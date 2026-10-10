@@ -1,0 +1,710 @@
+{
+  "kind": "knowledge-doc",
+  "slug": "nuxt",
+  "title": {
+    "en": "Nuxt.js",
+    "vi": "Nuxt.js"
+  },
+  "summary": {
+    "en": "Senior Nuxt interviews are not “SSR vs SPA” flashcards. They ask you to **design a hybrid rendering policy** under SEO, auth, TTFB, and server-cost constraints — then explain **payload, hydration, and data keys** when t…",
+    "vi": "Phỏng vấn Senior Nuxt không phải flashcard “SSR vs SPA.” Họ bảo bạn **thiết kế hybrid rendering policy** dưới ràng buộc SEO, auth, TTFB, và chi phí server — rồi giải thích **payload, hydration, và data key** khi policy…"
+  },
+  "category": "vue",
+  "order": 6,
+  "tags": [
+    "vue",
+    "nuxt"
+  ],
+  "sections": [
+    {
+      "id": {
+        "en": "intro",
+        "vi": "intro"
+      },
+      "title": {
+        "en": "Nuxt.js",
+        "vi": "Nuxt.js"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": {
+            "en": "Nuxt.js",
+            "vi": "Nuxt.js"
+          },
+          "id": {
+            "en": "nuxtjs",
+            "vi": "nuxtjs"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Senior Nuxt interviews are not “SSR vs SPA” flashcards. They ask you to **design a hybrid rendering policy** under SEO, auth, TTFB, and server-cost constraints — then explain **payload, hydration, and data keys** when that policy fails in production. Interviewers assume Vue 3. They probe **routeRules**, **when not to SSR**, and whether you treat middleware as real auth (it is not). A strong answer names the **decision**, the **constraint**, the **failure mode**, and how you would **measure** it.",
+            "vi": "Phỏng vấn Senior Nuxt không phải flashcard “SSR vs SPA.” Họ bảo bạn **thiết kế hybrid rendering policy** dưới ràng buộc SEO, auth, TTFB, và chi phí server — rồi giải thích **payload, hydration, và data key** khi policy đó gãy trên production. Interviewer giả định Vue 3. Họ soi **routeRules**, **khi nào không SSR**, và bạn có coi middleware là auth thật không (không phải). Câu trả lời mạnh gọi tên **quyết định**, **ràng buộc**, **failure mode**, và cách bạn **đo**."
+          }
+        },
+        {
+          "type": "thematic-break"
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "table-of-contents",
+        "vi": "table-of-contents"
+      },
+      "title": {
+        "en": "Table of Contents",
+        "vi": "Table of Contents"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Table of Contents",
+            "vi": "Table of Contents"
+          },
+          "id": {
+            "en": "table-of-contents",
+            "vi": "table-of-contents"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "[What is Nuxt.js?](#61-what-is-nuxtjs)",
+              "vi": "[What is Nuxt.js?](#61-what-is-nuxtjs)"
+            },
+            {
+              "en": "[Nuxt vs Vue](#62-nuxt-vs-vue)",
+              "vi": "[Nuxt vs Vue](#62-nuxt-vs-vue)"
+            },
+            {
+              "en": "[CSR vs SSR vs SSG vs SPA](#63-csr-vs-ssr-vs-ssg-vs-spa)",
+              "vi": "[CSR vs SSR vs SSG vs SPA](#63-csr-vs-ssr-vs-ssg-vs-spa)"
+            },
+            {
+              "en": "[Middleware](#64-middleware)",
+              "vi": "[Middleware](#64-middleware)"
+            },
+            {
+              "en": "[useAsyncData vs useFetch vs $fetch](#65-useasyncdata-vs-usefetch-vs-fetch)",
+              "vi": "[useAsyncData vs useFetch vs $fetch](#65-useasyncdata-vs-usefetch-vs-fetch)"
+            },
+            {
+              "en": "[Plugins, runtimeConfig, env](#66-plugins-runtimeconfig-env)",
+              "vi": "[Plugin, runtimeConfig, env](#66-plugin-runtimeconfig-env)"
+            },
+            {
+              "en": "[Nitro server routes vs BFF](#67-nitro-server-routes-vs-bff)",
+              "vi": "[Nitro server route vs BFF](#67-nitro-server-route-vs-bff)"
+            },
+            {
+              "en": "[Hydration, ClientOnly, lazy hydration](#68-hydration-clientonly-lazy-hydration)",
+              "vi": "[Hydration, ClientOnly, lazy hydration](#68-hydration-clientonly-lazy-hydration)"
+            }
+          ]
+        },
+        {
+          "type": "thematic-break"
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "6-nuxtjs",
+        "vi": "6-nuxtjs"
+      },
+      "title": {
+        "en": "6. Nuxt.js",
+        "vi": "6. Nuxt.js"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "6. Nuxt.js",
+            "vi": "6. Nuxt.js"
+          },
+          "id": {
+            "en": "6-nuxtjs",
+            "vi": "6-nuxtjs"
+          }
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "6.1. What is Nuxt.js?",
+            "vi": "6.1. What is Nuxt.js?"
+          },
+          "id": {
+            "en": "61-what-is-nuxtjs",
+            "vi": "61-what-is-nuxtjs"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "“Why Nuxt instead of Vue + Vite + vue-router?” They want **conventions that encode production decisions** (rendering mode, data, env, server), not a feature list.",
+            "vi": "“Vì sao Nuxt thay vì Vue + Vite + vue-router?” Họ muốn **convention mã hóa quyết định production** (rendering mode, data, env, server), không phải danh sách feature."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** Nuxt is the **application framework** on top of Vue 3: file routing, hybrid rendering, Nitro, first-class data fetching with a **serializable payload**, modules, and deploy presets. Use it when you need **SSR/SSG/hybrid**, SEO, or a BFF. Stay on Vue SPA when the product is an authenticated shell behind a CDN with no SEO surface and a separate API.\n- **Constraint:** Nuxt’s value is the **happy path**. You pay for it when you fight the defaults (fully custom routing, non-Nitro backends, leaking `window` in plugins).\n- **Failure mode:** Treating Nuxt as “Vue with folders” and fetching in `onMounted` everywhere — you keep SPA behavior and still pay SSR complexity.\n- **Measure:** Time to first **useful HTML** on a marketing URL vs TTI on an app URL; operational cost of Nitro vs a SPA on object storage.\n\nNuxt is not a Vue replacement. It is Vue + **routing + rendering policy + server**. Nitro is the deployable server (Node, serverless, edge presets). Pinia, Vue Router, and Vite are underneath; Nuxt wires their SSR story.",
+            "vi": "- **Quyết định:** Nuxt là **application framework** trên Vue 3: file routing, hybrid rendering, Nitro, fetch data first-class với **payload serialize được**, module, và deploy preset. Dùng khi cần **SSR/SSG/hybrid**, SEO, hoặc BFF. Ở lại Vue SPA khi product là shell đã auth sau CDN, không bề mặt SEO, API tách riêng.\n- **Ràng buộc:** Giá trị Nuxt nằm ở **happy path**. Bạn trả giá khi đánh với default (routing custom hết cỡ, backend không Nitro, leak `window` trong plugin).\n- **Failure mode:** Coi Nuxt là “Vue có folder” rồi fetch trong `onMounted` khắp nơi — giữ hành vi SPA mà vẫn trả complexity SSR.\n- **Đo:** Time to first **HTML hữu ích** trên URL marketing vs TTI trên URL app; chi phí vận hành Nitro vs SPA trên object storage.\n\nNuxt không thay Vue. Nó là Vue + **routing + rendering policy + server**. Nitro là server deploy được (Node, serverless, edge preset). Pinia, Vue Router, và Vite nằm dưới; Nuxt nối câu chuyện SSR của chúng."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Vue SPA: simpler mental model, cheaper static host, you own every SSR footgun if you add it later.\n- Nuxt: faster to a correct hybrid app, more magic (auto-import, payload), harder to debug when the magic is wrong.",
+            "vi": "- Vue SPA: mental model đơn giản, host static rẻ, bạn tự sở hữu mọi footgun SSR nếu thêm sau.\n- Nuxt: tới hybrid app đúng nhanh hơn, nhiều magic (auto-import, payload), khó debug khi magic sai."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- `ssr: false` globally is a Vue SPA with extra framework — justify it.\n- Modules (`nuxt-auth`, image, i18n) save months and can **own your request path**; read what they put in cookies and headers.\n- Auto-imports hide cycles — same interview point as Vue ([vue3 auto-import](./vue3.md#513-auto-import-components)).",
+            "vi": "- `ssr: false` global là Vue SPA cộng thêm framework — phải justify.\n- Module (`nuxt-auth`, image, i18n) tiết kiệm tháng và có thể **sở hữu request path**; đọc chúng nhét gì vào cookie và header.\n- Auto-import giấu cycle — cùng điểm phỏng vấn với Vue ([vue3 auto-import](./vue3.md#513-auto-import-components))."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- What Nitro buys you vs “Express next to Vite.”\n- When you would still split a real API out of the Nuxt process.\n- How you would migrate a Vue 2 + Nuxt 2 app (bridge vs rewrite).",
+            "vi": "- Nitro mang lại gì so với “Express cạnh Vite.”\n- Khi nào vẫn tách API thật ra khỏi process Nuxt.\n- Migrate Vue 2 + Nuxt 2 thế nào (bridge vs rewrite)."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "6.2. Nuxt vs Vue",
+            "vi": "6.2. Nuxt vs Vue"
+          },
+          "id": {
+            "en": "62-nuxt-vs-vue",
+            "vi": "62-nuxt-vs-vue"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "A comparison table is the junior answer. Seniors map **which layer owns which problem**, especially vs a Vue SPA the company already has.",
+            "vi": "Bảng so sánh là câu junior. Senior map **tầng nào sở hữu vấn đề nào**, nhất là vs Vue SPA công ty đã có."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** Vue owns **UI and reactivity**. Nuxt owns **when HTML is produced, how data is fetched for that HTML, how env is split, and how the server runs**. If the interview is “we have a Vue 3 SPA,” you add Nuxt for **public routes + hybrid**, not to rewrite the design system.\n- **Constraint:** Nuxt routing is file-based (`pages/`). Exotic URL designs (all-in-one query-driven shells) fight `pages/` and `routeRules`. Vue Router guards still exist; Nuxt middleware is the SSR-aware version.\n- **Failure mode:** Duplicating vue-router config beside `pages/`, or using Nuxt as a component library host.\n- **Measure:** Number of routes that must be SEO-visible; whether auth cookies work on first request; bundle of `node_modules/.cache/nuxt` vs a Vite SPA.\n\n| Layer | Vue SPA | Nuxt |\n| --- | --- | --- |\n| UI | Vue 3 | Vue 3 |\n| Routing | Manual vue-router | `pages/` + optional `router.options` |\n| Rendering | Client only | Hybrid: SSR / SSG / SWR / CSR per route |\n| Data | You invent cache | `useAsyncData` / `useFetch` + payload |\n| Env | `import.meta.env` | `runtimeConfig` public vs private |\n| Server | None | Nitro `server/` |\n| State | Pinia you wire | Pinia module + SSR serialization |",
+            "vi": "- **Quyết định:** Vue sở hữu **UI và reactivity**. Nuxt sở hữu **HTML được sinh lúc nào, data fetch cho HTML đó thế nào, env tách ra sao, server chạy ra sao**. Nếu interview là “chúng tôi có Vue 3 SPA,” bạn thêm Nuxt cho **route public + hybrid**, không phải rewrite design system.\n- **Ràng buộc:** Routing Nuxt theo file (`pages/`). Thiết kế URL dị (shell all-in-one theo query) đánh với `pages/` và `routeRules`. Vue Router guard vẫn tồn tại; Nuxt middleware là bản SSR-aware.\n- **Failure mode:** Nhân bản config vue-router cạnh `pages/`, hoặc dùng Nuxt làm host component library.\n- **Đo:** Số route phải SEO-visible; cookie auth chạy được trên first request không; bundle `node_modules/.cache/nuxt` vs Vite SPA.\n\n| Tầng | Vue SPA | Nuxt |\n| --- | --- | --- |\n| UI | Vue 3 | Vue 3 |\n| Routing | vue-router tay | `pages/` + `router.options` tùy chọn |\n| Rendering | Chỉ client | Hybrid: SSR / SSG / SWR / CSR theo route |\n| Data | Bạn tự invent cache | `useAsyncData` / `useFetch` + payload |\n| Env | `import.meta.env` | `runtimeConfig` public vs private |\n| Server | Không | Nitro `server/` |\n| State | Pinia bạn tự wire | Module Pinia + serialize SSR |"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Vue SPA + separate BFF: clear process boundary, two deploys, you must invent the payload/hydration story if you later SSR.\n- Nuxt monolith: one deploy, BFF in-process, easier cookies, easier to accidentally put CPU-heavy work on the page server.",
+            "vi": "- Vue SPA + BFF tách: biên process rõ, hai deploy, bạn phải invent câu chuyện payload/hydration nếu SSR sau.\n- Nuxt monolith: một deploy, BFF in-process, cookie dễ hơn, dễ vô tình nhét việc CPU-nặng lên page server."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- `useFetch` in a Vue SPA **without** Nuxt does not exist — people copy snippets into Vite apps.\n- Pinia in Vue SPA has no SSR payload; Nuxt’s Pinia module does. Do not assume they are identical.\n- Client plugins that import Node-only modules will fail the server build even if “the page is CSR.”",
+            "vi": "- `useFetch` trong Vue SPA **không** Nuxt thì không tồn tại — người ta copy snippet vào app Vite.\n- Pinia trong Vue SPA không có payload SSR; module Pinia của Nuxt thì có. Đừng giả định chúng giống nhau.\n- Client plugin import module Node-only sẽ gãy server build dù “page là CSR.”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- Nuxt vs VitePress/SSG for a docs site.\n- How much vue-router knowledge still matters (a lot: `meta`, navigation failures, scroll).\n- Islands / server components vs “just Vue SFCs.”",
+            "vi": "- Nuxt vs VitePress/SSG cho docs site.\n- Kiến thức vue-router còn quan trọng bao nhiêu (rất: `meta`, navigation failure, scroll).\n- Islands / server component vs “chỉ Vue SFC.”"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "6.3. CSR vs SSR vs SSG vs SPA",
+            "vi": "6.3. CSR vs SSR vs SSG vs SPA"
+          },
+          "id": {
+            "en": "63-csr-vs-ssr-vs-ssg-vs-spa",
+            "vi": "63-csr-vs-ssr-vs-ssg-vs-spa"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "They will let you define the four terms, then: **“How do you mix them in one app?”** That is `routeRules`, **payload**, **islands**, and **when not to SSR**. Hybrid rendering is the senior topic; the table is the warmup.",
+            "vi": "Họ để bạn định nghĩa bốn term, rồi: **“Trộn chúng trong một app thế nào?”** Đó là `routeRules`, **payload**, **islands**, và **khi nào không SSR**. Hybrid rendering là topic senior; bảng là warmup."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** Pick the **cheapest correct HTML** per route. Public, cacheable, SEO-sensitive → SSG or SWR. Personalized but crawlable → SSR with cache keys that **do not** include secrets. Authenticated app chrome, chart-heavy dashboards, editors → **CSR (`ssr: false`)** or **client-only islands**. Do not SSR the world.\n- **Constraint:** One Node/serverless process has a CPU budget. SSR of a 50-series dashboard for every navigation **will** melt TTFB under load. SSG cannot see per-user cookies at build time. SWR/ISR can serve **stale personalized HTML** if you key the cache wrong.\n- **Failure mode:** Default SSR on `/dashboard/**` with Recharts/ECharts → hydration mismatch + huge HTML + server CPU. Or SSG for a prices page that must be fresh every minute with no revalidation. Or “SPA because SSR is hard” on the marketing site.\n- **Measure:** TTFB and HTML bytes per route class; cache hit ratio on CDN; hydration warnings; origin CPU vs RPS; LCP on a cold cache vs warm.\n\n**Rendering modes (the 30-second version)**\n\n| Mode | HTML when | Good for | Wrong for |\n| --- | --- | --- | --- |\n| **CSR / SPA** | After JS | Auth shells, heavy widgets | Landing SEO, social crawlers |\n| **SSR** | Each request | Personalized SEO, session-aware public pages | Expensive, user-specific canvases |\n| **SSG** | At build | Docs, marketing, changelog | Per-user or rapidly changing catalog without rebuild |\n| **SWR / ISR-like** | Build or first request, then revalidate | Catalog, blogs, semi-static | Strictly real-time / per-user |\n\nSPA vs CSR: SPA is a **navigation architecture** (client router, no full reload). CSR is **where the HTML is built**. Nuxt can be an SPA (`ssr: false`) or a hybrid app that still **navigates like an SPA** after the first response.\n\n**Hybrid: `routeRules`**\n\nThis is the production control plane. Example policy, not a recipe to copy blindly:\n\n```ts\nexport default defineNuxtConfig({\n  routeRules: {\n    '/': { prerender: true },\n    '/blog/**': { swr: 3600 },\n    '/product/**': { swr: 60 },\n    '/search': { ssr: true, cache: false },\n    '/account/**': { ssr: false },\n    '/editor/**': { ssr: false },\n  },\n})\n```\n\n- **prerender / SSG:** HTML at build, CDN, no origin on hit.\n- **swr:** serve cached HTML, revalidate in the background. Confirm your Nitro/CDN preset actually honors it.\n- **ssr: true, cache: false:** per-request HTML (search with unique query strings).\n- **ssr: false:** skip server render; send a shell; Vue runs only on the client.\n\nRules are **path policies**. They do not replace `useAsyncData` keys. A SWR page that fetches with a cookie-derived user id will **cache user A’s HTML for user B** unless you vary the cache or you did not SSR that page.\n\n**When not to SSR**\n\n- **Auth dashboards** behind login: crawlers do not see them; HTML is personalized; hydration cost is high; a SPA shell + client fetch is honest.\n- **Charts / maps / canvas / WebGL:** server HTML is an empty box or a mismatch. SSR a heading + `ClientOnly` the widget (or `ssr: false` the route).\n- **Rich text editors, design canvases:** same — no SEO value, hostile to hydration.\n- **A/B or feature flags that only exist in `window`:** you will mismatch; decide on the server or don’t SSR the branch.\n- **Highly fan-out pages** where origin CPU is the bill (infinite filter combinations) — cache at the data layer or CSR.\n\n**Payload**\n\nSSR is useless if the client **re-fetches and re-renders** the same tree. Nuxt extracts async data into a **payload** (`__NUXT__` / `_payload.json`) so hydration reuses server results.\n\n- Keys (`useAsyncData('product:id')`) **are** the cache identity. Colliding keys mix pages; unique-per-instance keys destroy dedupe.\n- `useNuxtData(key)` reads that cache without refetch.\n- Payload size **is** your TBT/HTML budget. Returning a 2 MB search blob “because we have it” is a production incident.\n- `pick` / `transform` exist to **shrink** what you serialize.\n\n**Islands (Nuxt Island / server components)**\n\nIslands render a **server snippet** that the client does not need to hydrate as a full Vue tree (or hydrates later). Use them for **mostly static, expensive-to-hydrate** blocks (markdown article body, pricing table) inside an otherwise interactive page. Do not island a component that is all `v-model`.\n\nConstraint: islands have a **tighter data story** (props must be serializable; no leaking of request-only objects). Failure mode: island + client state that disagrees after a client navigation.",
+            "vi": "- **Quyết định:** Chọn **HTML đúng rẻ nhất** từng route. Public, cache được, nhạy SEO → SSG hoặc SWR. Personalized nhưng crawl được → SSR với cache key **không** gồm secret. Chrome app đã auth, dashboard nặng chart, editor → **CSR (`ssr: false`)** hoặc **island client-only**. Đừng SSR cả thế giới.\n- **Ràng buộc:** Một process Node/serverless có ngân sách CPU. SSR dashboard 50 series mỗi navigation **sẽ** nát TTFB dưới load. SSG không thấy cookie per-user lúc build. SWR/ISR có thể phục vụ **HTML personalized stale** nếu bạn key cache sai.\n- **Failure mode:** Default SSR trên `/dashboard/**` với Recharts/ECharts → hydration mismatch + HTML khổng lồ + CPU server. Hoặc SSG trang giá phải tươi mỗi phút không revalidate. Hoặc “SPA vì SSR khó” trên marketing site.\n- **Đo:** TTFB và byte HTML theo class route; cache hit ratio trên CDN; warning hydration; CPU origin vs RPS; LCP cache lạnh vs ấm.\n\n**Rendering mode (bản 30 giây)**\n\n| Mode | HTML khi nào | Hợp | Sai cho |\n| --- | --- | --- | --- |\n| **CSR / SPA** | Sau JS | Auth shell, widget nặng | Landing SEO, social crawler |\n| **SSR** | Mỗi request | SEO personalized, page public biết session | Canvas đắt, theo user |\n| **SSG** | Lúc build | Docs, marketing, changelog | Catalog per-user hoặc đổi rất nhanh không rebuild |\n| **SWR / kiểu ISR** | Build hoặc first request, rồi revalidate | Catalog, blog, bán-tĩnh | Real-time chặt / per-user |\n\nSPA vs CSR: SPA là **kiến trúc navigation** (client router, không full reload). CSR là **chỗ HTML được dựng**. Nuxt có thể là SPA (`ssr: false`) hoặc hybrid app vẫn **navigate như SPA** sau response đầu.\n\n**Hybrid: `routeRules`**\n\nĐây là control plane production. Ví dụ policy, không phải recipe copy mù:\n\n```ts\nexport default defineNuxtConfig({\n  routeRules: {\n    '/': { prerender: true },\n    '/blog/**': { swr: 3600 },\n    '/product/**': { swr: 60 },\n    '/search': { ssr: true, cache: false },\n    '/account/**': { ssr: false },\n    '/editor/**': { ssr: false },\n  },\n})\n```\n\n- **prerender / SSG:** HTML lúc build, CDN, không origin khi hit.\n- **swr:** phục vụ HTML cache, revalidate nền. Xác nhận Nitro/CDN preset thực sự tôn trọng nó.\n- **ssr: true, cache: false:** HTML mỗi request (search với query string độc).\n- **ssr: false:** bỏ server render; gửi shell; Vue chỉ chạy trên client.\n\nRule là **policy theo path**. Chúng không thay key `useAsyncData`. Page SWR fetch theo user id suy từ cookie sẽ **cache HTML user A cho user B** trừ khi bạn vary cache hoặc bạn không SSR page đó.\n\n**Khi nào không SSR**\n\n- **Dashboard auth** sau login: crawler không thấy; HTML personalized; cost hydration cao; SPA shell + client fetch là thành thật.\n- **Chart / map / canvas / WebGL:** HTML server là hộp rỗng hoặc mismatch. SSR heading + `ClientOnly` widget (hoặc `ssr: false` route).\n- **Rich text editor, design canvas:** tương tự — không giá trị SEO, thù hydration.\n- **A/B hoặc feature flag chỉ tồn tại trên `window`:** bạn sẽ lệch; quyết trên server hoặc đừng SSR nhánh đó.\n- **Page fan-out mạnh** nơi CPU origin là hóa đơn (vô hạn tổ hợp filter) — cache ở tầng data hoặc CSR.\n\n**Payload**\n\nSSR vô dụng nếu client **fetch lại và render lại** cùng cây. Nuxt rút async data vào **payload** (`__NUXT__` / `_payload.json`) để hydration tái dùng kết quả server.\n\n- Key (`useAsyncData('product:id')`) **chính là** identity cache. Key đụng nhau trộn page; key unique-per-instance phá dedupe.\n- `useNuxtData(key)` đọc cache đó không refetch.\n- Size payload **là** ngân sách TBT/HTML. Trả blob search 2 MB “vì đã có” là incident production.\n- `pick` / `transform` tồn tại để **co** cái bạn serialize.\n\n**Islands (Nuxt Island / server component)**\n\nIsland render **snippet server** mà client không cần hydrate như cây Vue đầy đủ (hoặc hydrate sau). Dùng cho khối **phần lớn tĩnh, hydrate đắt** (thân bài markdown, bảng giá) trong page vốn interactive. Đừng island component toàn `v-model`.\n\nRàng buộc: island có **câu chuyện data chặt hơn** (props phải serialize được; không leak object chỉ-request). Failure mode: island + client state bất đồng sau client navigation."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "| Policy | TTFB | Server CPU | SEO | Hydration |\n| --- | --- | --- | --- | --- |\n| Global SSR | Depends on origin | High | Strong | You pay it |\n| Global CSR | Fast shell, slow content | Low | Weak | Only client |\n| Hybrid `routeRules` | Tunable | Tunable | Tunable | Tunable |\n| SSG + client islands | Best for static | Build-time | Strong | Small |",
+            "vi": "| Policy | TTFB | CPU server | SEO | Hydration |\n| --- | --- | --- | --- | --- |\n| SSR global | Phụ thuộc origin | Cao | Mạnh | Bạn trả |\n| CSR global | Shell nhanh, content chậm | Thấp | Yếu | Chỉ client |\n| Hybrid `routeRules` | Chỉnh được | Chỉnh được | Chỉnh được | Chỉnh được |\n| SSG + client island | Tốt nhất cho static | Lúc build | Mạnh | Nhỏ |"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- `routeRules` + middleware redirects: first request may still hit SSR before the client nav cache.\n- Prerender crawling may miss authenticated or query-only URLs — they are not “SSG by accident.”\n- `swr` + `Set-Cookie` on the page = **do not cache** or you leak sessions. Personalized HTML belongs in `private` cache or CSR.\n- Payload vs CDN: if HTML is cached at the CDN and payload is not (or vice versa), you hydrate with the **wrong** data.",
+            "vi": "- `routeRules` + redirect middleware: first request vẫn có thể hit SSR trước client nav cache.\n- Prerender crawl có thể miss URL authenticated hoặc chỉ-query — chúng không “SSG tình cờ.”\n- `swr` + `Set-Cookie` trên page = **đừng cache** không thì leak session. HTML personalized thuộc `private` cache hoặc CSR.\n- Payload vs CDN: HTML cache ở CDN mà payload không (hoặc ngược) thì bạn hydrate **data sai**."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How you would run a **logged-in** account page and a **public** product page in one deploy.\n- Incremental static regeneration vs “just SSR + Redis.”\n- Nuxt vs Next mental map: `routeRules` ≈ segment config + caching headers; islands ≈ server components (not identical). See [Next.js](./nextjs.md) if the loop goes there.",
+            "vi": "- Chạy page account **đã login** và page product **public** trong một deploy thế nào.\n- Incremental static regeneration vs “chỉ SSR + Redis.”\n- Bản đồ tư duy Nuxt vs Next: `routeRules` ≈ segment config + caching header; islands ≈ server component (không ident). Xem [Next.js](./nextjs.md) nếu vòng hỏi đi đó."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "6.4. Middleware",
+            "vi": "6.4. Middleware"
+          },
+          "id": {
+            "en": "64-middleware",
+            "vi": "64-middleware"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "Auth redirects. Seniors are graded on **SSR vs client execution**, **cookies vs localStorage**, and the line: **middleware is UX gating, not authorization**.",
+            "vi": "Redirect auth. Senior được chấm ở **SSR vs client execution**, **cookie vs localStorage**, và ranh giới: **middleware là UX gating, không phải authorization**."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** Use **route middleware** to redirect unauthenticated users and to choose layouts **before a page renders**. Hydrate auth **once** (cookie session → server-readable). Put **real** authorization on Nitro/API (`server/middleware` or the upstream service). Never read `localStorage` in middleware that runs on the server.\n- **Constraint:** The same `defineNuxtRouteMiddleware` file can run on the **server** (first request) and on the **client** (subsequent navigations). It must be **idempotent**. It has `to` / `from`, not a raw Node `req`, unless you `useRequestEvent()` carefully (server-only).\n- **Failure mode:** `localStorage.getItem('token')` → always logged-out on SSR → flash of login → client redirect the other way. Or middleware that POSTs analytics on every run (double fire). Or treating `abortNavigation(403)` as security while `server/api` is open.\n- **Measure:** Redirect loops in server logs; extra `/me` calls per navigation; pages whose first HTML is the login shell for a logged-in cookie (wrong) or the dashboard for a logged-out user (worse).\n\n**Three kinds**\n\n| Kind | Declaration | Scope |\n| --- | --- | --- |\n| **Global** | `middleware/auth.global.ts` | Every navigation |\n| **Named** | `middleware/admin.ts` | `definePageMeta({ middleware: 'admin' })` |\n| **Inline / route** | `definePageMeta({ middleware: [...] })` | That page |\n\nOrder: **global → named/route (array order)** → render. Keep globals tiny. A global that fetches is how you freeze TTFB.\n\n**SSR vs client**\n\n1. First hit: middleware runs **on the server** with cookies/headers. Return `navigateTo('/login')` and the user never sees the protected SFC HTML.\n1. Client nav: middleware runs **in the browser**. You already have Pinia / `useState` if you hydrated correctly.\n1. Branch with `import.meta.server` / `import.meta.client` for the rare side effect (never for the auth **decision** if cookies are available).\n1. Do not `window` / `document` / `localStorage`. Session belongs in **httpOnly cookies** (XSS-resistant) or a payload-hydrated store filled on the server.\n1. Heavy DB work belongs in **API / Nitro `server/middleware`**, not UI route middleware.\n\n**Cookies vs localStorage**\n\n|  | Cookie (`httpOnly`, `Secure`, `SameSite`) | `localStorage` |\n| --- | --- | --- |\n| SSR middleware | Visible as `Cookie` header | Invisible |\n| XSS | httpOnly not readable by JS | Stolen easily |\n| CSRF | `SameSite` + anti-CSRF on mutations | Bearer in JS, different CSRF profile |\n| Interview line | Default for sessions | Not an auth source of truth |\n\nIf a third-party IdP forces a JS token, copy it into a **server-set cookie** via a BFF route; do not make middleware depend on `localStorage`.\n\n**Not real auth**\n\nHiding `/admin` with middleware is **defense in depth + UX**. The admin API must check the session. Client-only role checks are bypassable. Interview one-liner: *middleware decides what HTML to try; the server decides what data exists.*\n\n**Route middleware vs Nitro `server/middleware`**\n\n|  | Route middleware (`middleware/`) | Nitro `server/middleware` |\n| --- | --- | --- |\n| Runs on | Navigating to a Nuxt page | Matching HTTP requests (pages + `/api`) |\n| Purpose | Redirects, feature flags, UX | CORS, authn of APIs, rate limit, logging |\n| Context | `to` / `from` | H3 `event` |\n| Can protect `server/api` | No | Yes |",
+            "vi": "- **Quyết định:** Dùng **route middleware** để redirect user chưa auth và chọn layout **trước khi page render**. Hydrate auth **một lần** (session cookie → server đọc được). **Authorization thật** đặt trên Nitro/API (`server/middleware` hoặc service upstream). Không bao giờ đọc `localStorage` trong middleware chạy trên server.\n- **Ràng buộc:** Cùng file `defineNuxtRouteMiddleware` có thể chạy trên **server** (first request) và trên **client** (navigation sau). Nó phải **idempotent**. Có `to` / `from`, không có raw Node `req`, trừ khi bạn `useRequestEvent()` cẩn thận (chỉ server).\n- **Failure mode:** `localStorage.getItem('token')` → luôn logged-out trên SSR → flash login → client redirect ngược. Hoặc middleware POST analytics mọi lần chạy (fire đôi). Hoặc coi `abortNavigation(403)` là security trong khi `server/api` để mở.\n- **Đo:** Vòng redirect trong server log; thêm call `/me` mỗi navigation; page mà HTML đầu là login shell dù cookie đã login (sai) hoặc dashboard cho user logged-out (tệ hơn).\n\n**Ba loại**\n\n| Loại | Khai báo | Phạm vi |\n| --- | --- | --- |\n| **Global** | `middleware/auth.global.ts` | Mọi navigation |\n| **Named** | `middleware/admin.ts` | `definePageMeta({ middleware: 'admin' })` |\n| **Inline / route** | `definePageMeta({ middleware: [...] })` | Page đó |\n\nThứ tự: **global → named/route (thứ tự array)** → render. Giữ global mỏng. Global đi fetch là cách đóng băng TTFB.\n\n**SSR vs client**\n\n1. Hit đầu: middleware chạy **trên server** với cookie/header. Return `navigateTo('/login')` và user không bao giờ thấy HTML SFC được bảo vệ.\n1. Client nav: middleware chạy **trong browser**. Bạn đã có Pinia / `useState` nếu hydrate đúng.\n1. Nhánh `import.meta.server` / `import.meta.client` cho side effect hiếm (không bao giờ cho **quyết định** auth nếu cookie sẵn).\n1. Đừng `window` / `document` / `localStorage`. Session thuộc **httpOnly cookie** (chống XSS) hoặc store hydrate từ payload, đổ trên server.\n1. Việc DB nặng thuộc **API / Nitro `server/middleware`**, không phải UI route middleware.\n\n**Cookie vs localStorage**\n\n|  | Cookie (`httpOnly`, `Secure`, `SameSite`) | `localStorage` |\n| --- | --- | --- |\n| SSR middleware | Thấy được dưới header `Cookie` | Vô hình |\n| XSS | httpOnly JS không đọc được | Ăn cắp dễ |\n| CSRF | `SameSite` + anti-CSRF trên mutation | Bearer trong JS, CSRF profile khác |\n| Câu interview | Default cho session | Không phải source of truth auth |\n\nNếu IdP third-party ép token JS, copy vào **cookie server set** qua BFF route; đừng để middleware phụ thuộc `localStorage`.\n\n**Không phải auth thật**\n\nGiấu `/admin` bằng middleware là **defense in depth + UX**. Admin API phải check session. Check role chỉ client bypass được. One-liner interview: *middleware quyết HTML nào sẽ thử; server quyết data nào tồn tại.*\n\n**Route middleware vs Nitro `server/middleware`**\n\n|  | Route middleware (`middleware/`) | Nitro `server/middleware` |\n| --- | --- | --- |\n| Chạy lúc | Navigate tới Nuxt page | HTTP request khớp (page + `/api`) |\n| Mục đích | Redirect, feature flag, UX | CORS, authn API, rate limit, logging |\n| Context | `to` / `from` | H3 `event` |\n| Bảo vệ `server/api` | Không | Có |"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Global auth middleware: no forgotten page; easy to accidentally wrap `/login` and loop (always exclude).\n- Named per-page: easy to forget on a new admin route — lint `definePageMeta` or use a path prefix global.\n- `ssr: false` routes: server middleware for `/api` still runs; route middleware may only run on client for that page’s navigation.",
+            "vi": "- Auth middleware global: không quên page; dễ vô tình bọc `/login` rồi loop (luôn exclude).\n- Named per-page: dễ quên trên admin route mới — lint `definePageMeta` hoặc global theo path prefix.\n- Route `ssr: false`: server middleware cho `/api` vẫn chạy; route middleware có thể chỉ chạy client cho navigation page đó."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- `navigateTo` in middleware during SSR should use `redirectCode` (302 vs 301) deliberately; 301-caching a login redirect is a support nightmare.\n- `abortNavigation(createError({ statusCode: 404 }))` vs redirect: 404 is for “this id does not exist,” not for unauthenticated.\n- Middleware that `await useFetch` creates **waterfalls** and can deadlock with payload. Read a **already hydrated** `useState` / Pinia.\n- Vue Router guards still exist for SPA-only plugins; do not install a second auth gate that disagrees with Nuxt middleware.",
+            "vi": "- `navigateTo` trong middleware lúc SSR nên dùng `redirectCode` (302 vs 301) có chủ đích; 301-cache redirect login là ác mộng support.\n- `abortNavigation(createError({ statusCode: 404 }))` vs redirect: 404 cho “id này không tồn tại,” không cho unauthenticated.\n- Middleware `await useFetch` tạo **waterfall** và có thể deadlock với payload. Đọc `useState` / Pinia **đã hydrate**.\n- Vue Router guard vẫn tồn tại cho plugin SPA-only; đừng cài cổng auth thứ hai bất đồng với Nuxt middleware."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How you hydrate the user once for SSR + client (Pinia plugin, `useState('user')`, `callOnce`).\n- `definePageMeta({ middleware })` is compiled at build — it cannot be fully dynamic per user.\n- Next `middleware.ts` is an **edge gate before the response** — closest Nuxt map is this route middleware plus some Nitro `server/middleware` concerns.",
+            "vi": "- Hydrate user một lần cho SSR + client (Pinia plugin, `useState('user')`, `callOnce`).\n- `definePageMeta({ middleware })` compile lúc build — không fully dynamic theo user.\n- Next `middleware.ts` là **cổng edge trước response** — map Nuxt gần nhất là route middleware này cộng một phần concern Nitro `server/middleware`."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "6.5. useAsyncData vs useFetch vs $fetch",
+            "vi": "6.5. useAsyncData vs useFetch vs $fetch"
+          },
+          "id": {
+            "en": "65-useasyncdata-vs-usefetch-vs-fetch",
+            "vi": "65-useasyncdata-vs-usefetch-vs-fetch"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "“Which one do you use?” They want **dedupe, keys, refresh, and client vs server** — and why `$fetch` in `setup` is a footgun on SSR.",
+            "vi": "“Dùng cái nào?” Họ muốn **dedupe, key, refresh, và client vs server** — và vì sao `$fetch` trong `setup` là footgun trên SSR."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** `$fetch` for **imperative** calls (event handlers, Nitro handlers, plugins) with **no** payload integration. `useAsyncData` when you own the key and the handler (non-HTTP, compose two calls, custom cache). `useFetch` when it is an HTTP GET/POST that should participate in SSR payload — it is `useAsyncData` + `$fetch` with the **URL as default key**.\n- **Constraint:** On SSR, composable fetches run on the server, results go into the payload, the client **must not refetch** unless `refresh` / the key changes. Duplicate keys share state (that is the feature). Missing keys or `$fetch` in `setup` **double-fetch** or **mismatch**.\n- **Failure mode:** `$fetch('/api/x')` in `<script setup>` — runs on server **and** again on client, no dedupe, possible mismatch. `useFetch('/api/user/' + id)` without a stable key when `id` is empty then filled. `refresh()` storms on window focus you did not ask for (that is TanStack Query behavior — Nuxt does not unless you add it).\n- **Measure:** Network panel on first load (one GET, not two). Payload size. In-flight abort on route change. Error/pending flags that survive client nav.\n\n| API | SSR payload | Dedupe | Typical call site |\n| --- | --- | --- | --- |\n| `$fetch` | No | No (unless you wrap it) | `click`, plugins, `server/api` |\n| `useAsyncData(key, handler)` | Yes | By **key** | Non-REST, composed, custom |\n| `useFetch(url, opts)` | Yes | By URL + opts key | REST in SFCs |\n\n**Keys**\n\n- `useAsyncData('product:' + route.params.id, ...)` — explicit, greppable.\n- `useFetch` default key includes URL and selected options. Changing `query` changes the key (good) unless you mutated an object in place (bad).\n- Same key in parent and child: **one** request, shared `data`. That is how you avoid waterfalls **or** how you accidentally share the wrong product.\n- `getCachedData` / `useNuxtData` for “read if warm.”\n\n**Refresh, watch, lazy, server**\n\n- `refresh()` / `refreshNuxtData(key)` — explicit. Use after mutations.\n- `watch: [() => route.params.id]` (or `watch: true` on `useFetch` with reactive URL) — refetch when the source changes. Pair with abort.\n- `lazy: true` — don’t block navigation; you will paint pending. Good for secondary widgets, bad for SEO-critical H1.\n- `server: false` — client only; no HTML data, no payload. Charts, user-only widgets.\n- `immediate: false` — wait for a submit.\n\n**Client vs server**\n\n- Handler should use `$fetch` / `event.$fetch` so it works in both. `window.fetch` to a relative URL can surprise you on the server (needs a host).\n- Cookies: on server, `$fetch` in a composable **forwards the request cookies** when used correctly; a raw `fetch('https://api.internal')` may not. BFF routes exist for this.\n- Do not touch `document` in the handler.",
+            "vi": "- **Quyết định:** `$fetch` cho call **imperative** (event handler, Nitro handler, plugin) **không** gắn payload. `useAsyncData` khi bạn sở hữu key và handler (không HTTP, compose hai call, cache custom). `useFetch` khi là HTTP GET/POST nên tham gia payload SSR — nó là `useAsyncData` + `$fetch` với **URL làm default key**.\n- **Ràng buộc:** Trên SSR, composable fetch chạy trên server, kết quả vào payload, client **không được refetch** trừ khi `refresh` / key đổi. Key trùng share state (đó là feature). Thiếu key hoặc `$fetch` trong `setup` thì **fetch đôi** hoặc **mismatch**.\n- **Failure mode:** `$fetch('/api/x')` trong `<script setup>` — chạy server **và** lại trên client, không dedupe, có thể lệch. `useFetch('/api/user/' + id)` không key ổn định khi `id` rỗng rồi được điền. Bão `refresh()` lúc window focus bạn không xin (đó là hành vi TanStack Query — Nuxt không trừ khi bạn thêm).\n- **Đo:** Network panel first load (một GET, không hai). Size payload. Abort in-flight lúc đổi route. Flag error/pending sống sót client nav.\n\n| API | Payload SSR | Dedupe | Call site điển hình |\n| --- | --- | --- | --- |\n| `$fetch` | Không | Không (trừ khi bạn wrap) | `click`, plugin, `server/api` |\n| `useAsyncData(key, handler)` | Có | Theo **key** | Non-REST, compose, custom |\n| `useFetch(url, opts)` | Có | Theo URL + opts key | REST trong SFC |\n\n**Key**\n\n- `useAsyncData('product:' + route.params.id, ...)` — tường minh, grep được.\n- Default key `useFetch` gồm URL và option được chọn. Đổi `query` đổi key (tốt) trừ khi bạn mutate object tại chỗ (xấu).\n- Cùng key ở parent và child: **một** request, `data` share. Đó là cách tránh waterfall **hoặc** cách vô tình share nhầm product.\n- `getCachedData` / `useNuxtData` cho “đọc nếu ấm.”\n\n**Refresh, watch, lazy, server**\n\n- `refresh()` / `refreshNuxtData(key)` — tường minh. Dùng sau mutation.\n- `watch: [() => route.params.id]` (hoặc `watch: true` trên `useFetch` với URL reactive) — refetch khi source đổi. Ghép abort.\n- `lazy: true` — không block navigation; bạn sẽ paint pending. Tốt cho widget phụ, xấu cho H1 SEO-critical.\n- `server: false` — chỉ client; không data HTML, không payload. Chart, widget chỉ-user.\n- `immediate: false` — đợi submit.\n\n**Client vs server**\n\n- Handler nên dùng `$fetch` / `event.$fetch` để chạy cả hai. `window.fetch` tới relative URL có thể bất ngờ trên server (cần host).\n- Cookie: trên server, `$fetch` trong composable **forward cookie request** khi dùng đúng; `fetch('https://api.internal')` thô có thể không. BFF route tồn tại vì chuyện này.\n- Đừng chạm `document` trong handler."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Thin `useFetch` everywhere: fast DX, keys get messy, easy to over-fetch POST as GET.\n- `useAsyncData` + repository function: testable handlers, you must name keys well.\n- TanStack Query inside Nuxt: better stale-while-revalidate on the **client**; you must still not break SSR payload (or run Query client-only).",
+            "vi": "- `useFetch` mỏng khắp nơi: DX nhanh, key rối, dễ over-fetch POST như GET.\n- `useAsyncData` + hàm repository: handler test được, bạn phải đặt tên key tốt.\n- TanStack Query trong Nuxt: stale-while-revalidate tốt hơn trên **client**; vẫn không được phá payload SSR (hoặc chạy Query chỉ-client)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Deduped pending: two components with one key share `pending` — unmounting one should not cancel the other if the second still needs it. Know the version’s cancel semantics.\n- `transform` / `pick` run before serialization — use them to drop fields (PII, huge nested includes).\n- `useFetch` of a **POST** in setup will **replay** unless you `server: false` / call it in an event. Mutations do not belong in `setup`.\n- Error is **not** thrown into Vue error boundaries by default; you must read `error` or `showError`.",
+            "vi": "- Pending đã dedupe: hai component một key share `pending` — unmount một không nên cancel cái kia nếu cái thứ hai vẫn cần. Biết semantics cancel của version.\n- `transform` / `pick` chạy trước serialize — dùng để bỏ field (PII, include lồng khổng lồ).\n- `useFetch` một **POST** trong setup sẽ **replay** trừ khi `server: false` / gọi trong event. Mutation không thuộc `setup`.\n- Error **không** throw vào Vue error boundary mặc định; bạn phải đọc `error` hoặc `showError`."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- `callOnce` vs `useAsyncData` for one-shot inits (auth hydrate, feature flags).\n- `clearNuxtData` on logout so the next user on a shared browser does not see payload leftovers (usually process-isolated, but client cache is not).\n- Parallel `useAsyncData` vs one handler with `Promise.all` (one key vs waterfall of components).",
+            "vi": "- `callOnce` vs `useAsyncData` cho init one-shot (hydrate auth, feature flag).\n- `clearNuxtData` lúc logout để user sau trên browser share không thấy payload leftover (thường process-isolated, nhưng client cache thì không).\n- `useAsyncData` song song vs một handler `Promise.all` (một key vs waterfall component)."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "6.6. Plugins, runtimeConfig, env",
+            "vi": "6.6. Plugin, runtimeConfig, env"
+          },
+          "id": {
+            "en": "66-plugins-runtimeconfig-env",
+            "vi": "66-plugin-runtimeconfig-env"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "Where secrets live, and whether a plugin is **`.server` / `.client`**. They will ask you to leak a private key on purpose conceptually — they want you to refuse.",
+            "vi": "Secret sống ở đâu, và plugin có phải **`.server` / `.client`** không. Họ sẽ bảo bạn leak private key có chủ đích trên khái niệm — họ muốn bạn từ chối."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** `runtimeConfig.public` for values the **browser may see** (CDN host, feature flags that are not secrets, Sentry DSN if you accept that risk). `runtimeConfig` private for **server-only** (API keys, DB, session secret). Env: `NUXT_PUBLIC_*` maps to public; `NUXT_*` to private. Plugins: default = both; `.server.ts` / `.client.ts` for environment; `provide` from the plugin instead of module-scope singletons.\n- **Constraint:** `runtimeConfig` is **built into the server snapshot** and public keys are serialized to the client. Private keys in `public` are a security incident. `process.env.FOO` in a Vue SFC may be inlined at build — do not use it for per-deploy secrets; use runtimeConfig so **runtime** env on the host wins.\n- **Failure mode:** `const secret = useRuntimeConfig().stripeSecret` in a composable called from a page → bundled or leaked via payload if you returned it. A plugin that `import`s `fs` without `.server`. Analytics plugin firing on SSR (fake pageviews).\n- **Measure:** Search the client bundle for the secret string in CI. Plugin order tests (auth before API). Confirm preview/staging env vars actually override (runtime, not rebuild) if that is a requirement.\n\n**Plugins**\n\n- `defineNuxtPlugin` — `nuxtApp.provide('api', client)` then `useNuxtApp().$api`, or better a composable that `inject`s a typed key.\n- Order: filename prefixes / `enforce` / `dependsOn` (version-dependent). Auth hydrate before stores that need the user.\n- Vue plugin vs Nuxt plugin: `nuxtApp.vueApp.use(pinia)` is already done by the Pinia module; your job is **request-scoped** setup.\n- SSR-safe: create clients **inside** `defineNuxtPlugin`, not at import. No global `cache = new Map()` for user data.",
+            "vi": "- **Quyết định:** `runtimeConfig.public` cho giá trị **browser được thấy** (host CDN, feature flag không phải secret, Sentry DSN nếu bạn chấp nhận rủi ro đó). `runtimeConfig` private cho **chỉ server** (API key, DB, session secret). Env: `NUXT_PUBLIC_*` map public; `NUXT_*` map private. Plugin: default = cả hai; `.server.ts` / `.client.ts` theo môi trường; `provide` từ plugin thay vì singleton phạm vi module.\n- **Ràng buộc:** `runtimeConfig` được **build vào snapshot server** và public key serialize ra client. Private key trong `public` là incident bảo mật. `process.env.FOO` trong Vue SFC có thể bị inline lúc build — đừng dùng cho secret per-deploy; dùng runtimeConfig để env **runtime** trên host thắng.\n- **Failure mode:** `const secret = useRuntimeConfig().stripeSecret` trong composable gọi từ page → bị bundle hoặc leak qua payload nếu bạn return nó. Plugin `import` `fs` không `.server`. Analytics plugin fire trên SSR (pageview giả).\n- **Đo:** Search client bundle tìm chuỗi secret trong CI. Test thứ tự plugin (auth trước API). Confirm env preview/staging thực sự override (runtime, không rebuild) nếu đó là requirement.\n\n**Plugin**\n\n- `defineNuxtPlugin` — `nuxtApp.provide('api', client)` rồi `useNuxtApp().$api`, hoặc tốt hơn composable `inject` typed key.\n- Thứ tự: prefix filename / `enforce` / `dependsOn` (phụ thuộc version). Hydrate auth trước store cần user.\n- Vue plugin vs Nuxt plugin: `nuxtApp.vueApp.use(pinia)` module Pinia đã làm; việc bạn là setup **theo request**.\n- SSR-safe: tạo client **bên trong** `defineNuxtPlugin`, không lúc import. Không `cache = new Map()` global cho user data."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Public runtimeConfig: inspectable, easy, easy to overshare.\n- Private + BFF: client never sees the key; extra hop.\n- Compile-time `import.meta.env`: fast, wrong for secrets that change without rebuild.",
+            "vi": "- Public runtimeConfig: inspect được, dễ, dễ overshare.\n- Private + BFF: client không bao giờ thấy key; thêm hop.\n- `import.meta.env` compile-time: nhanh, sai cho secret đổi không rebuild."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Logging `useRuntimeConfig()` in a client plugin dumps **public** config into logs — still can include internal URLs.\n- `ssr: false` does not mean “private config is safe in the browser.” Private is **server**. No server, no private.\n- Different env for Nitro vs Vite: if a var is only in `.env` and not available on the host, production silently falls back to the build-time default.\n- Feature flags in public config are **not** access control.",
+            "vi": "- Log `useRuntimeConfig()` trong client plugin đổ **public** config vào log — vẫn có thể gồm URL nội bộ.\n- `ssr: false` không nghĩa “private config an toàn trong browser.” Private là **server**. Không server, không private.\n- Env khác cho Nitro vs Vite: biến chỉ trong `.env` mà host không có thì production im lặng fallback default lúc build.\n- Feature flag trong public config **không** phải access control."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How you would inject a per-request header (correlation id) into `$fetch`.\n- Layers: `.env` < `.env.[env]` < real environment on the process.\n- Why `useRuntimeConfig()` in `server/api` vs `useRuntimeConfig(event)` (request-aware overrides).",
+            "vi": "- Inject header per-request (correlation id) vào `$fetch`.\n- Layer: `.env` < `.env.[env]` < environment thật trên process.\n- Vì sao `useRuntimeConfig()` trong `server/api` vs `useRuntimeConfig(event)` (override theo request)."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "6.7. Nitro server routes vs BFF",
+            "vi": "6.7. Nitro server route vs BFF"
+          },
+          "id": {
+            "en": "67-nitro-server-routes-vs-bff",
+            "vi": "67-nitro-server-route-vs-bff"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "“Do you put the API in Nuxt?” Seniors talk **BFF**: aggregate, cookie session, hide upstream, vs when Nitro is the **wrong** place for the domain.",
+            "vi": "“Bạn nhét API vào Nuxt à?” Senior nói **BFF**: aggregate, session cookie, giấu upstream, vs khi Nitro là chỗ **sai** cho domain."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** Use Nitro `server/api` / `server/routes` as a **BFF** for the UI: session cookies, aggregating 3 upstreams, stripping fields, mapping errors to 4xx the UI understands. Keep **domain of record** (billing, inventory, identity) in the services that own the data. Do not grow a second monolith inside `server/` because it was convenient on day one.\n- **Constraint:** Nitro shares the **page origin** — cookies are easy (`same-site`), CORS often disappears. It also shares **CPU with SSR**. A 200 ms upstream waterfall on the BFF is a 200 ms TTFB on the page if you call it during render.\n- **Failure mode:** Calling five microservices from `useFetch` in the browser (CORS, tokens in JS, waterfalls) instead of one BFF route. Or putting a batch job / websocket fan-out on the same process that renders HTML.\n- **Measure:** RPS and p95 of `/api/*` vs page SSR; origin CPU; size of `server/` as a fraction of product logic; number of secrets in `runtimeConfig` vs upstream.\n\n`server/api/users.get.ts` → `/api/users`. `server/routes/health.ts` → `/health`. `server/middleware` for CORS/auth on those handlers. `event.context` for the decoded session.",
+            "vi": "- **Quyết định:** Dùng Nitro `server/api` / `server/routes` như **BFF** cho UI: session cookie, gộp 3 upstream, strip field, map lỗi thành 4xx UI hiểu. Giữ **domain of record** (billing, inventory, identity) ở service sở hữu data. Đừng lớn thành monolith thứ hai trong `server/` vì ngày một tiện.\n- **Ràng buộc:** Nitro share **origin của page** — cookie dễ (`same-site`), CORS thường biến mất. Nó cũng share **CPU với SSR**. Waterfall upstream 200 ms trên BFF là TTFB 200 ms trên page nếu bạn gọi lúc render.\n- **Failure mode:** Gọi năm microservice từ `useFetch` trên browser (CORS, token trong JS, waterfall) thay vì một BFF route. Hoặc nhét batch job / websocket fan-out cùng process render HTML.\n- **Đo:** RPS và p95 `/api/*` vs page SSR; CPU origin; size `server/` như phân số logic product; số secret trong `runtimeConfig` vs upstream.\n\n`server/api/users.get.ts` → `/api/users`. `server/routes/health.ts` → `/health`. `server/middleware` cho CORS/auth trên handler đó. `event.context` cho session đã decode."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "|  | Browser → upstream | Nuxt BFF | Separate BFF |\n| --- | --- | --- | --- |\n| Cookies | Painful / CORS | Easy | Easy if same site |\n| Token in JS | Often yes | No | No |\n| Scale independently | Upstream only | Coupled to Nuxt | Yes |\n| Local DX | Many mocks | One process | Two processes |",
+            "vi": "|  | Browser → upstream | Nuxt BFF | BFF tách |\n| --- | --- | --- | --- |\n| Cookie | Đau / CORS | Dễ | Dễ nếu same site |\n| Token trong JS | Thường có | Không | Không |\n| Scale độc lập | Chỉ upstream | Dính Nuxt | Có |\n| DX local | Nhiều mock | Một process | Hai process |"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- `$fetch('/api/x')` from SSR needs an internal URL; Nitro usually handles **same-app** routing without a loop through the public internet. Accidentally fetching `https://prod` from the server is a classic latency bug.\n- Caching GET BFF routes that vary on cookie — **don’t**, or vary by session.\n- File uploads / long SSE: serverless Nitro presets will time out; pick a Node preset or a dedicated service.\n- `server/api` is still public HTTP. Middleware auth belongs here, not only in `pages/middleware`.",
+            "vi": "- `$fetch('/api/x')` từ SSR cần URL internal; Nitro thường lo routing **cùng app** không vòng internet public. Lỡ fetch `https://prod` từ server là bug latency kinh điển.\n- Cache GET BFF route vary theo cookie — **đừng**, hoặc vary theo session.\n- Upload file / SSE dài: serverless Nitro preset sẽ timeout; chọn Node preset hoặc service riêng.\n- `server/api` vẫn là HTTP public. Auth middleware thuộc đây, không chỉ `pages/middleware`."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- When to extract `server/` into its own service (CPU, team boundary, non-HTTP workloads).\n- GraphQL BFF vs REST aggregators.\n- How `routeRules` on `/api/**` (`cors`, `swr`) interact with authenticated endpoints.",
+            "vi": "- Khi nào extract `server/` thành service riêng (CPU, biên team, workload không HTTP).\n- GraphQL BFF vs REST aggregator.\n- `routeRules` trên `/api/**` (`cors`, `swr`) tương tác endpoint authenticated thế nào."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "6.8. Hydration, ClientOnly, lazy hydration",
+            "vi": "6.8. Hydration, ClientOnly, lazy hydration"
+          },
+          "id": {
+            "en": "68-hydration-clientonly-lazy-hydration",
+            "vi": "68-hydration-clientonly-lazy-hydration"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "A mismatch screenshot, or “why is this page interactive so late?” They want **causes**, **ClientOnly**, and **lazy/delayed hydration** — not “turn off SSR.”",
+            "vi": "Screenshot mismatch, hoặc “sao page này interactive muộn vậy?” Họ muốn **nguyên nhân**, **ClientOnly**, và **lazy/delayed hydration** — không phải “tắt SSR.”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** Hydration must reuse SSR HTML. Make the tree **deterministic** (payload, same flags, valid HTML). Use `<ClientOnly>` for **true client-only** islands (maps, charts, widgets that touch `window` at render). Use **lazy hydration** (`hydrate-on-visible` / idle / interaction, `Lazy` components) for below-fold interactivity so you **keep HTML** but **defer JS**.\n- **Constraint:** `ClientOnly` means crawlers and first paint **do not** see that subtree (placeholder slot only). Lazy hydration still **must match**; it only delays the Vue runtime attaching listeners.\n- **Failure mode:** Wrapping the whole page in `ClientOnly` to silence warnings — you deleted SSR. Or hydrating a 3 MB dashboard at once so INP tanks. Or `v-if=\"mounted\"` patterns that always mismatch unless the server rendered the same `false`.\n- **Measure:** Hydration warnings in staging; TBT/INP; HTML vs visual for above-fold; how much JS runs before the user scrolls.\n\n**Mismatch sources (Nuxt-specific extras)**\n\n- Fetching again on the client with different results (`$fetch` in setup, no key).\n- Date/time/locale (server UTC vs browser).\n- Auth UI: server had cookie, client store not yet hydrated (or the reverse).\n- Invalid HTML the browser repaired.\n- Random IDs, `Date.now()` in template.\n- Third-party scripts mutating DOM before Vue hydrates.\n\nFix data with **payload keys**. Fix auth with **server-readable session**. Fix widgets with **ClientOnly**. Surgical text: Vue `data-allow-mismatch` — last resort.\n\n**ClientOnly**\n\n```vue\n<ClientOnly>\n  <HeavyChart :series=\"series\" />\n  <template #fallback>\n    <div class=\"chart-skeleton\" />\n  </template>\n</ClientOnly>\n```\n\nThe chart is not in SSR HTML. The skeleton is. No hydration of ECharts. SEO on the chart itself is zero — acceptable for dashboards; not for a price that must be crawlable (then SSR a number, client-only the canvas).\n\n**Lazy hydration**\n\nNuxt can delay hydrating a component until **visible**, **idle**, or **interaction**. Combined with `LazyChart` async import, below-fold widgets do not compete with the LCP element.\n\nConstraint: until hydrated, the island is **not interactive** (a carousel will not swipe). Do not lazy-hydrate the primary CTA. Server HTML should still look complete (real text, not empty).",
+            "vi": "- **Quyết định:** Hydration phải tái dùng HTML SSR. Làm cây **deterministic** (payload, cùng flag, HTML hợp lệ). Dùng `<ClientOnly>` cho đảo **thật sự client-only** (map, chart, widget chạm `window` lúc render). Dùng **lazy hydration** (`hydrate-on-visible` / idle / interaction, component `Lazy`) cho interactivity dưới fold để **giữ HTML** nhưng **hoãn JS**.\n- **Ràng buộc:** `ClientOnly` nghĩa crawler và first paint **không** thấy subtree đó (chỉ placeholder slot). Lazy hydration **vẫn phải khớp**; nó chỉ hoãn Vue runtime gắn listener.\n- **Failure mode:** Bọc cả page `ClientOnly` để im warning — bạn xóa SSR. Hoặc hydrate dashboard 3 MB một lúc khiến INP sụp. Hoặc pattern `v-if=\"mounted\"` luôn lệch trừ khi server render cùng `false`.\n- **Đo:** Warning hydration trên staging; TBT/INP; HTML vs visual above-fold; bao nhiêu JS chạy trước khi user scroll.\n\n**Nguồn mismatch (thêm Nuxt-specific)**\n\n- Fetch lại trên client kết quả khác (`$fetch` trong setup, không key).\n- Date/time/locale (server UTC vs browser).\n- Auth UI: server có cookie, client store chưa hydrate (hoặc ngược).\n- HTML không hợp lệ browser đã “sửa.”\n- ID random, `Date.now()` trong template.\n- Script third-party mutate DOM trước khi Vue hydrate.\n\nSửa data bằng **payload key**. Sửa auth bằng **session server đọc được**. Sửa widget bằng **ClientOnly**. Text phẫu thuật: Vue `data-allow-mismatch` — last resort.\n\n**ClientOnly**\n\n```vue\n<ClientOnly>\n  <HeavyChart :series=\"series\" />\n  <template #fallback>\n    <div class=\"chart-skeleton\" />\n  </template>\n</ClientOnly>\n```\n\nChart không nằm trong HTML SSR. Skeleton thì có. Không hydrate ECharts. SEO trên chính chart là zero — chấp nhận được cho dashboard; không cho giá phải crawl được (khi đó SSR một số, client-only canvas).\n\n**Lazy hydration**\n\nNuxt có thể hoãn hydrate component tới khi **visible**, **idle**, hoặc **interaction**. Kết hợp import async `LazyChart`, widget dưới fold không tranh với phần tử LCP.\n\nRàng buộc: tới khi hydrate, đảo **không interactive** (carousel không swipe). Đừng lazy-hydrate CTA chính. HTML server vẫn phải trông đủ (text thật, không rỗng)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "| Technique | HTML content | JS cost | Interactivity |\n| --- | --- | --- | --- |\n| Full SSR + hydrate | Full | Immediate | Immediate |\n| Lazy hydrate | Full | Deferred | Deferred |\n| ClientOnly | Placeholder | After load | After load |\n| `ssr: false` route | Shell | Whole page client | After load |",
+            "vi": "| Kỹ thuật | Nội dung HTML | Cost JS | Interactivity |\n| --- | --- | --- | --- |\n| SSR đầy + hydrate | Đầy | Ngay | Ngay |\n| Lazy hydrate | Đầy | Hoãn | Hoãn |\n| ClientOnly | Placeholder | Sau load | Sau load |\n| Route `ssr: false` | Shell | Cả page client | Sau load |"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- `ClientOnly` children still run `setup` on the **client** only; don’t assume `useAsyncData` inside ran on the server.\n- Nested `ClientOnly` inside a lazy island: order of attach can surprise focus management.\n- Hydration mismatch in **dev only** because of HMR / extra comments — verify with production build.\n- Images: wrong dimensions cause layout shift that looks like a hydration bug and isn’t.",
+            "vi": "- Children `ClientOnly` vẫn chạy `setup` **chỉ client**; đừng giả định `useAsyncData` bên trong đã chạy trên server.\n- `ClientOnly` lồng trong lazy island: thứ tự attach có thể bất ngờ với focus management.\n- Hydration mismatch **chỉ dev** vì HMR / comment thừa — verify bằng production build.\n- Image: dimension sai gây layout shift trông như bug hydration mà không phải."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How this maps to Vue’s hydration mismatch notes ([vue3](./vue3.md#5211-hydration-mismatch)).\n- Islands vs ClientOnly (server HTML without client Vue vs no server HTML).\n- Why INP got worse after you “fixed SEO with SSR” on an internal tool.",
+            "vi": "- Map sang ghi chú hydration mismatch của Vue ([vue3](./vue3.md#5211-hydration-mismatch)).\n- Islands vs ClientOnly (HTML server không client Vue vs không HTML server).\n- Vì sao INP tệ hơn sau khi bạn “fix SEO bằng SSR” trên internal tool."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "[← Back to Overview](../../README-en.md)",
+            "vi": "[← Back to Overview](../../README.md)"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,436 @@
+{
+  "kind": "plan-day",
+  "day": 17,
+  "date": "19/10/2026",
+  "week": 3,
+  "title": {
+    "en": "Effects, async cleanup, and error boundaries",
+    "vi": "Effect, cleanup async và error boundary"
+  },
+  "goal": {
+    "en": "Review the React concepts that most often cause bugs or shallow answers in interviews.",
+    "vi": "Ôn lại những khái niệm React dễ gây bug hoặc dễ bị trả lời nông trong phỏng vấn."
+  },
+  "studyLinks": [
+    {
+      "kind": "docs",
+      "slug": "react",
+      "label": {
+        "en": "React notes",
+        "vi": "Tài liệu React"
+      }
+    },
+    {
+      "kind": "docs",
+      "slug": "javascript",
+      "label": {
+        "en": "JavaScript notes",
+        "vi": "Tài liệu JavaScript"
+      }
+    },
+    {
+      "kind": "docs",
+      "slug": "practical-questions",
+      "label": {
+        "en": "Practical debugging notes",
+        "vi": "Tài liệu practical questions"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "useeffect",
+      "label": {
+        "en": "useEffect",
+        "vi": "useEffect"
+      }
+    },
+    {
+      "id": "error-boundary-limits",
+      "label": {
+        "en": "Error Boundary limits",
+        "vi": "Giới hạn của Error Boundary"
+      }
+    },
+    {
+      "id": "perf-issue-story",
+      "label": {
+        "en": "Performance or bug investigation story",
+        "vi": "Story điều tra bug hoặc performance"
+      }
+    }
+  ],
+  "handsOn": [
+    {
+      "en": "Review one effect and ask: what triggers it, how is stale work cancelled, and what happens on rapid input or unmount?",
+      "vi": "Review một effect và hỏi: cái gì kích hoạt nó, stale work bị huỷ thế nào và chuyện gì xảy ra khi input nhanh hoặc unmount?"
+    },
+    {
+      "en": "Write one short explanation for why Error Boundaries do not replace API error handling.",
+      "vi": "Viết một câu ngắn giải thích vì sao Error Boundary không thay thế cho xử lý lỗi API."
+    }
+  ],
+  "algorithm": {
+    "resourceId": "algo-day-17",
+    "path": "artifacts/algo/problems/day-17.md",
+    "label": {
+      "en": "Lowest Common Ancestor of a BST",
+      "vi": "Lowest Common Ancestor of a BST"
+    }
+  },
+  "checklist": [
+    {
+      "en": "You can describe one good and one bad useEffect pattern.",
+      "vi": "Nói được một pattern useEffect tốt và một pattern useEffect tệ."
+    },
+    {
+      "en": "Error Boundaries are now tied to real limitations, not a vague definition.",
+      "vi": "Error Boundary giờ gắn với giới hạn thật chứ không còn là định nghĩa mơ hồ."
+    },
+    {
+      "en": "Algo is done and BST properties are used correctly.",
+      "vi": "Bài algo xong và dùng đúng tính chất của BST."
+    }
+  ],
+  "lab": {
+    "resourceId": "lab-day-17",
+    "title": {
+      "en": "Day 17 — Lab",
+      "vi": "Day 17 — Lab"
+    },
+    "sections": [
+      {
+        "id": {
+          "en": "intro",
+          "vi": "intro"
+        },
+        "title": {
+          "en": "Day 17 — Lab",
+          "vi": "Day 17 — Lab"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 1,
+            "text": {
+              "en": "Day 17 — Lab",
+              "vi": "Day 17 — Lab"
+            },
+            "id": {
+              "en": "day-17-lab",
+              "vi": "day-17-lab"
+            }
+          },
+          {
+            "type": "callout",
+            "kind": "quote",
+            "text": {
+              "en": "Timebox 45-60 minutes. Interview drill, not a product build.",
+              "vi": "Timebox 45-60 phút. Drill phỏng vấn, không phải dựng sản phẩm."
+            }
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "what-they-will-ask",
+          "vi": "ho-se-hoi-gi"
+        },
+        "title": {
+          "en": "What they will ask",
+          "vi": "Họ sẽ hỏi gì"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "What they will ask",
+              "vi": "Họ sẽ hỏi gì"
+            },
+            "id": {
+              "en": "what-they-will-ask",
+              "vi": "ho-se-hoi-gi"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "What is a good `useEffect` vs a bad one? How do you cancel stale work? Why don’t Error Boundaries catch API failures or event-handler errors?",
+              "vi": "`useEffect` tốt khác `useEffect` tệ thế nào? Huỷ việc stale ra sao? Vì sao Error Boundary không bắt lỗi API hay lỗi trong event handler?"
+            }
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "what-you-will-produce",
+          "vi": "ban-se-produce-gi"
+        },
+        "title": {
+          "en": "What you will produce",
+          "vi": "Bạn sẽ produce gì"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "What you will produce",
+              "vi": "Bạn sẽ produce gì"
+            },
+            "id": {
+              "en": "what-you-will-produce",
+              "vi": "ban-se-produce-gi"
+            }
+          },
+          {
+            "type": "list",
+            "style": "ul",
+            "items": [
+              {
+                "en": "Review one effect and ask: what triggers it, how is stale work cancelled, and what happens on rapid input or unmount?",
+                "vi": "Review một effect và hỏi: cái gì kích hoạt nó, stale work bị huỷ thế nào và chuyện gì xảy ra khi input nhanh hoặc unmount?"
+              },
+              {
+                "en": "Write one short explanation for why Error Boundaries do not replace API error handling.",
+                "vi": "Viết một câu ngắn giải thích vì sao Error Boundary không thay thế cho xử lý lỗi API."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "how-a-senior-works-this",
+          "vi": "senior-lam-the-nao"
+        },
+        "title": {
+          "en": "How a senior works this",
+          "vi": "Senior làm thế nào"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "How a senior works this",
+              "vi": "Senior làm thế nào"
+            },
+            "id": {
+              "en": "how-a-senior-works-this",
+              "vi": "senior-lam-the-nao"
+            }
+          },
+          {
+            "type": "list",
+            "style": "ul",
+            "items": [
+              {
+                "en": "**Decision:** For one effect: trigger, cleanup, stale, unmount. Then one sentence: Error Boundaries catch render-time React errors, not `fetch` or click handlers.",
+                "vi": "**Quyết định:** Với một effect: trigger, cleanup, stale, unmount. Rồi một câu: Error Boundary bắt lỗi React lúc render, không bắt `fetch` hay click handler."
+              },
+              {
+                "en": "**Constraint:** Review / snippet. Do not add an Error Boundary tree to a product app today.",
+                "vi": "**Constraint:** Review / snippet. Hôm nay không gắn cây Error Boundary vào app product."
+              },
+              {
+                "en": "**Failure mode:** Fetching in an effect without cleanup (Strict Mode double-fetch + setState on unmount). Using Error Boundaries as the only error UX.",
+                "vi": "**Failure mode:** Fetch trong effect không cleanup (Strict Mode fetch hai lần + setState lúc unmount). Lấy Error Boundary làm UX lỗi duy nhất."
+              },
+              {
+                "en": "**Measure:** One good and one bad `useEffect` pattern, and Error Boundaries tied to real limits, not a vague definition.",
+                "vi": "**Cách đo:** Một pattern `useEffect` tốt và một pattern tệ, và Error Boundary gắn với giới hạn thật chứ không phải định nghĩa mơ hồ."
+              },
+              {
+                "en": "**Tradeoff:** Effects are the escape hatch. Prefer derived render and event handlers. If you need an effect to sync props → state, ask whether the state should exist.",
+                "vi": "**Trade-off:** Effect là lối thoát. Ưu tiên render derived và event handler. Nếu cần effect để sync props → state, hỏi xem state đó có nên tồn tại không."
+              },
+              {
+                "en": "**Production gotcha:** React 18 Strict Mode remounts. AbortController in the cleanup. Error Boundaries do not catch async. `getDerivedStateFromError` vs `componentDidCatch` is extra credit, not required.",
+                "vi": "**Gotcha production:** React 18 Strict Mode remount. AbortController trong cleanup. Error Boundary không bắt async. `getDerivedStateFromError` vs `componentDidCatch` là điểm cộng, không bắt buộc."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "done-when",
+          "vi": "tieu-chi-xong"
+        },
+        "title": {
+          "en": "Done when",
+          "vi": "Tiêu chí xong"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "Done when",
+              "vi": "Tiêu chí xong"
+            },
+            "id": {
+              "en": "done-when",
+              "vi": "tieu-chi-xong"
+            }
+          },
+          {
+            "type": "list",
+            "style": "ul",
+            "items": [
+              {
+                "en": "You can describe one good and one bad useEffect pattern.",
+                "vi": "Nói được một pattern useEffect tốt và một pattern useEffect tệ."
+              },
+              {
+                "en": "Error Boundaries are now tied to real limitations, not a vague definition.",
+                "vi": "Error Boundary giờ gắn với giới hạn thật chứ không còn là định nghĩa mơ hồ."
+              },
+              {
+                "en": "Algo is done and BST properties are used correctly.",
+                "vi": "Bài algo xong và dùng đúng tính chất của BST."
+              },
+              {
+                "en": "You can explain one trade-off from today in under 2 minutes (decision → constraint → failure → measure).",
+                "vi": "Giải thích được một trade-off của hôm nay dưới 2 phút (quyết định → constraint → failure → cách đo)."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "stretch",
+          "vi": "stretch"
+        },
+        "title": {
+          "en": "Stretch",
+          "vi": "Stretch"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "Stretch",
+              "vi": "Stretch"
+            },
+            "id": {
+              "en": "stretch",
+              "vi": "stretch"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Write the dependency-array trap you would mention (`[]` on a callback that closes over stale props).",
+              "vi": "Viết bẫy dependency array bạn sẽ nhắc (`[]` trên callback đóng over props stale)."
+            }
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "algorithm",
+          "vi": "thuat-toan"
+        },
+        "title": {
+          "en": "Algorithm",
+          "vi": "Thuật toán"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "Algorithm",
+              "vi": "Thuật toán"
+            },
+            "id": {
+              "en": "algorithm",
+              "vi": "thuat-toan"
+            }
+          },
+          {
+            "type": "list",
+            "style": "ul",
+            "items": [
+              {
+                "en": "**Problem:** Lowest Common Ancestor of a BST",
+                "vi": "**Bài:** Lowest Common Ancestor of a BST"
+              },
+              {
+                "en": "**Constraints:**",
+                "vi": "**Ràng buộc:**"
+              },
+              {
+                "en": "Use BST properties, not a full tree walk if you can avoid it",
+                "vi": "Dùng tính chất BST, đừng duyệt hết cây nếu tránh được"
+              },
+              {
+                "en": "**Hint:** Both < root → left; both > root → right; else root is LCA.",
+                "vi": "**Hint:** Nếu cả hai < root → trái; cả hai > root → phải; else root là LCA."
+              }
+            ]
+          },
+          {
+            "type": "code",
+            "lang": "text",
+            "code": {
+              "en": "algorithms/day-17/solution.ts\nalgorithms/day-17/solution.test.ts",
+              "vi": "algorithms/day-17/solution.ts\nalgorithms/day-17/solution.test.ts"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Run: `pnpm test:algo -- day-17`",
+              "vi": "Chạy: `pnpm test:algo -- day-17`"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Open the full prompt: [day-17.md](../artifacts/algo/problems/day-17.md)",
+              "vi": "Mở đề đầy đủ: [day-17.md](../artifacts/algo/problems/day-17.md)"
+            }
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "suggested-commit",
+          "vi": "commit-goi-y"
+        },
+        "title": {
+          "en": "Suggested commit",
+          "vi": "Commit gợi ý"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "Suggested commit",
+              "vi": "Commit gợi ý"
+            },
+            "id": {
+              "en": "suggested-commit",
+              "vi": "commit-goi-y"
+            }
+          },
+          {
+            "type": "code",
+            "lang": "text",
+            "code": {
+              "en": "day-17: review one effect cleanup and error-boundary limits",
+              "vi": "day-17: review one effect cleanup and error-boundary limits"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,643 @@
+{
+  "kind": "knowledge-doc",
+  "slug": "css-layout",
+  "title": {
+    "en": "CSS Layout",
+    "vi": "CSS Layout"
+  },
+  "summary": {
+    "en": "Senior CSS interviews are not a Flexbox cheat sheet. They watch whether you can explain why a modal painted under a sticky header, why a flex child refused to shrink, why a page jumped 40px when images loaded, and wheth…",
+    "vi": "Phỏng vấn CSS senior không phải cheat sheet Flexbox. Họ xem bạn giải thích được vì sao modal vẽ dưới sticky header, vì sao flex child không chịu shrink, vì sao page nhảy 40px khi ảnh load, và bạn có thật sự dùng Grid ch…"
+  },
+  "category": "core",
+  "order": 3,
+  "tags": [
+    "core",
+    "css-layout"
+  ],
+  "sections": [
+    {
+      "id": {
+        "en": "intro",
+        "vi": "intro"
+      },
+      "title": {
+        "en": "CSS Layout",
+        "vi": "CSS Layout"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": {
+            "en": "CSS Layout",
+            "vi": "CSS Layout"
+          },
+          "id": {
+            "en": "css-layout",
+            "vi": "css-layout"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Senior CSS interviews are not a Flexbox cheat sheet. They watch whether you can explain why a modal painted under a sticky header, why a flex child refused to shrink, why a page jumped 40px when images loaded, and whether you would actually use Grid for the **page** and Flex for the **toolbar**. Layout is production: stacking contexts, intrinsic sizing, CLS, `100vh` on mobile, and tokens that survive a dark theme.",
+            "vi": "Phỏng vấn CSS senior không phải cheat sheet Flexbox. Họ xem bạn giải thích được vì sao modal vẽ dưới sticky header, vì sao flex child không chịu shrink, vì sao page nhảy 40px khi ảnh load, và bạn có thật sự dùng Grid cho **page** còn Flex cho **toolbar** không. Layout là production: stacking context, intrinsic sizing, CLS, `100vh` trên mobile, và token sống sót dark theme."
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Answer with a decision (Grid vs Flex vs flow), a constraint (content min-size, containing block, user zoom), a failure mode (overflow, clipped focus, layout shift), and how you measure (CLS in CrUX, overlay in DevTools, a reduced test case).",
+            "vi": "Trả lời bằng quyết định (Grid vs Flex vs flow), constraint (content min-size, containing block, user zoom), failure mode (overflow, clip focus, layout shift), và cách đo (CLS trong CrUX, overlay DevTools, reduced test case)."
+          }
+        },
+        {
+          "type": "thematic-break"
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "table-of-contents",
+        "vi": "table-of-contents"
+      },
+      "title": {
+        "en": "Table of Contents",
+        "vi": "Table of Contents"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Table of Contents",
+            "vi": "Table of Contents"
+          },
+          "id": {
+            "en": "table-of-contents",
+            "vi": "table-of-contents"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "[Flexbox](#31-flexbox)",
+              "vi": "[Flexbox](#31-flexbox)"
+            },
+            {
+              "en": "[CSS Grid](#32-css-grid)",
+              "vi": "[CSS Grid](#32-css-grid)"
+            },
+            {
+              "en": "[Flexbox vs Grid](#33-when-to-use-flexbox-vs-grid)",
+              "vi": "[Flexbox vs Grid](#33-when-to-use-flexbox-vs-grid)"
+            },
+            {
+              "en": "[Responsive Design Strategy](#34-responsive-design-strategy)",
+              "vi": "[Responsive Design Strategy](#34-responsive-design-strategy)"
+            },
+            {
+              "en": "[Stacking Context and z-index](#35-stacking-context-and-z-index)",
+              "vi": "[Stacking Context và z-index](#35-stacking-context-và-z-index)"
+            },
+            {
+              "en": "[Intrinsic Sizing and Overflow](#36-intrinsic-sizing-and-overflow)",
+              "vi": "[Intrinsic Sizing và Overflow](#36-intrinsic-sizing-và-overflow)"
+            },
+            {
+              "en": "[Modern Layout: subgrid, :has, Cascade Layers](#37-modern-layout-subgrid-has-cascade-layers)",
+              "vi": "[Layout hiện đại: subgrid, :has, Cascade Layers](#37-layout-hiện-đại-subgrid-has-cascade-layers)"
+            }
+          ]
+        },
+        {
+          "type": "thematic-break"
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "3-css-layout",
+        "vi": "3-css-layout"
+      },
+      "title": {
+        "en": "3. CSS Layout",
+        "vi": "3. CSS Layout"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "3. CSS Layout",
+            "vi": "3. CSS Layout"
+          },
+          "id": {
+            "en": "3-css-layout",
+            "vi": "3-css-layout"
+          }
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "3.1. Flexbox",
+            "vi": "3.1. Flexbox"
+          },
+          "id": {
+            "en": "31-flexbox",
+            "vi": "31-flexbox"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "A toolbar: logo left, nav in the middle, actions right. On small screens the nav overflows instead of shrinking. Or: a card row where one long unbreakable SKU stretches the whole row. They are probing **`min-width: auto`**, `gap` vs margin, and wrapping — not `justify-content` trivia.",
+            "vi": "Toolbar: logo trái, nav giữa, action phải. Màn nhỏ nav overflow thay vì shrink. Hoặc: hàng card mà một SKU dài không ngắt kéo cả hàng. Họ probing **`min-width: auto`**, `gap` vs margin, và wrapping — không trivia `justify-content`."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "Flex is for **one axis** of distribution: a nav, a form row, a cluster of buttons, space-between header chrome. Decision: `display: flex; gap: …; min-width: 0` on the child that must shrink (text, search input, the middle nav). Constraint: a flex item’s default `min-width: auto` is the minimum of its content — it will not shrink below that, so `flex: 1` on a child with a long word does **not** prevent overflow. Failure mode: using `margin-left: auto` hacks plus `:last-child` margins that break when Vue adds a badge; `gap` exists for this. Measure: overflow in DevTools (scrollWidth vs clientWidth), and a keyboard pass — wrapping must not drop focus order.",
+            "vi": "Flex cho **một trục** phân phối: nav, form row, cụm button, space-between header chrome. Quyết định: `display: flex; gap: …; min-width: 0` trên child phải shrink (text, search input, nav giữa). Constraint: default `min-width: auto` của flex item là minimum của content — không shrink dưới đó, nên `flex: 1` trên child chữ dài **không** chặn overflow. Failure mode: hack `margin-left: auto` cộng margin `:last-child` gãy khi Vue thêm badge; `gap` tồn tại vì việc này. Đo: overflow DevTools (scrollWidth vs clientWidth), và pass bàn phím — wrap không được đảo focus order."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Don’t Flex a full page into a column of “header / main / footer” if Grid `template-areas` would name those roles. Flex is fine for a simple app-shell; it gets brittle once you add a second column.\n- `justify-content: space-between` with two items looks even until a third Vue `v-if` appears. Prefer `margin-inline-start: auto` on the actions group, or Grid.\n- `flex-wrap: wrap` is the escape hatch, not the default, if the design is a single toolbar. Wrapping a toolbar can bury the primary CTA.\n- `gap` vs margin: `gap` does not collapse, doesn’t require last-child resets, but older WebViews and some nested flex + `overflow` combinations still surprise. It’s the default I write in 2026.",
+            "vi": "- Đừng Flex cả page thành cột “header / main / footer” nếu Grid `template-areas` đặt tên được các vai. Flex ổn cho app-shell đơn; mong manh khi thêm cột thứ hai.\n- `justify-content: space-between` với hai item nhìn đều đến khi Vue `v-if` thứ ba xuất hiện. Prefer `margin-inline-start: auto` trên nhóm action, hoặc Grid.\n- `flex-wrap: wrap` là cửa thoát, không phải default, nếu design là một toolbar. Wrap toolbar có thể chôn CTA chính.\n- `gap` vs margin: `gap` không collapse, không cần last-child reset, nhưng WebView cũ và vài combo nested flex + `overflow` vẫn bất ngờ. Đó là default tôi viết năm 2026."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- `min-width: auto` / `min-height: auto` on flex items is the #1 overflow bug. Fix with `min-width: 0` (or `overflow: hidden` if you also need to clip), and `min-height: 0` on nested column flex in a grid cell.\n- `flex: 1` is `1 1 0%` in the spec-ish shorthand people think they know — browsers treat `flex: 1` as `1 1 0%`. `flex: auto` is `1 1 auto`. Mixing them in a Vue list is how one child eats the row.\n- `align-items: stretch` + an image without height → stretch then CLS when the image arrives. Give the image dimensions or an aspect-ratio box.\n- `gap` on flex doesn’t include collapsed space for `display: none` children (good). Margin hacks do (bad) when `v-if` toggles.\n- a11y: visual order vs DOM order. `order: -1` to pull a button left is a keyboard trap. Reorder in the Vue template, not with `order`.\n- `overflow: auto` on a flex child without `min-height: 0` in a column layout: the child grows with content and the page scrolls instead of the panel. Classic dashboard bug.\n\n```css\n.toolbar {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n}\n.toolbar__nav {\n  flex: 1 1 auto;\n  min-width: 0; /* allow shrink below content min */\n  overflow: auto;\n}\n.toolbar__actions {\n  margin-inline-start: auto;\n  flex: 0 0 auto;\n}\n```",
+            "vi": "- `min-width: auto` / `min-height: auto` trên flex item là bug overflow #1. Fix `min-width: 0` (hoặc `overflow: hidden` nếu cũng cần clip), và `min-height: 0` trên nested column flex trong grid cell.\n- `flex: 1` là `1 1 0%` theo shorthand người ta nghĩ mình biết — browser coi `flex: 1` là `1 1 0%`. `flex: auto` là `1 1 auto`. Trộn trong Vue list là cách một child ăn cả hàng.\n- `align-items: stretch` + ảnh không height → stretch rồi CLS khi ảnh tới. Cho ảnh dimension hoặc box aspect-ratio.\n- `gap` trên flex không tính chỗ collapsed cho child `display: none` (tốt). Hack margin thì có (xấu) khi `v-if` toggle.\n- a11y: visual order vs DOM order. `order: -1` kéo button sang trái là bẫy bàn phím. Reorder trong Vue template, không bằng `order`.\n- `overflow: auto` trên flex child không `min-height: 0` trong column layout: child lớn theo content và page scroll thay vì panel. Bug dashboard classic.\n\n```css\n.toolbar {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n}\n.toolbar__nav {\n  flex: 1 1 auto;\n  min-width: 0; /* cho shrink dưới content min */\n  overflow: auto;\n}\n.toolbar__actions {\n  margin-inline-start: auto;\n  flex: 0 0 auto;\n}\n```"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "1. Why doesn’t `flex: 1` stop a long filename from overflowing? What property actually does?\n1. `gap` vs `margin` on a list that Vue filters — which one leaves a trailing gap?\n1. When is `flex-wrap` a product bug (toolbar CTA wrapping below the fold)?\n1. Why is CSS `order` an a11y smell in a Vue `v-for`?\n1. Nested flex in a Grid cell: whose job is `min-height: 0`?\n1. `flex-basis: 0` vs `auto` — which do you use for equal-width cards, and why do padding/borders break “equal”?",
+            "vi": "1. Vì sao `flex: 1` không chặn filename dài overflow? Property nào thật sự làm?\n1. `gap` vs `margin` trên list Vue filter — cái nào để lại trailing gap?\n1. Khi nào `flex-wrap` là bug product (toolbar CTA wrap dưới fold)?\n1. Vì sao CSS `order` là mùi a11y trong Vue `v-for`?\n1. Nested flex trong Grid cell: `min-height: 0` là việc của ai?\n1. `flex-basis: 0` vs `auto` — cái nào cho card equal-width, và vì sao padding/border phá “equal”?"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "3.2. CSS Grid",
+            "vi": "3.2. CSS Grid"
+          },
+          "id": {
+            "en": "32-css-grid",
+            "vi": "32-css-grid"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "A dashboard: sidebar, top bar, main, optional inspector. Or a card grid that should fill the row without a media-query for every breakpoint. They want `minmax`, `fr`, **named areas**, and the overflow story — not `grid-template-columns: 1fr 1fr 1fr`.",
+            "vi": "Dashboard: sidebar, top bar, main, inspector optional. Hoặc card grid lấp hàng mà không media-query mỗi breakpoint. Họ muốn `minmax`, `fr`, **named areas**, và câu chuyện overflow — không `grid-template-columns: 1fr 1fr 1fr`."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "Grid is for **two axes at once**: page chrome, form label/field alignment, card galleries where rows and columns matter. Decision: named `grid-template-areas` for the app shell (readable in review, easy to swap for a one-column mobile template); `repeat(auto-fit, minmax(min(100%, 16rem), 1fr))` for a gallery that doesn’t need a breakpoint per card count. Constraint: `1fr` is `minmax(auto, 1fr)` — same min-content trap as Flex. Put `minmax(0, 1fr)` on tracks that must shrink. Failure mode: an implicit row from a Vue list item that wasn’t placed, stretching the footer. Measure: Grid overlay in DevTools, and CLS if tracks resize when fonts/images load.",
+            "vi": "Grid cho **hai trục cùng lúc**: page chrome, form label/field alignment, gallery card nơi hàng và cột đều quan trọng. Quyết định: named `grid-template-areas` cho app shell (đọc được lúc review, dễ đổi template một cột mobile); `repeat(auto-fit, minmax(min(100%, 16rem), 1fr))` cho gallery không cần breakpoint theo số card. Constraint: `1fr` là `minmax(auto, 1fr)` — cùng bẫy min-content như Flex. Đặt `minmax(0, 1fr)` trên track phải shrink. Failure mode: implicit row từ Vue list item không được place, kéo footer. Đo: Grid overlay DevTools, và CLS nếu track resize khi font/ảnh load."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Don’t Grid a button group. That’s Flex.\n- Don’t 12-column-everything like Bootstrap 2014. If the layout is a sidebar + main, two tracks are clearer than `span 3`.\n- `auto-fit` vs `auto-fill`: `fit` collapses empty tracks (good for 1–n cards); `fill` keeps empty columns (good if you want a stable rhythm with holes). Know which product you are building.\n- Subgrid (see 3.7) is how nested cards share the parent’s columns. Without it, nested Grids don’t align labels across cards — that’s a reason to promote the grid one level, not to pixel-push margin.",
+            "vi": "- Đừng Grid nhóm button. Đó là Flex.\n- Đừng 12-cột-mọi-thứ kiểu Bootstrap 2014. Layout sidebar + main thì hai track rõ hơn `span 3`.\n- `auto-fit` vs `auto-fill`: `fit` collapse track trống (tốt cho 1–n card); `fill` giữ cột trống (tốt nếu muốn nhịp ổn định có lỗ). Biết product bạn đang dựng.\n- Subgrid (xem 3.7) là cách nested card share cột parent. Không có thì nested Grid không align label xuyên card — lý do promote grid lên một level, không pixel-push margin."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- `minmax(200px, 1fr)` + padding can overflow the viewport on a 320px device. Wrap with `min(100%, 200px)` inside `minmax`.\n- Grid items as `min-width: auto` too. `minmax(0, 1fr)` on the track **and** `min-width: 0` on the item if it holds a table or code block.\n- `grid-auto-flow: dense` fills holes and **reorders visually**. Screen reader / tab order follow DOM. Don’t dense-pack a Vue product grid if the order is rank.\n- Stretching replaced elements (images, video) in a grid area without `object-fit` and an `aspect-ratio` is a CLS + crop bug.\n- `position: sticky` inside a grid/flex item: the sticky containing block is the grid area, but overflow on any ancestor kills it. That’s why a “sticky thead” dies inside `overflow: auto` panels.\n\n```css\n.app {\n  display: grid;\n  grid-template-columns: minmax(0, 16rem) minmax(0, 1fr) minmax(0, 20rem);\n  grid-template-rows: auto minmax(0, 1fr);\n  grid-template-areas:\n    'nav top top'\n    'nav main inspector';\n  min-height: 100dvh;\n}\n@media (max-width: 64rem) {\n  .app {\n    grid-template-columns: minmax(0, 1fr);\n    grid-template-areas:\n      'top'\n      'main';\n  }\n}\n.gallery {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));\n  gap: 1rem;\n}\n```",
+            "vi": "- `minmax(200px, 1fr)` + padding có thể overflow viewport trên máy 320px. Bọc `min(100%, 200px)` trong `minmax`.\n- Grid item cũng `min-width: auto`. `minmax(0, 1fr)` trên track **và** `min-width: 0` trên item nếu nó giữ table hoặc code block.\n- `grid-auto-flow: dense` lấp lỗ và **reorder visual**. Screen reader / tab order theo DOM. Đừng dense-pack Vue product grid nếu thứ tự là rank.\n- Stretch replaced element (ảnh, video) trong grid area không `object-fit` và `aspect-ratio` là bug CLS + crop.\n- `position: sticky` trong grid/flex item: sticky containing block là grid area, nhưng overflow trên bất kỳ ancestor nào giết nó. Vì thế “sticky thead” chết trong panel `overflow: auto`.\n\n```css\n.app {\n  display: grid;\n  grid-template-columns: minmax(0, 16rem) minmax(0, 1fr) minmax(0, 20rem);\n  grid-template-rows: auto minmax(0, 1fr);\n  grid-template-areas:\n    'nav top top'\n    'nav main inspector';\n  min-height: 100dvh;\n}\n@media (max-width: 64rem) {\n  .app {\n    grid-template-columns: minmax(0, 1fr);\n    grid-template-areas:\n      'top'\n      'main';\n  }\n}\n.gallery {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));\n  gap: 1rem;\n}\n```"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "1. Why does a `1fr` column overflow on a table with `white-space: nowrap`?\n1. `auto-fit` vs `auto-fill` — which would you pick for a product admin’s “widget library”?\n1. How do you hide the inspector column in Vue without leaving an empty track?\n1. Why did `position: sticky` fail inside your grid main? Name the overflow ancestor.\n1. Named areas vs numbered lines vs `subgrid` — which do you want in a design-system `FormGrid`?\n1. What does `min(100%, 16rem)` inside `minmax` save you from at 320px?",
+            "vi": "1. Vì sao cột `1fr` overflow trên table `white-space: nowrap`?\n1. `auto-fit` vs `auto-fill` — chọn cái nào cho “widget library” admin product?\n1. Ẩn cột inspector trong Vue mà không để track trống thế nào?\n1. Vì sao `position: sticky` fail trong grid main? Nêu overflow ancestor.\n1. Named areas vs numbered lines vs `subgrid` — cái nào cho design-system `FormGrid`?\n1. `min(100%, 16rem)` trong `minmax` cứu bạn khỏi gì ở 320px?"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "3.3. When to Use Flexbox vs Grid?",
+            "vi": "3.3. When to Use Flexbox vs Grid?"
+          },
+          "id": {
+            "en": "33-when-to-use-flexbox-vs-grid",
+            "vi": "33-when-to-use-flexbox-vs-grid"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "“Flex is 1D, Grid is 2D” is the mid answer. Seniors are asked **which one owns the page**, how they **compose**, and which bugs are unique to each (shrink overflow, stacking, gap).",
+            "vi": "“Flex 1D, Grid 2D” là câu mid. Senior bị hỏi **cái nào sở hữu page**, chúng **compose** thế nào, và bug nào unique từng cái (shrink overflow, stacking, gap)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "I Grid the **page** (rows *and* columns, named areas, explicit tracks). I Flex the **components** (nav, button clusters, input+addon, empty-state icon+copy). Constraint: a component that starts as a row and later needs a 2D interior (label/field/help aligned across rows) should be promoted to Grid — don’t nest five Flexes. Failure mode: all-Flex app shells where `min-height: 0` is copied onto every child, or all-Grid button bars that need four lines of `grid-column` to do `margin-left: auto`. Measure: can a new hire move the inspector in one template-area edit? If not, the abstraction is wrong.",
+            "vi": "Tôi Grid **page** (hàng *và* cột, named areas, track tường minh). Tôi Flex **component** (nav, cụm button, input+addon, empty-state icon+copy). Constraint: component bắt đầu là hàng rồi sau cần interior 2D (label/field/help align xuyên hàng) nên promote lên Grid — đừng nest năm Flex. Failure mode: app shell all-Flex nơi `min-height: 0` copy lên mọi child, hoặc button bar all-Grid cần bốn dòng `grid-column` để làm `margin-left: auto`. Đo: new hire dời inspector bằng một edit template-area được không? Không thì abstraction sai."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- You can Grid a 1D row. You shouldn’t, unless you need track alignment with a sibling row (form groups). That’s the actual exception to “Flex for 1D.”\n- You can Flex a 2D gallery with wrap. You get ragged columns and no row alignment of the second item. That’s why card galleries are Grid.\n- `gap` works on both. Don’t choose Grid “because gap.”\n- In Vue, the layout parent is often a layout SFC (`AppLayout.vue`) + a page that only Flexes its content. Keep page-level Grid out of leaf widgets so widgets stay portable (container queries, see 3.4).",
+            "vi": "- Bạn có thể Grid hàng 1D. Không nên, trừ khi cần track alignment với hàng sibling (form group). Đó là exception thật của “Flex cho 1D.”\n- Bạn có thể Flex gallery 2D với wrap. Bạn được cột răng cưa và không row alignment của item thứ hai. Vì thế gallery card là Grid.\n- `gap` chạy trên cả hai. Đừng chọn Grid “vì gap.”\n- Trong Vue, layout parent thường là layout SFC (`AppLayout.vue`) + page chỉ Flex content. Giữ page-level Grid khỏi leaf widget để widget portable (container query, xem 3.4)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Mixing: a Grid cell that is `display: flex; flex-direction: column; min-height: 0` is the standard dashboard pattern. Forgetting `min-height: 0` on **either** the grid track or the flex child is the scroll bug.\n- `align-items: center` on a full-page Flex column centers a short page and breaks “footer at the bottom” vs “footer after content.” Grid `1fr` main is the more honest sticky-footer.\n- Stacking: `transform`/`opacity` on a Flex/Grid child creates a stacking context and can trap `z-index` (modals, dropdowns). Teleport in Vue exists partly because of this. See 3.5.\n- SSR/hydration: Grid `auto-fit` + font swap can reflow after paint. Reserve min-height on the gallery or accept the CLS budget.",
+            "vi": "- Mix: Grid cell `display: flex; flex-direction: column; min-height: 0` là pattern dashboard chuẩn. Quên `min-height: 0` trên **một trong hai** grid track hoặc flex child là bug scroll.\n- `align-items: center` trên full-page Flex column căn page ngắn và phá “footer đáy” vs “footer sau content.” Grid `1fr` main là sticky-footer thật thà hơn.\n- Stacking: `transform`/`opacity` trên Flex/Grid child tạo stacking context và có thể nhốt `z-index` (modal, dropdown). Teleport trong Vue tồn tại một phần vì việc này. Xem 3.5.\n- SSR/hydration: Grid `auto-fit` + font swap có thể reflow sau paint. Reserve min-height gallery hoặc chấp nhận ngân sách CLS."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "1. Give a 1D layout you would still Grid (and why Flex would fail alignment).\n1. Give a 2D layout you would still Flex (and why).\n1. Where does the `min-height: 0` belong in Grid-of-Flex?\n1. Why is a sticky footer easier in Grid than in Flex?\n1. How does Vue `<Teleport>` interact with this choice for dropdowns vs page layout?\n1. When would you drop both and use flow layout + `float`? (You wouldn’t — except for wrap-around images in an article.)",
+            "vi": "1. Cho layout 1D bạn vẫn Grid (và vì sao Flex fail alignment).\n1. Cho layout 2D bạn vẫn Flex (và vì sao).\n1. `min-height: 0` thuộc đâu trong Grid-of-Flex?\n1. Vì sao sticky footer dễ hơn trên Grid so với Flex?\n1. Vue `<Teleport>` tương tác lựa chọn này thế nào với dropdown vs page layout?\n1. Khi nào bỏ cả hai dùng flow layout + `float`? (Không — trừ ảnh wrap-around trong article.)"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "3.4. Responsive Design Strategy",
+            "vi": "3.4. Responsive Design Strategy"
+          },
+          "id": {
+            "en": "34-responsive-design-strategy",
+            "vi": "34-responsive-design-strategy"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "Not “mobile-first media queries.” They want: **viewport vs container queries**, fluid type that still respects user zoom, **CLS from images**, `100vh` vs `dvh` on iOS, and whether spacing comes from tokens or magic pixels.",
+            "vi": "Không phải “mobile-first media query.” Họ muốn: **viewport vs container query**, fluid type vẫn tôn trọng user zoom, **CLS từ ảnh**, `100vh` vs `dvh` trên iOS, và spacing đến từ token hay magic pixel."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "Mobile-first `@media (min-width: …)` is the default for **page** chrome (nav → sidebar). Components that sit in a sidebar *or* in the main column should respond to **container queries**, not the viewport — a 400px widget in a 1440px window is “mobile.” Fluid type: `clamp(min, preferred, max)` in **rem**, so OS/browser zoom still works; the middle term is a `vw`/`cqi` mix you actually graph so it doesn’t overshoot. Images: `width`/`height` or `aspect-ratio` **before** load, plus `sizes` if `srcset`. Viewport height: `100dvh` (or `svh` + `lvh` when you care about iOS chrome showing/hiding); `100vh` is the classic mobile overflow. Tokens: color/space/radius/z-index in CSS variables or a design-system layer, not scattered `13px`. Measure: CLS in the field (CrUX), a 320 / 768 / 1280 / 1440 pass, and 200% zoom.",
+            "vi": "Mobile-first `@media (min-width: …)` là default cho chrome **page** (nav → sidebar). Component ngồi sidebar *hoặc* cột main nên đáp **container query**, không phải viewport — widget 400px trong cửa sổ 1440px là “mobile.” Fluid type: `clamp(min, preferred, max)` bằng **rem**, để OS/browser zoom vẫn chạy; hạng giữa là mix `vw`/`cqi` bạn thật sự graph để không overshoot. Ảnh: `width`/`height` hoặc `aspect-ratio` **trước** load, cộng `sizes` nếu `srcset`. Viewport height: `100dvh` (hoặc `svh` + `lvh` khi bạn quan tâm chrome iOS hiện/ẩn); `100vh` là overflow mobile classic. Token: color/space/radius/z-index trong CSS variable hoặc design-system layer, không `13px` rải. Đo: CLS field (CrUX), pass 320 / 768 / 1280 / 1440, và zoom 200%."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Desktop-first is not immoral; it’s costlier when the product is phone-heavy. Don’t rewrite a working desktop-first admin just to say mobile-first.\n- Container queries need a `container-type` ancestor. You cannot CQ the viewport itself; keep `@media` for nav/off-canvas that is a page concern.\n- `clamp` without a rem min can violate WCAG if the preferred `vw` term shrinks below readable at 320px. Check the computed size.\n- A token system that requires a JS theme runtime for first paint will flash. Prefer CSS variables on `:root` / `[data-theme]` that SSR can emit.",
+            "vi": "- Desktop-first không vô đạo đức; đắt hơn khi product nặng phone. Đừng rewrite admin desktop-first đang chạy chỉ để nói mobile-first.\n- Container query cần ancestor `container-type`. Không CQ chính viewport; giữ `@media` cho nav/off-canvas là concern của page.\n- `clamp` không rem min có thể vi phạm WCAG nếu hạng `vw` preferred co dưới readable ở 320px. Check computed size.\n- Token system cần JS theme runtime cho first paint sẽ flash. Prefer CSS variable trên `:root` / `[data-theme]` mà SSR emit được."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- CLS: images without dimensions, ads, web fonts (`size-adjust` / metric-matched fallback), Vue `v-if` banners inserting above the fold, `autofill` in forms. Skeletons must **match** the final box.\n- `100vh` on iOS includes area covered by the browser chrome → bottom nav sits under the home indicator, or the page scrolls 50px for no reason. `dvh` tracks the dynamic viewport.\n- `vw` in `clamp` includes the scrollbar, so 100vw can overflow horizontally. Prefer `%` of a container or `cqi`.\n- Breakpoints as pixel copies of a designer’s artboards (`768, 1024, 1440`) without naming (`--bp-md`) drift across Vue files.\n- `prefers-reduced-motion` is part of responsive. Don’t container-query a layout that then animates 400px on first paint.\n- Hydration: different markup for “mobile” via JS (`window.innerWidth` in `setup`) desyncs SSR. CSS must be the source of layout; JS only for features that cannot be CSS (`matchMedia` for a map lib).\n\n```css\n:root {\n  --space-2: 0.5rem;\n  --space-4: 1rem;\n  --text-body: clamp(1rem, 0.85rem + 0.6cqi, 1.125rem);\n}\n.card-grid {\n  container-type: inline-size;\n  display: grid;\n  gap: var(--space-4);\n  grid-template-columns: 1fr;\n}\n@container (min-width: 36rem) {\n  .card-grid {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }\n}\n.hero-img {\n  width: 100%;\n  height: auto;\n  aspect-ratio: 16 / 9;\n}\n.shell {\n  min-height: 100dvh;\n}\n```",
+            "vi": "- CLS: ảnh không dimension, ads, web font (`size-adjust` / metric-matched fallback), Vue `v-if` banner chèn above the fold, `autofill` trong form. Skeleton phải **khớp** box cuối.\n- `100vh` trên iOS gồm vùng chrome browser che → bottom nav nằm dưới home indicator, hoặc page scroll 50px vô cớ. `dvh` theo dynamic viewport.\n- `vw` trong `clamp` gồm scrollbar, nên 100vw overflow ngang. Prefer `%` của container hoặc `cqi`.\n- Breakpoint copy pixel artboard designer (`768, 1024, 1440`) không đặt tên (`--bp-md`) drift xuyên file Vue.\n- `prefers-reduced-motion` là một phần responsive. Đừng container-query layout rồi animate 400px first paint.\n- Hydration: markup khác cho “mobile” qua JS (`window.innerWidth` trong `setup`) desync SSR. CSS phải là source of layout; JS chỉ feature CSS không làm được (`matchMedia` cho map lib).\n\n```css\n:root {\n  --space-2: 0.5rem;\n  --space-4: 1rem;\n  --text-body: clamp(1rem, 0.85rem + 0.6cqi, 1.125rem);\n}\n.card-grid {\n  container-type: inline-size;\n  display: grid;\n  gap: var(--space-4);\n  grid-template-columns: 1fr;\n}\n@container (min-width: 36rem) {\n  .card-grid {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }\n}\n.hero-img {\n  width: 100%;\n  height: auto;\n  aspect-ratio: 16 / 9;\n}\n.shell {\n  min-height: 100dvh;\n}\n```"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "1. When is a container query wrong (you actually needed the viewport, e.g. off-canvas nav)?\n1. Why `rem` in `clamp` min/max, not `px`? What happens at 200% zoom?\n1. List three CLS sources in a Vue product page besides images.\n1. `100vh` vs `100dvh` vs `100svh` — which for a full-screen mobile web app, and why still a safe-area inset?\n1. How do you keep design tokens from causing a dark-mode flash on first paint in Nuxt?\n1. Why is JS `innerWidth` branching in `setup()` a hydration bug?",
+            "vi": "1. Khi nào container query sai (bạn thật sự cần viewport, ví dụ off-canvas nav)?\n1. Vì sao `rem` trong `clamp` min/max, không `px`? Zoom 200% thì sao?\n1. Liệt kê ba nguồn CLS trên Vue product page ngoài ảnh.\n1. `100vh` vs `100dvh` vs `100svh` — cái nào cho full-screen mobile web app, và vì sao vẫn cần safe-area inset?\n1. Giữ design token không gây flash dark-mode first paint trong Nuxt thế nào?\n1. Vì sao nhánh JS `innerWidth` trong `setup()` là bug hydration?"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "3.5. Stacking Context and z-index",
+            "vi": "3.5. Stacking Context và z-index"
+          },
+          "id": {
+            "en": "35-stacking-context-and-z-index",
+            "vi": "35-stacking-context-va-z-index"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "A dropdown is clipped or paints under a sticky header. A Vue modal inside a card with `transform` cannot escape. Someone sets `z-index: 9999` and it still loses. This is the senior CSS question.",
+            "vi": "Dropdown bị clip hoặc vẽ dưới sticky header. Vue modal trong card có `transform` không thoát được. Ai đó set `z-index: 9999` vẫn thua. Đây là câu CSS senior."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "`z-index` only compares **within a stacking context**. A new context is created by `position` + `z-index` other than auto, `opacity < 1`, `transform`, `filter`, `isolation: isolate`, `will-change`, some `display: flex/grid` with `z-index`, and a few others. Decision: don’t “win” with a bigger number; **flatten** the context or **Teleport** the overlay to `body` (Vue `<Teleport to=\"body\">`). Constraint: a `transform` on a parent for a cheap animation traps every child overlay. Failure mode: global z-index scale (`--z-modal: 1000`) that still loses to a local `transform`. Measure: DevTools 3D layers / “stacking context” inspectors, and a test that the modal is the last tab stop in the document, not in the card.",
+            "vi": "`z-index` chỉ so **trong một stacking context**. Context mới được tạo bởi `position` + `z-index` khác auto, `opacity < 1`, `transform`, `filter`, `isolation: isolate`, `will-change`, một số `display: flex/grid` với `z-index`, và vài cái nữa. Quyết định: đừng “thắng” bằng số lớn hơn; **flatten** context hoặc **Teleport** overlay ra `body` (Vue `<Teleport to=\"body\">`). Constraint: `transform` trên parent vì animation rẻ nhốt mọi overlay con. Failure mode: scale z-index global (`--z-modal: 1000`) vẫn thua `transform` local. Đo: DevTools 3D layers / inspector “stacking context”, và test modal là tab stop cuối trong document, không trong card."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Teleport solves paint order and `position: fixed` containing blocks. It complicates Vue `provide/inject` if you expected the old parent (you still get the logical parent for inject; the DOM parent changes). Know that.\n- `isolation: isolate` on a widget is a good fence so its internal z-index cannot escape. Don’t isolate the thing that *is* the modal.\n- A documented token scale (`dropdown 20, sticky 30, modal 40, toast 50`) beats 9999, but tokens do not beat stacking contexts.\n- React `createPortal` is the same interview answer. The CSS is identical.",
+            "vi": "- Teleport giải paint order và containing block `position: fixed`. Nó phức tạp hóa Vue `provide/inject` nếu bạn expect parent cũ (bạn vẫn được logical parent cho inject; DOM parent đổi). Biết điều đó.\n- `isolation: isolate` trên widget là hàng rào tốt để z-index nội bộ không thoát. Đừng isolate thứ *là* modal.\n- Token scale có document (`dropdown 20, sticky 30, modal 40, toast 50`) thắng 9999, nhưng token không thắng stacking context.\n- React `createPortal` cùng câu trả lời interview. CSS giống hệt."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- `position: fixed` inside a `transform`/`filter`/`will-change` ancestor is positioned against that ancestor, not the viewport. That’s why a “full-screen” loader in a transformed card is not full-screen.\n- `opacity: 0.99` on a fade wrapper creates a context. Your `z-index: 2` header inside cannot cover a sibling tooltip from another tree.\n- Sticky headers create contexts; page content with `z-index: 1` can slide over or under depending on who is the context.\n- CSS `isolation` + canvas/WebGL: extra layers cost GPU memory. Don’t `will-change: transform` forever.\n- a11y: stacking is not focus order. A visually top modal with DOM in the card is a keyboard/SR bug even if z-index is “correct.” Teleport + focus trap.",
+            "vi": "- `position: fixed` trong ancestor `transform`/`filter`/`will-change` định vị theo ancestor đó, không viewport. Vì thế loader “full-screen” trong card đã transform không full-screen.\n- `opacity: 0.99` trên fade wrapper tạo context. Header `z-index: 2` bên trong không phủ tooltip sibling từ cây khác.\n- Sticky header tạo context; page content `z-index: 1` trượt trên hoặc dưới tùy ai là context.\n- CSS `isolation` + canvas/WebGL: layer thêm tốn GPU memory. Đừng `will-change: transform` mãi.\n- a11y: stacking không phải focus order. Modal visual trên cùng mà DOM trong card là bug bàn phím/SR dù z-index “đúng.” Teleport + focus trap."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "1. Name five properties that create a stacking context. Which one did your last modal bug hit?\n1. Why did `z-index: 9999` lose to `z-index: 1`?\n1. `position: fixed` not covering the viewport — what ancestor do you look for?\n1. Vue `<Teleport>` vs CSS `isolation` — when do you use both?\n1. How do you design a z-index token scale that survives a third-party chat widget?\n1. Why is a dropdown `overflow: hidden` on the card a stacking *and* a clipping problem?",
+            "vi": "1. Nêu năm property tạo stacking context. Bug modal gần nhất đụng cái nào?\n1. Vì sao `z-index: 9999` thua `z-index: 1`?\n1. `position: fixed` không phủ viewport — tìm ancestor nào?\n1. Vue `<Teleport>` vs CSS `isolation` — khi nào dùng cả hai?\n1. Thiết kế z-index token scale sống sót chat widget third-party thế nào?\n1. Vì sao dropdown `overflow: hidden` trên card vừa là stacking *vừa* clipping?"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "3.6. Intrinsic Sizing and Overflow",
+            "vi": "3.6. Intrinsic Sizing và Overflow"
+          },
+          "id": {
+            "en": "36-intrinsic-sizing-and-overflow",
+            "vi": "36-intrinsic-sizing-va-overflow"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "A grid of cards, one of which has a URL or a table. The row grows horizontally and the page gets a window-level scrollbar. Or a flex/grid child with `flex: 1` never shrinks. This is `min-width: auto`, `min-content`, and `overflow`.",
+            "vi": "Grid card, một cái có URL hoặc table. Hàng phình ngang và page có scrollbar cửa sổ. Hoặc flex/grid child `flex: 1` không bao giờ shrink. Đây là `min-width: auto`, `min-content`, và `overflow`."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "Every flex/grid item has a **min-content size** by default (`min-width: auto`). Long words, `nowrap`, tables, `<pre>`, and replaced elements set a floor. Decision: on the shrinking child, `min-width: 0` (or `minmax(0, 1fr)` on the track) **and** an overflow policy (`auto` | `hidden` + ellipsis | wrap). Constraint: `overflow: hidden` clips focus rings and sticky children; `min-width: 0` without overflow still lets content paint outside unless it can wrap. Failure mode: fixing overflow by `overflow-x: hidden` on `body`, which also clips `position: sticky` and off-canvas nav. Measure: a story with a 200-char unbroken SKU, a table page, and a code block.",
+            "vi": "Mọi flex/grid item có **min-content size** mặc định (`min-width: auto`). Chữ dài, `nowrap`, table, `<pre>`, và replaced element đặt sàn. Quyết định: trên child shrink, `min-width: 0` (hoặc `minmax(0, 1fr)` trên track) **và** overflow policy (`auto` | `hidden` + ellipsis | wrap). Constraint: `overflow: hidden` clip focus ring và sticky child; `min-width: 0` không overflow vẫn cho content vẽ ra ngoài trừ khi wrap được. Failure mode: fix overflow bằng `overflow-x: hidden` trên `body`, cũng clip `position: sticky` và off-canvas nav. Đo: story SKU 200 ký tự không ngắt, trang table, và code block."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- `overflow: hidden` to “make shrink work” is a layout hack that becomes a clipping bug. Prefer `min-width: 0` + wrapping (`overflow-wrap: anywhere` for URLs).\n- Truncation (`text-overflow: ellipsis`) needs `overflow: hidden; min-width: 0` and usually `white-space: nowrap`. That’s a product decision — you hid data.\n- `word-break: break-all` wrecks CJK and English. `overflow-wrap: anywhere` / `break-word` first.\n- `ch`/`ex` units for “approx N characters” are hints, not a11y guarantees.",
+            "vi": "- `overflow: hidden` để “cho shrink chạy” là hack layout thành bug clipping. Prefer `min-width: 0` + wrapping (`overflow-wrap: anywhere` cho URL).\n- Truncation (`text-overflow: ellipsis`) cần `overflow: hidden; min-width: 0` và thường `white-space: nowrap`. Đó là quyết định product — bạn giấu data.\n- `word-break: break-all` phá CJK và English. `overflow-wrap: anywhere` / `break-word` trước.\n- Unit `ch`/`ex` cho “khoảng N ký tự” là gợi ý, không bảo đảm a11y."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Tables: a `table` in a grid cell will expand to min-content of all columns. Wrap in `overflow: auto; min-width: 0`.\n- SVG/canvas with intrinsic width: same floor. Set `max-width: 100%; height: auto`.\n- `white-space: nowrap` on a flex item is a deliberate overflow. Pair with ellipsis or a tooltip, and an accessible name that isn’t truncated.\n- Vue `v-for` of tags: the container must wrap (`flex-wrap`) or scroll; it will not magically shrink chips.\n- `scrollbar-gutter: stable` avoids CLS when overflow appears; `overflow: auto` vs `scroll` changes whether the gutter is always reserved.",
+            "vi": "- Table: `table` trong grid cell phình theo min-content mọi cột. Bọc `overflow: auto; min-width: 0`.\n- SVG/canvas có intrinsic width: cùng sàn. Set `max-width: 100%; height: auto`.\n- `white-space: nowrap` trên flex item là overflow cố ý. Pair ellipsis hoặc tooltip, và accessible name không bị cắt.\n- Vue `v-for` tag: container phải wrap (`flex-wrap`) hoặc scroll; chip không magically shrink.\n- `scrollbar-gutter: stable` tránh CLS khi overflow xuất hiện; `overflow: auto` vs `scroll` đổi việc gutter luôn được reserve hay không."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "1. What is the computed `min-width` of a flex item with a long word, and how do you change it?\n1. Why is `overflow-x: hidden` on `body` a last resort?\n1. How do you make a `<table>` sit in a `1fr` column without blowing the grid?\n1. Ellipsis vs wrap vs horizontal scroll — pick one for a data-grid cell and defend a11y.\n1. What does `minmax(0, 1fr)` change compared to `1fr`?\n1. How do container queries change this if the “small” container is a sidebar, not the viewport?",
+            "vi": "1. Computed `min-width` của flex item chữ dài là gì, và đổi thế nào?\n1. Vì sao `overflow-x: hidden` trên `body` là last resort?\n1. Cho `<table>` ngồi cột `1fr` mà không nổ grid thế nào?\n1. Ellipsis vs wrap vs scroll ngang — chọn một cho data-grid cell và bảo vệ a11y.\n1. `minmax(0, 1fr)` đổi gì so với `1fr`?\n1. Container query đổi bài này thế nào nếu container “nhỏ” là sidebar, không phải viewport?"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "3.7. Modern Layout: subgrid, :has, Cascade Layers",
+            "vi": "3.7. Layout hiện đại: subgrid, :has, Cascade Layers"
+          },
+          "id": {
+            "en": "37-modern-layout-subgrid-has-cascade-layers",
+            "vi": "37-layout-hien-ai-subgrid-has-cascade-layers"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "Awareness with judgment: **subgrid** for nested alignment, **`:has()`** as a parent selector, **cascade layers** vs `!important` wars with utilities (Tailwind). They do not want a demo of every new selector. They want when you would ship it, and the cost.",
+            "vi": "Awareness kèm judgment: **subgrid** cho alignment lồng, **`:has()`** như parent selector, **cascade layers** vs chiến tranh `!important` với utility (Tailwind). Họ không muốn demo mọi selector mới. Họ muốn khi nào bạn ship, và cost."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Subgrid:** a nested grid that reuses the parent’s tracks — form rows or card headers whose columns must line up across siblings. I ship it where alignment is the product (pricing table, definition list in cards). Constraint: browser support is now mainstream, but a design-system still needs a Flex fallback if you support last-gen WebViews.\n\n**`:has()`:** style a card if it contains an error, a form if a checkbox is checked, a list item if it holds an unread badge — without Vue class soup. Constraint: `:has` is not free on huge, dirty DOMs (it can invalidate more often). I use it for local widgets, not `body:has(.modal)`.\n\n**Cascade layers** (`@layer reset, tokens, components, utilities`): put utilities last so Tailwind-style classes win without `!important`. Tokens live in a layer that components can override. Failure mode: mixing layers with Vue scoped CSS and third-party widgets that don’t layer — you still need a boundary (`:where`, a wrapper class), not a new `!important`.\n\nMeasure: one reduced test that a nested card’s labels align (subgrid), a form error state without a `hasError` prop if CSS can do it, and a layered `utilities` win over `components`.",
+            "vi": "**Subgrid:** nested grid tái dùng track của parent — form row hoặc card header mà cột phải thẳng hàng xuyên sibling. Tôi ship nơi alignment là product (bảng giá, definition list trong card). Constraint: browser support giờ mainstream, nhưng design-system vẫn cần Flex fallback nếu support WebView đời trước.\n\n**`:has()`:** style card nếu chứa error, form nếu checkbox checked, list item nếu giữ unread badge — không soup class Vue. Constraint: `:has` không miễn phí trên DOM khổng lồ, bẩn (invalidate nhiều hơn). Tôi dùng widget local, không `body:has(.modal)`.\n\n**Cascade layers** (`@layer reset, tokens, components, utilities`): để utility cuối để class kiểu Tailwind thắng không cần `!important`. Token sống trong layer mà component override được. Failure mode: mix layer với Vue scoped CSS và widget third-party không layer — bạn vẫn cần ranh giới (`:where`, wrapper class), không `!important` mới.\n\nĐo: một reduced test label nested card thẳng hàng (subgrid), form error state không cần prop `hasError` nếu CSS làm được, và layer `utilities` thắng `components`."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Don’t rewrite a working Grid+gap card to subgrid for fashion. Use it when **two nested levels must share tracks**.\n- Don’t replace Vue state with `:has` if the same condition drives JS (disable submit, announce errors). CSS can mirror; it should not be the only source if a11y needs an `aria-invalid` anyway.\n- Cascade layers don’t replace BEM or Vue `scoped`. They replace the specificity arms race. Tailwind v4’s layer story is why this is an interview talking point now.\n- `:has` + `querySelector` mental model in interviews is fine; in production, pair with `:focus-within` for keyboard, not only mouse `:hover`.",
+            "vi": "- Đừng rewrite card Grid+gap đang chạy sang subgrid vì mốt. Dùng khi **hai level lồng phải share track**.\n- Đừng thay Vue state bằng `:has` nếu cùng điều kiện chạy JS (disable submit, announce error). CSS có thể mirror; không nên là source duy nhất nếu a11y cần `aria-invalid` anyway.\n- Cascade layers không thay BEM hay Vue `scoped`. Chúng thay cuộc đua specificity. Câu chuyện layer Tailwind v4 là lý do đây thành talking point interview.\n- `:has` + mental model `querySelector` lúc interview ổn; production pair `:focus-within` cho bàn phím, không chỉ mouse `:hover`."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Subgrid `grid-template-columns: subgrid` requires the child to **span** the same number of parent tracks. A Vue slot that injects an extra wrapper breaks it — keep the DOM shallow.\n- `:has(*:nth-child)` on large lists is a performance conversation; profile before using it as a table-row zebra replacement.\n- `@layer` + Vue SFC `<style scoped>`: the scoped attribute selector still adds specificity. Layers order the **origin**, not a miracle.\n- Polyfills for `:has` / subgrid are not worth it; `@supports` or a simpler layout is the fallback.\n- Design tokens in a layer vs in `:root`: prefer `:root` variables (they inherit) and layers for **rules**, not for the values.",
+            "vi": "- Subgrid `grid-template-columns: subgrid` đòi child **span** cùng số track parent. Vue slot inject thêm wrapper phá nó — giữ DOM nông.\n- `:has(*:nth-child)` trên list lớn là cuộc nói chuyện performance; profile trước khi dùng thay zebra table-row.\n- `@layer` + Vue SFC `<style scoped>`: attribute selector scoped vẫn cộng specificity. Layer sắp **origin**, không phải phép màu.\n- Polyfill `:has` / subgrid không đáng; `@supports` hoặc layout đơn giản hơn là fallback.\n- Design token trong layer vs `:root`: prefer biến `:root` (chúng inherit) và layer cho **rule**, không cho value."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "1. When does subgrid beat padding-hacking two nested grids?\n1. Why can a Vue wrapper `div` in a slot kill subgrid alignment?\n1. Give a `:has` rule you would **not** write (performance or a11y), and the Vue class you’d use instead.\n1. How do cascade layers interact with Tailwind and with a scoped SFC?\n1. `@supports (grid-template-columns: subgrid)` — what is the Flex fallback for a label/field row?\n1. Why is `body:has(.modal-open)` a stacking/scroll-lock smell compared to a class on `html` from Vue?",
+            "vi": "1. Khi nào subgrid thắng padding-hack hai nested grid?\n1. Vì sao Vue wrapper `div` trong slot giết alignment subgrid?\n1. Cho rule `:has` bạn **không** viết (performance hoặc a11y), và class Vue dùng thay.\n1. Cascade layers tương tác Tailwind và scoped SFC thế nào?\n1. `@supports (grid-template-columns: subgrid)` — Flex fallback cho hàng label/field là gì?\n1. Vì sao `body:has(.modal-open)` là mùi stacking/scroll-lock so với class trên `html` từ Vue?"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "[← Back to Overview](../../README-en.md)",
+            "vi": "[← Back to Overview](../../README.md)"
+          }
+        }
+      ]
+    }
+  ]
+}

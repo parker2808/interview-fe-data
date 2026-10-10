@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parker2808.github.io/interview-fe-data/schema/content.schema.json",
+  "title": "Interview content primitives",
+  "description": "Every user-facing string is Localized { en, vi }. Validation also walks nested objects and fails on a missing locale.",
+  "$defs": {
+    "localized": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["en", "vi"],
+      "properties": {
+        "en": { "type": "string", "minLength": 1 },
+        "vi": { "type": "string", "minLength": 1 }
+      }
+    },
+    "block": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["type", "level", "text", "id"],
+          "properties": {
+            "type": { "const": "heading" },
+            "level": { "type": "integer", "minimum": 1, "maximum": 6 },
+            "text": { "$ref": "#/$defs/localized" },
+            "id": { "$ref": "#/$defs/localized" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "text"],
+          "properties": {
+            "type": { "const": "paragraph" },
+            "text": { "$ref": "#/$defs/localized" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "style", "items"],
+          "properties": {
+            "type": { "const": "list" },
+            "style": { "enum": ["ul", "ol"] },
+            "items": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/localized" }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "kind", "text"],
+          "properties": {
+            "type": { "const": "callout" },
+            "kind": { "enum": ["note", "warning", "tip", "quote"] },
+            "text": { "$ref": "#/$defs/localized" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "lang", "code"],
+          "properties": {
+            "type": { "const": "code" },
+            "lang": { "type": "string" },
+            "code": { "$ref": "#/$defs/localized" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "headers", "rows"],
+          "properties": {
+            "type": { "const": "table" },
+            "headers": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/localized" }
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/localized" }
+              }
+            },
+            "align": {
+              "type": "array",
+              "items": { "enum": ["left", "center", "right", null] }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "label", "text"],
+          "properties": {
+            "type": { "const": "senior-answer" },
+            "label": { "$ref": "#/$defs/localized" },
+            "text": { "$ref": "#/$defs/localized" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "items"],
+          "properties": {
+            "type": { "const": "key-takeaways" },
+            "items": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/localized" }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "text"],
+          "properties": {
+            "type": { "const": "markdown" },
+            "text": { "$ref": "#/$defs/localized" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": { "const": "thematic-break" }
+          }
+        }
+      ]
+    },
+    "section": {
+      "type": "object",
+      "required": ["id", "title", "blocks"],
+      "properties": {
+        "id": { "$ref": "#/$defs/localized" },
+        "title": { "$ref": "#/$defs/localized" },
+        "blocks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/block" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,495 @@
+{
+  "kind": "knowledge-doc",
+  "slug": "devops",
+  "title": {
+    "en": "DevOps",
+    "vi": "DevOps"
+  },
+  "summary": {
+    "en": "This is senior **frontend** interview prep. You are not the platform engineer. You still must talk fluently about **immutable artifacts, preview environments, feature flags vs env deploys, rollback, and what FE CI shoul…",
+    "vi": "Đây là tài liệu ôn phỏng vấn **frontend** senior. Bạn không phải platform engineer. Bạn vẫn phải nói trôi chảy về **immutable artifact, preview environment, feature flag vs env deploy, rollback, và CI FE nên gate gì** —…"
+  },
+  "category": "infra",
+  "order": 17,
+  "tags": [
+    "infra",
+    "devops"
+  ],
+  "sections": [
+    {
+      "id": {
+        "en": "intro",
+        "vi": "intro"
+      },
+      "title": {
+        "en": "DevOps",
+        "vi": "DevOps"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": {
+            "en": "DevOps",
+            "vi": "DevOps"
+          },
+          "id": {
+            "en": "devops",
+            "vi": "devops"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "This is senior **frontend** interview prep. You are not the platform engineer. You still must talk fluently about **immutable artifacts, preview environments, feature flags vs env deploys, rollback, and what FE CI should gate** — because that is how your Vue/Nuxt app actually reaches users.",
+            "vi": "Đây là tài liệu ôn phỏng vấn **frontend** senior. Bạn không phải platform engineer. Bạn vẫn phải nói trôi chảy về **immutable artifact, preview environment, feature flag vs env deploy, rollback, và CI FE nên gate gì** — vì đó là cách app Vue/Nuxt thực sự tới user."
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "GitOps + ArgoCD is a common backdrop in enterprise interviews. Translate it into **what you own** (image, ingress path, env contract) and **what you don’t** (the cluster).",
+            "vi": "GitOps + ArgoCD là backdrop phổ biến ở phỏng vấn enterprise. Dịch nó thành **thứ bạn sở hữu** (image, đường ingress, env contract) và **thứ bạn không** (cluster)."
+          }
+        },
+        {
+          "type": "thematic-break"
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "table-of-contents",
+        "vi": "table-of-contents"
+      },
+      "title": {
+        "en": "Table of Contents",
+        "vi": "Table of Contents"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Table of Contents",
+            "vi": "Table of Contents"
+          },
+          "id": {
+            "en": "table-of-contents",
+            "vi": "table-of-contents"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "[GitOps + ArgoCD Pipeline](#141-gitops-argocd-pipeline)",
+              "vi": "[GitOps + ArgoCD Pipeline](#141-gitops--argocd-pipeline)"
+            },
+            {
+              "en": "[Frontend CI/CD Pipeline You'd Design](#142-frontend-cicd-pipeline-youd-design)",
+              "vi": "[Pipeline CI/CD Frontend bạn sẽ thiết kế](#142-pipeline-cicd-frontend-bạn-sẽ-thiết-kế)"
+            },
+            {
+              "en": "[Preview Deployments and Env Vars](#143-preview-deployments-and-env-vars)",
+              "vi": "[Preview deployment và biến môi trường](#143-preview-deployment-và-biến-môi-trường)"
+            },
+            {
+              "en": "[Feature Flags](#144-feature-flags)",
+              "vi": "[Feature Flags](#144-feature-flags)"
+            },
+            {
+              "en": "[Frontend's Role in Kubernetes and GitOps](#145-frontends-role-in-kubernetes-and-gitops)",
+              "vi": "[Vai trò Frontend trong Kubernetes và GitOps](#145-vai-trò-frontend-trong-kubernetes-và-gitops)"
+            }
+          ]
+        },
+        {
+          "type": "thematic-break"
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "14-devops",
+        "vi": "14-devops"
+      },
+      "title": {
+        "en": "14. DevOps",
+        "vi": "14. DevOps"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "14. DevOps",
+            "vi": "14. DevOps"
+          },
+          "id": {
+            "en": "14-devops",
+            "vi": "14-devops"
+          }
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "14.1. GitOps + ArgoCD Pipeline",
+            "vi": "14.1. GitOps + ArgoCD Pipeline"
+          },
+          "id": {
+            "en": "141-gitops-argocd-pipeline",
+            "vi": "141-gitops-argocd-pipeline"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “How does your frontend get to production?”\n- “We use ArgoCD. What’s your part?”\n- “How do you roll back a bad Vue release?”\n- “Why is `:latest` bad?”",
+            "vi": "- “Frontend lên production thế nào?”\n- “Team dùng ArgoCD. Phần của bạn là gì?”\n- “Rollback Vue release tồi thế nào?”\n- “Sao `:latest` xấu?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** **Build once, promote the same digest.** CI produces an **immutable** image or static artifact tagged with the **git SHA** (digest, not `latest`). GitOps repo (Helm/Kustomize) is updated to that tag. ArgoCD reconciles cluster → Git. Rollback = **revert the GitOps commit** (or point the tag back) and let Argo sync — not “ssh and kubectl edit.”\n- **Constraint:** A senior FE does not operate etcd. You **must** be able to explain desired state vs live state, why Git is the audit log, and why “it works on my preview” is not the prod artifact unless the digest matches.\n- **Failure mode:** CI builds a different image for staging vs prod; `:latest` + `imagePullPolicy: Always` (you don’t know what you run); Argo auto-syncing a broken main on Friday; config (API URLs, feature defaults) that **isn’t** in Git; rolling back the app Git while the GitOps repo still points at the bad tag.\n- **Measure:** lead time SHA → serving, deploy frequency, **failed deploy recovery time**, drift detected by Argo, whether every prod image is **reproducible from a SHA**.\n\n**GitOps in one paragraph (then stop sounding like a platform interview)**\n\nGit is the source of truth for **desired** cluster state. ArgoCD watches that repo, diffs live vs desired, syncs (auto or manual). Your app repo’s CI does **not** kubectl apply. It (1) tests, (2) builds image `ghcr.io/acme/web:abc123`, (3) opens/commits a change in the GitOps repo `image: abc123`. Merge + Argo = prod. Preview envs are a **namespace or separate cluster app** from a PR SHA, not a snowflake laptop.\n\n**Artifact immutability and tags**\n\n- Tag with **git SHA** and also a moving pointer (`staging`, `prod`) **only** as a GitOps field that still references a digest. Prefer digest pinning (`image@sha256:...`) in prod.\n- **Never `:latest`.** You cannot roll back, you cannot diff, caches lie.\n- Static Nuxt/Vite: the **object storage / CDN prefix** is the artifact (`/releases/abc123/`). Same rule: don’t overwrite `current/` in place without keeping the previous prefix.\n- Config: build-time `NUXT_PUBLIC_*` is **baked**. Runtime Nitro env can change without a new image — document which is which or you will “roll back the image” and keep the bad URL.\n\n**Feature flags vs env deploys**\n\n- **Env deploy** (deploy `feat-x` to staging cluster): good for integration, bad as the only way to test with prod-like data, slow, multiplies env cost.\n- **Preview env per PR:** best for UI review (14.3).\n- **Flags in prod:** best for **gradual rollout / kill switch** (14.4). Not a substitute for CI.\n- Seniors use **all three** at different layers, not “we only have staging.”\n\n**Rollback**\n\n- Instant: **flag off** (broken checkout path).\n- Fast: Argo rollback / Git revert to previous known digest (CDN still has the old assets if they were immutable).\n- Slow/wrong: “hotfix forward” with no SHA, or `kubectl rollout undo` that GitOps immediately **re-applies** the bad Git. If GitOps is the truth, undo **Git**.\n\n**What FE CI should gate (say this list)**\n\n| Gate | Why | On PR? |\n| --- | --- | --- |\n| `eslint` + format | Consistency, some a11y/security lint | Yes |\n| `vue-tsc --noEmit` | The cheapest production bug catcher | Yes |\n| Unit / component (Vitest) | Composables, money math, flags | Yes |\n| Production `vite` / `nuxt build` | Dev-only bugs, tree-shake breaks | Yes |\n| **Bundle budget** | 12.3 in CI form | Yes |\n| E2E **smoke** (Playwright, prod build) | Login, critical buy/search | PR: tiny; main: more |\n| Lighthouse / CWV **budgets** on key URLs | Lab, not RUM | Main or nightly; PR if cheap |\n| Image scan / license | Org requirement | Release |\n| Source maps upload | Sentry is useless without it | Release, not public CDN |\n\nDo **not** gate merge on 100% coverage or a full Lighthouse score of 100. Gate on **budgets and smoke**.",
+            "vi": "- **Quyết định:** **Build một lần, promote cùng digest.** CI tạo **immutable** image hoặc static artifact tagged bằng **git SHA** (digest, không phải `latest`). Repo GitOps (Helm/Kustomize) được update tới tag đó. ArgoCD reconcile cluster → Git. Rollback = **revert commit GitOps** (hoặc trỏ tag lại) rồi để Argo sync — không phải “ssh rồi kubectl edit.”\n- **Ràng buộc:** Senior FE không vận hành etcd. Bạn **phải** giải thích được desired state vs live state, vì sao Git là audit log, và vì sao “chạy được trên preview của tôi” không phải prod artifact trừ khi digest khớp.\n- **Failure mode:** CI build image khác nhau cho staging vs prod; `:latest` + `imagePullPolicy: Always` (bạn không biết mình đang chạy gì); Argo auto-sync main gãy vào Friday; config (API URL, feature default) **không** nằm trong Git; rollback app Git trong khi repo GitOps vẫn trỏ tag xấu.\n- **Đo:** lead time SHA → serving, tần suất deploy, **thời gian recovery deploy fail**, drift Argo detect, liệu mọi prod image **reproducible từ một SHA**.\n\n**GitOps trong một đoạn (rồi ngừng nghe như phỏng vấn platform)**\n\nGit là source of truth cho trạng thái cluster **mong muốn**. ArgoCD watch repo đó, diff live vs desired, sync (auto hoặc manual). CI của app repo **không** kubectl apply. Nó (1) test, (2) build image `ghcr.io/acme/web:abc123`, (3) mở/commit thay đổi trong GitOps repo `image: abc123`. Merge + Argo = prod. Preview env là **namespace hoặc app cluster riêng** từ SHA của PR, không phải laptop snowflake.\n\n**Tính bất biến của artifact và tag**\n\n- Tag bằng **git SHA** và thêm pointer dịch chuyển (`staging`, `prod`) **chỉ** như field GitOps vẫn reference digest. Ưu tiên pin digest (`image@sha256:...`) trên prod.\n- **Không bao giờ `:latest`.** Bạn không rollback được, không diff được, cache nói dối.\n- Static Nuxt/Vite: **prefix object storage / CDN** là artifact (`/releases/abc123/`). Cùng rule: đừng overwrite `current/` tại chỗ mà không giữ prefix trước.\n- Config: `NUXT_PUBLIC_*` lúc build bị **nướng**. Runtime env Nitro đổi được không cần image mới — document cái nào là cái nào nếu không bạn sẽ “rollback image” mà vẫn giữ URL xấu.\n\n**Feature flag vs env deploy**\n\n- **Env deploy** (deploy `feat-x` lên staging cluster): tốt cho integration, tệ nếu là cách duy nhất test với data giống prod, chậm, nhân chi phí env.\n- **Preview env mỗi PR:** tốt nhất cho UI review (14.3).\n- **Flag trên prod:** tốt nhất cho **gradual rollout / kill switch** (14.4). Không thay CI.\n- Senior dùng **cả ba** ở các tầng khác nhau, không phải “chúng tôi chỉ có staging.”\n\n**Rollback**\n\n- Tức thì: **tắt flag** (đường checkout gãy).\n- Nhanh: Argo rollback / Git revert về digest đã biết (CDN vẫn còn asset cũ nếu chúng immutable).\n- Chậm/sai: “hotfix forward” không SHA, hoặc `kubectl rollout undo` rồi GitOps lập tức **apply lại** Git xấu. Nếu GitOps là sự thật, undo **Git**.\n\n**CI FE nên gate gì (nói list này)**\n\n| Gate | Vì sao | Trên PR? |\n| --- | --- | --- |\n| `eslint` + format | Consistency, một ít lint a11y/security | Có |\n| `vue-tsc --noEmit` | Bộ bắt bug production rẻ nhất | Có |\n| Unit / component (Vitest) | Composable, toán tiền, flag | Có |\n| Production `vite` / `nuxt build` | Bug chỉ lúc dev, tree-shake vỡ | Có |\n| **Bundle budget** | 12.3 dạng CI | Có |\n| E2E **smoke** (Playwright, prod build) | Login, buy/search critical | PR: nhỏ; main: nhiều hơn |\n| Lighthouse / CWV **budget** trên URL then chốt | Lab, không phải RUM | Main hoặc nightly; PR nếu rẻ |\n| Image scan / license | Yêu cầu org | Release |\n| Upload source map | Sentry vô dụng nếu thiếu | Release, không public CDN |\n\n**Đừng** gate merge trên coverage 100% hay Lighthouse score 100. Gate trên **budget và smoke**."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Auto-sync (speed) vs manual sync on prod (change control). Many teams auto-sync staging, **manual/PR** for prod GitOps.\n- One repo vs app repo + GitOps repo (the latter is common; FE must know which PR actually ships).\n- Helm values per env vs Kustomize overlays — pick what the platform team already runs; don’t invent a third.",
+            "vi": "- Auto-sync (tốc độ) vs manual sync trên prod (change control). Nhiều team auto-sync staging, **manual/PR** cho GitOps prod.\n- Một repo vs app repo + GitOps repo (cái sau phổ biến; FE phải biết PR nào thực sự ship).\n- Helm values theo env vs Kustomize overlay — chọn thứ platform team đã chạy; đừng invent cái thứ ba."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Argo healthy, users still on old JS: **CDN cache** of `index.html`. Cache HTML short, hashed assets long (`immutable`).\n- SSR pods + old HTML pointing at deleted hashed files after a too-aggressive CDN purge.\n- Clock skew on `latest` tags.\n- Secrets in GitOps (use Sealed Secrets / External Secrets — you should know they exist, not implement them in the interview).",
+            "vi": "- Argo healthy, user vẫn JS cũ: **CDN cache** của `index.html`. Cache HTML ngắn, hashed asset dài (`immutable`).\n- Pod SSR + HTML cũ trỏ file hash đã xóa sau CDN purge quá hung hăng.\n- Clock skew trên tag `latest`.\n- Secret trong GitOps (dùng Sealed Secrets / External Secrets — bạn nên biết chúng tồn tại, không implement chúng trong phỏng vấn)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How do you blue/green a static SPA? (two prefixes + switch the ingress / CDN alias)\n- What is drift? (someone kubectl-edited; Argo will fight them — good)\n- Difference between liveness and readiness for a Nuxt Node process? (14.5)",
+            "vi": "- Blue/green static SPA thế nào? (hai prefix + chuyển ingress / CDN alias)\n- Drift là gì? (ai đó kubectl-edit; Argo sẽ đánh nhau với họ — tốt)\n- Khác nhau liveness vs readiness cho process Node Nuxt? (14.5)"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "14.2. Frontend CI/CD Pipeline You'd Design",
+            "vi": "14.2. Pipeline CI/CD Frontend bạn sẽ thiết kế"
+          },
+          "id": {
+            "en": "142-frontend-cicd-pipeline-youd-design",
+            "vi": "142-pipeline-cicd-frontend-ban-se-thiet-ke"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "“Draw the pipeline for a Nuxt app in a monorepo.”",
+            "vi": "“Vẽ pipeline cho app Nuxt trong monorepo.”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** Two tracks. **PR:** fast feedback (lint, typecheck, unit, build, budget, optional preview). **Main:** the same plus e2e smoke, publish **one** artifact, GitOps bump / CDN deploy, maps + Sentry release, notify Slack. No “rebuild on the prod cluster.”\n- **Constraint:** Minutes-to-green and **flake rate** matter as much as coverage. Playwright against `nuxt dev` is a lie.\n- **Failure mode:** Sequential 20-minute job; secrets available to fork PRs; preview using prod credentials; deploy skipped tests “just this once”; frontend Docker `npm run build` inside k8s instead of CI.\n- **Measure:** p50/p95 pipeline duration, cache hit %, % of prod incidents with a green pipeline (process bug), mean time SHA → prod.\n\nSketch:\n\n```\nPR  → install (pnpm cache)\n    → parallel: lint | vue-tsc | vitest\n    → nuxt build + bundle budget\n    → optional: Playwright smoke on preview URL\n    → optional: preview deploy (14.3)\n\nmain → same gates\n     → docker build FROM dist or standalone Nitro\n     → push ghcr.io/app@sha256:…\n     → commit image digest to gitops/\n     → upload hidden sourcemaps to Sentry release=SHA\n     → Argo sync (or wait)\n     → synthetic smoke on prod\n```\n\nMonorepo: build **affected** packages (Turbo/Nx). Design-system change rebuilds apps; a docs markdown change does not.",
+            "vi": "- **Quyết định:** Hai track. **PR:** feedback nhanh (lint, typecheck, unit, build, budget, preview tùy chọn). **Main:** cùng vậy cộng e2e smoke, publish **một** artifact, GitOps bump / CDN deploy, map + Sentry release, notify Slack. Không “rebuild trên prod cluster.”\n- **Ràng buộc:** Minutes-to-green và **flake rate** quan trọng không kém coverage. Playwright trên `nuxt dev` là nói dối.\n- **Failure mode:** Job tuần tự 20 phút; secret lộ cho fork PR; preview dùng prod credential; deploy bỏ test “chỉ lần này”; frontend Docker `npm run build` bên trong k8s thay vì CI.\n- **Đo:** p50/p95 duration pipeline, cache hit %, % incident prod có pipeline xanh (bug process), mean time SHA → prod.\n\nPhác thảo:\n\n```\nPR  → install (pnpm cache)\n    → parallel: lint | vue-tsc | vitest\n    → nuxt build + bundle budget\n    → optional: Playwright smoke on preview URL\n    → optional: preview deploy (14.3)\n\nmain → same gates\n     → docker build FROM dist or standalone Nitro\n     → push ghcr.io/app@sha256:…\n     → commit image digest to gitops/\n     → upload hidden sourcemaps to Sentry release=SHA\n     → Argo sync (or wait)\n     → synthetic smoke on prod\n```\n\nMonorepo: build package **bị ảnh hưởng** (Turbo/Nx). Đổi design-system rebuild app; đổi markdown docs thì không."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Self-hosted runners (faster, cache disks) vs GitHub-hosted (cleaner).\n- Deploy on merge vs nightly release train. Product Vue apps: **merge to main = prod-eligible**, flags for unfinished work — not GitFlow release branches (see 18.4).",
+            "vi": "- Self-hosted runner (nhanh hơn, đĩa cache) vs GitHub-hosted (sạch hơn).\n- Deploy lúc merge vs nightly release train. App Vue product: **merge main = đủ điều kiện prod**, flag cho việc chưa xong — không phải GitFlow release branch (xem 18.4)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- `NUXT_PUBLIC_API_BASE` baked at build vs runtime — staging image promoted to prod still pointing at staging.\n- OOM in `nuxt build` only on CI (less RAM than laptops).\n- Using `npm publish` of a private design system without provenance.",
+            "vi": "- `NUXT_PUBLIC_API_BASE` nướng lúc build vs runtime — image staging promote lên prod vẫn trỏ staging.\n- OOM trong `nuxt build` chỉ trên CI (RAM ít hơn laptop).\n- `npm publish` private design system không có provenance."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How do you secret-scan? (block `VITE_` keys in the client bundle)\n- Who can approve GitOps prod? (CODEOWNERS, not every FE)",
+            "vi": "- Secret-scan thế nào? (chặn key `VITE_` trong client bundle)\n- Ai approve GitOps prod? (CODEOWNERS, không phải mọi FE)"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "14.3. Preview Deployments and Env Vars",
+            "vi": "14.3. Preview deployment và biến môi trường"
+          },
+          "id": {
+            "en": "143-preview-deployments-and-env-vars",
+            "vi": "143-preview-deployment-va-bien-moi-truong"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "“How do designers/PMs see a PR?” / “How do you not leak prod data into previews?”",
+            "vi": "“Designer/PM xem PR thế nào?” / “Làm sao không leak prod data vào preview?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** Every PR gets a **unique URL** (`pr-123.preview.example.com`) running **that SHA**. Env: **staging/test APIs**, fake or anonymized data, **separate** OAuth clients and cookies. Kill the preview on merge/close.\n- **Constraint:** Preview origins explode CORS and cookie domains (13.4). Either proxy API same-origin on the preview, or a wildcard CORS allowlist **only** for the staging API, never prod.\n- **Failure mode:** Preview with prod DB (PII, charges, destroying real orders); `VITE_*` copied from prod; long-lived preview that becomes someone’s “staging”; auth cookies set on `.example.com` leaking between preview and prod.\n- **Measure:** time-to-preview, % PRs with a URL in the first CI pass, incidents caused by preview→prod config mixups.\n\n**Env vars (Nuxt-first)**\n\n- `runtimeConfig.public` / `NUXT_PUBLIC_*`: safe to expose, still not secrets.\n- Server `runtimeConfig` / `NUXT_*`: secrets, only Nitro.\n- Vite `VITE_*`: always client. Treat as public.\n- Prefer **runtime** env on the Node image so the **same digest** can run in preview/staging/prod with different URLs. If you bake public API URLs at build time, you **cannot** promote the artifact.\n\nCookie `Domain=` and OAuth `redirect_uri` must include the preview host or use a BFF on that host.",
+            "vi": "- **Quyết định:** Mỗi PR có **URL unique** (`pr-123.preview.example.com`) chạy **đúng SHA đó**. Env: **API staging/test**, data giả hoặc anonymize, OAuth client và cookie **tách**. Giết preview lúc merge/close.\n- **Ràng buộc:** Preview origin làm nổ CORS và cookie domain (13.4). Hoặc proxy API same-origin trên preview, hoặc wildcard CORS allowlist **chỉ** cho staging API, không bao giờ prod.\n- **Failure mode:** Preview với prod DB (PII, charge, phá order thật); `VITE_*` copy từ prod; preview sống lâu thành “staging” của ai đó; auth cookie set trên `.example.com` leak giữa preview và prod.\n- **Đo:** time-to-preview, % PR có URL ngay lần CI đầu, incident do mix config preview→prod.\n\n**Env var (Nuxt-first)**\n\n- `runtimeConfig.public` / `NUXT_PUBLIC_*`: được phép expose, vẫn không phải secret.\n- Server `runtimeConfig` / `NUXT_*`: secret, chỉ Nitro.\n- Vite `VITE_*`: luôn client. Coi như public.\n- Ưu tiên env **runtime** trên Node image để **cùng digest** chạy preview/staging/prod với URL khác. Nếu nướng public API URL lúc build, bạn **không** promote artifact được.\n\nCookie `Domain=` và OAuth `redirect_uri` phải gồm preview host hoặc dùng BFF trên host đó."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Full k8s namespace per PR (expensive, realistic) vs Vercel/Netlify/Cloudflare Pages preview (cheap, may not match GitOps).\n- Shared staging DB vs per-PR ephemeral backend (best, rare). At minimum: **feature-flagged** test tenant.",
+            "vi": "- Full k8s namespace mỗi PR (đắt, thực tế) vs preview Vercel/Netlify/Cloudflare Pages (rẻ, có thể không khớp GitOps).\n- Shared staging DB vs backend ephemeral mỗi PR (tốt nhất, hiếm). Tối thiểu: test tenant **feature-flag**."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- `indexable` previews leaking into Google — `X-Robots-Tag: noindex`, basic auth or SSO in front of previews.\n- CSP `connect-src` missing the staging API.\n- Mixed content (`https` preview calling `http` API).",
+            "vi": "- Preview `indexable` lọt Google — `X-Robots-Tag: noindex`, basic auth hoặc SSO trước preview.\n- CSP `connect-src` thiếu staging API.\n- Mixed content (`https` preview gọi `http` API)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How do e2e tests target a preview? (Playwright `baseURL` from CI)\n- Can you preview SSR + WS? (need a real Node host, not only static)",
+            "vi": "- E2E nhắm preview thế nào? (Playwright `baseURL` từ CI)\n- Preview SSR + WS được không? (cần Node host thật, không chỉ static)"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "14.4. Feature Flags",
+            "vi": "14.4. Feature Flags"
+          },
+          "id": {
+            "en": "144-feature-flags",
+            "vi": "144-feature-flags"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "“Ship dark? Kill switch? Why not just deploy?”",
+            "vi": "“Ship dark? Kill switch? Sao không cứ deploy?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** Flags are for **runtime control** of risk: kill switch, percentage rollout, entitlement, experiment. They are **not** a substitute for version control or a permanent if/else graveyard. Default in a Vue app: evaluate flags **in the BFF** for anything security/pricing related; client flags only for UX chrome.\n- **Constraint:** The flag service will go down. You need **fail-closed** (payments) vs **fail-open** (new sidebar). Cache with TTL. Don’t block first paint on LaunchDarkly if the marketing page doesn’t need it.\n- **Failure mode:** Flag left on 1% forever; targeting “internal users” that still hits prod data; client-side flag that hides a button but not the API; flag in `localStorage` that disagrees across tabs; changing a flag and blaming “GitOps didn’t deploy.”\n- **Measure:** time to disable a bad feature (should be minutes), % of flags older than N days, error rate **sliced by flag** (19.6), exposure vs conversion for experiments.\n\nTypes:\n\n| Kind | Example | Where evaluated |\n| --- | --- | --- |\n| Kill switch | Disable new checkout | BFF + FE, fail-safe |\n| Gradual | 10% of sessions | Consistent hash on user id, not `Math.random()` per request |\n| Entitlement | Plan has “exports” | Server; FE only reflects |\n| Experiment | Copy/layout | Client OK; watch CLS/CWV |\n\nCleanup is part of the story: ticket to remove the flag when it hits 100% / is abandoned. ADR if the flag changes architecture.",
+            "vi": "- **Quyết định:** Flag là **runtime control** rủi ro: kill switch, percentage rollout, entitlement, experiment. Chúng **không** thay version control hay nghĩa địa if/else vĩnh viễn. Default trong app Vue: evaluate flag **trong BFF** cho mọi thứ liên quan security/pricing; client flag chỉ cho UX chrome.\n- **Ràng buộc:** Flag service sẽ sập. Bạn cần **fail-closed** (payment) vs **fail-open** (sidebar mới). Cache với TTL. Đừng block first paint vì LaunchDarkly nếu marketing page không cần.\n- **Failure mode:** Flag để 1% mãi; targeting “internal user” vẫn đụng prod data; client-side flag giấu nút nhưng không giấu API; flag trong `localStorage` lệch giữa tab; đổi flag rồi đổ lỗi “GitOps chưa deploy.”\n- **Đo:** thời gian tắt feature xấu (phải là phút), % flag già hơn N ngày, error rate **cắt theo flag** (19.6), exposure vs conversion cho experiment.\n\nLoại:\n\n| Kind | Ví dụ | Evaluate ở đâu |\n| --- | --- | --- |\n| Kill switch | Tắt checkout mới | BFF + FE, fail-safe |\n| Gradual | 10% session | Consistent hash theo user id, không `Math.random()` mỗi request |\n| Entitlement | Plan có “exports” | Server; FE chỉ phản ánh |\n| Experiment | Copy/layout | Client OK; để ý CLS/CWV |\n\nCleanup là một phần câu chuyện: ticket gỡ flag khi nó 100% / bị bỏ. ADR nếu flag đổi architecture."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- LaunchDarkly/Unleash vs homemade `config.json`. Homemade is fine for 5 kill switches; you will regret it for experiments.\n- Env-based deploy (`STAGING_FEATURE=1`) vs flags. Envs cannot slice 10% of prod users.",
+            "vi": "- LaunchDarkly/Unleash vs `config.json` tự nấu. Tự nấu ổn cho 5 kill switch; bạn sẽ hối với experiment.\n- Env-based deploy (`STAGING_FEATURE=1`) vs flag. Env không slice được 10% user prod."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- SSR: flag at request time vs hydrate mismatch (user in 10% on server, 0% on client). **Pin the bucketing key** in the payload.\n- SEO: don’t flag-gate content Google must see, or you A/B your rankings.\n- Caching HTML that baked flag A for all users.",
+            "vi": "- SSR: flag lúc request vs hydrate mismatch (user 10% trên server, 0% trên client). **Pin bucketing key** trong payload.\n- SEO: đừng flag-gate content Google phải thấy, nếu không bạn A/B ranking.\n- Cache HTML đã nướng flag A cho mọi user."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How do you test both sides in CI? (both values in unit tests; e2e on default path + one flagged path)\n- Flag vs branch vs skip the feature? (18.5 / 17.5)",
+            "vi": "- Test cả hai phía trên CI thế nào? (cả hai giá trị trong unit test; e2e trên default path + một flagged path)\n- Flag vs branch vs bỏ feature? (18.5 / 17.5)"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "14.5. Frontend's Role in Kubernetes and GitOps",
+            "vi": "14.5. Vai trò Frontend trong Kubernetes và GitOps"
+          },
+          "id": {
+            "en": "145-frontends-role-in-kubernetes-and-gitops",
+            "vi": "145-vai-tro-frontend-trong-kubernetes-va-gitops"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "“Do you write Helm charts?” They are testing whether you **overclaim**.",
+            "vi": "“Bạn có viết Helm chart không?” Họ đang test bạn có **overclaim** không."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** You **own the image and the ingress path**. Dockerfile (or static bucket + CloudFront), ports, **health endpoints**, resource requests for **SSR**, which path the app lives on (`/`, `/app`), headers you need (CSP, cache). You **do not** own the cluster, CNI, cert-manager, node autoscaler, or mesh — you collaborate, you don’t design them in a FE round unless you actually did.\n- **Constraint:** SPA vs SSR changes the k8s shape. Static Vite: nginx/unprivileged distroless serving hashed files, almost no CPU. Nuxt SSR: **Node process**, HPA, readiness, memory leaks, sticky sessions if you were foolish enough to keep server memory sessions.\n- **Failure mode:** `latest`; no readiness probe so pods take traffic before Nitro listens; liveness hitting a heavy page and killing healthy pods; FE “fixing” an outage by restarting unrelated jobs; claiming you “do Kubernetes” because you edited a values.yaml image tag.\n- **Measure:** pod restart count, RSS of Nitro, p95 TTFB from inside the cluster, 5xx from ingress vs app.\n\n**What you should be able to talk about**\n\n- **Image:** multi-stage build, non-root, dist only, no `npm` in the final SPA image. SSR: `node .output/server/index.mjs`, `HOST=0.0.0.0`.\n- **Probes:** liveness = process alive (`/healthz` cheap). Readiness = ready for traffic (Nitro up, maybe not “can reach downstream”). Startup probe for slow boots. Don’t run a full SSR of `/` as liveness.\n- **Ingress:** TLS at the edge, `index.html` / HTML **short cache**, `/_nuxt/*` hashed **long cache**. Trailing slash, SPA fallback **only** for client routes, not for `/api`.\n- **GitOps:** your PR to the app repo is not live until the GitOps tag moves. You read Argo’s diff when “deploy didn’t.”\n- **Headers:** CSP, HSTS, `Referrer-Policy` — often set here or at the CDN. You own the **content** of CSP because you know the FE origins.",
+            "vi": "- **Quyết định:** Bạn **sở hữu image và đường ingress**. Dockerfile (hoặc static bucket + CloudFront), port, **health endpoint**, resource request cho **SSR**, path app sống (`/`, `/app`), header bạn cần (CSP, cache). Bạn **không** sở hữu cluster, CNI, cert-manager, node autoscaler, hay mesh — bạn collaborate, không thiết kế chúng trong vòng FE trừ khi bạn thực sự đã làm.\n- **Ràng buộc:** SPA vs SSR đổi shape k8s. Static Vite: nginx/unprivileged distroless serve hashed file, gần như không CPU. Nuxt SSR: **process Node**, HPA, readiness, memory leak, sticky session nếu bạn đủ dại giữ session trong server memory.\n- **Failure mode:** `latest`; không readiness probe nên pod nhận traffic trước khi Nitro listen; liveness hit page nặng rồi giết pod khỏe; FE “fix” outage bằng restart job unrelated; claim “làm Kubernetes” vì sửa image tag trong values.yaml.\n- **Đo:** số lần pod restart, RSS của Nitro, p95 TTFB từ trong cluster, 5xx từ ingress vs app.\n\n**Thứ bạn phải nói được**\n\n- **Image:** multi-stage build, non-root, chỉ dist, không `npm` trong image SPA cuối. SSR: `node .output/server/index.mjs`, `HOST=0.0.0.0`.\n- **Probe:** liveness = process còn sống (`/healthz` rẻ). Readiness = sẵn sàng nhận traffic (Nitro lên, có thể chưa “với được downstream”). Startup probe cho boot chậm. Đừng SSR full `/` làm liveness.\n- **Ingress:** TLS ở edge, `index.html` / HTML **cache ngắn**, `/_nuxt/*` hashed **cache dài**. Trailing slash, SPA fallback **chỉ** cho client route, không cho `/api`.\n- **GitOps:** PR repo app chưa live cho đến khi tag GitOps dịch. Bạn đọc diff Argo khi “deploy không.”\n- **Header:** CSP, HSTS, `Referrer-Policy` — thường set ở đây hoặc CDN. Bạn sở hữu **nội dung** CSP vì bạn biết origin FE."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Static on object storage (cheap, simple rollback of prefixes) vs SSR in k8s (SEO, auth, BFF). Hybrid Nuxt: static marketing at CDN, SSR for app — two ingresses, still one repo.\n- Sidecar nginx vs Node serving static — SPA usually nginx; don’t run Express to `sendFile` without a reason.",
+            "vi": "- Static trên object storage (rẻ, rollback prefix đơn giản) vs SSR trong k8s (SEO, auth, BFF). Hybrid Nuxt: marketing static ở CDN, SSR cho app — hai ingress, vẫn một repo.\n- Sidecar nginx vs Node serve static — SPA thường nginx; đừng chạy Express `sendFile` không lý do."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Websocket/SSE timeouts at ingress (13.1).\n- Horizontal scaling SSR without shared cache → thundering herd to the API (need Redis/Nitro cache).\n- Resource `limits` too low → throttled INP, looks like a “frontend performance” bug.",
+            "vi": "- Timeout Websocket/SSE ở ingress (13.1).\n- Scale ngang SSR không shared cache → thundering herd lên API (cần Redis/Nitro cache).\n- Resource `limits` quá thấp → INP bị throttle, trông như bug “frontend performance.”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How would you run a canary 10%? (Argo rollout / flag / weighted ingress — pick one and name the failure mode)\n- What do you log from a pod vs the browser? (19.4)",
+            "vi": "- Canary 10% thế nào? (Argo rollout / flag / weighted ingress — chọn một và nêu failure mode)\n- Log gì từ pod vs từ browser? (19.4)"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "[← Back to Overview](../../README-en.md)",
+            "vi": "[← Back to Overview](../../README.md)"
+          }
+        }
+      ]
+    }
+  ]
+}

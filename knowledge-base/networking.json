@@ -1,0 +1,892 @@
+{
+  "kind": "knowledge-doc",
+  "slug": "networking",
+  "title": {
+    "en": "Networking",
+    "vi": "Networking"
+  },
+  "summary": {
+    "en": "This is senior frontend interview prep for **how the browser talks to your backends**, not a protocol textbook. They will not hire you for reciting “WebSocket is full-duplex.” They will hire you if you can pick **REST v…",
+    "vi": "Đây là tài liệu ôn phỏng vấn senior frontend về **cách browser nói chuyện với backend**, không phải textbook protocol. Họ không thuê bạn vì thuộc lòng “WebSocket là full-duplex.” Họ thuê bạn nếu bạn chọn được **REST vs…"
+  },
+  "category": "infra",
+  "order": 16,
+  "tags": [
+    "infra",
+    "networking"
+  ],
+  "sections": [
+    {
+      "id": {
+        "en": "intro",
+        "vi": "intro"
+      },
+      "title": {
+        "en": "Networking",
+        "vi": "Networking"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": {
+            "en": "Networking",
+            "vi": "Networking"
+          },
+          "id": {
+            "en": "networking",
+            "vi": "networking"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "This is senior frontend interview prep for **how the browser talks to your backends**, not a protocol textbook. They will not hire you for reciting “WebSocket is full-duplex.” They will hire you if you can pick **REST vs GraphQL vs SSE vs WS**, put **auth on the right transport**, and describe **loading / error / empty / optimistic** as product states.",
+            "vi": "Đây là tài liệu ôn phỏng vấn senior frontend về **cách browser nói chuyện với backend**, không phải textbook protocol. Họ không thuê bạn vì thuộc lòng “WebSocket là full-duplex.” Họ thuê bạn nếu bạn chọn được **REST vs GraphQL vs SSE vs WS**, đặt **auth đúng transport**, và mô tả **loading / error / empty / optimistic** như product state."
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Vue 3 / Nuxt: `$fetch` / `ofetch`, `useAsyncData`, VueUse `useWebSocket`. Same ideas apply to React Query / Next — the constraints are HTTP and the browser, not the framework.",
+            "vi": "Vue 3 / Nuxt: `$fetch` / `ofetch`, `useAsyncData`, VueUse `useWebSocket`. Cùng ý tưởng áp cho React Query / Next — constraint là HTTP và browser, không phải framework."
+          }
+        },
+        {
+          "type": "thematic-break"
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "table-of-contents",
+        "vi": "table-of-contents"
+      },
+      "title": {
+        "en": "Table of Contents",
+        "vi": "Table of Contents"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Table of Contents",
+            "vi": "Table of Contents"
+          },
+          "id": {
+            "en": "table-of-contents",
+            "vi": "table-of-contents"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "[WebSocket vs REST](#131-websocket-vs-rest)",
+              "vi": "[WebSocket vs REST](#131-websocket-vs-rest)"
+            },
+            {
+              "en": "[REST Design from the Frontend](#132-rest-design-from-the-frontend)",
+              "vi": "[Thiết kế REST từ phía Frontend](#132-thiết-kế-rest-từ-phía-frontend)"
+            },
+            {
+              "en": "[Loading, Error, Empty, and Optimistic UI](#133-loading-error-empty-and-optimistic-ui)",
+              "vi": "[Loading, Error, Empty và Optimistic UI](#133-loading-error-empty-và-optimistic-ui)"
+            },
+            {
+              "en": "[CORS and Cookies from the Frontend](#134-cors-and-cookies-from-the-frontend)",
+              "vi": "[CORS và Cookie từ phía Frontend](#134-cors-và-cookie-từ-phía-frontend)"
+            },
+            {
+              "en": "[AbortController and Timeouts](#135-abortcontroller-and-timeouts)",
+              "vi": "[AbortController và Timeout](#135-abortcontroller-và-timeout)"
+            }
+          ]
+        },
+        {
+          "type": "thematic-break"
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "13-networking",
+        "vi": "13-networking"
+      },
+      "title": {
+        "en": "13. Networking",
+        "vi": "13. Networking"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "13. Networking",
+            "vi": "13. Networking"
+          },
+          "id": {
+            "en": "13-networking",
+            "vi": "13-networking"
+          }
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "13.1. WebSocket vs REST",
+            "vi": "13.1. WebSocket vs REST"
+          },
+          "id": {
+            "en": "131-websocket-vs-rest",
+            "vi": "131-websocket-vs-rest"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “When do you use WebSockets instead of REST?”\n- “Why not GraphQL for everything?”\n- “How do you authenticate a WebSocket from the browser?”\n- “What happens when the laptop lid closes for 20 minutes?”",
+            "vi": "- “Khi nào dùng WebSocket thay REST?”\n- “Sao không GraphQL cho mọi thứ?”\n- “Authenticate WebSocket từ browser thế nào?”\n- “Laptop đóng nắp 20 phút thì sao?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** **REST (or RPC-over-HTTP)** for request/response work: CRUD, forms, searches, anything you want cached, retried, load-balanced, and debuggable in a HAR file. **WebSocket** (or SSE) when the **server must push** and latency of polling would be a product failure (collab cursors, trading ticks, ops dashboards, chat). Default combo: REST/BFF for commands and initial state, WS for deltas.\n- **Constraint:** Browsers, mobile radios, corporate proxies, and load-balancer **idle timeouts** hate cheap always-on sockets. HTTP/2 already multiplexes many REST calls on one connection — “too many endpoints” is not an automatic reason for WS.\n- **Failure mode:** One WS for the whole app that then reinvents HTTP (request IDs, error codes, retries) badly; token in the query string landing in CDN logs; no heartbeat → silent death behind nginx; reconnect storms after a deploy.\n- **Measure:** messages / sec / user, p95 time-to-first-push, reconnect rate, **duplicate events after resume**, battery/radio cost on mobile, cost of fan-out on the server.",
+            "vi": "- **Quyết định:** **REST (hoặc RPC-over-HTTP)** cho việc request/response: CRUD, form, search, bất cứ thứ gì bạn muốn cache, retry, load-balance, và debug trong file HAR. **WebSocket** (hoặc SSE) khi **server phải push** và latency của polling sẽ là product failure (cursor collab, tick trading, ops dashboard, chat). Combo mặc định: REST/BFF cho command và initial state, WS cho delta.\n- **Ràng buộc:** Browser, radio mobile, corporate proxy, và **idle timeout** của load-balancer ghét socket always-on rẻ tiền. HTTP/2 đã multiplex nhiều REST call trên một connection — “quá nhiều endpoint” không tự động thành lý do dùng WS.\n- **Failure mode:** Một WS cho cả app rồi tái phát minh HTTP (request ID, error code, retry) một cách tệ; token trên query string rơi vào CDN log; không heartbeat → chết thầm sau nginx; reconnect storm sau deploy.\n- **Đo:** message / giây / user, p95 time-to-first-push, reconnect rate, **event duplicate sau resume**, chi phí battery/radio trên mobile, chi phí fan-out phía server."
+          }
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "HTTP/2 multiplexing (why “just open more REST calls” got cheaper)",
+            "vi": "HTTP/2 multiplexing (vì sao “cứ mở thêm REST call” rẻ hơn)"
+          },
+          "id": {
+            "en": "http2-multiplexing-why-just-open-more-rest-calls-got-cheaper",
+            "vi": "http2-multiplexing-vi-sao-cu-mo-them-rest-call-re-hon"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "HTTP/1.1: ~6 connections per origin, head-of-line blocking, combining endpoints was a real FE sport.",
+            "vi": "HTTP/1.1: khoảng 6 connection mỗi origin, head-of-line blocking, gộp endpoint từng là môn thể thao FE thật sự."
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "HTTP/2: many streams, one TCP connection. Parallel `useAsyncData` / TanStack Query calls are fine. You still pay **server time and payload size**. HTTP/2 does not fix overfetching a 2MB JSON for a table widget.",
+            "vi": "HTTP/2: nhiều stream, một TCP connection. Gọi song song `useAsyncData` / TanStack Query thì ổn. Bạn vẫn trả **thời gian server và kích thước payload**. HTTP/2 không sửa overfetch JSON 2MB cho một table widget."
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "HTTP/2 still has **TCP HOL blocking** (a lost packet stalls all streams). HTTP/3/QUIC is the follow-up if they ask. This is not a reason to rewrite the app; it is why “we need WS because HTTP is slow” is usually wrong.",
+            "vi": "HTTP/2 vẫn bị **TCP HOL blocking** (packet mất stall mọi stream). HTTP/3/QUIC là follow-up nếu họ hỏi. Đây không phải lý do rewrite app; đây là lý do “cần WS vì HTTP chậm” thường sai."
+          }
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "GraphQL as a tradeoff (not a religion)",
+            "vi": "GraphQL như một tradeoff (không phải tôn giáo)"
+          },
+          "id": {
+            "en": "graphql-as-a-tradeoff-not-a-religion",
+            "vi": "graphql-nhu-mot-tradeoff-khong-phai-ton-giao"
+          }
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "You want",
+              "vi": "Bạn muốn"
+            },
+            {
+              "en": "GraphQL helps",
+              "vi": "GraphQL giúp"
+            },
+            {
+              "en": "You pay",
+              "vi": "Bạn trả giá"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "One round trip for a screen with 6 REST resources",
+                "vi": "Một round trip cho màn hình 6 REST resource"
+              },
+              {
+                "en": "Yes — if the graph is designed",
+                "vi": "Có — nếu graph được thiết kế"
+              },
+              {
+                "en": "BFF complexity, N+1, authz per field",
+                "vi": "Độ phức tạp BFF, N+1, authz từng field"
+              }
+            ],
+            [
+              {
+                "en": "Stop overfetching",
+                "vi": "Dừng overfetch"
+              },
+              {
+                "en": "Maybe",
+                "vi": "Có thể"
+              },
+              {
+                "en": "Clients still ask for too much; persisted queries / allowlists become mandatory in prod",
+                "vi": "Client vẫn hỏi quá nhiều; persisted query / allowlist trở thành bắt buộc trên prod"
+              }
+            ],
+            [
+              {
+                "en": "FE-owned schema iteration",
+                "vi": "FE tự iterate schema"
+              },
+              {
+                "en": "Until the graph is a dumping ground",
+                "vi": "Cho đến khi graph thành bãi rác"
+              },
+              {
+                "en": "Versioning is *harder* than REST URL versioning",
+                "vi": "Versioning *khó hơn* versioning URL REST"
+              }
+            ],
+            [
+              {
+                "en": "Caching",
+                "vi": "Caching"
+              },
+              {
+                "en": "Normalized client cache (Apollo/Urql/TanStack)",
+                "vi": "Normalized client cache (Apollo/Urql/TanStack)"
+              },
+              {
+                "en": "HTTP CDN caching is much worse than REST GET",
+                "vi": "HTTP CDN cache kém hơn REST GET rất nhiều"
+              }
+            ]
+          ],
+          "align": [
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Senior line: **GraphQL is a BFF contract.** Put it at the edge/BFF, not as a leaky replacement for every microservice. For a public CDN-cached marketing page, REST/JSON or even HTML from Nuxt wins. For a dashboard that otherwise waterfalls 12 REST calls, GraphQL or a **purpose-built BFF endpoint** both beat WS.",
+            "vi": "Câu senior: **GraphQL là BFF contract.** Đặt nó ở edge/BFF, không phải bản thay thế thủng cho mọi microservice. Với marketing page public cache trên CDN, REST/JSON hoặc thậm chí HTML từ Nuxt thắng. Với dashboard nếu không sẽ waterfall 12 REST call, GraphQL hoặc **BFF endpoint dựng đúng việc** đều thắng WS."
+          }
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "SSE vs WebSocket vs polling",
+            "vi": "SSE vs WebSocket vs polling"
+          },
+          "id": {
+            "en": "sse-vs-websocket-vs-polling",
+            "vi": "sse-vs-websocket-vs-polling"
+          }
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "",
+              "vi": ""
+            },
+            {
+              "en": "Polling",
+              "vi": "Polling"
+            },
+            {
+              "en": "SSE",
+              "vi": "SSE"
+            },
+            {
+              "en": "WebSocket",
+              "vi": "WebSocket"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Direction",
+                "vi": "Direction"
+              },
+              {
+                "en": "Client pull",
+                "vi": "Client pull"
+              },
+              {
+                "en": "Server → client",
+                "vi": "Server → client"
+              },
+              {
+                "en": "Bidirectional",
+                "vi": "Bidirectional"
+              }
+            ],
+            [
+              {
+                "en": "Transport",
+                "vi": "Transport"
+              },
+              {
+                "en": "HTTP",
+                "vi": "HTTP"
+              },
+              {
+                "en": "HTTP (event stream)",
+                "vi": "HTTP (event stream)"
+              },
+              {
+                "en": "Its own upgrade",
+                "vi": "Upgrade riêng"
+              }
+            ],
+            [
+              {
+                "en": "Auth",
+                "vi": "Auth"
+              },
+              {
+                "en": "Normal cookies/headers",
+                "vi": "Cookie/header bình thường"
+              },
+              {
+                "en": "Normal cookies/headers",
+                "vi": "Cookie/header bình thường"
+              },
+              {
+                "en": "See below — **no custom headers in the browser constructor**",
+                "vi": "Xem bên dưới — **browser constructor không set custom header**"
+              }
+            ],
+            [
+              {
+                "en": "Proxies / HTTP/2",
+                "vi": "Proxy / HTTP/2"
+              },
+              {
+                "en": "Trivial",
+                "vi": "Trivial"
+              },
+              {
+                "en": "Good (it’s HTTP)",
+                "vi": "Tốt (vẫn là HTTP)"
+              },
+              {
+                "en": "Sticky sessions, idle timeouts, special LB config",
+                "vi": "Sticky session, idle timeout, cấu hình LB đặc biệt"
+              }
+            ],
+            [
+              {
+                "en": "Use",
+                "vi": "Dùng khi"
+              },
+              {
+                "en": "TTL-tolerable freshness (30s+), or ETag/304",
+                "vi": "Độ tươi chịu được TTL (30s+), hoặc ETag/304"
+              },
+              {
+                "en": "Notifications, logs, one-way ticks",
+                "vi": "Notification, log, tick một chiều"
+              },
+              {
+                "en": "Chat, collab, client→server streaming, protocol you control",
+                "vi": "Chat, collab, client→server streaming, protocol bạn kiểm soát"
+              }
+            ]
+          ],
+          "align": [
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Prefer **SSE** when the client mostly listens (notification bell, “job finished”). Prefer **short polling + `If-None-Match`** when “live” is 15–60s and you want CDN/BFF caching. Prefer **WS** when both sides speak frequently.",
+            "vi": "Ưu tiên **SSE** khi client chủ yếu lắng nghe (chuông notification, “job xong”). Ưu tiên **short polling + `If-None-Match`** khi “live” là 15–60s và bạn muốn cache CDN/BFF. Ưu tiên **WS** khi hai phía nói chuyện thường xuyên."
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Long polling is what you do when SSE is blocked and you cannot run WS — mention it, don’t design for it first.",
+            "vi": "Long polling là việc bạn làm khi SSE bị chặn và không chạy được WS — nhắc tới, đừng thiết kế nó trước."
+          }
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "Auth on WebSocket: cookie vs token in the first message",
+            "vi": "Auth trên WebSocket: cookie vs token trong message đầu"
+          },
+          "id": {
+            "en": "auth-on-websocket-cookie-vs-token-in-the-first-message",
+            "vi": "auth-tren-websocket-cookie-vs-token-trong-message-au"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Browser `new WebSocket(url)` **cannot set `Authorization`**. That is the trap.",
+            "vi": "Browser `new WebSocket(url)` **không set được `Authorization`**. Đó là bẫy."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Cookie on the handshake** (`SameSite=None; Secure` if cross-site, usually **same-site** to your API). Simple, CSRF story must be explicit (custom header or SameSite). Works with HttpOnly refresh cookies. **Best default** when FE and API share a parent site.",
+              "vi": "**Cookie trên handshake** (`SameSite=None; Secure` nếu cross-site, thường **same-site** với API). Đơn giản, chuyện CSRF phải nói rõ (custom header hoặc SameSite). Chạy được với HttpOnly refresh cookie. **Default tốt nhất** khi FE và API share parent site."
+            },
+            {
+              "en": "**Token in the query string** (`?access_token=`): it will show up in **access logs, proxies, Referer**. Treat as a footgun. Short-lived only if you have no other option.",
+              "vi": "**Token trên query string** (`?access_token=`): nó sẽ xuất hiện trong **access log, proxy, Referer**. Coi như footgun. Chỉ short-lived nếu không còn lựa chọn khác."
+            },
+            {
+              "en": "**Connect, then first message `{ type: 'auth', token }`:** works with access tokens in memory. Server must **reject all other messages until auth**, timeout unauthenticated sockets, and **not** log the token. Pair with reconnect that re-auths.",
+              "vi": "**Connect, rồi message đầu `{ type: 'auth', token }`:** chạy với access token trong memory. Server phải **reject mọi message khác cho đến khi auth**, timeout socket chưa auth, và **không** log token. Pair với reconnect re-auth."
+            },
+            {
+              "en": "Don’t store long-lived access tokens in `localStorage` just to feed WS. If XSS exists, WS is owned anyway — still prefer memory + HttpOnly refresh via REST.",
+              "vi": "Đừng cất access token sống lâu trong `localStorage` chỉ để nuôi WS. Nếu XSS tồn tại, WS cũng bị chiếm — vẫn ưu tiên memory + HttpOnly refresh qua REST."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "Reconnection, backoff, heartbeat",
+            "vi": "Reconnection, backoff, heartbeat"
+          },
+          "id": {
+            "en": "reconnection-backoff-heartbeat",
+            "vi": "reconnection-backoff-heartbeat"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "Heartbeat / ping-pong: application-level if the LB or serverless WS gateway won’t. Detect **half-open** connections (wifi change).",
+              "vi": "Heartbeat / ping-pong: tầng application nếu LB hoặc serverless WS gateway không làm. Detect connection **half-open** (đổi wifi)."
+            },
+            {
+              "en": "Reconnect: exponential backoff **with jitter**. Cap the delay. Reset backoff after a stable connection.",
+              "vi": "Reconnect: exponential backoff **có jitter**. Cap delay. Reset backoff sau connection ổn định."
+            },
+            {
+              "en": "After resume: **don’t replay the whole world** if you can send `lastEventId` / cursor / version. SSE has `Last-Event-ID` for this; WS you invent it.",
+              "vi": "Sau resume: **đừng replay cả thế giới** nếu gửi được `lastEventId` / cursor / version. SSE có `Last-Event-ID` cho việc này; WS thì bạn tự invent."
+            },
+            {
+              "en": "Tab freeze (mobile): `visibilitychange` — pause heartbeats in background if the server will kick you; document that.",
+              "vi": "Tab freeze (mobile): `visibilitychange` — pause heartbeat dưới nền nếu server sẽ kick bạn; document điều đó."
+            },
+            {
+              "en": "Auth expiry mid-session: refresh via REST (single-flight), then re-auth the socket; don’t open a second socket per 401.",
+              "vi": "Auth hết hạn giữa session: refresh qua REST (single-flight), rồi re-auth socket; đừng mở socket thứ hai mỗi 401."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "When a BFF exists",
+            "vi": "Khi có BFF"
+          },
+          "id": {
+            "en": "when-a-bff-exists",
+            "vi": "khi-co-bff"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Say the box diagram: **browser → BFF (Nuxt/Nitro or Node) → services.**",
+            "vi": "Nói sơ đồ hộp: **browser → BFF (Nuxt/Nitro hoặc Node) → services.**"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "Browser uses **one origin** (no CORS circus), cookies stay first-party, GraphQL/REST aggregation lives here.",
+              "vi": "Browser dùng **một origin** (không rạp CORS), cookie first-party, aggregation GraphQL/REST sống ở đây."
+            },
+            {
+              "en": "BFF holds service credentials; the browser never talks to the inventory WS farm directly.",
+              "vi": "BFF giữ credential của service; browser không nói chuyện trực tiếp với farm WS inventory."
+            },
+            {
+              "en": "Realtime: browser SSE/WS to **BFF**, BFF subscribes internally (Kafka, service WS, Redis pub/sub).",
+              "vi": "Realtime: browser SSE/WS tới **BFF**, BFF subscribe nội bộ (Kafka, service WS, Redis pub/sub)."
+            },
+            {
+              "en": "Initial snapshot via REST/`useAsyncData` (SSR-friendly); stream patches after hydrate. SSR cannot “hold a WS” for the user.",
+              "vi": "Snapshot ban đầu qua REST/`useAsyncData` (thân thiện SSR); stream patch sau hydrate. SSR không “giữ WS” cho user."
+            }
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- REST: cacheable, boring, easy 401 policy — chatty screens without a BFF.\n- WS: great push, miserable auth/debug/scale if used as a generic API.\n- GraphQL: flexible screens, easy to create a permission and performance incident.\n- SSE: simple one-way; auto-reconnect in `EventSource` is nice; **cannot POST**, custom headers are limited (cookies still work).",
+            "vi": "- REST: cache được, nhàm chán, policy 401 dễ — màn hình nhiều lời nếu không có BFF.\n- WS: push tuyệt, auth/debug/scale khổ nếu dùng như generic API.\n- GraphQL: màn hình linh hoạt, dễ tạo incident permission và performance.\n- SSE: một chiều đơn giản; auto-reconnect trong `EventSource` dễ chịu; **không POST**, custom header hạn chế (cookie vẫn chạy)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- nginx `proxy_read_timeout` killing SSE/WS at 60s because nobody sent a heartbeat.\n- Sticky sessions required, then autoscaling “randomly” drops users.\n- Duplicate event processing (reconnect without an offset) — **idempotent consumers** on the client (keyed by event id).\n- Opening a WS per component mount (chat widget + header + page = 3 sockets).",
+            "vi": "- nginx `proxy_read_timeout` giết SSE/WS ở 60s vì không ai gửi heartbeat.\n- Cần sticky session, rồi autoscaling “ngẫu nhiên” rớt user.\n- Xử lý event duplicate (reconnect không có offset) — **idempotent consumer** trên client (key theo event id).\n- Mở một WS mỗi lần component mount (chat widget + header + page = 3 socket)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How do you test WS? (mock a small protocol, contract tests on event shapes, don’t e2e the whole broker)\n- Binary vs JSON frames?\n- How does this change with HTTP/2 + many REST calls vs a custom BFF resource?",
+            "vi": "- Test WS thế nào? (mock protocol nhỏ, contract test trên shape event, đừng e2e cả broker)\n- Frame binary vs JSON?\n- HTTP/2 + nhiều REST call vs custom BFF resource thay đổi chuyện này ra sao?"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "13.2. REST Design from the Frontend",
+            "vi": "13.2. Thiết kế REST từ phía Frontend"
+          },
+          "id": {
+            "en": "132-rest-design-from-the-frontend",
+            "vi": "132-thiet-ke-rest-tu-phia-frontend"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "“If you could change the API, what would you ask backend for?” They want a **frontend contract**, not textbook REST purity.",
+            "vi": "“Nếu đổi được API, bạn nhờ backend điều gì?” Họ muốn **frontend contract**, không phải sự thuần khiết REST trong sách."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** Design URLs and payloads for **screens**: list + filter + sort in **query params** (shareable, SSR-readable), stable resource IDs, an **error envelope** the UI can branch on, pagination that matches the UI (infinite scroll ≠ page buttons), **idempotency** on money and “create” buttons.\n- **Constraint:** The browser will retry, double-click, and lose a tab. Mobile will timeout. You do not control all clients (iOS, old Android WebView).\n- **Failure mode:** Offset pagination that **duplicates/skips** rows when the list mutates; 500 with an HTML nginx page; POST `/order` that creates two orders; errors that only have a string so you cannot i18n or field-highlight.\n- **Measure:** p95 payload size per screen, duplicate-create rate, empty vs error vs zero-result rates, time to first useful row.\n\n**Pagination**\n\n- **Offset/limit:** admin tables, jump-to-page. Breaks when items insert at the top (duplicate/missing rows). Fine for stable catalogs.\n- **Cursor / keyset:** feeds, infinite scroll, “load more.” Put the cursor **opaque** (`?cursor=`) so you can change it. Store it in the URL if the feed should be shareable — often it shouldn’t; use it in memory then.\n- **Always return** `{ items, nextCursor, total? }`. Don’t hide total if the UI has “143,221 rows”; don’t compute `COUNT(*)` if the UI doesn’t need it.\n- Prefer **BFF-shaped list DTOs** (already joined names, permissions) over making FE compose 3 APIs per row.\n\n**Errors**\n\nAgree a body, not a vibe:\n\n```json\n{\n  \"error\": {\n    \"code\": \"QUOTE_EXPIRED\",\n    \"message\": \"Price changed, refresh the quote\",\n    \"fields\": { \"coupon\": \"Not combinable with sale items\" }\n  }\n}\n```\n\nMap **status** for control flow: `401` session, `403` permission (not “please login”), `404` vs empty list, `409` conflict / version, `422` validation, `429` + `Retry-After`, `5xx` retryable with backoff. Never parse error **message** strings in UI logic.\n\n**Idempotency**\n\n- GET/PUT/DELETE are supposed to be idempotent; **POST create/pay is not**.\n- FE sends `Idempotency-Key` (UUID) on Pay / Submit Order, retries with the **same** key, button disabled + timeout. Backend must store the first result.\n- Client-side: don’t only `disabled={loading}` — a refresh mid-flight still double-posts without a key.\n\n**Other FE-shaped contract asks**\n\n- Partial updates (`PATCH`) with optimistic UI and `If-Match` / version field for 409.\n- Filter/sort whitelist (don’t accept arbitrary SQL-ish query languages from the URL).\n- File uploads: presigned URL, not a 200MB JSON POST through Nuxt.\n- Batch endpoints when a table would otherwise fire N requests.",
+            "vi": "- **Quyết định:** Thiết kế URL và payload cho **màn hình**: list + filter + sort trong **query param** (share được, SSR đọc được), resource ID ổn định, **error envelope** UI nhánh được, pagination khớp UI (infinite scroll ≠ nút page), **idempotency** trên tiền và nút “create.”\n- **Ràng buộc:** Browser sẽ retry, double-click, và mất tab. Mobile sẽ timeout. Bạn không kiểm soát mọi client (iOS, Android WebView cũ).\n- **Failure mode:** Offset pagination **duplicate/skip** hàng khi list mutate; 500 kèm HTML nginx; POST `/order` tạo hai order; error chỉ có string nên không i18n hay highlight field được.\n- **Đo:** p95 payload size mỗi màn, tỷ lệ create duplicate, tỷ lệ empty vs error vs zero-result, thời gian tới hàng hữu ích đầu tiên.\n\n**Pagination**\n\n- **Offset/limit:** bảng admin, nhảy-tới-trang. Vỡ khi item insert ở đầu (hàng duplicate/thiếu). Ổn với catalog ổn định.\n- **Cursor / keyset:** feed, infinite scroll, “load more.” Để cursor **opaque** (`?cursor=`) để còn đổi được. Cất trong URL nếu feed cần share — thường thì không nên; dùng trong memory.\n- **Luôn trả** `{ items, nextCursor, total? }`. Đừng giấu total nếu UI có “143,221 rows”; đừng tính `COUNT(*)` nếu UI không cần.\n- Ưu tiên **list DTO hình BFF** (đã join name, permission) hơn bắt FE compose 3 API mỗi hàng.\n\n**Error**\n\nThống nhất một body, không phải vibe:\n\n```json\n{\n  \"error\": {\n    \"code\": \"QUOTE_EXPIRED\",\n    \"message\": \"Price changed, refresh the quote\",\n    \"fields\": { \"coupon\": \"Not combinable with sale items\" }\n  }\n}\n```\n\nMap **status** cho control flow: `401` session, `403` permission (không phải “xin login”), `404` vs empty list, `409` conflict / version, `422` validation, `429` + `Retry-After`, `5xx` retry được với backoff. Không bao giờ parse **message** string trong logic UI.\n\n**Idempotency**\n\n- GET/PUT/DELETE được cho là idempotent; **POST create/pay thì không**.\n- FE gửi `Idempotency-Key` (UUID) trên Pay / Submit Order, retry với **cùng** key, disable nút + timeout. Backend phải lưu kết quả đầu.\n- Phía client: đừng chỉ `disabled={loading}` — refresh giữa chuyến bay vẫn double-post nếu không có key.\n\n**Yêu cầu contract hình FE khác**\n\n- Partial update (`PATCH`) với optimistic UI và `If-Match` / field version cho 409.\n- Whitelist filter/sort (đừng nhận query language kiểu SQL tùy ý từ URL).\n- Upload file: presigned URL, không POST JSON 200MB xuyên Nuxt.\n- Batch endpoint khi table nếu không sẽ bắn N request."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- REST resources vs BFF “screen DTOs” — seniors usually want **both**: resources for reuse, BFF for the expensive page.\n- Cursor vs offset — pick from the UI, don’t cargo-cult cursor for a 20-row settings table.",
+            "vi": "- REST resource vs BFF “screen DTO” — senior thường muốn **cả hai**: resource để reuse, BFF cho page đắt.\n- Cursor vs offset — chọn từ UI, đừng cargo-cult cursor cho bảng settings 20 hàng."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Accidental caching of personalized GET (`Cache-Control: public` on `/api/me`).\n- `204` with a body, or `200` wrapping errors — interceptors become archaeology.\n- Pagination `total` that is an estimate; UI shows it as exact.",
+            "vi": "- Cache nhầm GET cá nhân hóa (`Cache-Control: public` trên `/api/me`).\n- `204` kèm body, hoặc `200` bọc error — interceptor thành khảo cổ.\n- Pagination `total` là ước lượng; UI hiện như số exact."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How do you version? (URL `/v2` vs headers vs additive JSON)\n- What belongs in query vs body for a complex search? (GET if cacheable and short; POST `/search` if the query is huge)",
+            "vi": "- Version thế nào? (URL `/v2` vs header vs JSON additive)\n- Query vs body cho search phức tạp? (GET nếu cache được và ngắn; POST `/search` nếu query khổng lồ)"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "13.3. Loading, Error, Empty, and Optimistic UI",
+            "vi": "13.3. Loading, Error, Empty và Optimistic UI"
+          },
+          "id": {
+            "en": "133-loading-error-empty-and-optimistic-ui",
+            "vi": "133-loading-error-empty-va-optimistic-ui"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "“The API is slow / flaky. How does the UI behave?” This is a **product** question dressed as networking.",
+            "vi": "“API chậm / flake. UI xử sự thế nào?” Đây là câu hỏi **product** mặc áo networking."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** Every async view has four states — **loading, error, empty, success** — plus **stale** (you have data, you’re refreshing) and **optimistic** (you guessed). Encode them explicitly (TanStack Query / `useAsyncData` status), not `data && !error && !pending` soup.\n- **Constraint:** Perceived performance > raw RTT. A 150ms spinner is worse than nothing. A wrong optimistic row that cannot roll back is worse than a 300ms wait.\n- **Failure mode:** Spinner on every filter keystroke; empty state that looks like an error; optimistic create that duplicates after retry; error toast with no recovery; SSR success then client refetch flash.\n- **Measure:** time-to-first-content, spinner time buckets, error recovery rate, rollback rate, “blank page” RUM events.\n\n**Patterns**\n\n- **Pending vs refreshing:** first load → skeleton that **matches layout** (CLS). Refetch → keep old rows, subtle indicator. Nuxt `useAsyncData` + `lazy` / `keep-alive` of the previous payload.\n- **Don’t flash:** delay spinner ~200ms; ignore responses that lost a race (AbortController, 13.5).\n- **Empty ≠ error ≠ zero filter results.** “No orders yet” (CTA) vs “No orders match filters” (clear filters) vs “We couldn’t load orders” (retry).\n- **Error:** retry with backoff on 5xx/network; don’t retry 4xx except 429. Show **code-driven** copy, plus a retry control. Widget-level error, not the whole shell (see [19.2](./monitoring.md#192-error-boundaries-in-vue)).\n- **Optimistic:** only when rollback is cheap and conflict is rare (toggle, rename, reorder). For payments / inventory: **pessimistic** or “pending on server” state.\n\n```ts\n// Decision: mutate cache immediately, roll back on 409/5xx, don't invent a second source of truth.\nasync function onToggle(id: string) {\n  const snapshot = queryClient.getQueryData([\"orders\"]);\n  queryClient.setQueryData([\"orders\"], optimisticToggle(snapshot, id));\n  try {\n    await $fetch(`/api/orders/${id}`, { method: \"PATCH\", body: { done: true } });\n  } catch {\n    queryClient.setQueryData([\"orders\"], snapshot);\n    toast.error(\"Couldn’t update — still not marked done\");\n  }\n}\n```",
+            "vi": "- **Quyết định:** Mọi view async có bốn state — **loading, error, empty, success** — cộng **stale** (đã có data, đang refresh) và **optimistic** (bạn đoán). Encode tường minh (TanStack Query / status `useAsyncData`), không phải súp `data && !error && !pending`.\n- **Ràng buộc:** Perceived performance > RTT thô. Spinner 150ms còn tệ hơn không có gì. Hàng optimistic sai không rollback được còn tệ hơn chờ 300ms.\n- **Failure mode:** Spinner mỗi lần gõ filter; empty state trông như error; optimistic create duplicate sau retry; error toast không recovery; SSR success rồi client refetch flash.\n- **Đo:** time-to-first-content, bucket thời gian spinner, tỷ lệ recovery lỗi, tỷ lệ rollback, RUM event “blank page.”\n\n**Pattern**\n\n- **Pending vs refreshing:** load lần đầu → skeleton **khớp layout** (CLS). Refetch → giữ hàng cũ, indicator nhẹ. Nuxt `useAsyncData` + `lazy` / `keep-alive` payload trước.\n- **Đừng flash:** delay spinner ~200ms; bỏ response thua race (AbortController, 13.5).\n- **Empty ≠ error ≠ zero filter result.** “Chưa có order nào” (CTA) vs “Không order nào khớp filter” (clear filter) vs “Không load được order” (retry).\n- **Error:** retry với backoff trên 5xx/network; đừng retry 4xx trừ 429. Copy **theo code**, kèm control retry. Error cấp widget, không phải cả shell (xem [19.2](./monitoring.md#192-error-boundaries-trong-vue)).\n- **Optimistic:** chỉ khi rollback rẻ và conflict hiếm (toggle, rename, reorder). Với payment / inventory: **pessimistic** hoặc state “pending trên server.”\n\n```ts\n// Decision: mutate cache immediately, roll back on 409/5xx, don't invent a second source of truth.\nasync function onToggle(id: string) {\n  const snapshot = queryClient.getQueryData([\"orders\"]);\n  queryClient.setQueryData([\"orders\"], optimisticToggle(snapshot, id));\n  try {\n    await $fetch(`/api/orders/${id}`, { method: \"PATCH\", body: { done: true } });\n  } catch {\n    queryClient.setQueryData([\"orders\"], snapshot);\n    toast.error(\"Couldn’t update — still not marked done\");\n  }\n}\n```"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Skeletons vs spinners vs nothing (cached).\n- Optimistic vs undo toast vs waiting.\n- Global query cache vs “this page owns the request” — cache is right for lists used in two places; it is how you get **stale permission** bugs if you don’t key by user/tenant.",
+            "vi": "- Skeleton vs spinner vs không gì (đã cache).\n- Optimistic vs undo toast vs chờ.\n- Global query cache vs “page này sở hữu request” — cache đúng cho list dùng ở hai chỗ; đó cũng là cách bạn dính bug **permission stale** nếu không key theo user/tenant."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- SSR hydrated empty, client refetches and the list jumps (Nuxt payload mismatch).\n- Optimistic UI vs **multi-tab** (BroadcastChannel / query broadcast).\n- Treating `[]` as error because `if (!data)`.",
+            "vi": "- SSR hydrate empty, client refetch rồi list nhảy (Nuxt payload mismatch).\n- Optimistic UI vs **multi-tab** (BroadcastChannel / query broadcast).\n- Coi `[]` là error vì `if (!data)`."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How do you cancel in-flight search? (13.5)\n- Where does pagination cursor live? (URL vs TanStack Query key)",
+            "vi": "- Cancel search đang bay thế nào? (13.5)\n- Pagination cursor sống ở đâu? (URL vs TanStack Query key)"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "13.4. CORS and Cookies from the Frontend",
+            "vi": "13.4. CORS và Cookie từ phía Frontend"
+          },
+          "id": {
+            "en": "134-cors-and-cookies-from-the-frontend",
+            "vi": "134-cors-va-cookie-tu-phia-frontend"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "“Why is the browser blocking my API?” / “Why aren’t cookies sent?” They want you to know this is **the browser**, not axios being rude.",
+            "vi": "“Sao browser chặn API?” / “Sao cookie không được gửi?” Họ muốn bạn biết đây là **browser**, không phải axios khó tính."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** Prefer **same-site** (browser → BFF on `app.example.com` / `example.com/api`) so CORS and third-party cookies disappear. If you must cross-origin: explicit `Access-Control-Allow-Origin: https://app.example.com` (never `*` with credentials), `Allow-Credentials: true`, FE `credentials: 'include'`.\n- **Constraint:** Cross-site cookies are dying. `SameSite=None; Secure` is the old third-party hack and will keep breaking. Don’t design a new SPA on `app.foo.com` talking to `api.bar.com` with cookies unless you have a very old SSO reason.\n- **Failure mode:** `*` + cookies (browser rejects); preflight failing on `Authorization` / `Content-Type: application/json`; CSRF on cookie-authenticated POST; thinking CORS protects the API from non-browsers (it doesn’t).\n- **Measure:** preflight count (OPTIONS cache via `Access-Control-Max-Age`), auth success rate after login, CSRF reject rate, Safari ITP bugs in RUM.\n\n**From the FE side**\n\n- Simple requests vs **preflight**. `application/json` + custom headers ⇒ OPTIONS. Don’t add vanity headers on every GET.\n- `fetch(url, { credentials: 'include' })` / axios `withCredentials: true`. Forgetting this looks like “random 401 after login.”\n- Cookie flags you should be able to recite: `HttpOnly`, `Secure`, `SameSite=Lax` (good default for first-party), `Path`, `__Host-` prefix. Lax will **not** send cookies on cross-site POST — that’s a feature (CSRF), and why OAuth callbacks need care.\n- CSRF: cookie session ⇒ same-site **or** double-submit / custom header the server checks. Bearer token in memory is not CSRF’d the same way (XSS is your problem instead). See security notes; don’t mix both poorly.\n- Nuxt: proxy `/api` in Nitro/dev to the upstream so **localhost doesn’t need CORS** during development — and prod uses the same origin via ingress.",
+            "vi": "- **Quyết định:** Ưu tiên **same-site** (browser → BFF trên `app.example.com` / `example.com/api`) để CORS và third-party cookie biến mất. Nếu bắt buộc cross-origin: `Access-Control-Allow-Origin: https://app.example.com` tường minh (không bao giờ `*` kèm credential), `Allow-Credentials: true`, FE `credentials: 'include'`.\n- **Ràng buộc:** Cross-site cookie đang chết. `SameSite=None; Secure` là hack third-party cũ và sẽ tiếp tục vỡ. Đừng thiết kế SPA mới trên `app.foo.com` nói chuyện `api.bar.com` bằng cookie trừ khi có lý do SSO rất cũ.\n- **Failure mode:** `*` + cookie (browser reject); preflight fail trên `Authorization` / `Content-Type: application/json`; CSRF trên POST auth bằng cookie; nghĩ CORS bảo vệ API khỏi non-browser (không phải).\n- **Đo:** số preflight (cache OPTIONS qua `Access-Control-Max-Age`), tỷ lệ auth thành công sau login, tỷ lệ CSRF reject, bug Safari ITP trong RUM.\n\n**Từ phía FE**\n\n- Simple request vs **preflight**. `application/json` + custom header ⇒ OPTIONS. Đừng gắn header cho vui trên mọi GET.\n- `fetch(url, { credentials: 'include' })` / axios `withCredentials: true`. Quên cái này trông như “401 ngẫu nhiên sau login.”\n- Cookie flag bạn phải thuộc: `HttpOnly`, `Secure`, `SameSite=Lax` (default tốt cho first-party), `Path`, prefix `__Host-`. Lax **không** gửi cookie trên POST cross-site — đó là feature (CSRF), và vì sao OAuth callback cần cẩn thận.\n- CSRF: cookie session ⇒ same-site **hoặc** double-submit / custom header server check. Bearer token trong memory không bị CSRF cùng cách (XSS mới là vấn đề). Xem note security; đừng mix cả hai một cách tồi.\n- Nuxt: proxy `/api` trong Nitro/dev lên upstream để **localhost không cần CORS** lúc dev — và prod dùng cùng origin qua ingress."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Cookie session (HttpOnly, first-party) vs Bearer in memory + refresh cookie. Seniors pick **BFF + first-party cookies** for browser apps unless you are a public API for third-party JS.\n- CORS on each microservice vs one BFF origin.",
+            "vi": "- Cookie session (HttpOnly, first-party) vs Bearer trong memory + refresh cookie. Senior chọn **BFF + first-party cookie** cho browser app trừ khi bạn là public API cho JS third-party.\n- CORS trên từng microservice vs một origin BFF."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Staging FE `https://pr-123.preview.com` vs API `https://api.staging.com` — every preview origin must be allowlisted or you use a **proxy**.\n- `localhost` vs `127.0.0.1` are different origins.\n- WebSocket handshake CORS is not the same as `fetch`; cookies still follow SameSite.",
+            "vi": "- Staging FE `https://pr-123.preview.com` vs API `https://api.staging.com` — mọi preview origin phải được allowlist hoặc bạn dùng **proxy**.\n- `localhost` vs `127.0.0.1` là origin khác nhau.\n- CORS handshake WebSocket không giống `fetch`; cookie vẫn theo SameSite."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- Does CORS stop curl from hitting the API? (No.)\n- How do you do auth for a mobile WebView?",
+            "vi": "- CORS có chặn curl hit API không? (Không.)\n- Auth cho mobile WebView thế nào?"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "13.5. AbortController and Timeouts",
+            "vi": "13.5. AbortController và Timeout"
+          },
+          "id": {
+            "en": "135-abortcontroller-and-timeouts",
+            "vi": "135-abortcontroller-va-timeout"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "“User types fast / navigates away. Do you still let those requests finish?”",
+            "vi": "“User gõ nhanh / navigate đi. Bạn vẫn để request chạy xong?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** **Abort GETs** that became irrelevant (search, route change, filter). **Timeout** all requests (including mutations) so a hung TCP isn’t an infinite spinner. **Do not blindly abort mutations** (pay, save) on unmount — let them finish or you will retry and double-submit; instead disable navigation or confirm, and keep the idempotency key.\n- **Constraint:** `fetch` does not timeout by default. Vue unmount does not cancel anything unless you wire it. Nuxt `useAsyncData` / VueUse can take a signal; axios needs `AbortController` (not the old `CancelToken`).\n- **Failure mode:** aborting the login POST when the component re-renders; ignoring `AbortError` and showing a red toast; one global timeout of 3s that kills file uploads; leaking listeners because you never aborted.\n- **Measure:** aborted vs failed vs timed-out in RUM, p95 duration by endpoint, orphan request rate after route changes.\n\n```ts\n// Decision: search is cancelable + 8s timeout; AbortError is not a user-facing failure.\nexport async function searchOrders(q: string, routeSignal: AbortSignal) {\n  const signal = AbortSignal.any([routeSignal, AbortSignal.timeout(8_000)]);\n  try {\n    return await $fetch(\"/api/orders\", { query: { q }, signal });\n  } catch (err) {\n    if (err instanceof DOMException && (err.name === \"AbortError\" || err.name === \"TimeoutError\")) {\n      return null; // superseded or gave up; UI keeps previous results or skeleton\n    }\n    throw err;\n  }\n}\n```\n\nIn Vue: create the controller in `watchEffect` / `watch` on the query, **abort in the cleanup**. In Nuxt, pass `signal` into `$fetch` tied to `vue:error` / unmount. On route leave, abort the **list** fetch, not the **in-flight checkout**.",
+            "vi": "- **Quyết định:** **Abort GET** đã thành thừa (search, đổi route, filter). **Timeout** mọi request (kể cả mutation) để TCP treo không thành spinner vô hạn. **Đừng abort mù mutation** (pay, save) khi unmount — để chúng chạy xong nếu không bạn sẽ retry và double-submit; thay vào đó disable navigation hoặc confirm, và giữ idempotency key.\n- **Ràng buộc:** `fetch` mặc định không timeout. Vue unmount không cancel gì trừ khi bạn nối dây. Nuxt `useAsyncData` / VueUse nhận signal được; axios cần `AbortController` (không phải `CancelToken` cũ).\n- **Failure mode:** abort POST login khi component re-render; bỏ qua `AbortError` rồi hiện toast đỏ; một global timeout 3s giết upload file; leak listener vì không abort.\n- **Đo:** aborted vs failed vs timed-out trong RUM, p95 duration theo endpoint, tỷ lệ request mồ côi sau đổi route.\n\n```ts\n// Decision: search is cancelable + 8s timeout; AbortError is not a user-facing failure.\nexport async function searchOrders(q: string, routeSignal: AbortSignal) {\n  const signal = AbortSignal.any([routeSignal, AbortSignal.timeout(8_000)]);\n  try {\n    return await $fetch(\"/api/orders\", { query: { q }, signal });\n  } catch (err) {\n    if (err instanceof DOMException && (err.name === \"AbortError\" || err.name === \"TimeoutError\")) {\n      return null; // superseded or gave up; UI keeps previous results or skeleton\n    }\n    throw err;\n  }\n}\n```\n\nTrong Vue: tạo controller trong `watchEffect` / `watch` trên query, **abort trong cleanup**. Trong Nuxt, truyền `signal` vào `$fetch` gắn với `vue:error` / unmount. Khi rời route, abort fetch **list**, không phải **checkout đang bay**."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Aggressive abort (saves battery and server) vs analytics that never see completed searches.\n- `AbortSignal.timeout` (standard) vs homemade `Promise.race` (don’t; race without abort leaves the socket running).",
+            "vi": "- Abort hung hăng (tiết kiệm battery và server) vs analytics không bao giờ thấy search hoàn thành.\n- `AbortSignal.timeout` (chuẩn) vs `Promise.race` tự chế (đừng; race mà không abort thì socket vẫn chạy)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Polyfill `AbortSignal.any` / `timeout` if you still support old WebViews.\n- Axios adapters that don’t forward `signal`.\n- `$fetch` / ofetch may **wrap** `AbortError` — inspect `err.name` / `err.cause`, still don’t toast it.\n- Service workers ignoring abort.\n- Treating timeout as 401 and logging the user out.",
+            "vi": "- Polyfill `AbortSignal.any` / `timeout` nếu còn support WebView cũ.\n- Axios adapter không forward `signal`.\n- `$fetch` / ofetch có thể **wrap** `AbortError` — inspect `err.name` / `err.cause`, vẫn đừng toast.\n- Service worker bỏ qua abort.\n- Coi timeout như 401 rồi logout user."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How does this interact with optimistic UI? (don’t abort the mutation you already reflected)\n- How do you timeout a WS? (heartbeat, not AbortController)",
+            "vi": "- Cái này tương tác optimistic UI thế nào? (đừng abort mutation bạn đã phản ánh)\n- Timeout WS thế nào? (heartbeat, không phải AbortController)"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "[← Back to Overview](../../README-en.md)",
+            "vi": "[← Back to Overview](../../README.md)"
+          }
+        }
+      ]
+    }
+  ]
+}

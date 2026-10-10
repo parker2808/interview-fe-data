@@ -1,0 +1,1833 @@
+{
+  "kind": "knowledge-doc",
+  "slug": "react",
+  "title": {
+    "en": "React",
+    "vi": "React"
+  },
+  "summary": {
+    "en": "You already know Vue 3. This file is not a React tutorial — it is a **Vue → React bridge** plus the **judgment** a senior React/Next round actually scores: re-render vs fine-grained reactivity, when an effect is a bug,…",
+    "vi": "Bạn đã biết Vue 3. File này không phải tutorial React — đây là **cầu nối Vue → React** cộng với **phán đoán** mà vòng senior React/Next thực sự chấm: re-render vs fine-grained reactivity, khi nào effect là bug, khi nào…"
+  },
+  "category": "react",
+  "order": 8,
+  "tags": [
+    "react",
+    "react"
+  ],
+  "sections": [
+    {
+      "id": {
+        "en": "intro",
+        "vi": "intro"
+      },
+      "title": {
+        "en": "React",
+        "vi": "React"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": {
+            "en": "React",
+            "vi": "React"
+          },
+          "id": {
+            "en": "react",
+            "vi": "react"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "You already know Vue 3. This file is not a React tutorial — it is a **Vue → React bridge** plus the **judgment** a senior React/Next round actually scores: re-render vs fine-grained reactivity, when an effect is a bug, when memo is theater, where data should load (Query vs RSC vs `useEffect`), and how composition/perf/auth differ from Nuxt habits. Interviewers are listening for **decision → constraint → failure mode → measure**, not a Counter. Map Composition API instincts here, then answer as if you own production.",
+            "vi": "Bạn đã biết Vue 3. File này không phải tutorial React — đây là **cầu nối Vue → React** cộng với **phán đoán** mà vòng senior React/Next thực sự chấm: re-render vs fine-grained reactivity, khi nào effect là bug, khi nào memo chỉ là diễn, data nên load ở đâu (Query vs RSC vs `useEffect`), và composition/perf/auth khác thói Nuxt thế nào. Interviewer nghe **quyết định → ràng buộc → failure mode → cách đo**, không phải một Counter. Map instinct Composition API sang đây, rồi trả lời như người đang chịu production."
+          }
+        },
+        {
+          "type": "thematic-break"
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "table-of-contents",
+        "vi": "table-of-contents"
+      },
+      "title": {
+        "en": "Table of Contents",
+        "vi": "Table of Contents"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Table of Contents",
+            "vi": "Table of Contents"
+          },
+          "id": {
+            "en": "table-of-contents",
+            "vi": "table-of-contents"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "**Core Concepts**\n\n1.1. [Virtual DOM & Reconciliation](#2011-virtual-dom--reconciliation)\n\n1.2. [Class Components vs Function Components + Hooks](#2012-class-components-vs-function-components--hooks)\n\n1.3. [JSX & Rendering Model](#2013-jsx--rendering-model)\n\n1.4. [Props vs State](#2014-props-vs-state)\n\n1.5. [Controlled Inputs (Vue `v-model` equivalent)](#2015-controlled-inputs-vue-v-model-equivalent)\n\n1.6. [Lists & Keys](#2016-lists--keys)\n\n1.7. [Effects: `useEffect` vs Vue `watch` / lifecycle](#2017-effects-useeffect-vs-vue-watch--lifecycle)\n\n1.8. [Derived values: `useMemo` vs Vue `computed`](#2018-derived-values-usememo-vs-vue-computed)\n\n1.9. [Stable callbacks: `useCallback`](#2019-stable-callbacks-usecallback)\n\n1.10. [Refs: `useRef` vs Vue `ref` / template ref](#20110-refs-useref-vs-vue-ref--template-ref)\n\n1.11. [Component lifecycle mental model](#20111-component-lifecycle-mental-model)\n\n1.12. [When to fetch data](#20112-when-to-fetch-data)",
+              "vi": "**Core Concepts**\n\n1.1. [Virtual DOM & Reconciliation](#2011-virtual-dom--reconciliation)\n\n1.2. [Class vs Function Components + Hooks](#2012-class-vs-function-components--hooks)\n\n1.3. [JSX & mô hình render](#2013-jsx--mô-hình-render)\n\n1.4. [Props vs State](#2014-props-vs-state)\n\n1.5. [Controlled input (tương đương `v-model`)](#2015-controlled-input-tương-đương-v-model)\n\n1.6. [Lists & Keys](#2016-lists--keys)\n\n1.7. [Effects: `useEffect` vs `watch` / lifecycle Vue](#2017-effects-useeffect-vs-watch--lifecycle-vue)\n\n1.8. [Giá trị suy diễn: `useMemo` vs `computed`](#2018-giá-trị-suy-diễn-usememo-vs-computed)\n\n1.9. [Callback ổn định: `useCallback`](#2019-callback-ổn-định-usecallback)\n\n1.10. [Refs: `useRef` vs `ref` Vue](#20110-refs-useref-vs-ref-vue)\n\n1.11. [Lifecycle theo góc nhìn React](#20111-lifecycle-theo-góc-nhìn-react)\n\n1.12. [Khi nào fetch data](#20112-khi-nào-fetch-data)"
+            },
+            {
+              "en": "**Advanced Features**\n\n2.1. [Context vs Vue Provide / Inject](#2021-context-vs-vue-provide--inject)\n\n2.2. [Portals vs Vue Teleport](#2022-portals-vs-vue-teleport)\n\n2.3. [Suspense](#2023-suspense)\n\n2.4. [Error Boundaries](#2024-error-boundaries)\n\n2.5. [Custom Hooks vs Vue Composables](#2025-custom-hooks-vs-vue-composables)\n\n2.6. [Children, slots mindset, and composition](#2026-children-slots-mindset-and-composition)\n\n2.7. [State libraries overview (Redux, Zustand, Jotai)](#2027-state-libraries-overview-redux-zustand-jotai)\n\n2.8. [Performance checklist for seniors](#2028-performance-checklist-for-seniors)\n\n2.9. [Route guards / middleware (SPA)](#2029-route-guards--middleware-spa)\n\n2.10. [Concurrent features: transitions and useDeferredValue](#20210-concurrent-features-transitions-and-usedeferredvalue)",
+              "vi": "**Advanced Features**\n\n2.1. [Context vs Provide / Inject](#2021-context-vs-provide--inject)\n\n2.2. [Portals vs Teleport](#2022-portals-vs-teleport)\n\n2.3. [Suspense](#2023-suspense)\n\n2.4. [Error Boundaries](#2024-error-boundaries)\n\n2.5. [Custom Hooks vs Composables](#2025-custom-hooks-vs-composables)\n\n2.6. [Children / tư duy slot](#2026-children--tư-duy-slot)\n\n2.7. [Tổng quan state library (Redux, Zustand, Jotai)](#2027-tổng-quan-state-library-redux-zustand-jotai)\n\n2.8. [Checklist performance cho senior](#2028-checklist-performance-cho-senior)\n\n2.9. [Route guards / middleware (SPA)](#2029-route-guards--middleware-spa)\n\n2.10. [Tính năng concurrent: transition và useDeferredValue](#20210-tính-năng-concurrent-transition-và-usedeferredvalue)"
+            }
+          ]
+        },
+        {
+          "type": "thematic-break"
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "20-react",
+        "vi": "20-react"
+      },
+      "title": {
+        "en": "20. React",
+        "vi": "20. React"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "20. React",
+            "vi": "20. React"
+          },
+          "id": {
+            "en": "20-react",
+            "vi": "20-react"
+          }
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "20.1. Core Concepts",
+            "vi": "20.1. Core Concepts"
+          },
+          "id": {
+            "en": "201-core-concepts",
+            "vi": "201-core-concepts"
+          }
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.1.1. Virtual DOM & Reconciliation",
+            "vi": "20.1.1. Virtual DOM & Reconciliation"
+          },
+          "id": {
+            "en": "2011-virtual-dom-reconciliation",
+            "vi": "2011-virtual-dom-reconciliation"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “How does React decide what to update?”\n- “Vue is fine-grained — why does my whole React tree re-render?”\n- “Do I still need `memo` if we turn on React Compiler?”\n- “What do keys actually do?”",
+            "vi": "- “React quyết định update cái gì?”\n- “Vue fine-grained — sao cả cây React của tôi re-render?”\n- “Bật React Compiler rồi thì còn cần `memo` không?”\n- “Key thực sự làm gì?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** React’s model is **UI = f(state)**: when state/props/context change, the component **function runs again**, returns a new element tree, then **reconciles** against the previous tree and **commits** DOM mutations. Vue 3’s model is a **reactivity graph**: mutate a `ref`, and only tracked effects/computed/components re-run. That contrast *is* the interview. You do not “patch a dependency” in React the way Vue patches a getter — you re-execute, then diff.\n\n**Constraint.** Reconciliation matches by **element type + position**, and for lists by **`key`**. Same type + same key → update in place (state preserved). Different type or different key → unmount/remount (state reset). A child re-renders because its parent re-rendered, **unless** it bails out (`React.memo` shallow-equal props, `useState`/`useReducer` `Object.is` same value, Compiler-inserted memo, or it is not a React child of that parent). Context consumers **do not** bail out of a value change even if wrapped in `memo`.\n\n**Failure mode.** Index keys on a reorderable list (inputs keep the wrong row’s DOM). Assuming “I only changed `count`, so `<ExpensiveChild />` is free” — in React it is not free unless you paid for a bailout. Blanket `memo` on every component (extra shallow compares, still broken if props are new object/function identities every render). Treating Compiler as magic that erases architectural mistakes (state too high, Context as a event bus).\n\n**Measure.** React Profiler: *why did this render* (props, hooks, context, parent). Production: INP / long tasks, not a hunch. Compiler: `react-compiler-healthcheck` / compiled output — if the Compiler already memoizes a path, deleting hand-rolled `memo` can be the senior move.",
+            "vi": "**Quyết định.** Model React là **UI = f(state)**: khi state/props/context đổi, **function component chạy lại**, trả về element tree mới, rồi **reconcile** với tree trước và **commit** mutation lên DOM. Model Vue 3 là **reactivity graph**: mutate một `ref`, chỉ effect/computed/component bị track mới chạy lại. Contrast đó *chính là* câu phỏng vấn. React không “patch một dependency” như Vue patch getter — bạn re-execute, rồi diff.\n\n**Ràng buộc.** Reconciliation match theo **element type + position**, list thì theo **`key`**. Cùng type + cùng key → update tại chỗ (giữ state). Khác type hoặc khác key → unmount/remount (reset state). Child re-render vì parent re-render, **trừ khi** nó bail out (`React.memo` so sánh props nông, `useState`/`useReducer` `Object.is` cùng value, Compiler chèn memo, hoặc nó không phải React child của parent đó). Context consumer **không** bail out khi value đổi, kể cả đã bọc `memo`.\n\n**Failure mode.** Key = index trên list reorder được (input giữ nhầm DOM của hàng khác). Tưởng “chỉ đổi `count` thì `<ExpensiveChild />` miễn phí” — React không miễn phí trừ khi bạn trả giá bailout. `memo` tràn mọi component (thêm shallow compare, vẫn vỡ nếu props là object/function identity mới mỗi render). Coi Compiler là phép thuật xóa lỗi kiến trúc (state đặt quá cao, Context làm event bus).\n\n**Cách đo.** React Profiler: *why did this render* (props, hooks, context, parent). Production: INP / long task, không phải cảm giác. Compiler: `react-compiler-healthcheck` / compiled output — nếu Compiler đã memo path đó, xóa `memo` viết tay mới là nước đi senior."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "|  | Vue 3 | React (classic + Compiler) |\n| --- | --- | --- |\n| Update trigger | Proxy/dep tracking | Explicit `setState` → re-render |\n| Default work | Re-run affected subscribers | Re-run the component, then children |\n| Skip work | Compiler flags, `v-once`, computed cache | Bailout, `memo`, Compiler auto-memo |\n| Mental model | Graph | Snapshot of UI from props+state |\n\nVue often *feels* cheaper to write. React is simpler to reason about as a snapshot, and the ecosystem (RSC, Compiler, concurrent) exists because the default re-render is expensive at scale.",
+            "vi": "|  | Vue 3 | React (classic + Compiler) |\n| --- | --- | --- |\n| Trigger update | Proxy/dep tracking | `setState` tường minh → re-render |\n| Work mặc định | Chạy lại subscriber bị ảnh hưởng | Chạy lại component, rồi children |\n| Bỏ work | Compiler flag, `v-once`, computed cache | Bailout, `memo`, Compiler auto-memo |\n| Mental model | Graph | Snapshot UI từ props+state |\n\nVue thường *cảm giác* rẻ hơn khi viết. React đơn giản hơn khi lý luận như snapshot, và ecosystem (RSC, Compiler, concurrent) tồn tại vì re-render mặc định đắt khi scale."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Changing a component’s **type** at runtime (`isCondition ? Foo : Bar` as the element type, or remounting via `key={user.id}` on a form) **destroys state**. That is a feature when you want a reset; a bug when you did not.\n- `memo` compares **props**, not “did business data change.” `style={{ margin: 0 }}` or `onClick={() => ...}` still break bailout.\n- React Compiler changes the **default answer** from “wrap it in `memo`/`useCallback`” to “measure, keep render pure, let the Compiler memoize, only hand-memoize interop or Profiler-proven holes.”",
+            "vi": "- Đổi **type** component lúc runtime (`isCondition ? Foo : Bar` làm element type, hoặc remount bằng `key={user.id}` trên form) **phá state**. Đó là feature khi bạn muốn reset; là bug khi bạn không muốn.\n- `memo` so **props**, không phải “business data có đổi không.” `style={{ margin: 0 }}` hoặc `onClick={() => ...}` vẫn phá bailout.\n- React Compiler đổi **câu trả lời mặc định** từ “bọc `memo`/`useCallback`” thành “đo, giữ render pure, để Compiler memo, chỉ hand-memoize interop hoặc lỗ Profiler đã chứng minh.”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- Walk a list reorder with and without stable keys (see [20.1.6](#2016-lists--keys)).\n- “Does `memo` skip reconciliation of descendants?” — it skips **rendering that function**; if it renders, children still run unless they bail out too.\n- “Fiber / concurrent” — reconciliation can be **interruptible**; that does not change the Vue-vs-React update model (see [20.2.10](#20210-concurrent-features-transitions-and-usedeferredvalue)).",
+            "vi": "- Walk list reorder có và không có key ổn định (xem [20.1.6](#2016-lists--keys)).\n- “`memo` có skip reconciliation của descendant không?” — nó skip **chạy function đó**; nếu nó render, children vẫn chạy trừ khi chúng cũng bail out.\n- “Fiber / concurrent” — reconciliation có thể **interrupt được**; điều đó không đổi model update Vue-vs-React (xem [20.2.10](#20210-tính-năng-concurrent-transition-và-usedeferredvalue))."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.1.2. Class Components vs Function Components + Hooks",
+            "vi": "20.1.2. Class vs Function Components + Hooks"
+          },
+          "id": {
+            "en": "2012-class-components-vs-function-components-hooks",
+            "vi": "2012-class-vs-function-components-hooks"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “Why can’t I call a Hook inside `if`?”\n- “Are class components dead? Then how do Error Boundaries work?”\n- “How do you migrate Options API thinking to Hooks?”",
+            "vi": "- “Sao không được gọi Hook trong `if`?”\n- “Class component chết chưa? Vậy Error Boundary hoạt động thế nào?”\n- “Map tư duy Options API sang Hooks ra sao?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** New code is **function components + Hooks**. Classes are legacy surface area: old codebases, and **Error Boundaries**, which historically (and still, in core React) are **class-only** (`componentDidCatch` / `getDerivedStateFromError`). Use `react-error-boundary` rather than inventing a class in every app — but know *why* the class exists.\n\n**Constraint.** Hooks are **positional**. React stores Hook state in a list on the fiber and pairs calls **by order**. Call order must be identical every render. That is why `eslint-plugin-react-hooks` (`rules-of-hooks`, `exhaustive-deps`) is a **correctness linter**, not style. Name custom Hooks `useX` so the linter can see them.\n\n**Failure mode.** `if (enabled) useEffect(...)` → after a toggle, every later Hook is mis-aligned (wrong state, crash). A helper named `onlineStatus()` that calls `useState` — linter silent, rules still broken. “I’ll put the Hook in a loop over columns” — same bug.\n\n**Measure.** Hooks plugin in CI on `error`. Review: any `use*` behind a condition is a reject. Do not “prove it works” by clicking once.\n\n**Vue bridge**\n\n| Vue | React |\n| --- | --- |\n| Options API | Class components (historical parallel) |\n| Composition API / `<script setup>` | Function components + Hooks |\n| `ref` / `reactive` | `useState` / `useReducer` |\n| `onMounted` / `watch` | `useEffect` (not a 1:1 lifecycle map — see [20.1.7](#2017-effects-useeffect-vs-vue-watch--lifecycle)) |\n| `onErrorCaptured` | Error Boundary class / library |",
+            "vi": "**Quyết định.** Code mới là **function component + Hooks**. Class là diện tích legacy: codebase cũ, và **Error Boundary**, historically (và vẫn, trong core React) **chỉ class** (`componentDidCatch` / `getDerivedStateFromError`). Dùng `react-error-boundary` chứ đừng invent class trong mọi app — nhưng phải biết *vì sao* class còn tồn tại.\n\n**Ràng buộc.** Hook là **positional**. React lưu Hook state thành list trên fiber và pair lời gọi **theo thứ tự**. Call order phải giống nhau mọi render. Vì vậy `eslint-plugin-react-hooks` (`rules-of-hooks`, `exhaustive-deps`) là **linter correctness**, không phải style. Đặt tên custom Hook `useX` để linter nhìn thấy.\n\n**Failure mode.** `if (enabled) useEffect(...)` → sau khi toggle, mọi Hook phía sau lệch hàng (sai state, crash). Helper tên `onlineStatus()` gọi `useState` — linter im, rule vẫn vỡ. “Nhét Hook vào loop theo cột” — cùng bug.\n\n**Cách đo.** Plugin Hooks trong CI ở mức `error`. Review: bất kỳ `use*` đứng sau condition là reject. Đừng “chứng minh chạy được” bằng click một lần.\n\n**Cầu nối Vue**\n\n| Vue | React |\n| --- | --- |\n| Options API | Class component (song song lịch sử) |\n| Composition API / `<script setup>` | Function component + Hooks |\n| `ref` / `reactive` | `useState` / `useReducer` |\n| `onMounted` / `watch` | `useEffect` (không map lifecycle 1:1 — xem [20.1.7](#2017-effects-useeffect-vs-watch--lifecycle-vue)) |\n| `onErrorCaptured` | Error Boundary class / library |"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "Classes give `componentDidCatch` and a single `this`. Hooks give composition without mixin hell (the same reason you left Options API mixins). Do not mix “class for everything because Error Boundaries” — isolate the boundary, keep the tree functions.",
+            "vi": "Class cho `componentDidCatch` và một `this`. Hooks cho composition không mixin hell (cùng lý do bạn bỏ mixin Options API). Đừng “class cho mọi thứ vì Error Boundary” — cô lập boundary, giữ tree là function."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Exhaustive-deps warnings silenced with `eslint-disable` are how stale closures ship.\n- `useEffectEvent` (when available in your React version) is the structured escape for “read latest props without re-subscribing” — not a blanket ignore comment.",
+            "vi": "- Warning exhaustive-deps bị `eslint-disable` là cách stale closure lên production.\n- `useEffectEvent` (khi version React của bạn có) là lối thoát có cấu trúc cho “đọc props mới nhất mà không re-subscribe” — không phải comment ignore tràn lan."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- Implement an Error Boundary — they want the class methods, and what it **does not** catch (event handlers, async, SSR). See [20.2.4](#2024-error-boundaries).\n- “Can I call Hooks in a class?” — no.",
+            "vi": "- Implement Error Boundary — họ muốn class method, và thứ nó **không** bắt (event handler, async, SSR). Xem [20.2.4](#2024-error-boundaries).\n- “Gọi Hook trong class được không?” — không."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.1.3. JSX & Rendering Model",
+            "vi": "20.1.3. JSX & mô hình render"
+          },
+          "id": {
+            "en": "2013-jsx-rendering-model",
+            "vi": "2013-jsx-mo-hinh-render"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “What does returning `null` do vs `false` vs `undefined`?”\n- “Why did my UI print `0`?”\n- “When do I need a Fragment, and can it have a key?”",
+            "vi": "- “`return null` khác `false` khác `undefined` thế nào?”\n- “Sao UI in ra `0`?”\n- “Khi nào cần Fragment, và Fragment có `key` được không?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** JSX is `React.createElement` / `jsx()`. A component returns a **description** of UI, not DOM nodes. You do not `v-if` a template — you return `null` or omit the child.\n\n**Constraint.** In `{cond && <X />}`, these render **nothing**: `false`, `null`, `undefined`. These **render text**: `0`, `NaN`, `''` (empty string is a text node). Booleans are ignored; numbers are not. Fragments group without a DOM node: `<>...</>` or `<Fragment key={id}>`. **Only `Fragment` accepts `key`** — short syntax `<>` cannot.\n\n**Failure mode.** `{count && <Badge />}` with `count === 0` paints **0**. `{items.length && <List />}` same bug. Mapping two siblings without a keyed Fragment remounts or warns. Invalid HTML nesting (`<p><div>`) hydrates wrong (especially in Next).\n\n**Measure.** React DevTools + the real DOM text node. Hydration warnings in the console are signal, not noise.\n\n**Vue bridge**\n\n- Vue SFC: template + script + style. React: JS/TS + JSX (styles via modules / Tailwind / CSS-in-JS).\n- `v-if` / `v-else-if` → ternary or early `return null`.\n- `v-show` has no primitive — CSS `hidden` / unmount explicitly; don’t fake it with `&&` if you needed display toggle.\n\n```tsx\n{count && <Badge />}           // pitfall: count=0 renders \"0\"\n{count > 0 ? <Badge /> : null} // explicit\n{count ? <Badge /> : null}\n```",
+            "vi": "**Quyết định.** JSX là `React.createElement` / `jsx()`. Component trả về **mô tả** UI, không phải DOM node. Bạn không `v-if` template — bạn `return null` hoặc bỏ child.\n\n**Ràng buộc.** Trong `{cond && <X />}`, những cái này render **không gì**: `false`, `null`, `undefined`. Những cái này **render text**: `0`, `NaN`, `''` (empty string vẫn là text node). Boolean bị bỏ qua; number thì không. Fragment nhóm mà không tạo DOM node: `<>...</>` hoặc `<Fragment key={id}>`. **Chỉ `Fragment` nhận `key`** — cú pháp ngắn `<>` không được.\n\n**Failure mode.** `{count && <Badge />}` khi `count === 0` vẽ **0**. `{items.length && <List />}` cùng bug. Map hai sibling không có Fragment có key thì remount hoặc warn. HTML lồng sai (`<p><div>`) hydrate lệch (đặc biệt Next).\n\n**Cách đo.** React DevTools + text node trên DOM thật. Hydration warning trên console là tín hiệu, không phải nhiễu.\n\n**Cầu nối Vue**\n\n- Vue SFC: template + script + style. React: JS/TS + JSX (style qua module / Tailwind / CSS-in-JS).\n- `v-if` / `v-else-if` → ternary hoặc early `return null`.\n- `v-show` không có primitive — CSS `hidden` / unmount tường minh; đừng giả bằng `&&` nếu bạn cần toggle display.\n\n```tsx\n{count && <Badge />}           // pitfall: count=0 renders \"0\"\n{count > 0 ? <Badge /> : null} // explicit\n{count ? <Badge /> : null}\n```"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "`&&` is terse and unsafe for numbers. Ternary is noisier and honest. Prefer `null` for “render nothing” in APIs you control (`return null` from the component).",
+            "vi": "`&&` ngắn và không an toàn với number. Ternary dài hơn và trung thực. Ưu tiên `null` cho “không render gì” trong API bạn kiểm soát (`return null` từ component)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- `undefined` as a **prop** vs as a child: missing prop vs default; children `undefined` is empty.\n- Arrays as children flatten; nested arrays still need keys on the **elements React sees**.",
+            "vi": "- `undefined` như **prop** vs như child: missing prop vs default; children `undefined` là empty.\n- Array child bị flatten; nested array vẫn cần key trên **element mà React nhìn thấy**."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- “Why Fragments over a wrapper `div`?” — layout/CSS (flex/grid children), valid HTML (`<tr>`), a11y.\n- Keyed Fragment when a list item is multiple siblings (see [20.1.6](#2016-lists--keys)).",
+            "vi": "- “Sao Fragment hơn wrapper `div`?” — layout/CSS (flex/grid children), HTML hợp lệ (`<tr>`), a11y.\n- Fragment có key khi một list item là nhiều sibling (xem [20.1.6](#2016-lists--keys))."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.1.4. Props vs State",
+            "vi": "20.1.4. Props vs State"
+          },
+          "id": {
+            "en": "2014-props-vs-state",
+            "vi": "2014-props-vs-state"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “Can the child mutate props?”\n- “Why is `items.push` a React bug when it is normal Vue?”\n- “Where should this state live?”",
+            "vi": "- “Child mutate props được không?”\n- “Sao `items.push` là bug React trong khi Vue thì bình thường?”\n- “State này nên sống ở đâu?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** **Props** are the parent’s data flowing down — read-only contract. **State** is owned by this component (or a store/URL/server cache — see [state-management-react.md](./state-management-react.md)). Updates **replace** values. React’s `setState` bails out if `Object.is` says the same reference.\n\n**Constraint.** Vue’s proxy **sees in-place mutation**. React does not. `user.name = 'x'; setUser(user)` is a no-op. You copy: `setUser({ ...user, name: 'x' })` or a reducer/Immer. Children never “own” props; they call `onChange` and the owner updates.\n\n**Failure mode.** Mutating props and wondering why the parent is stale. Storing a copy of props in state and forgetting to sync (you probably wanted derivation, not an effect). Lifting state so high that every keystroke re-renders a dashboard.\n\n**Measure.** Profiler: who owns the state vs who re-renders. If a leaf input re-renders a page, the state is in the wrong place.\n\n**Vue bridge**\n\n| Vue | React |\n| --- | --- |\n| `defineProps` (readonly-ish; mutation is a smell) | function args; **do not mutate** |\n| `emit('update:modelValue')` / `v-model` | `value` + `onChange` (controlled) |\n| local `ref` / `reactive` | `useState` / `useReducer` |\n| mutate `state.list.push` | new array: `[...list, item]` |",
+            "vi": "**Quyết định.** **Props** là data của parent chảy xuống — contract read-only. **State** do component này sở hữu (hoặc store/URL/server cache — xem [state-management-react.md](./state-management-react.md)). Update **thay** value. `setState` của React bail out nếu `Object.is` nói cùng reference.\n\n**Ràng buộc.** Proxy Vue **thấy mutation tại chỗ**. React thì không. `user.name = 'x'; setUser(user)` là no-op. Bạn copy: `setUser({ ...user, name: 'x' })` hoặc reducer/Immer. Child không bao giờ “own” props; chúng gọi `onChange` và owner update.\n\n**Failure mode.** Mutate props rồi hỏi sao parent stale. Copy props vào state rồi quên sync (có lẽ bạn muốn derivation, không phải effect). Lift state quá cao đến mức mỗi phím gõ re-render cả dashboard.\n\n**Cách đo.** Profiler: ai own state vs ai re-render. Nếu input ở lá re-render cả page, state đang ở sai chỗ.\n\n**Cầu nối Vue**\n\n| Vue | React |\n| --- | --- |\n| `defineProps` (readonly-ish; mutation là mùi) | function args; **đừng mutate** |\n| `emit('update:modelValue')` / `v-model` | `value` + `onChange` (controlled) |\n| `ref` / `reactive` local | `useState` / `useReducer` |\n| mutate `state.list.push` | array mới: `[...list, item]` |"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "Immutability makes `memo` and `Object.is` cheap and time-travel/debug possible. It is more ceremony than Pinia. Immer (in RTK or by hand) is the team-scale compromise.",
+            "vi": "Immutability làm `memo` và `Object.is` rẻ, time-travel/debug được. Ceremony nhiều hơn Pinia. Immer (trong RTK hoặc tự dùng) là thỏa hiệp scale theo team."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Structural sharing matters for large trees; cloning the **root of a 10k-row table** on each cell edit is a perf bug — localize state or use an atomic store.\n- Props that are new objects every parent render (`config={{}}`) look like “state changed” to `memo` children.",
+            "vi": "- Structural sharing quan trọng với tree lớn; clone **root của table 10k hàng** mỗi lần sửa cell là bug perf — localize state hoặc dùng atomic store.\n- Props là object mới mỗi lần parent render (`config={{}}`) trông như “state đổi” với child đã `memo`."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- Controlled vs uncontrolled ([20.1.5](#2015-controlled-inputs-vue-v-model-equivalent)).\n- “Single source of truth” when URL, server, and local all want the same field — [state-management-react.md](./state-management-react.md).",
+            "vi": "- Controlled vs uncontrolled ([20.1.5](#2015-controlled-input-tương-đương-v-model)).\n- “Single source of truth” khi URL, server, và local đều muốn cùng field — [state-management-react.md](./state-management-react.md)."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.1.5. Controlled Inputs (Vue `v-model` equivalent)",
+            "vi": "20.1.5. Controlled input (tương đương `v-model`)"
+          },
+          "id": {
+            "en": "2015-controlled-inputs-vue-v-model-equivalent",
+            "vi": "2015-controlled-input-tuong-uong-v-model"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “Controlled vs uncontrolled — when each?”\n- “Why can’t I control a file input?”\n- “Would you use React Hook Form or `useState` per field?”",
+            "vi": "- “Controlled vs uncontrolled — khi nào cái nào?”\n- “Sao không control được file input?”\n- “Dùng React Hook Form hay `useState` từng field?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** **Controlled**: React state is the source of truth (`value` + `onChange`). **Uncontrolled**: the DOM is (`defaultValue` / `defaultChecked` + ref / form `FormData`). **File inputs are uncontrolled by platform** — the browser will not let you `value={file}`; you read `e.target.files`. That is not a React quirk.\n\n**Constraint.** You must not **flip** a field from uncontrolled to controlled (or the reverse) across renders — React warns and the cursor/value glitches. A fully controlled form with 80 fields in one parent re-renders the whole form every keystroke unless you isolate fields or stop using React state as the draft.\n\n**Failure mode.** `<input value={x} />` with no `onChange` → frozen input. `value={possibleUndefined}` that later becomes a string → uncontrolled→controlled warning. Building Formik-style “one big values object in Context” and then asking why typing janks.\n\n**Measure.** Type at 60fps: Profiler on the form, INP. If RHF/`register` (uncontrolled) kills the jank, the problem was **React owning every keystroke**, not “React is slow.”\n\n**Vue bridge**\n\n`v-model` is sugar for value + emit. React has no sugar in core. Vue can mutate a ref bound with `v-model`; React must `setState` a new string.",
+            "vi": "**Quyết định.** **Controlled**: React state là source of truth (`value` + `onChange`). **Uncontrolled**: DOM mới là (`defaultValue` / `defaultChecked` + ref / form `FormData`). **File input uncontrolled theo platform** — browser không cho `value={file}`; bạn đọc `e.target.files`. Đó không phải quirk React.\n\n**Ràng buộc.** Không được **lật** field từ uncontrolled sang controlled (hoặc ngược) giữa các render — React warn và cursor/value giật. Form controlled đủ 80 field trong một parent re-render cả form mỗi phím gõ trừ khi bạn isolate field hoặc thôi dùng React state làm draft.\n\n**Failure mode.** `<input value={x} />` không `onChange` → input đóng băng. `value={possibleUndefined}` sau đó thành string → warning uncontrolled→controlled. Formik-style “một object values khổng lồ trong Context” rồi hỏi sao gõ bị jank.\n\n**Cách đo.** Gõ 60fps: Profiler trên form, INP. Nếu RHF/`register` (uncontrolled) hết jank, vấn đề là **React own mọi keystroke**, không phải “React chậm.”\n\n**Cầu nối Vue**\n\n`v-model` là sugar cho value + emit. React core không có sugar. Vue có thể mutate ref bind `v-model`; React phải `setState` string mới."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "| Approach | Use when | Cost |\n| --- | --- | --- |\n| Controlled `useState` | Single field, immediate validation UI, masks | Re-render on each change |\n| Uncontrolled + `FormData` | Simple native forms, file uploads, progressive enhancement | Weaker per-keystroke UI |\n| **React Hook Form** | Production forms: `register` (uncontrolled), `Controller` for design-system inputs, Zod/Yup resolver | Team dependency; still isolate `Controller` |\n| Next **Server Actions** + `useActionState` | Small mutations, progressive enhancement | Awkward for rich client UX |\n\nSenior default for a real app form: **RHF (or similar)**, schema validation, uncontrolled where the design system allows, `Controller` only at the leaf. Do not reinvent RHF with 40 `useState`s. Do not put the draft in Zustand/Redux unless the draft must survive route changes **and** URL is the wrong place.",
+            "vi": "| Approach | Dùng khi | Cost |\n| --- | --- | --- |\n| Controlled `useState` | Một field, UI validate tức thì, mask | Re-render mỗi lần đổi |\n| Uncontrolled + `FormData` | Form native đơn giản, upload file, progressive enhancement | UI theo từng phím yếu hơn |\n| **React Hook Form** | Form production: `register` (uncontrolled), `Controller` cho input design system, Zod/Yup resolver | Dependency team; vẫn isolate `Controller` |\n| Next **Server Actions** + `useActionState` | Mutation nhỏ, progressive enhancement | Khó cho UX client giàu |\n\nDefault senior cho form app thật: **RHF (hoặc tương đương)**, schema validation, uncontrolled nơi design system cho phép, `Controller` chỉ ở lá. Đừng reinvent RHF bằng 40 `useState`. Đừng nhét draft vào Zustand/Redux trừ khi draft phải sống sót đổi route **và** URL là chỗ sai."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- File input: `onChange` → `FileList`; never `value={file}`. Reset via `inputRef.current.value = ''` or `key` remount.\n- Controlled `<select>` / `<input type=\"date\">` empty string vs `undefined` still trips the flip warning.\n- Debouncing the **state** that hits the server is fine; debouncing the **input `value`** makes the field feel broken.",
+            "vi": "- File input: `onChange` → `FileList`; không bao giờ `value={file}`. Reset bằng `inputRef.current.value = ''` hoặc remount `key`.\n- Controlled `<select>` / `<input type=\"date\">` empty string vs `undefined` vẫn dính warning lật mode.\n- Debounce **state** đánh server thì ổn; debounce **`value` của input** làm field cảm giác hỏng."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How you’d wire a shadcn/MUI `TextField` (must be `Controller`).\n- Server-side validation errors mapped back onto fields vs only client Zod.",
+            "vi": "- Wire shadcn/MUI `TextField` thế nào (phải `Controller`).\n- Lỗi validate server map lại từng field vs chỉ Zod phía client."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.1.6. Lists & Keys",
+            "vi": "20.1.6. Lists & Keys"
+          },
+          "id": {
+            "en": "2016-lists-keys",
+            "vi": "2016-lists-keys"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “Why not `key={index}`?”\n- “I used a Fragment in `map` and React warned — why?”\n- “Can I use key to reset a component?”",
+            "vi": "- “Sao không `key={index}`?”\n- “Tôi dùng Fragment trong `map` rồi React warn — vì sao?”\n- “Dùng key để reset component được không?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** `key` is **identity** across renders, not a performance hint. Prefer a **stable business id**. Index keys are acceptable **only** for static lists that never insert, delete, filter, or reorder.\n\n**Constraint.** Key is on the **element in the array**, not a normal prop the child should use. Missing keys → React falls back to index internally and warns. Two children in a `map` need `<Fragment key={id}>` (short `<>` cannot take a key).\n\n**Failure mode.** Reorder/sort with index keys: **uncontrolled inputs and component state stick to the DOM position**, not the item — the classic “wrong row edited” bug. `key={Math.random()}` remounts every render (lost focus, extra effects). `key={item.id}` on a form when `id` goes `undefined → 123` remounts mid-submit.\n\n**Measure.** Put an uncontrolled `<input>` in each row, reorder, watch which text stays. Profiler: remount vs update (`mount` vs `update` in the flamegraph).\n\n**Vue bridge**\n\nSame contract as Vue `:key`. Vue also warns on index keys for the same state-reuse reason. React is **less forgiving** because more UI is “state in the component” rather than a single reactive object.\n\n```tsx\n// Pitfall: index keys + reorder → input state follows the row index\n{todos.map((t, i) => (\n  <li key={i}>\n    <input defaultValue={t.title} />\n  </li>\n))}\n\n// Pitfall: Fragment short syntax cannot carry identity\n{items.map((item) => (\n  <>\n    <dt>{item.term}</dt>\n    <dd>{item.def}</dd>\n  </>\n))}\n\n{items.map((item) => (\n  <Fragment key={item.id}>\n    <dt>{item.term}</dt>\n    <dd>{item.def}</dd>\n  </Fragment>\n))}\n```",
+            "vi": "**Quyết định.** `key` là **identity** giữa các lần render, không phải gợi ý performance. Ưu tiên **id nghiệp vụ ổn định**. Key = index chấp nhận được **chỉ** với list tĩnh không insert, delete, filter, hay reorder.\n\n**Ràng buộc.** Key nằm trên **element trong array**, không phải prop bình thường để child dùng. Thiếu key → React fallback index nội bộ và warn. Hai child trong `map` cần `<Fragment key={id}>` (`<>` ngắn không nhận key).\n\n**Failure mode.** Reorder/sort với key index: **uncontrolled input và component state dính vị trí DOM**, không dính item — bug kinh điển “sửa nhầm hàng”. `key={Math.random()}` remount mỗi render (mất focus, effect thừa). `key={item.id}` trên form khi `id` đi `undefined → 123` remount giữa lúc submit.\n\n**Cách đo.** Nhét uncontrolled `<input>` vào mỗi hàng, reorder, xem text nào ở lại. Profiler: remount vs update (`mount` vs `update` trên flamegraph).\n\n**Cầu nối Vue**\n\nCùng contract với Vue `:key`. Vue cũng warn key = index vì cùng lý do reuse state. React **ít khoan dung hơn** vì UI nhiều “state trong component” hơn một object reactive duy nhất.\n\n```tsx\n// Pitfall: index keys + reorder → input state follows the row index\n{todos.map((t, i) => (\n  <li key={i}>\n    <input defaultValue={t.title} />\n  </li>\n))}\n\n// Pitfall: Fragment short syntax cannot carry identity\n{items.map((item) => (\n  <>\n    <dt>{item.term}</dt>\n    <dd>{item.def}</dd>\n  </>\n))}\n\n{items.map((item) => (\n  <Fragment key={item.id}>\n    <dt>{item.term}</dt>\n    <dd>{item.def}</dd>\n  </Fragment>\n))}\n```"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "Using `key={user.id}` on a wizard/stepper **intentionally remounts** and clears local state — a valid reset API. Document it; don’t use it as a hammer to “fix” stale state (that’s usually a closure/effect bug).",
+            "vi": "`key={user.id}` trên wizard/stepper **cố ý remount** và xóa local state — reset API hợp lệ. Document nó; đừng dùng như búa để “fix” state stale (thường là bug closure/effect)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Duplicate keys (two rows with `id: 0`) → missing/wrong updates, hard to debug.\n- Virtualization (`react-window` / TanStack Virtual): keys still must be stable; index + window offset is a footgun.",
+            "vi": "- Key trùng (hai hàng `id: 0`) → update thiếu/sai, khó debug.\n- Virtualization (`react-window` / TanStack Virtual): key vẫn phải ổn định; index + window offset là footgun."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- “Why did changing key run `useEffect` cleanup + setup again?” — remount is a new fiber.\n- Reconciliation type+key from [20.1.1](#2011-virtual-dom--reconciliation).",
+            "vi": "- “Sao đổi key lại chạy cleanup + setup `useEffect`?” — remount là fiber mới.\n- Reconciliation type+key từ [20.1.1](#2011-virtual-dom--reconciliation)."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.1.7. Effects: `useEffect` vs Vue `watch` / lifecycle",
+            "vi": "20.1.7. Effects: `useEffect` vs `watch` / lifecycle Vue"
+          },
+          "id": {
+            "en": "2017-effects-useeffect-vs-vue-watch-lifecycle",
+            "vi": "2017-effects-useeffect-vs-watch-lifecycle-vue"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “You Probably Don’t Need an Effect — so when *do* you?”\n- “Why does Strict Mode run my effect twice?”\n- “Where should I fetch?”",
+            "vi": "- “You Probably Don’t Need an Effect — vậy *khi nào* cần?”\n- “Sao Strict Mode chạy effect hai lần?”\n- “Fetch ở đâu?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** `useEffect` is for **synchronizing with an external system** after paint: subscriptions, non-React DOM APIs, analytics that must see committed UI, a third-party widget. It is **not** `onMounted`, not `watch` for derived data, and **not** the default fetch API. Derived values belong in render. User-event logic belongs in event handlers. Data: **RSC or TanStack Query/SWR**, not a hand-rolled effect, unless you are in a dumb SPA with no library and no server renderer.\n\n**Constraint.** Effects run **after paint**. Dependency array is the subscription key: `[]` is “after mount + Strict Mode remount,” not “once in the lifetime of the tab.” Cleanup must undo the setup (**idempotent setup/cleanup**) because Strict Mode in development **mounts → cleanup → mounts again** to shake out leaks. Fetch-in-effect without abort races the last response.\n\n**Failure mode.** `useEffect(() => setX(transform(y)), [y])` — extra render, tearing, you wanted `const x = transform(y)` in render. Fetch in effect while the team has Query or Next Server Components. Missing deps → **stale closures**. `setState` in effect that retriggers the same effect → loop. Treating double-invoke as a React bug and disabling Strict Mode.\n\n**Measure.** React’s “effect ran” in Strict Mode is expected. Network tab: duplicate GETs in dev vs prod. Race: slow request A, fast request B, A wins — without abort. Prefer Query’s `queryKey` + cancel as the measured solution.\n\n**Vue bridge**\n\n| Need | Vue | React |\n| --- | --- | --- |\n| Sync *external* system | `watch` / `watchEffect` + `onUnmounted` | `useEffect` + cleanup |\n| After mount (DOM read) | `onMounted` | `useEffect` or `useLayoutEffect` if you must read layout |\n| Derived data | `computed` | calculate in render / `useMemo` |\n| Watch a value to fetch | `watch(id, fetch)` (still racy) | Query / RSC; effect + `AbortController` only if you must |\n\nVue `watch` feels like “when this ref changes.” React `useEffect` is “after this snapshot commits, align the outside world.” If there is no outside world, you do not need an effect.\n\n```tsx\n// Stale closure: interval always sees count from the first render\nuseEffect(() => {\n  const id = setInterval(() => setCount(count + 1), 1000)\n  return () => clearInterval(id)\n}, []) // missing count — or use setCount(c => c + 1)\n\n// Race: without abort, an older fetch can win\nuseEffect(() => {\n  const ac = new AbortController()\n  fetch(`/api/items/${id}`, { signal: ac.signal })\n    .then((r) => r.json())\n    .then((data) => setItems(data))\n    .catch((e) => {\n      if (e.name === 'AbortError') return\n      setError(e)\n    })\n  return () => ac.abort()\n}, [id])\n```\n\nIf this fetch effect is your production architecture, you are behind — see [20.1.12](#20112-when-to-fetch-data).",
+            "vi": "**Quyết định.** `useEffect` để **đồng bộ hệ thống bên ngoài** sau paint: subscription, DOM API không-React, analytics phải thấy UI đã commit, widget bên thứ ba. Nó **không** phải `onMounted`, không phải `watch` cho data suy diễn, và **không** phải fetch API mặc định. Giá trị suy diễn thuộc về render. Logic sự kiện user thuộc event handler. Data: **RSC hoặc TanStack Query/SWR**, không phải effect tự chế, trừ khi bạn ở SPA trần không lib và không server renderer.\n\n**Ràng buộc.** Effect chạy **sau paint**. Dependency array là khóa subscription: `[]` là “sau mount + Strict Mode remount,” không phải “một lần trong đời tab.” Cleanup phải undo setup (**setup/cleanup idempotent**) vì Strict Mode ở development **mount → cleanup → mount lại** để lắc leak. Fetch trong effect không abort thì race response cuối.\n\n**Failure mode.** `useEffect(() => setX(transform(y)), [y])` — thêm một render, tearing, bạn muốn `const x = transform(y)` trong render. Fetch trong effect trong khi team đã có Query hoặc Next Server Component. Thiếu deps → **stale closure**. `setState` trong effect kích lại chính effect đó → loop. Coi double-invoke là bug React rồi tắt Strict Mode.\n\n**Cách đo.** “Effect ran” của React trong Strict Mode là expected. Network tab: GET trùng ở dev vs prod. Race: request A chậm, B nhanh, A thắng — nếu không abort. Ưu tiên `queryKey` + cancel của Query làm lời giải đã đo.\n\n**Cầu nối Vue**\n\n| Nhu cầu | Vue | React |\n| --- | --- | --- |\n| Sync hệ thống *ngoài* | `watch` / `watchEffect` + `onUnmounted` | `useEffect` + cleanup |\n| Sau mount (đọc DOM) | `onMounted` | `useEffect` hoặc `useLayoutEffect` nếu phải đọc layout |\n| Data suy diễn | `computed` | tính trong render / `useMemo` |\n| Watch value để fetch | `watch(id, fetch)` (vẫn race) | Query / RSC; effect + `AbortController` chỉ khi bắt buộc |\n\nVue `watch` cảm giác “khi ref này đổi.” React `useEffect` là “sau khi snapshot này commit, căn thế giới bên ngoài.” Không có thế giới bên ngoài thì không cần effect.\n\n```tsx\n// Stale closure: interval always sees count from the first render\nuseEffect(() => {\n  const id = setInterval(() => setCount(count + 1), 1000)\n  return () => clearInterval(id)\n}, []) // missing count — or use setCount(c => c + 1)\n\n// Race: without abort, an older fetch can win\nuseEffect(() => {\n  const ac = new AbortController()\n  fetch(`/api/items/${id}`, { signal: ac.signal })\n    .then((r) => r.json())\n    .then((data) => setItems(data))\n    .catch((e) => {\n      if (e.name === 'AbortError') return\n      setError(e)\n    })\n  return () => ac.abort()\n}, [id])\n```\n\nNếu fetch effect này là kiến trúc production của bạn, bạn đang chậm — xem [20.1.12](#20112-khi-nào-fetch-data)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "Effects are the escape hatch that made Hooks complete. They are also the #1 source of production bugs in Vue-trained React codebases (because `onMounted` + `watch` mapped too literally).",
+            "vi": "Effect là escape hatch khiến Hooks đủ bộ. Chúng cũng là nguồn bug production #1 trong codebase React do người Vue train (vì map `onMounted` + `watch` quá literal)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Strict Mode double-invoke: subscriptions must unsubscribe; fetches must abort or ignore stale `id`.\n- `void fetch()` in render (not in an effect) is worse — render must stay pure.\n- Event handlers should not be “done in an effect because I don’t want to pass arguments.”",
+            "vi": "- Strict Mode double-invoke: subscription phải unsubscribe; fetch phải abort hoặc ignore `id` stale.\n- `void fetch()` trong render (không trong effect) còn tệ hơn — render phải pure.\n- Event handler không nên “làm trong effect vì tôi không muốn truyền argument.”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- `useLayoutEffect` vs `useEffect` ([20.1.11](#20111-component-lifecycle-mental-model)).\n- “How do you test this?” — don’t; extract the sync, or use Query and test the queryFn.",
+            "vi": "- `useLayoutEffect` vs `useEffect` ([20.1.11](#20111-lifecycle-theo-góc-nhìn-react)).\n- “Test cái này thế nào?” — đừng; extract phần sync, hoặc dùng Query và test queryFn."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.1.8. Derived values: `useMemo` vs Vue `computed`",
+            "vi": "20.1.8. Giá trị suy diễn: `useMemo` vs `computed`"
+          },
+          "id": {
+            "en": "2018-derived-values-usememo-vs-vue-computed",
+            "vi": "2018-gia-tri-suy-dien-usememo-vs-computed"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “Should I `useMemo` this?”\n- “Is this like `computed`?”\n- “What does React Compiler change?”",
+            "vi": "- “Có nên `useMemo` cái này không?”\n- “Có giống `computed` không?”\n- “React Compiler đổi gì?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** First **derive in render** (`const total = items.reduce(...)`). `useMemo` is for (1) **proven expensive** work or (2) **referential stability** of an object/array passed to a `memo` child or as a dep of an effect. It is **not** Vue `computed`. Vue `computed` is lazy, auto-tracked, and the default for derived state. React `useMemo` is an opt-in cache keyed by a **dependency array you declared**.\n\n**Constraint.** Wrong deps → stale memo. Deps that are new objects every time → memo never hits. Compiler (when enabled) **already memoizes** many of these; stacking hand-`useMemo` can be noise.\n\n**Failure mode.** Wrapping every constant in `useMemo` “for performance” (the Hook call + compare can cost more than the math). Using `useMemo` to hide an effect that should not exist. Memoizing a cheap boolean.\n\n**Measure.** Profile the parent **before** adding `useMemo`. If the Compiler is on, look at compiled output / Profiler again after deleting memos.\n\n**Vue bridge**\n\n|  | Vue `computed` | React `useMemo` |\n| --- | --- | --- |\n| Deps | Auto-track | Manual array |\n| Default? | Yes for derived state | No — render first |\n| Lazy | Yes | Runs on render if deps changed (not a Vue-style lazy getter) |",
+            "vi": "**Quyết định.** Trước hết **derive trong render** (`const total = items.reduce(...)`). `useMemo` cho (1) work **đã chứng minh đắt** hoặc (2) **ổn định reference** của object/array đưa vào child `memo` hoặc làm dep của effect. Nó **không** phải Vue `computed`. Vue `computed` lazy, auto-track, và mặc định cho derived state. React `useMemo` là cache opt-in khóa theo **dependency array bạn khai báo**.\n\n**Ràng buộc.** Sai deps → memo stale. Deps là object mới mỗi lần → memo không bao giờ hit. Compiler (khi bật) **đã memo** nhiều path này; chồng thêm `useMemo` tay có thể là nhiễu.\n\n**Failure mode.** Bọc mọi hằng trong `useMemo` “cho perf” (gọi Hook + compare có thể đắt hơn phép toán). Dùng `useMemo` để giấu effect không nên tồn tại. Memo hóa một boolean rẻ.\n\n**Cách đo.** Profile parent **trước** khi thêm `useMemo`. Nếu Compiler đang bật, nhìn compiled output / Profiler lại sau khi xóa memo.\n\n**Cầu nối Vue**\n\n|  | Vue `computed` | React `useMemo` |\n| --- | --- | --- |\n| Deps | Auto-track | Array thủ công |\n| Mặc định? | Có, cho derived state | Không — render trước |\n| Lazy | Có | Chạy lúc render nếu deps đổi (không phải lazy getter kiểu Vue) |"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "Manual memo is documentation of “this identity matters.” Overuse is a junior tell. Underuse that breaks a memoized child (new `[]` every time) is a real bug — fix identity there, not by memoizing the entire page.",
+            "vi": "Memo tay là documentation “identity này quan trọng.” Lạm dụng là dấu junior. Thiếu memo đến mức phá child đã memo (mỗi lần một `[]` mới) là bug thật — sửa identity chỗ đó, không phải memo cả page."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- `useMemo(() => ({ width }), [width])` to keep `memo(Child)` happy — valid, or lift the object, or Compiler.\n- Memoizing JSX (`useMemo(() => <Child />)`) is usually the wrong primitive (`memo` / composition).",
+            "vi": "- `useMemo(() => ({ width }), [width])` để `memo(Child)` vui — hợp lệ, hoặc lift object, hoặc Compiler.\n- Memo JSX (`useMemo(() => <Child />)`) thường sai primitive (`memo` / composition)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- Referential stability for [useCallback](#2019-stable-callbacks-usecallback).\n- “Would you still teach `useMemo` in 2026?” — yes as a **concept** (purity, identity); the **habit** depends on Compiler adoption on that team.",
+            "vi": "- Ổn định reference cho [useCallback](#2019-callback-ổn-định-usecallback).\n- “2026 còn dạy `useMemo` không?” — có, như **concept** (purity, identity); **thói quen** phụ thuộc team đã adopt Compiler chưa."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.1.9. Stable callbacks: `useCallback`",
+            "vi": "20.1.9. Callback ổn định: `useCallback`"
+          },
+          "id": {
+            "en": "2019-stable-callbacks-usecallback",
+            "vi": "2019-callback-on-inh-usecallback"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “Why `useCallback` if functions are cheap?”\n- “Vue doesn’t need this — why does React?”",
+            "vi": "- “Function đã rẻ, sao còn `useCallback`?”\n- “Vue không cần cái này — sao React cần?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** `useCallback(fn, deps)` keeps **function identity** stable when that identity is a **contract**: a `memo` child’s prop, a dep of `useEffect`, a context value, a register in a third-party lib. It does **not** make the function body cheaper.\n\n**Constraint.** Vue children update because **their reactive data changed**, not because the parent’s `onClick` was a new function. React `memo` children **will** re-render if `onClick` is a new identity every time. That is the whole reason `useCallback` exists.\n\n**Failure mode.** `useCallback` around every handler “for perf.” Unstable deps (`useCallback(() => do(x), [])` with stale `x`). Passing `useCallback` to a DOM node that was never memoized — wasted.\n\n**Measure.** Profiler on the **memoized child**, not the parent. If the child is a native `<button>`, skip `useCallback` unless something else depends on identity.\n\n**Vue bridge**\n\nRarely needed. Closest pain in Vue is passing new object props that break `v-once` / manual caching, not function identity.",
+            "vi": "**Quyết định.** `useCallback(fn, deps)` giữ **function identity** ổn định khi identity đó là **contract**: prop của child `memo`, dep của `useEffect`, context value, register với lib bên thứ ba. Nó **không** làm thân function rẻ hơn.\n\n**Ràng buộc.** Child Vue update vì **reactive data của chúng đổi**, không vì `onClick` của parent là function mới. Child React đã `memo` **sẽ** re-render nếu `onClick` identity mới mỗi lần. Đó là toàn bộ lý do `useCallback` tồn tại.\n\n**Failure mode.** `useCallback` quanh mọi handler “cho perf.” Deps không ổn định (`useCallback(() => do(x), [])` với `x` stale). Truyền `useCallback` vào DOM node chưa từng memo — lãng phí.\n\n**Cách đo.** Profiler trên **child đã memo**, không phải parent. Nếu child là `<button>` native, bỏ `useCallback` trừ khi thứ khác phụ thuộc identity.\n\n**Cầu nối Vue**\n\nHiếm khi cần. Nỗi gần nhất bên Vue là truyền object prop mới phá `v-once` / cache tay, không phải function identity."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "React Compiler often auto-memoizes callbacks. Senior answer in a Compiler shop: **don’t sprinkle `useCallback` by policy**; keep handlers in event scope; add it when Profiler or a non-compiled child demands identity. In a pre-Compiler shop: `useCallback` at the boundary of `memo` leaves.",
+            "vi": "React Compiler thường auto-memo callback. Câu senior trong shop đã Compiler: **đừng rải `useCallback` theo policy**; giữ handler trong scope event; thêm khi Profiler hoặc child chưa compile đòi identity. Shop pre-Compiler: `useCallback` ở biên child `memo`."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Context `value={{ onLogin: useCallback(...) }}` — you still need a **stable value object** or split functions into their own context ([20.2.1](#2021-context-vs-vue-provide--inject)).\n- Listing `setState` in deps is fine (React guarantees identity); listing `state` when you could use a functional update is how callbacks churn.",
+            "vi": "- Context `value={{ onLogin: useCallback(...) }}` — bạn vẫn cần **value object ổn định** hoặc tách function sang context riêng ([20.2.1](#2021-context-vs-provide--inject)).\n- Liệt kê `setState` trong deps thì ổn (React đảm bảo identity); liệt kê `state` khi có thể dùng functional update là cách callback churn."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- `startTransition` in a callback vs memoizing it ([20.2.10](#20210-concurrent-features-transitions-and-usedeferredvalue)).",
+            "vi": "- `startTransition` trong callback vs memo hóa nó ([20.2.10](#20210-tính-năng-concurrent-transition-và-usedeferredvalue))."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.1.10. Refs: `useRef` vs Vue `ref` / template ref",
+            "vi": "20.1.10. Refs: `useRef` vs `ref` Vue"
+          },
+          "id": {
+            "en": "20110-refs-useref-vs-vue-ref-template-ref",
+            "vi": "20110-refs-useref-vs-ref-vue"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “Is `useRef` like Vue `ref`?”\n- “Why doesn’t changing `.current` re-render?”\n- “Refs vs state for a timer id / latest callback?”",
+            "vi": "- “`useRef` có giống Vue `ref` không?”\n- “Sao đổi `.current` không re-render?”\n- “Ref vs state cho timer id / callback mới nhất?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** `useRef` is a **mutable box** (`{ current }`) that **survives renders and does not notify React**. It is **not** Vue `ref()`. Vue `ref()` is reactive state. React `useRef` is an instance field. Vue **template ref** (DOM/component instance) is the close analog of React DOM `useRef`.\n\n**Constraint.** Assigning `ref.current = x` is invisible to rendering. Read refs in **effects and handlers**, not as the source of rendered output (you’ll show stale UI). Don’t use a ref to “avoid” state when the user should see the change.\n\n**Failure mode.** Using `useRef` for `count` then wondering why the view is stuck. Reading `ref.current` during render for branching (inconsistent with concurrent rendering). Vue-trained `const x = ref(0)` translated to `useRef(0)` instead of `useState`.\n\n**Measure.** If the UI must update, it is state. If you are storing a node, timeout id, AbortController, or “latest value for a subscription,” it is a ref.\n\n**Vue bridge**\n\n| Use | Vue | React |\n| --- | --- | --- |\n| Reactive value | `ref(0)` / `reactive` | `useState` / `useReducer` |\n| DOM node | template `ref=\"el\"` | `useRef<HTMLDivElement>(null)` |\n| Timer / WS / “latest fn” | non-reactive `let` in `setup` | `useRef` |\n| Child component instance | template ref | usually don’t; lift state or `forwardRef`/`useImperativeHandle` (escape hatch) |",
+            "vi": "**Quyết định.** `useRef` là **hộp mutable** (`{ current }`) **sống qua render và không báo React**. Nó **không** phải Vue `ref()`. Vue `ref()` là reactive state. React `useRef` là instance field. **Template ref** Vue (DOM/component instance) mới gần analog với React DOM `useRef`.\n\n**Ràng buộc.** Gán `ref.current = x` vô hình với rendering. Đọc ref trong **effect và handler**, không lấy làm nguồn output render (UI sẽ stale). Đừng dùng ref để “tránh” state khi user phải thấy thay đổi.\n\n**Failure mode.** Dùng `useRef` cho `count` rồi hỏi sao view đứng im. Đọc `ref.current` lúc render để phân nhánh (không nhất quán với concurrent rendering). Người Vue train `const x = ref(0)` dịch thành `useRef(0)` thay vì `useState`.\n\n**Cách đo.** UI phải update → state. Lưu node, timeout id, AbortController, hoặc “value mới nhất cho subscription” → ref.\n\n**Cầu nối Vue**\n\n| Use | Vue | React |\n| --- | --- | --- |\n| Giá trị reactive | `ref(0)` / `reactive` | `useState` / `useReducer` |\n| DOM node | template `ref=\"el\"` | `useRef<HTMLDivElement>(null)` |\n| Timer / WS / “fn mới nhất” | `let` không reactive trong `setup` | `useRef` |\n| Child component instance | template ref | thường đừng; lift state hoặc `forwardRef`/`useImperativeHandle` (escape hatch) |"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "`useImperativeHandle` is the React equivalent of poking a child — legal for video players/focus managers; a smell for passing data that should have been props.",
+            "vi": "`useImperativeHandle` là tương đương React của việc thọc tay vào child — hợp pháp với video player/focus manager; mùi khi truyền data lẽ ra phải là props."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Callback refs vs object refs: callback refs re-run when the node attaches; needed for lists/virtualization.\n- During concurrent render, **don’t write** to refs in the render body (side effect). Write in effects/handlers.",
+            "vi": "- Callback ref vs object ref: callback ref chạy lại khi node attach; cần cho list/virtualization.\n- Trong concurrent render, **đừng ghi** ref trong thân render (side effect). Ghi trong effect/handler."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- “How do you keep an event listener stable but read latest props?” — ref to latest + effect that subscribes once (or `useEffectEvent`).",
+            "vi": "- “Giữ event listener ổn định nhưng đọc props mới nhất thế nào?” — ref tới latest + effect subscribe một lần (hoặc `useEffectEvent`)."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.1.11. Component lifecycle mental model",
+            "vi": "20.1.11. Lifecycle theo góc nhìn React"
+          },
+          "id": {
+            "en": "20111-component-lifecycle-mental-model",
+            "vi": "20111-lifecycle-theo-goc-nhin-react"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “Map `componentDidMount` to Hooks.”\n- “Why must render be pure?”\n- “When `useLayoutEffect`?”",
+            "vi": "- “Map `componentDidMount` sang Hooks.”\n- “Sao render phải pure?”\n- “Khi nào `useLayoutEffect`?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** Stop naming class lifecycle first. Think **phases**:\n\n1. **Render (pure):** given props/state/context, return JSX. No network, no `setState`, no DOM writes. Concurrent React may **render twice** (or discard a render) — purity is correctness.\n1. **Commit:** React touches the DOM.\n1. **Layout effects** (`useLayoutEffect`): after DOM updates, **before paint** — measure, restore scroll, sync a non-React widget that must not flash.\n1. **Passive effects** (`useEffect`): after paint — subscriptions, logging, non-urgent sync.\n\n**Constraint.** `useLayoutEffect` **blocks paint**. Using it to `setState` from `getBoundingClientRect` can **thrash** (layout → setState → layout). Prefer CSS, ResizeObserver, or measure once.\n\n**Failure mode.** `useEffect` for derived state (extra paint of wrong UI). `useLayoutEffect` on the server (warning: it cannot run on SSR — gate or `useEffect`). Impure render (`Math.random()` / `Date.now()` in JSX) → hydration mismatch in Next.\n\n**Measure.** Layout thrashing: Performance panel (forced reflow). Hydration: Next overlay / console mismatch.\n\n**Vue bridge**\n\n| Class | Hooks (approximate, not equal) |\n| --- | --- |\n| `componentDidMount` | `useEffect(..., [])` (Strict Mode: setup+cleanup+setup in dev) |\n| `componentDidUpdate` | `useEffect(..., [deps])` |\n| `componentWillUnmount` | effect cleanup |\n| `shouldComponentUpdate` | `memo` / bailout / Compiler |\n| `getSnapshotBeforeUpdate` | `useLayoutEffect` (rare) |\n\nVue `onBeforeUpdate` / `onUpdated` do not map cleanly; don’t force them.",
+            "vi": "**Quyết định.** Đừng đặt tên class lifecycle lên trước. Nghĩ **phase**:\n\n1. **Render (pure):** cho props/state/context, trả JSX. Không network, không `setState`, không ghi DOM. Concurrent React có thể **render hai lần** (hoặc vứt một render) — purity là correctness.\n1. **Commit:** React chạm DOM.\n1. **Layout effects** (`useLayoutEffect`): sau DOM update, **trước paint** — đo, restore scroll, sync widget không-React không được flash.\n1. **Passive effects** (`useEffect`): sau paint — subscription, logging, sync không gấp.\n\n**Ràng buộc.** `useLayoutEffect` **chặn paint**. Dùng nó `setState` từ `getBoundingClientRect` có thể **thrash** (layout → setState → layout). Ưu tiên CSS, ResizeObserver, hoặc đo một lần.\n\n**Failure mode.** `useEffect` cho derived state (thêm một paint UI sai). `useLayoutEffect` trên server (warning: không chạy được SSR — gate hoặc `useEffect`). Render impure (`Math.random()` / `Date.now()` trong JSX) → lệch hydration trên Next.\n\n**Cách đo.** Layout thrash: Performance panel (forced reflow). Hydration: overlay Next / console mismatch.\n\n**Cầu nối Vue**\n\n| Class | Hooks (xấp xỉ, không bằng) |\n| --- | --- |\n| `componentDidMount` | `useEffect(..., [])` (Strict Mode: setup+cleanup+setup ở dev) |\n| `componentDidUpdate` | `useEffect(..., [deps])` |\n| `componentWillUnmount` | cleanup của effect |\n| `shouldComponentUpdate` | `memo` / bailout / Compiler |\n| `getSnapshotBeforeUpdate` | `useLayoutEffect` (hiếm) |\n\nVue `onBeforeUpdate` / `onUpdated` không map sạch; đừng ép."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "Layout effects remove flicker (tooltip position) at the cost of INP. Default to `useEffect`. If you see a flash, then layout-effect the **measurement**, not your entire business logic.",
+            "vi": "Layout effect bỏ flicker (vị trí tooltip) với giá INP. Default `useEffect`. Thấy flash rồi mới layout-effect **phần đo**, không phải cả business logic."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "```tsx\n// Thrash: measure → setState → new layout → measure ...\nuseLayoutEffect(() => {\n  setHeight(el.current.getBoundingClientRect().height)\n}, [items, height]) // height in deps is a loop waiting to happen\n```",
+            "vi": "```tsx\n// Thrash: measure → setState → new layout → measure ...\nuseLayoutEffect(() => {\n  setHeight(el.current.getBoundingClientRect().height)\n}, [items, height]) // height in deps is a loop waiting to happen\n```"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- Strict Mode double render in dev — purity, not “React is broken.”\n- RSC: there is **no** componentDidMount on the server tree; effects only exist on Client Components.",
+            "vi": "- Strict Mode double render ở dev — purity, không phải “React hỏng.”\n- RSC: **không có** componentDidMount trên server tree; effect chỉ tồn tại trên Client Component."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.1.12. When to fetch data",
+            "vi": "20.1.12. Khi nào fetch data"
+          },
+          "id": {
+            "en": "20112-when-to-fetch-data",
+            "vi": "20112-khi-nao-fetch-data"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “Fetch in `useEffect`?”\n- “TanStack Query vs Next Server Components?”\n- “How do you cancel in-flight requests?”",
+            "vi": "- “Fetch trong `useEffect`?”\n- “TanStack Query vs Next Server Component?”\n- “Cancel request đang bay thế nào?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** Pick the **source of truth and the runtime**:\n\n| Situation | Default |\n| --- | --- |\n| Next App Router, data for the document, SEO, secrets, DB | **async Server Component** `fetch` / data layer |\n| Client interactivity on cached server data (filters, polling, mutations, shared cache across islands) | **TanStack Query / SWR** |\n| Dumb Vite SPA, no Query yet | Effect + abort is the *minimum*; still prefer Query |\n| After a mutation | Query `invalidateQueries` and/or Next `revalidatePath` / `revalidateTag` |\n\nDo **not** fetch in `useEffect` when Query or RSC already exists on the project. That is the senior line.\n\n**Constraint.** RSC fetch runs on the server (bundle + secrets stay off the client) but is **request/cache scoped**, not a live client cache. Query is a **client cache** (stale-while-revalidate, dedupe, retries). Effects have neither unless you build them.\n\n**Failure mode.** Waterfall of client effects (layout fetch → child fetch). Duplicate of the same list in Redux **and** Query. RSC `await` chain that could be `Promise.all` ([nextjs.md](./nextjs.md) §21.12).\n\n**Measure.** Network waterfall screenshots, TTFB vs time-to-interactive, cache hit rates (Query Devtools / Next cache logs for your version).\n\n**Vue bridge**\n\n| Vue / Nuxt | React / Next |\n| --- | --- |\n| `onMounted` + `fetch` | the trap; same as `useEffect` fetch |\n| Nuxt `useAsyncData` / `useFetch` | RSC `await` + optional Query on the client |\n| Pinia holding the list | usually **wrong** — Query/RSC |",
+            "vi": "**Quyết định.** Chọn **source of truth và runtime**:\n\n| Tình huống | Default |\n| --- | --- |\n| Next App Router, data cho document, SEO, secret, DB | **async Server Component** `fetch` / data layer |\n| Interactivity client trên data server đã cache (filter, polling, mutation, cache share giữa island) | **TanStack Query / SWR** |\n| Vite SPA trần, chưa có Query | Effect + abort là *tối thiểu*; vẫn nên Query |\n| Sau mutation | Query `invalidateQueries` và/hoặc Next `revalidatePath` / `revalidateTag` |\n\n**Đừng** fetch trong `useEffect` khi project đã có Query hoặc RSC. Đó là lằn ranh senior.\n\n**Ràng buộc.** RSC fetch chạy trên server (bundle + secret không xuống client) nhưng **scope theo request/cache**, không phải live client cache. Query là **client cache** (stale-while-revalidate, dedupe, retry). Effect không có cả hai trừ khi bạn tự dựng.\n\n**Failure mode.** Waterfall effect phía client (layout fetch → child fetch). List cùng một thứ vừa Redux **vừa** Query. Chuỗi RSC `await` lẽ ra `Promise.all` ([nextjs.md](./nextjs.md) §21.12).\n\n**Cách đo.** Screenshot network waterfall, TTFB vs time-to-interactive, cache hit rate (Query Devtools / Next cache log theo version).\n\n**Cầu nối Vue**\n\n| Vue / Nuxt | React / Next |\n| --- | --- |\n| `onMounted` + `fetch` | cái bẫy; giống fetch `useEffect` |\n| Nuxt `useAsyncData` / `useFetch` | RSC `await` + Query tùy chọn phía client |\n| Pinia giữ list | thường **sai** — Query/RSC |"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "RSC wins first paint and bundle size; it loses “typeahead that shares cache with a widget three routes away” unless you add Query. Query wins UX for live client data; it ships JS and needs a provider. Effects win nothing at senior level except honesty in a tiny SPA.",
+            "vi": "RSC thắng first paint và bundle size; thua “typeahead share cache với widget cách ba route” trừ khi thêm Query. Query thắng UX data live phía client; ship JS và cần provider. Effect không thắng gì ở mức senior ngoài sự trung thực trong SPA nhỏ."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Race + `AbortController` if you truly are in an effect ([20.1.7](#2017-effects-useeffect-vs-vue-watch--lifecycle)).\n- Don’t block navigation on a client fetch that the server already had.",
+            "vi": "- Race + `AbortController` nếu bạn thực sự ở trong effect ([20.1.7](#2017-effects-useeffect-vs-watch--lifecycle-vue)).\n- Đừng chặn navigation vì client fetch mà server đã có sẵn."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- Cache layers in Next ([nextjs.md](./nextjs.md) §21.10).\n- Why server lists do not belong in Redux ([state-management-react.md](./state-management-react.md)).",
+            "vi": "- Các tầng cache Next ([nextjs.md](./nextjs.md) §21.10).\n- Vì sao list server không thuộc Redux ([state-management-react.md](./state-management-react.md))."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "20.2. Advanced Features",
+            "vi": "20.2. Advanced Features"
+          },
+          "id": {
+            "en": "202-advanced-features",
+            "vi": "202-advanced-features"
+          }
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.2.1. Context vs Vue Provide / Inject",
+            "vi": "20.2.1. Context vs Provide / Inject"
+          },
+          "id": {
+            "en": "2021-context-vs-vue-provide-inject",
+            "vi": "2021-context-vs-provide-inject"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “How do you avoid prop drilling?”\n- “Why is my app re-rendering on every keystroke in Context?”\n- “Context vs Zustand?”",
+            "vi": "- “Tránh prop drilling thế nào?”\n- “Sao app re-render mỗi phím gõ trong Context?”\n- “Context vs Zustand?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** Context is **dependency injection** for **low-frequency** values: theme, locale, current user **id/session snapshot**, feature flags, a query client. It is **not** a store for high-frequency updates (mouse, draft text, animation frame, cart qty if it ticks often).\n\n**Constraint.** Any `Provider` `value` change (`Object.is`) re-renders **all** consumers below, and `memo` on the consumer **does not** skip context changes. Split providers (**theme vs user vs form**) so a tick in one tree does not paint the other. Stabilize `value` (split state/dispatch contexts — the Redux pattern).\n\n**Failure mode.** One `AppContext` with `{ user, theme, cart, setCart, searchQuery }`. A form draft in Context. Using Context because “we don’t want another library” at 200 consumers.\n\n**Measure.** Profiler: click, watch the whole tree highlight. If yes, split or move to Zustand/Jotai with selectors.\n\n**Vue bridge**\n\n≈ `provide` / `inject`. Vue’s provide is not a render-fanout in the same way (consumers are tracked). React Context is **broadcast re-render**. That difference surprises Vue seniors.",
+            "vi": "**Quyết định.** Context là **dependency injection** cho value **tần suất thấp**: theme, locale, **id/session snapshot** user hiện tại, feature flag, query client. Nó **không** phải store cho update tần suất cao (chuột, draft text, animation frame, cart qty nếu tick thường xuyên).\n\n**Ràng buộc.** Mọi đổi `value` của `Provider` (`Object.is`) re-render **mọi** consumer bên dưới, và `memo` trên consumer **không** skip đổi context. Tách provider (**theme vs user vs form**) để tick một cây không sơn cây kia. Ổn định `value` (tách context state/dispatch — pattern Redux).\n\n**Failure mode.** Một `AppContext` với `{ user, theme, cart, setCart, searchQuery }`. Draft form trong Context. Dùng Context vì “không muốn thêm lib” với 200 consumer.\n\n**Cách đo.** Profiler: click, nhìn cả tree highlight. Nếu có, tách hoặc chuyển Zustand/Jotai kèm selector.\n\n**Cầu nối Vue**\n\n≈ `provide` / `inject`. Provide Vue không fan-out render cùng cách (consumer được track). React Context là **broadcast re-render**. Khác biệt đó làm Vue senior bất ngờ."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "|  | Context | Zustand / Jotai |\n| --- | --- | --- |\n| API | built-in | extra lib |\n| Re-render | all consumers of that provider | selected slice |\n| SSR/RSC | easy for static values | hydrate carefully |",
+            "vi": "|  | Context | Zustand / Jotai |\n| --- | --- | --- |\n| API | built-in | thêm lib |\n| Re-render | mọi consumer của provider đó | slice đã select |\n| SSR/RSC | dễ với value tĩnh | hydrate cẩn thận |"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- `value={{ theme }}` new object every render → consumers always update.\n- Auth user object that is a new reference every fetch — memoize or pass `userId` + Query.",
+            "vi": "- `value={{ theme }}` object mới mỗi render → consumer luôn update.\n- Object user auth reference mới mỗi fetch — memoize hoặc truyền `userId` + Query."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- Full layering: [state-management-react.md](./state-management-react.md).\n- “Can I put Query data in Context?” — Query already has a cache; don’t duplicate.",
+            "vi": "- Layer đầy đủ: [state-management-react.md](./state-management-react.md).\n- “Nhét Query data vào Context được không?” — Query đã có cache; đừng nhân đôi."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.2.2. Portals vs Vue Teleport",
+            "vi": "20.2.2. Portals vs Teleport"
+          },
+          "id": {
+            "en": "2022-portals-vs-vue-teleport",
+            "vi": "2022-portals-vs-teleport"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “How do modals escape `overflow: hidden`?”\n- “Do portal events bubble to `document` or to React parents?”",
+            "vi": "- “Modal thoát `overflow: hidden` thế nào?”\n- “Event portal bubble ra `document` hay ra React parent?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** `createPortal(child, domNode)` **paints** into `domNode` (usually `document.body`) but the **React tree parent stays the same**. Use it for modals, toasts, popovers that must escape clipping/stacking.\n\n**Constraint.** **Events still bubble in the React tree**, not the DOM tree. A click inside a portal modal still reaches React parents of the `createPortal` call. `stopPropagation` on a DOM parent **outside** that React subtree will not see the click the way you think.\n\n**Failure mode.** Assuming Teleport-like DOM bubbling for click-outside. Nested `overflow` + portal to a node that is still inside the clipping ancestor. Multiple modals without a stacking / focus trap plan.\n\n**Measure.** Click-outside tests in the actual overlay container. A11y: focus trap, `aria-modal`, Esc — Portals don’t give you this.\n\n**Vue bridge**\n\n≈ `<Teleport to=\"body\">`. Vue event bubbling also follows the **Vue** tree more than people expect; still, interviewers specifically poke React’s “events bubble through portals in React.”",
+            "vi": "**Quyết định.** `createPortal(child, domNode)` **sơn** vào `domNode` (thường `document.body`) nhưng **React tree parent vẫn vậy**. Dùng cho modal, toast, popover phải thoát clipping/stacking.\n\n**Ràng buộc.** **Event vẫn bubble theo React tree**, không theo DOM tree. Click trong modal portal vẫn tới React parent của lời gọi `createPortal`. `stopPropagation` trên DOM parent **ngoài** React subtree đó sẽ không thấy click như bạn nghĩ.\n\n**Failure mode.** Giả định bubbling DOM kiểu Teleport cho click-outside. `overflow` lồng + portal vào node vẫn nằm trong ancestor clipping. Nhiều modal không có plan stacking / focus trap.\n\n**Cách đo.** Test click-outside trên overlay container thật. A11y: focus trap, `aria-modal`, Esc — Portal không cho sẵn.\n\n**Cầu nối Vue**\n\n≈ `<Teleport to=\"body\">`. Event Vue cũng theo **cây Vue** hơn người ta nghĩ; dù vậy interviewer đặc biệt thọc “event bubble xuyên portal trong React.”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "Portal to `body` wins stacking; you lose “this DOM parent is my containing block” for `position: absolute` unless you portal to a local overlay root (design-system pattern).",
+            "vi": "Portal ra `body` thắng stacking; bạn mất “DOM parent này là containing block” cho `position: absolute` trừ khi portal vào overlay root local (pattern design system)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- SSR: the target node must exist; in Next, portal only in a Client Component after mount or to a known `#modal-root` in `layout`.\n- Hydration: server must render the portal content in a consistent place — mismatch if you `return null` on server and portal on client without a strategy.",
+            "vi": "- SSR: target node phải tồn tại; Next thì portal chỉ trong Client Component sau mount hoặc vào `#modal-root` đã biết trong `layout`.\n- Hydration: server phải render nội dung portal ở chỗ nhất quán — mismatch nếu `return null` trên server rồi portal trên client không có strategy."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- Combine with [Error Boundaries](#2024-error-boundaries) and [Suspense](#2023-suspense) — they follow the **React** tree, including portaled children.",
+            "vi": "- Kết hợp [Error Boundaries](#2024-error-boundaries) và [Suspense](#2023-suspense) — chúng theo **cây React**, kể cả child đã portal."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.2.3. Suspense",
+            "vi": "20.2.3. Suspense"
+          },
+          "id": {
+            "en": "2023-suspense",
+            "vi": "2023-suspense"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “Suspense for data vs for `lazy()`?”\n- “How do you pair Suspense with Error Boundaries?”\n- “Does Vue Suspense mean the same thing?”",
+            "vi": "- “Suspense cho data vs cho `lazy()`?”\n- “Ghép Suspense với Error Boundary thế nào?”\n- “Vue Suspense có cùng nghĩa không?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** `<Suspense fallback={...}>` catches **children that suspend** (throw a thenable): **code-split** (`lazy` / `React.lazy`) and **data** (RSC, `use()`, Relay, some Query + Suspense modes). It is a **boundary for loading UI**, not an error handler.\n\n**Constraint.** Place boundaries **where a fallback makes sense** (page shell vs inner panel). Too high → the whole page flickers. Too low → spinner soup. **Error Boundary outside/around** Suspense: load failures should not look like infinite fallbacks. SSR/RSC: streaming HTML + client hydration; Client Component trees still need a boundary to show fallback.\n\n**Failure mode.** Suspense without an Error Boundary (a failed fetch looks like a hung spinner). Using Suspense as a substitute for Query when the team needs retries/cache. `lazy()` without a boundary (runtime error).\n\n**Measure.** Core Web Vitals on streaming vs client-only spinners. Which segment’s `loading.tsx` (Next) fired vs your local `<Suspense>`.\n\n**Vue bridge**\n\nVue `<Suspense>` is the same **product** idea (async setup / async components). Ecosystem wiring differs: Nuxt hides a lot; Next `loading.tsx` is a route-level Suspense around the segment.",
+            "vi": "**Quyết định.** `<Suspense fallback={...}>` bắt **children đang suspend** (throw thenable): **code-split** (`lazy` / `React.lazy`) và **data** (RSC, `use()`, Relay, một số mode Query + Suspense). Nó là **boundary cho loading UI**, không phải error handler.\n\n**Ràng buộc.** Đặt boundary **nơi fallback có nghĩa** (page shell vs panel trong). Cao quá → cả page nhấp nháy. Thấp quá → soup spinner. **Error Boundary ngoài/quanh** Suspense: load fail không được trông như fallback vô tận. SSR/RSC: stream HTML + hydrate client; cây Client Component vẫn cần boundary để hiện fallback.\n\n**Failure mode.** Suspense không Error Boundary (fetch fail trông như spinner treo). Dùng Suspense thay Query khi team cần retry/cache. `lazy()` không boundary (runtime error).\n\n**Cách đo.** Core Web Vitals khi stream vs spinner chỉ client. Segment nào `loading.tsx` (Next) nổ vs `<Suspense>` local của bạn.\n\n**Cầu nối Vue**\n\nVue `<Suspense>` cùng **ý sản phẩm** (async setup / async component). Wiring ecosystem khác: Nuxt giấu nhiều; Next `loading.tsx` là Suspense mức route quanh segment."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "Code-split Suspense is table stakes. Data Suspense is powerful with RSC/`use()` and sharp-edged with ad-hoc client caches. Don’t enable Query suspense mode “because it’s modern” without error + cache design.",
+            "vi": "Suspense code-split là bàn thắng tối thiểu. Data Suspense mạnh với RSC/`use()` và sắc với client cache ad-hoc. Đừng bật Query suspense mode “vì hiện đại” khi chưa thiết kế error + cache."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Nested Suspense reveals content in pieces — good for PPR/streaming, bad if layout jumps (reserve skeleton size).\n- Fallback that itself suspends — you nested wrong.",
+            "vi": "- Nested Suspense lộ content từng mảnh — tốt cho PPR/streaming, xấu nếu layout nhảy (giữ size skeleton).\n- Fallback tự suspend — bạn lồng sai."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- Next `loading.tsx` / `error.tsx` vs manual boundaries ([nextjs.md](./nextjs.md)).\n- Concurrent: Suspense and transitions interact (a transition can show old UI instead of fallback — [20.2.10](#20210-concurrent-features-transitions-and-usedeferredvalue)).",
+            "vi": "- Next `loading.tsx` / `error.tsx` vs boundary tay ([nextjs.md](./nextjs.md)).\n- Concurrent: Suspense và transition tương tác (transition có thể giữ UI cũ thay vì fallback — [20.2.10](#20210-tính-năng-concurrent-transition-và-usedeferredvalue))."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.2.4. Error Boundaries",
+            "vi": "20.2.4. Error Boundaries"
+          },
+          "id": {
+            "en": "2024-error-boundaries",
+            "vi": "2024-error-boundaries"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “Why is this a class?”\n- “Will it catch my `fetch` error?”\n- “Where do you put them?”",
+            "vi": "- “Sao cái này là class?”\n- “Nó bắt được lỗi `fetch` của tôi không?”\n- “Đặt chúng ở đâu?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** Error Boundaries catch **render / lifecycle / constructor errors in descendants** and render fallback UI. In core React they are **classes**. Hook components cannot implement `componentDidCatch`. Production: `react-error-boundary` + a reporting sink (Sentry).\n\n**Constraint.** They **do not** catch: event handlers, `async`/`setTimeout`, Server Component I/O unless the framework maps it to `error.tsx`, the Error Boundary’s **own** render errors. You still need `try/catch` in handlers and Query `error` state.\n\n**Failure mode.** One boundary at `App` → a tooltip crash whitescreens the product. No reset (`key` / `resetKeys`) after the user fixes state. Logging in `componentDidCatch` only, never in `window.onerror` / `createRoot(onUncaughtError)` for the rest.\n\n**Measure.** Chaos: throw in render of a widget, confirm the rest of the page lives. Throw in `onClick`, confirm it is **not** caught (that’s the quiz).\n\n**Vue bridge**\n\n≈ `onErrorCaptured` + `app.config.errorHandler`. Vue can do this in composition; React core cannot.",
+            "vi": "**Quyết định.** Error Boundary bắt **lỗi render / lifecycle / constructor của descendant** và render fallback UI. Trong core React chúng là **class**. Hook component không implement `componentDidCatch`. Production: `react-error-boundary` + sink báo cáo (Sentry).\n\n**Ràng buộc.** Chúng **không** bắt: event handler, `async`/`setTimeout`, I/O Server Component trừ khi framework map sang `error.tsx`, lỗi render **của chính** Error Boundary. Vẫn cần `try/catch` trong handler và state `error` của Query.\n\n**Failure mode.** Một boundary ở `App` → tooltip crash whitescreen cả product. Không reset (`key` / `resetKeys`) sau khi user sửa state. Chỉ log trong `componentDidCatch`, không bao giờ `window.onerror` / `createRoot(onUncaughtError)` cho phần còn lại.\n\n**Cách đo.** Chaos: throw trong render một widget, xác nhận phần còn lại của page sống. Throw trong `onClick`, xác nhận **không** bị bắt (đó là bài quiz).\n\n**Cầu nối Vue**\n\n≈ `onErrorCaptured` + `app.config.errorHandler`. Vue làm được trong composition; React core thì không."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "Segment boundaries (Next `error.tsx`) vs component boundaries. Both. Route-level for “this page died”; widget-level for embeds/charts.",
+            "vi": "Boundary theo segment (Next `error.tsx`) vs boundary theo component. Cả hai. Mức route cho “page này chết”; mức widget cho embed/chart."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Error Boundary + Suspense: failed lazy import should error, not hang.\n- SSR: some errors recover via `error.tsx`; hydration errors are a different class (fix the mismatch, don’t swallow).",
+            "vi": "- Error Boundary + Suspense: lazy import fail phải error, không treo.\n- SSR: một số lỗi recover qua `error.tsx`; hydration error là class khác (sửa mismatch, đừng nuốt)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- “How do you reset?” — `resetErrorBoundary()`, or `key={location.pathname}` with care (don’t remount the whole app on every nav).",
+            "vi": "- “Reset thế nào?” — `resetErrorBoundary()`, hoặc `key={location.pathname}` cẩn thận (đừng remount cả app mỗi lần nav)."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.2.5. Custom Hooks vs Vue Composables",
+            "vi": "20.2.5. Custom Hooks vs Composables"
+          },
+          "id": {
+            "en": "2025-custom-hooks-vs-vue-composables",
+            "vi": "2025-custom-hooks-vs-composables"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “What’s a custom Hook vs a helper?”\n- “How do you share logic without HOCs?”\n- “Rules of Hooks still apply?”",
+            "vi": "- “Custom Hook khác helper chỗ nào?”\n- “Share logic không dùng HOC thế nào?”\n- “Rules of Hooks vẫn apply?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** A custom Hook (`useX`) is a **composable**: reusable **stateful** logic that calls other Hooks. If it doesn’t call Hooks, it is a plain function — don’t prefix `use` just for fashion (you’d lie to the linter).\n\n**Constraint.** Same rules: top level, React function only, stable order. A Hook that takes a callback must document identity (`useCallback` on the caller) or store the latest callback in a ref.\n\n**Failure mode.** Conditional `useX` inside the consumer. Hooks that fetch with `useEffect` when the app already has Query (`useUsers` should wrap `useQuery`, not reinvent it). Returning new object identity every render from `useX()` and passing it as props to `memo` children.\n\n**Measure.** The Hook is tested via a small harness (`renderHook`) for subscription cleanup, not via a 200-line component test.\n\n**Vue bridge**\n\n```ts\n// Vue composable ≈ React custom hook — same extraction instinct\nexport function useOnlineStatus() { /* Vue: ref + onMounted | React: useState + useEffect */ }\n```\n\nNaming `use*` is **load-bearing** in React (lint). In Vue it is convention.",
+            "vi": "**Quyết định.** Custom Hook (`useX`) là **composable**: logic **stateful** tái sử dụng, gọi Hook khác. Nếu không gọi Hook, nó là function thường — đừng prefix `use` cho mốt (bạn nói dối linter).\n\n**Ràng buộc.** Cùng rule: top level, chỉ React function, thứ tự ổn định. Hook nhận callback phải document identity (`useCallback` phía caller) hoặc giữ callback mới nhất trong ref.\n\n**Failure mode.** `useX` có điều kiện trong consumer. Hook fetch bằng `useEffect` khi app đã có Query (`useUsers` nên wrap `useQuery`, không reinvent). `useX()` trả object identity mới mỗi render rồi truyền props vào child `memo`.\n\n**Cách đo.** Hook được test qua harness nhỏ (`renderHook`) cho cleanup subscription, không qua component test 200 dòng.\n\n**Cầu nối Vue**\n\n```ts\n// Vue composable ≈ React custom hook — same extraction instinct\nexport function useOnlineStatus() { /* Vue: ref + onMounted | React: useState + useEffect */ }\n```\n\nĐặt tên `use*` là **load-bearing** trong React (lint). Vue thì là convention."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "HOCs and render-props still appear in old libs; custom Hooks are the composition API. Don’t wrap every component in `withAuth` when `useAuth()` + a route guard is clearer.",
+            "vi": "HOC và render-props vẫn xuất hiện ở lib cũ; custom Hook là composition API. Đừng bọc mọi component `withAuth` khi `useAuth()` + route guard rõ hơn."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- SSR: `useMediaQuery` / `useWindowSize` must have a **server snapshot** (default + `useEffect`) or you hydrate-mismatch.\n- Don’t hide Server/Client boundaries inside a Hook that imports `window` at module scope.",
+            "vi": "- SSR: `useMediaQuery` / `useWindowSize` phải có **server snapshot** (default + `useEffect`) nếu không lệch hydrate.\n- Đừng giấu ranh giới Server/Client trong Hook import `window` ở module scope."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- Composition vs boolean props ([20.2.6](#2026-children-slots-mindset-and-composition)).\n- Sharing fetch: Hook over Query, not Hook over `useEffect`.",
+            "vi": "- Composition vs boolean props ([20.2.6](#2026-children--tư-duy-slot)).\n- Share fetch: Hook bọc Query, không Hook bọc `useEffect`."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.2.6. Children, slots mindset, and composition",
+            "vi": "20.2.6. Children / tư duy slot"
+          },
+          "id": {
+            "en": "2026-children-slots-mindset-and-composition",
+            "vi": "2026-children-tu-duy-slot"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “How do slots work in React?”\n- “This component has 12 boolean props — what’s wrong?”\n- “Render props vs `children` as a function?”",
+            "vi": "- “Slot trong React hoạt động thế nào?”\n- “Component này 12 boolean props — sai chỗ nào?”\n- “Render props vs `children` là function?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** `children` ≈ Vue **default slot**. Passing a component/render function ≈ **named / scoped slots**. Prefer **composition** (`<Card><Card.Header/>…`) over **boolean soup** (`showHeader`, `isCompact`, `hasFooter`, `variant=\"modal-like\"`). If the parent knows the structure, the parent should **pass JSX**, not flip flags.\n\n**Constraint.** `React.Children.map` / `cloneElement` to inject props is brittle (breaks on wrappers, Fragments, memo). Explicit props or context for a compound component (`Tabs` + `Tabs.List`) scales better.\n\n**Failure mode.** `<Button showIcon showSpinner isFullWidth isDanger asLink>` — unreadable, combinatorial tests. Using `children` as an implicit API with undocumented shape. Scoped-slot instinct translated to `cloneElement` on every child.\n\n**Measure.** Can a caller build a weird layout without a new boolean? If they had to wait on you, the API is closed; composition opens it.\n\n**Vue bridge**\n\n| Vue | React |\n| --- | --- |\n| Default slot | `children` |\n| Named slot | props like `header={...}` / compound components |\n| Scoped slot | `children(props)` render function, or render-prop `renderItem` |\n| `v-bind=\"$attrs\"` | extra DOM props + `...rest` (know what you filter) |",
+            "vi": "**Quyết định.** `children` ≈ **default slot** Vue. Truyền component/render function ≈ **named / scoped slot**. Ưu tiên **composition** (`<Card><Card.Header/>…`) hơn **soup boolean** (`showHeader`, `isCompact`, `hasFooter`, `variant=\"modal-like\"`). Nếu parent biết cấu trúc, parent nên **truyền JSX**, không lật flag.\n\n**Ràng buộc.** `React.Children.map` / `cloneElement` để inject props là giòn (vỡ với wrapper, Fragment, memo). Props tường minh hoặc context cho compound component (`Tabs` + `Tabs.List`) scale tốt hơn.\n\n**Failure mode.** `<Button showIcon showSpinner isFullWidth isDanger asLink>` — không đọc được, test tổ hợp. Dùng `children` làm API ngầm không document shape. Instinct scoped-slot dịch thành `cloneElement` mọi child.\n\n**Cách đo.** Caller có dựng layout dị được mà không cần boolean mới không? Nếu họ phải chờ bạn, API đóng; composition mở.\n\n**Cầu nối Vue**\n\n| Vue | React |\n| --- | --- |\n| Default slot | `children` |\n| Named slot | props kiểu `header={...}` / compound component |\n| Scoped slot | `children(props)` render function, hoặc render-prop `renderItem` |\n| `v-bind=\"$attrs\"` | extra DOM props + `...rest` (biết mình filter gì) |"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "Compound components + context: elegant, more moving parts. Render props: flexible, ugly JSX, mostly replaced by Hooks for **logic**, still valid for **view injection** (`renderItem` in a List).",
+            "vi": "Compound component + context: thanh lịch, nhiều moving part. Render props: linh hoạt, JSX xấu, phần lớn bị Hooks thay cho **logic**, vẫn hợp lệ cho **tiêm view** (`renderItem` trong List)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- `children` type `ReactNode` vs `ReactElement` — strings/arrays/false sneak in.\n- Passing `children` through a Client Component from a Server Component is the **correct** way to nest Server children under a client wrapper — do not import the server child into the client module ([nextjs.md](./nextjs.md) §21.5).",
+            "vi": "- Type `children` `ReactNode` vs `ReactElement` — string/array/false len lỏi vào.\n- Truyền `children` xuyên Client Component từ Server Component là **cách đúng** để lồng Server child dưới client wrapper — đừng import server child vào client module ([nextjs.md](./nextjs.md) §21.5)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- “How would you design a Modal API?” — `open` controlled/uncontrolled, portal, composition for body/footer, no `showCloseButton` if they can just omit it.",
+            "vi": "- “Design Modal API thế nào?” — `open` controlled/uncontrolled, portal, composition cho body/footer, không `showCloseButton` nếu họ chỉ cần omit."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.2.7. State libraries overview (Redux, Zustand, Jotai)",
+            "vi": "20.2.7. Tổng quan state library (Redux, Zustand, Jotai)"
+          },
+          "id": {
+            "en": "2027-state-libraries-overview-redux-zustand-jotai",
+            "vi": "2027-tong-quan-state-library-redux-zustand-jotai"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “Redux or Zustand?”\n- “Does everything go in the store?”",
+            "vi": "- “Redux hay Zustand?”\n- “Mọi thứ đều vào store à?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "Keep this short in a React round; the depth lives in [State Management (React)](./state-management-react.md).\n\n**Decision.** Default **client UI** store for a Vue senior is **Zustand** (Pinia-shaped). **RTK** when the team needs conventions, DevTools, many contributors, or already owns RTK Query. **Jotai** when the problem is an **atomic graph**, not one fat store. **None of them** are the place for server lists — that is Query/RSC.\n\n**Constraint.** Context is enough for low-churn DI. URL is enough for shareable filters. Cookies/session are the auth source of truth on Next.\n\n**Failure mode.** “We use Redux so the users list lives in a slice.” That answer fails the senior bar.\n\n**Measure.** How many stores, what is in Query, what is in the URL — draw the layers in 30 seconds.\n\n**Vue bridge**\n\n| Vue | React default analog |\n| --- | --- |\n| Vuex | Redux Toolkit |\n| Pinia | Zustand |\n| Many small refs | Jotai atoms |\n\n**Tradeoffs / Follow-ups**\n\nSend them to [state-management-react.md](./state-management-react.md) for team-scale RTK vs Zustand vs Jotai, Next cookies, hydration, Context thrash.",
+            "vi": "Giữ ngắn trong vòng React; độ sâu nằm ở [State Management (React)](./state-management-react.md).\n\n**Quyết định.** Default store **client UI** cho Vue senior là **Zustand** (dáng Pinia). **RTK** khi team cần convention, DevTools, nhiều contributor, hoặc đã own RTK Query. **Jotai** khi bài toán là **atomic graph**, không phải một store béo. **Không cái nào** là chỗ cho list server — đó là Query/RSC.\n\n**Ràng buộc.** Context đủ cho DI ít churn. URL đủ cho filter share được. Cookie/session là source of truth auth trên Next.\n\n**Failure mode.** “Dùng Redux nên users list nằm trong slice.” Câu đó trượt thanh senior.\n\n**Cách đo.** Bao nhiêu store, cái gì trong Query, cái gì trên URL — vẽ các tầng trong 30 giây.\n\n**Cầu nối Vue**\n\n| Vue | Analog mặc định React |\n| --- | --- |\n| Vuex | Redux Toolkit |\n| Pinia | Zustand |\n| Nhiều `ref` nhỏ | Jotai atom |\n\n**Tradeoff / Câu hỏi nối**\n\nĐưa họ tới [state-management-react.md](./state-management-react.md) cho RTK vs Zustand vs Jotai scale team, cookie Next, hydration, Context thrash."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.2.8. Performance checklist for seniors",
+            "vi": "20.2.8. Checklist performance cho senior"
+          },
+          "id": {
+            "en": "2028-performance-checklist-for-seniors",
+            "vi": "2028-checklist-performance-cho-senior"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “How would you make this page faster?”\n- “Did you measure?”",
+            "vi": "- “Làm page này nhanh hơn thế nào?”\n- “Bạn đã đo chưa?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** Architecture first (state locality, server data, bundle), not `useMemo` folklore.\n\n**Constraint.** You cannot optimize a guess. Vue’s fine-grained updates hide some sins; React will punish state-in-the-wrong-place immediately.\n\n**Failure mode.** Memoizing the world, skipping Profiler, shipping a 5k-row table without virtualization, fetching in a parent waterfall.\n\n**Measure.** React Profiler (commit duration, why-did-you-render). Field: INP, LCP, CLS. Bundle: route-level split analysis. Lists: FPS while scrolling.\n\nChecklist:\n\n1. **Profiler first** — who re-renders and why (parent, context, hook).\n1. **State locality** — push state down; don’t store keystrokes in Context/Redux.\n1. **Bailout / Compiler** — `memo` at proven boundaries; don’t fight the Compiler.\n1. **Virtualize** long lists (`content-visibility` / TanStack Virtual / `react-window`).\n1. **Code-split** routes and heavy widgets (`lazy` + Suspense).\n1. **Fetch on the right runtime** — RSC/Query, not effect waterfalls.\n1. **Bundle / images / fonts** — same discipline as Vue/Vite; Next has `next/image` but it is not automatic virtue.\n1. **Concurrent extras** — `useDeferredValue` / transitions for **stale-while-type**, not as a substitute for O(n²) work ([20.2.10](#20210-concurrent-features-transitions-and-usedeferredvalue)).\n\n**Vue bridge one-liner**\n\nVue often feels “already optimized.” React seniors earn the same UX with **where state lives + Profiler + framework features (RSC, Compiler)**.",
+            "vi": "**Quyết định.** Architecture trước (locality của state, data server, bundle), không folklore `useMemo`.\n\n**Ràng buộc.** Không tối ưu một phỏng đoán. Fine-grained update của Vue giấu một số tội; React trừng phạt ngay state-sai-chỗ.\n\n**Failure mode.** Memo cả thế giới, bỏ Profiler, ship table 5k hàng không virtualize, fetch waterfall ở parent.\n\n**Cách đo.** React Profiler (commit duration, why-did-you-render). Field: INP, LCP, CLS. Bundle: phân tích split theo route. List: FPS lúc scroll.\n\nChecklist:\n\n1. **Profiler trước** — ai re-render và vì sao (parent, context, hook).\n1. **State locality** — đẩy state xuống; đừng chứa keystroke trong Context/Redux.\n1. **Bailout / Compiler** — `memo` ở biên đã chứng minh; đừng đánh Compiler.\n1. **Virtualize** list dài (`content-visibility` / TanStack Virtual / `react-window`).\n1. **Code-split** route và widget nặng (`lazy` + Suspense).\n1. **Fetch đúng runtime** — RSC/Query, không waterfall effect.\n1. **Bundle / image / font** — cùng kỷ luật Vue/Vite; Next có `next/image` nhưng không tự là đức hạnh.\n1. **Concurrent extras** — `useDeferredValue` / transition cho **stale-while-type**, không thay O(n²) ([20.2.10](#20210-tính-năng-concurrent-transition-và-usedeferredvalue)).\n\n**Cầu nối Vue một câu**\n\nVue thường cảm giác “đã tối ưu sẵn.” Senior React kiếm cùng UX bằng **state sống ở đâu + Profiler + khả năng framework (RSC, Compiler)**."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "Virtualization costs a11y/measure complexity. Split too early and you waterfall spinners. Memo too early and you freeze stale props.",
+            "vi": "Virtualization tốn độ phức tạp a11y/đo. Split quá sớm thì waterfall spinner. Memo quá sớm thì đóng băng props stale."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- `React.StrictMode` double-render is not a prod perf bug.\n- A fast Profiler in dev with extra checks ≠ prod; confirm with production profiling when the stake is high.",
+            "vi": "- Double-render `React.StrictMode` không phải bug perf production.\n- Profiler nhanh ở dev với extra check ≠ prod; xác nhận bằng production profiling khi stake cao."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- Show a before/after Profiler screenshot story.\n- Next-specific cache/PPR: [nextjs.md](./nextjs.md).",
+            "vi": "- Kể story screenshot Profiler trước/sau.\n- Cache/PPR riêng Next: [nextjs.md](./nextjs.md)."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.2.9. Route guards / middleware (SPA)",
+            "vi": "20.2.9. Route guards / middleware (SPA)"
+          },
+          "id": {
+            "en": "2029-route-guards-middleware-spa",
+            "vi": "2029-route-guards-middleware-spa"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “How do you protect routes in React?”\n- “Is that like Nuxt middleware?”\n- “Why isn’t client redirect enough?”",
+            "vi": "- “Bảo vệ route trong React thế nào?”\n- “Có giống Nuxt middleware không?”\n- “Sao redirect phía client chưa đủ?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** A React **SPA has no Edge middleware**. “Guards” are:\n\n1. **Layout / wrapper** (`RequireAuth` + `<Outlet />`) — UX gate after JS loads.\n1. **React Router loaders** (`redirect()`) — closer to `beforeEnter`, still **after** the request for a CSR app.\n1. **Next `middleware.ts`** — **Edge, before HTML**. Cookie presence, rewrites, locale. **Not authorization.** Real authz is server (RSC / Route Handler / Server Action). See [Next.js · Middleware](./nextjs.md#218-middleware).\n\n**Constraint.** Client guards **cannot** hide data that already shipped in JS or in a JSON API without auth. They prevent a flash of the wrong screen **if** you wait for `ready` (session hydrated). Redirecting before hydration is how you get login flicker or loops.\n\n**Failure mode.** Treat `<Navigate to=\"/login\">` as security. Middleware that “checks JWT signature with a huge library on the Edge” and still never hits the DB for revocation. Matcher that excludes the page you meant to protect.\n\n**Measure.** Unauthenticated request to the **data** endpoint (must 401). Lighthouse/SEO if you expected server HTML. Watch a slow session fetch: no admin flash.\n\n**Vue / Nuxt bridge**\n\n| Vue / Nuxt | React SPA | Next.js |\n| --- | --- | --- |\n| `router.beforeEach` | `RequireAuth` / loader | — |\n| Nuxt `middleware/` | no file convention | `middleware.ts` (Edge) |\n| `meta.requiresAuth` | route config / loader | matcher + cookies |\n| Server `useFetch` + 401 | Query + redirect | RSC/session + `redirect()` |",
+            "vi": "**Quyết định.** React **SPA không có Edge middleware**. “Guard” là:\n\n1. **Layout / wrapper** (`RequireAuth` + `<Outlet />`) — cổng UX sau khi JS load.\n1. **React Router loader** (`redirect()`) — gần `beforeEnter`, vẫn **sau** request với app CSR.\n1. **Next `middleware.ts`** — **Edge, trước HTML**. Cookie presence, rewrite, locale. **Không phải authorization.** Authz thật là server (RSC / Route Handler / Server Action). Xem [Next.js · Middleware](./nextjs.md#218-middleware).\n\n**Ràng buộc.** Client guard **không** giấu được data đã ship trong JS hoặc JSON API không auth. Chúng ngăn flash màn hình sai **nếu** bạn đợi `ready` (session đã hydrate). Redirect trước hydration là cách bị flicker login hoặc loop.\n\n**Failure mode.** Coi `<Navigate to=\"/login\">` là security. Middleware “check chữ ký JWT bằng lib khổng lồ trên Edge” rồi không bao giờ đụng DB để revoke. Matcher loại trừ đúng page bạn định bảo vệ.\n\n**Cách đo.** Request không auth tới endpoint **data** (phải 401). Lighthouse/SEO nếu bạn kỳ vọng HTML server. Quan sát session fetch chậm: không flash admin.\n\n**Cầu nối Vue / Nuxt**\n\n| Vue / Nuxt | React SPA | Next.js |\n| --- | --- | --- |\n| `router.beforeEach` | `RequireAuth` / loader | — |\n| Nuxt `middleware/` | không có file convention | `middleware.ts` (Edge) |\n| `meta.requiresAuth` | route config / loader | matcher + cookie |\n| Server `useFetch` + 401 | Query + redirect | RSC/session + `redirect()` |"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "SPA + Vite is honest for **auth dashboards** (no SEO, existing API). Next middleware adds a cookie gate **before paint** — better UX, still not RBAC.",
+            "vi": "SPA + Vite trung thực với **dashboard auth** (không SEO, API sẵn). Next middleware thêm cổng cookie **trước paint** — UX tốt hơn, vẫn không phải RBAC."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Redirect loop: `/login` protected by the same “has cookie” rule as `/app`.\n- `ready === false` returning `null` without a skeleton → layout pop.\n- Roles in JWT in localStorage — XSS theater; cookies `httpOnly` + server check.\n\n```tsx\n// Production pitfall: redirect before session is known → bounce/flicker\nif (!user) return <Navigate to=\"/login\" replace />\n// Need an explicit ready/pending state from the session source of truth\nif (!ready) return <ShellSkeleton />\nif (!user) return <Navigate to=\"/login\" replace state={{ from: location }} />\n```",
+            "vi": "- Redirect loop: `/login` bị cùng rule “có cookie” với `/app`.\n- `ready === false` `return null` không skeleton → layout pop.\n- Role trong JWT ở localStorage — diễn XSS; cookie `httpOnly` + check server.\n\n```tsx\n// Production pitfall: redirect before session is known → bounce/flicker\nif (!user) return <Navigate to=\"/login\" replace />\n// Need an explicit ready/pending state from the session source of truth\nif (!ready) return <ShellSkeleton />\nif (!user) return <Navigate to=\"/login\" replace state={{ from: location }} />\n```"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- “Where is authorization enforced?” — API/RSC, always. UI is a hint.\n- Next vs Vite SPA: [nextjs.md §21.11](./nextjs.md#2111-when-to-choose-next-vs-spa-react).",
+            "vi": "- “Authorization enforce ở đâu?” — API/RSC, luôn luôn. UI là gợi ý.\n- Next vs Vite SPA: [nextjs.md §21.11](./nextjs.md#2111-khi-nào-chọn-next-vs-spa-react)."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "20.2.10. Concurrent features: transitions and useDeferredValue",
+            "vi": "20.2.10. Tính năng concurrent: transition và useDeferredValue"
+          },
+          "id": {
+            "en": "20210-concurrent-features-transitions-and-usedeferredvalue",
+            "vi": "20210-tinh-nang-concurrent-transition-va-usedeferredvalue"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “What is concurrent rendering?”\n- “`useTransition` vs `useDeferredValue` vs debounce?”\n- “Do these replace `memo`?”",
+            "vi": "- “Concurrent rendering là gì?”\n- “`useTransition` vs `useDeferredValue` vs debounce?”\n- “Chúng thay `memo` được không?”"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "**Decision.** Concurrent React can **interrupt** a render so **urgent** updates (typing, click) are not blocked by **heavy** UI. You mark the heavy update:\n\n- `startTransition` / `useTransition` — “this `setState` is not urgent” (tab switch, filter apply, route-like UI). Pending flag for a spinner on the **deferred** part.\n- `useDeferredValue(value)` — keep showing the **previous** value in an expensive child while `value` (usually the input) stays instant.\n- `useOptimistic` — show the success state, then reconcile with the server (forms/actions).\n\nThey **deprioritize work**. They do **not** make an O(n²) tree cheap.\n\n**Constraint.** Transitions + Suspense: a transition can **keep old UI** rather than flipping to `fallback` (that’s the point). Debounce **delays** the value; `useDeferredValue` **renders immediately** at high priority for the input and lags the expensive view. Don’t confuse them.\n\n**Failure mode.** Wrapping every `setState` in `startTransition`. Using `useDeferredValue` instead of virtualizing a 20k list. Expecting no re-render of the child.\n\n**Measure.** Type into a filter: INP, whether the input lags. Profiler lanes (urgent vs transition). If the input still lags, the expensive work is on the **same** urgent update — you didn’t split the state.\n\n**Vue bridge**\n\nVue rarely needs this because fine-grained updates don’t re-run the world on each keystroke. This is React **catching up in UX**, not a Vue feature you were missing.",
+            "vi": "**Quyết định.** Concurrent React có thể **interrupt** một render để update **khẩn** (gõ, click) không bị UI **nặng** chặn. Bạn đánh dấu update nặng:\n\n- `startTransition` / `useTransition` — “`setState` này không khẩn” (đổi tab, apply filter, UI giống route). Flag pending cho spinner ở phần **deferred**.\n- `useDeferredValue(value)` — tiếp tục hiện **value trước** trong child đắt trong khi `value` (thường là input) vẫn tức thì.\n- `useOptimistic` — hiện trạng thái success, rồi reconcile với server (form/action).\n\nChúng **hạ ưu tiên work**. Chúng **không** làm cây O(n²) rẻ.\n\n**Ràng buộc.** Transition + Suspense: transition có thể **giữ UI cũ** thay vì lật sang `fallback` (đó là mục đích). Debounce **trì hoãn** value; `useDeferredValue` **render ngay** ưu tiên cao cho input và làm view đắt chậm lại. Đừng nhầm hai thứ.\n\n**Failure mode.** Bọc mọi `setState` trong `startTransition`. Dùng `useDeferredValue` thay vì virtualize list 20k. Kỳ vọng child không re-render.\n\n**Cách đo.** Gõ vào filter: INP, input có lag không. Profiler lane (urgent vs transition). Nếu input vẫn lag, work đắt đang nằm trên **cùng** update khẩn — bạn chưa tách state.\n\n**Cầu nối Vue**\n\nVue hiếm khi cần cái này vì fine-grained update không chạy lại cả thế giới mỗi phím gõ. Đây là React **bắt kịp UX**, không phải feature Vue bạn đang thiếu."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "| Tool | You want |\n| --- | --- |\n| Debounce/throttle | Fewer **network** calls |\n| `useDeferredValue` | Instant input, stale list for a frame |\n| `useTransition` | Instant click, heavy panel later + `isPending` |\n| `memo` / Compiler | Skip work entirely |\n| Virtualize | Don’t render 20k rows |",
+            "vi": "| Tool | Bạn muốn |\n| --- | --- |\n| Debounce/throttle | Ít **network** call hơn |\n| `useDeferredValue` | Input tức thì, list stale một frame |\n| `useTransition` | Click tức thì, panel nặng sau + `isPending` |\n| `memo` / Compiler | Bỏ work hẳn |\n| Virtualize | Đừng render 20k hàng |"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- `isPending` from `useTransition` is false if something else already suspended — know your boundary.\n- Don’t start a transition in render.",
+            "vi": "- `isPending` từ `useTransition` là false nếu thứ khác đã suspend — biết boundary của mình.\n- Đừng start transition trong render."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- Pair with Query: transition on `setSearchParams`, Query still caches.\n- Next: `useOptimistic` + Server Actions.",
+            "vi": "- Ghép Query: transition trên `setSearchParams`, Query vẫn cache.\n- Next: `useOptimistic` + Server Actions."
+          }
+        },
+        {
+          "type": "thematic-break"
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "quick-vue-react-cheat-sheet",
+        "vi": "cheat-sheet-vue-react"
+      },
+      "title": {
+        "en": "Quick Vue → React cheat sheet",
+        "vi": "Cheat sheet Vue → React"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Quick Vue → React cheat sheet",
+            "vi": "Cheat sheet Vue → React"
+          },
+          "id": {
+            "en": "quick-vue-react-cheat-sheet",
+            "vi": "cheat-sheet-vue-react"
+          }
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Vue 3",
+              "vi": "Vue 3"
+            },
+            {
+              "en": "React",
+              "vi": "React"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "SFC `.vue`",
+                "vi": "SFC `.vue`"
+              },
+              {
+                "en": "`.tsx` component",
+                "vi": "`.tsx` component"
+              }
+            ],
+            [
+              {
+                "en": "Fine-grained reactivity",
+                "vi": "Fine-grained reactivity"
+              },
+              {
+                "en": "Re-render + reconcile (+ Compiler bailout)",
+                "vi": "Re-render + reconcile (+ Compiler bailout)"
+              }
+            ],
+            [
+              {
+                "en": "`ref` / `reactive`",
+                "vi": "`ref` / `reactive`"
+              },
+              {
+                "en": "`useState` / `useReducer` (not `useRef`)",
+                "vi": "`useState` / `useReducer` (không phải `useRef`)"
+              }
+            ],
+            [
+              {
+                "en": "`computed`",
+                "vi": "`computed`"
+              },
+              {
+                "en": "derive in render / `useMemo`",
+                "vi": "derive trong render / `useMemo`"
+              }
+            ],
+            [
+              {
+                "en": "`watch` / `watchEffect`",
+                "vi": "`watch` / `watchEffect`"
+              },
+              {
+                "en": "`useEffect` **only** to sync externals",
+                "vi": "`useEffect` **chỉ** để sync hệ thống ngoài"
+              }
+            ],
+            [
+              {
+                "en": "`onMounted`",
+                "vi": "`onMounted`"
+              },
+              {
+                "en": "`useEffect(..., [])` (Strict Mode double-invoke)",
+                "vi": "`useEffect(..., [])` (Strict Mode double-invoke)"
+              }
+            ],
+            [
+              {
+                "en": "`provide` / `inject`",
+                "vi": "`provide` / `inject`"
+              },
+              {
+                "en": "Context (broadcast re-renders)",
+                "vi": "Context (broadcast re-render)"
+              }
+            ],
+            [
+              {
+                "en": "`<Teleport>`",
+                "vi": "`<Teleport>`"
+              },
+              {
+                "en": "`createPortal` (events still React-tree)",
+                "vi": "`createPortal` (event vẫn theo React tree)"
+              }
+            ],
+            [
+              {
+                "en": "composables",
+                "vi": "composable"
+              },
+              {
+                "en": "custom hooks (`use*`, rules of Hooks)",
+                "vi": "custom hook (`use*`, rules of Hooks)"
+              }
+            ],
+            [
+              {
+                "en": "`v-model`",
+                "vi": "`v-model`"
+              },
+              {
+                "en": "controlled input; files uncontrolled; RHF at scale",
+                "vi": "controlled input; file uncontrolled; RHF khi scale"
+              }
+            ],
+            [
+              {
+                "en": "`v-for` + `:key`",
+                "vi": "`v-for` + `:key`"
+              },
+              {
+                "en": "`.map` + stable `key` (Fragment keys)",
+                "vi": "`.map` + `key` ổn định (Fragment key)"
+              }
+            ],
+            [
+              {
+                "en": "Pinia",
+                "vi": "Pinia"
+              },
+              {
+                "en": "Zustand / Redux Toolkit — not for server lists",
+                "vi": "Zustand / Redux Toolkit — không cho list server"
+              }
+            ],
+            [
+              {
+                "en": "Router guards / Nuxt middleware",
+                "vi": "Router guards / Nuxt middleware"
+              },
+              {
+                "en": "SPA wrapper/loader · Next Edge middleware (not authz)",
+                "vi": "SPA wrapper/loader · Next Edge middleware (không phải authz)"
+              }
+            ]
+          ],
+          "align": [
+            null,
+            null
+          ]
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "[← Back to Overview](../../README-en.md)",
+            "vi": "[← Back to Overview](../../README.md)"
+          }
+        }
+      ]
+    }
+  ]
+}
