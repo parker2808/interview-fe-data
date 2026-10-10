@@ -15,9 +15,10 @@ plan/index.json                # meta + day summaries
 plan/days/day-XX.json          # day plan + lab blocks
 plan/resources/<id>.json       # lab-repo, project-context, algo-day-XX, …
 qna/categories.json
-qna/questions.json             # existing Q&A shape (PIN-gated in the app)
+qna/questions.json             # single bank (142 questions). Do not split — the
+                               # public app loader only reads this file.
 schema/                        # JSON Schema for Localized + blocks
-scripts/validate.mjs           # fails on missing en/vi
+scripts/validate.mjs           # fails on missing en/vi; also checks Q&A counts
 ```
 
 ## Editing
@@ -36,7 +37,9 @@ A later PR can rewrite the prose for readability. This repo is the format + cont
 
 ## Validation
 
-`scripts/validate.mjs` walks every JSON object that looks like `{ en, vi }` and exits non-zero if either side is missing or blank. GitHub Actions runs the same check on every PR and push.
+`scripts/validate.mjs` walks every JSON object that looks like `{ en, vi }` and exits non-zero if either side is missing or blank. It also fails if `qna/questions.json` drops below 142 questions (or below the per-category floors: soft 29, technical 86, situational 27) and prints the live counts. GitHub Actions runs the same check on every PR and push.
+
+Keep Q&A in **one** `qna/questions.json`. `interview-senior-fe` `server/utils/contentStore.ts` and `scripts/validate-content.mjs` only load that path — splitting into `qna/technical.json` etc. would silently drop questions until the app loader changes.
 
 ## Redeploy
 
