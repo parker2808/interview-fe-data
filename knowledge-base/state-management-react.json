@@ -6,8 +6,8 @@
     "vi": "State Management (React)"
   },
   "summary": {
-    "en": "You already know Vuex/Pinia. This file is the **store-shaped** part of a senior React/Next round: **which layer owns the data** (URL vs cookies/RSC vs Query vs Zustand), why **server lists do not belong in Redux**, and…",
-    "vi": "Bạn đã biết Vuex/Pinia. File này là phần **dáng store** của vòng senior React/Next: **tầng nào own data** (URL vs cookie/RSC vs Query vs Zustand), vì sao **list server không thuộc Redux**, và bug production interviewer…"
+    "en": "You already know Vuex/Pinia. Seniors are graded on which layer owns the data — URL, cookies/RSC, Query, Zustand — and why server lists do not belong in Redux.",
+    "vi": "Bạn đã biết Vuex/Pinia. Senior được chấm ở tầng nào own data — URL, cookie/RSC, Query, Zustand — và vì sao list server không thuộc Redux."
   },
   "category": "react",
   "order": 10,
@@ -91,53 +91,241 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "- “Where should this live — Redux, Context, or Query?”\n- “How do you think about state in Next App Router?”\n- “Is the URL a store?”",
-            "vi": "- “Cái này sống ở đâu — Redux, Context, hay Query?”\n- “Nghĩ về state trong Next App Router thế nào?”\n- “URL có phải một store không?”"
+            "en": "A product table, a guest cart, the current user, and a theme toggle — “Redux, Context, or Query?” is the warmup. They want you to place each fact by **source of truth and lifetime**, including whether the URL is a store, in under 30 seconds.",
+            "vi": "Bảng product, guest cart, current user, và toggle theme — “Redux, Context, hay Query?” là warmup. Họ muốn bạn đặt từng sự thật theo **source of truth và vòng đời**, kể cả URL có phải một store không, trong chưa đầy 30 giây."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "**Decision.** Split by **source of truth and lifetime**, not by “global vs local” as a moral category. Put state in the **narrowest** layer that still shares correctly. A Vue senior’s failure mode is a **Pinia dump** of everything because Pinia was pleasant. React/Next punishes that: re-renders, hydration, stale lists, SEO URLs that don’t match the store.\n\n| Layer | Source of truth | Lifetime | Examples | Vue / Nuxt analogy |\n| --- | --- | --- | --- | --- |\n| **Local UI** | `useState` / `useReducer` | This mount | Modal open, hover, input caret-adjacent draft | Component `ref` |\n| **URL** | path / `searchParams` | Shareable, back-button, reload | Filters, tab, pagination, selected id | `route.query` |\n| **Cookies / session** | httpOnly cookie + server session | Auth lifetime | Who is logged in, CSRF, tenant | Nuxt `useCookie` / `useState` *only if* you understand SSR |\n| **RSC / server render** | Server Components, `fetch` cache | Request + Next data cache | Initial page data, serialized DTO to children | Nuxt `useAsyncData` on server |\n| **Server cache (client)** | TanStack Query / SWR | App session, keyed, stale-while-revalidate | **Lists, details, mutations** | “async data cache,” not Pinia |\n| **Context** | Provider value | Subtree | Theme, locale, `QueryClient`, low-churn user **id** | `provide` / `inject` |\n| **Client store** | Zustand / RTK / Jotai | Cross-route **client** graph | Cart (guest), multi-step editor, complex UI selection | Pinia / Vuex |\n\n**The interview ranking (Next):** URL and **cookies/session** beat a client store for anything that must survive reload, be shareable, or be trusted. **Query/RSC** beat Redux for server lists. Zustand/RTK beat Context for **high-frequency** client state.\n\n**Constraint.** One fact, one owner. Filters in the URL **or** in Zustand, not both (unless Zustand is a derived view you throw away). Auth user in **session** **or** you will hydrate-mismatch and XSS-copy tokens into `localStorage`.\n\n**Failure mode.** “Everything in Redux because the Vuex app was everything in Vuex.” Users list in a slice, filters in the slice, `user` in the slice, modal flags in the slice. Next: hydrating that slice from `localStorage` before the cookie session is known.\n\n**Measure.** For a screen, fill this in under 30s: *URL owns ___. Query key is ___. Server session is ___. Client store is ___ (or empty).* If two layers claim the same field, you already have a bug.",
-            "vi": "**Quyết định.** Tách theo **source of truth và vòng đời**, không theo “global vs local” như phạm trù đạo đức. Đặt state vào tầng **hẹp nhất** vẫn share đúng. Failure mode của Vue senior là **dump Pinia** mọi thứ vì Pinia dễ chịu. React/Next trừng phạt: re-render, hydration, list stale, URL SEO không khớp store.\n\n| Tầng | Source of truth | Vòng đời | Ví dụ | Analog Vue / Nuxt |\n| --- | --- | --- | --- | --- |\n| **Local UI** | `useState` / `useReducer` | Mount này | Modal mở, hover, draft sát caret | `ref` component |\n| **URL** | path / `searchParams` | Share được, back-button, reload | Filter, tab, pagination, id đang chọn | `route.query` |\n| **Cookie / session** | cookie httpOnly + server session | Vòng đời auth | Ai đang login, CSRF, tenant | Nuxt `useCookie` / `useState` *chỉ khi* bạn hiểu SSR |\n| **RSC / server render** | Server Component, cache `fetch` | Request + Next data cache | Data trang ban đầu, DTO serialize xuống children | Nuxt `useAsyncData` trên server |\n| **Server cache (client)** | TanStack Query / SWR | Session app, theo key, stale-while-revalidate | **List, detail, mutation** | “async data cache,” không phải Pinia |\n| **Context** | Provider value | Subtree | Theme, locale, `QueryClient`, **id** user ít churn | `provide` / `inject` |\n| **Client store** | Zustand / RTK / Jotai | Graph **client** cross-route | Cart (guest), editor nhiều bước, selection UI phức tạp | Pinia / Vuex |\n\n**Thứ tự ưu tiên khi phỏng vấn (Next):** URL và **cookie/session** thắng client store cho mọi thứ phải sống sót reload, share được, hoặc được tin. **Query/RSC** thắng Redux cho list server. Zustand/RTK thắng Context cho state client **tần suất cao**.\n\n**Ràng buộc.** Một sự thật, một owner. Filter trên URL **hoặc** trong Zustand, không cả hai (trừ khi Zustand là view suy diễn bạn vứt đi). User auth trong **session** **nếu không** bạn sẽ lệch hydrate và copy token XSS vào `localStorage`.\n\n**Failure mode.** “Hết vào Redux vì app Vuex hết vào Vuex.” Users list trong slice, filter trong slice, `user` trong slice, flag modal trong slice. Next: hydrate slice đó từ `localStorage` trước khi cookie session được biết.\n\n**Cách đo.** Với một màn hình, điền trong 30s: *URL own ___. Query key là ___. Server session là ___. Client store là ___ (hoặc trống).* Nếu hai tầng nhận cùng field, bạn đã có bug."
+            "en": "Put each fact in the narrowest layer that still shares correctly — one owner per fact.",
+            "vi": "Đặt mỗi sự thật vào tầng hẹp nhất vẫn share đúng — một sự thật, một owner."
           }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** Split by source of truth and lifetime, not “global vs local” as a moral category. Next ranking: URL and cookies/session beat a client store for anything that must survive reload, be shareable, or be trusted. Query/RSC beat Redux for server lists. Zustand/RTK beat Context for high-frequency client state. Most screens are URL + Query + a few `useState`s. Stores appear when client workflow is actually a graph.",
+              "vi": "**Quyết định.** Tách theo source of truth và vòng đời, không theo “global vs local” như phạm trù đạo đức. Thứ tự Next: URL và cookie/session thắng client store cho mọi thứ phải sống sót reload, share được, hoặc được tin. Query/RSC thắng Redux cho list server. Zustand/RTK thắng Context cho state client tần suất cao. Hầu hết màn hình là URL + Query + vài `useState`. Store xuất hiện khi workflow client thực sự là graph."
+            },
+            {
+              "en": "**Why.** A Vue senior’s failure mode is a Pinia dump of everything because Pinia was pleasant. React/Next punishes that: re-renders, hydration, stale lists, SEO URLs that don’t match the store. One fact, one owner. Filters in the URL **or** in Zustand, not both (unless Zustand is a throwaway derived read). Auth user in **session**, or you hydrate-mismatch and copy tokens into `localStorage`.",
+              "vi": "**Vì sao.** Failure mode của Vue senior là dump Pinia mọi thứ vì Pinia dễ chịu. React/Next trừng phạt: re-render, hydration, list stale, URL SEO không khớp store. Một sự thật, một owner. Filter trên URL **hoặc** trong Zustand, không cả hai (trừ khi Zustand là bản đọc derived rồi bỏ). User auth trong **session**, không thì lệch hydrate và copy token vào `localStorage`."
+            },
+            {
+              "en": "**Trade-off.** “Everything in Redux because the Vuex app was everything in Vuex” — users list, filters, `user`, modal flags in one slice, then hydrate that slice from `localStorage` before the cookie session is known. Restoring filters from Zustand after the URL already had them flickers and fights the back button. RSC fetched the list **and** Query fetches it again with a different shape — pick a handoff (`initialData` + same key) or don’t use Query on that page.",
+              "vi": "**Đánh đổi / rủi ro.** “Hết vào Redux vì app Vuex hết vào Vuex” — users list, filter, `user`, flag modal trong một slice, rồi hydrate slice đó từ `localStorage` trước khi cookie session được biết. Restore filter từ Zustand sau khi URL đã có chúng thì flicker và đánh nhau với back button. RSC đã fetch list **và** Query fetch lại với shape khác — chọn handoff (`initialData` + cùng key) hoặc đừng dùng Query trên page đó."
+            },
+            {
+              "en": "**How to verify.** For a screen, fill this in under 30s: *URL owns ___. Query key is ___. Server session is ___. Client store is ___ (or empty).* If two layers claim the same field, you already have a bug. Practice placing product table, cart, auth, theme.",
+              "vi": "**Cách kiểm chứng.** Với một màn hình, điền trong 30s: *URL own ___. Query key là ___. Server session là ___. Client store là ___ (hoặc trống).* Nếu hai tầng nhận cùng field, bạn đã có bug. Practice đặt chỗ bảng product, cart, auth, theme."
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Layer",
+              "vi": "Tầng"
+            },
+            {
+              "en": "Source of truth",
+              "vi": "Source of truth"
+            },
+            {
+              "en": "Examples",
+              "vi": "Ví dụ"
+            },
+            {
+              "en": "Vue / Nuxt analog",
+              "vi": "Analog Vue / Nuxt"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Local UI",
+                "vi": "Local UI"
+              },
+              {
+                "en": "`useState` / `useReducer`",
+                "vi": "`useState` / `useReducer`"
+              },
+              {
+                "en": "Modal open, hover, caret-adjacent draft",
+                "vi": "Modal mở, hover, draft sát caret"
+              },
+              {
+                "en": "Component `ref`",
+                "vi": "`ref` component"
+              }
+            ],
+            [
+              {
+                "en": "URL",
+                "vi": "URL"
+              },
+              {
+                "en": "path / `searchParams`",
+                "vi": "path / `searchParams`"
+              },
+              {
+                "en": "Filters, tab, pagination, selected id",
+                "vi": "Filter, tab, pagination, id đang chọn"
+              },
+              {
+                "en": "`route.query`",
+                "vi": "`route.query`"
+              }
+            ],
+            [
+              {
+                "en": "Cookies / session",
+                "vi": "Cookie / session"
+              },
+              {
+                "en": "httpOnly cookie + server session",
+                "vi": "cookie httpOnly + server session"
+              },
+              {
+                "en": "Who is logged in, CSRF, tenant",
+                "vi": "Ai đang login, CSRF, tenant"
+              },
+              {
+                "en": "Nuxt `useCookie`",
+                "vi": "Nuxt `useCookie`"
+              }
+            ],
+            [
+              {
+                "en": "RSC / server render",
+                "vi": "RSC / server render"
+              },
+              {
+                "en": "Server Components, `fetch` cache",
+                "vi": "Server Component, cache `fetch`"
+              },
+              {
+                "en": "Initial page data, DTO to children",
+                "vi": "Data trang ban đầu, DTO xuống children"
+              },
+              {
+                "en": "Nuxt `useAsyncData` on server",
+                "vi": "Nuxt `useAsyncData` trên server"
+              }
+            ],
+            [
+              {
+                "en": "Server cache (client)",
+                "vi": "Server cache (client)"
+              },
+              {
+                "en": "TanStack Query / SWR",
+                "vi": "TanStack Query / SWR"
+              },
+              {
+                "en": "Lists, details, mutations",
+                "vi": "List, detail, mutation"
+              },
+              {
+                "en": "Async data cache, not Pinia",
+                "vi": "Async data cache, không phải Pinia"
+              }
+            ],
+            [
+              {
+                "en": "Context",
+                "vi": "Context"
+              },
+              {
+                "en": "Provider value",
+                "vi": "Provider value"
+              },
+              {
+                "en": "Theme, locale, `QueryClient`, low-churn user id",
+                "vi": "Theme, locale, `QueryClient`, id user ít churn"
+              },
+              {
+                "en": "`provide` / `inject`",
+                "vi": "`provide` / `inject`"
+              }
+            ],
+            [
+              {
+                "en": "Client store",
+                "vi": "Client store"
+              },
+              {
+                "en": "Zustand / RTK / Jotai",
+                "vi": "Zustand / RTK / Jotai"
+              },
+              {
+                "en": "Guest cart, multi-step editor, complex UI selection",
+                "vi": "Cart guest, editor nhiều bước, selection UI phức tạp"
+              },
+              {
+                "en": "Pinia / Vuex",
+                "vi": "Pinia / Vuex"
+              }
+            ]
+          ]
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "More layers look “complicated” in a junior answer. A senior’s diagram is **smaller**: most screens are URL + Query + a few `useState`s. Stores appear when client workflow is actually a graph.",
-            "vi": "Nhiều tầng trông “phức tạp” trong câu junior. Diagram của senior **nhỏ hơn**: hầu hết màn hình là URL + Query + vài `useState`. Store xuất hiện khi workflow client thực sự là graph."
+            "en": "I place state by source of truth and lifetime, not by “global vs local.” Filters live in the URL, the session lives in an httpOnly cookie, lists live in Query or RSC, and Zustand only holds a client graph that is neither URL-worthy nor server data. If two layers claim the same field I already have a bug. A Pinia-style dump into Redux is how you get stale lists and hydration mismatches.",
+            "vi": "Tôi đặt state theo source of truth và vòng đời, không theo “global vs local.” Filter sống trên URL, session sống trong cookie httpOnly, list sống trong Query hoặc RSC, và Zustand chỉ giữ graph client không đáng URL cũng không phải data server. Hai tầng nhận cùng field thì tôi đã có bug. Dump kiểu Pinia vào Redux là cách có list stale và lệch hydration."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- Restoring filters from Zustand on load **after** the URL already had them → flicker and fights with back button.\n- RSC fetched the list **and** Query fetches it again with a different shape — pick a handoff (`initialData` + same key) or don’t use Query on that page.",
-            "vi": "- Restore filter từ Zustand lúc load **sau** khi URL đã có chúng → flicker và đánh nhau với back button.\n- RSC đã fetch list **và** Query fetch lại với shape khác — chọn handoff (`initialData` + cùng key) hoặc đừng dùng Query trên page đó."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "One fact, one owner. Narrowest layer that still shares correctly.",
+              "vi": "Một sự thật, một owner. Tầng hẹp nhất vẫn share đúng."
+            },
+            {
+              "en": "URL + cookies/session beat a client store for reload, share, and trust.",
+              "vi": "URL + cookie/session thắng client store cho reload, share, và tin cậy."
+            },
+            {
+              "en": "Query/RSC own server lists. Do not dump everything into Redux.",
+              "vi": "Query/RSC own list server. Đừng dump mọi thứ vào Redux."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- They will pick a feature (product table, cart, auth, theme) and make you place it. Practice all four.\n- Next-specific: §22.6.",
-            "vi": "- Họ sẽ chọn một feature (bảng product, cart, auth, theme) và bắt bạn đặt chỗ. Practice cả bốn.\n- Riêng Next: §22.6."
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "Place product filters, current user, guest cart, and theme — four different layers.",
+              "vi": "Đặt chỗ filter product, current user, guest cart, và theme — bốn tầng khác nhau."
+            },
+            {
+              "en": "When may Zustand hold a derived read of the URL, and when is that a second source of truth?",
+              "vi": "Khi nào Zustand được giữ bản đọc derived từ URL, và khi nào đó là source of truth thứ hai?"
+            },
+            {
+              "en": "RSC fetched the list and Query fetches it again — what is the handoff contract?",
+              "vi": "RSC đã fetch list và Query fetch lại — contract handoff là gì?"
+            },
+            {
+              "en": "Next-specific placement: see [22.6](#226-nextjs-state-patterns).",
+              "vi": "Đặt chỗ riêng Next: xem [22.6](#226-nextjs-state-patterns)."
+            }
+          ]
         },
         {
           "type": "thematic-break"
@@ -161,53 +349,195 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "- “Which store would you pick for a team of 20?”\n- “Is Redux dead?”\n- “Atoms vs slices?”",
-            "vi": "- “Store nào cho team 20 người?”\n- “Redux đã chết chưa?”\n- “Atom vs slice?”"
+            "en": "“Is Redux dead?” and “which store for a team of 20?” They want a **team-scale / problem-shape** pick, not Twitter — and they will fail you if the users list goes in a slice.",
+            "vi": "“Redux đã chết chưa?” và “store nào cho team 20 người?” Họ muốn chọn theo **scale team / hình bài toán**, không phải Twitter — và họ sẽ đánh trượt nếu users list vào một slice."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "**Decision.** This is a **team-scale / problem-shape** choice, not Twitter.\n\n|  | **Redux Toolkit** | **Zustand** | **Jotai** |\n| --- | --- | --- | --- |\n| Shape | One store, slices, conventions | One or few stores, hook API | Many atoms, compose |\n| Vue analog | Vuex (discipline, DevTools) | Pinia | “many small refs” |\n| Team of 15–40 | **Default** if you need one way to do things, reviewers, time-travel, middleware | Works if you **write conventions** (selectors, folders) | Works if the domain is a **graph**; chaos if everyone invents atoms |\n| Solo / small product | Heavy | **Default** | If derived state is the product |\n| Async / lists | RTK Query (if you’re already in RTK) | **Don’t** — use TanStack Query | Don’t — Query |\n| TS | Excellent, more types to learn | Light, infer from `create` | Excellent per atom; graphs get clever |\n| Next client island | Possible; more provider ceremony | **Fits** | Fits; watch SSR hydration per atom |\n\n**Redux is not dead.** It is **optional**. You pick RTK when the **organization** needs a paved road (onboarding, DevTools, RTK Query already there, event logging middleware). You pick Zustand when you want Pinia DX and you will **enforce selectors**. You pick Jotai when a **single store becomes a god object** and derived/atomic updates are the actual model (editors, node graphs, spreadsheet-like UI).\n\n**Constraint.** **Do not put server lists in Redux/Zustand/Jotai by default.** Cache, stale time, dedupe, retries, identity (`queryKey`) are Query’s job. A slice that `fetchUsers` + stores `users[]` is a 2018 answer. Exception: you are building an **offline sync engine** with its own replication log — then you know why, and Query isn’t enough.\n\n**Failure mode.** Introducing Jotai because it’s trendy, then recreating a global store with `atom` soup and no ownership. Introducing RTK for a 6-component SPA. Zustand **without selectors** (`useStore()` whole store) → Context-class thrash.\n\n**Measure.** Time for a new engineer to add a field + DevTools story. Profiler on a typed input: who re-renders. Count of duplicated lists in Query **and** a slice (should be 0).\n\n**Setup (mental, not a tutorial)**\n\n- RTK: `configureStore` + `createSlice` + `useSelector`/`useDispatch` (or RTK Query hooks).\n- Zustand: `create((set, get) => …)` + **narrow** `useCart(s => s.items)`.\n- Jotai: `atom` + `useAtom`; derived atoms instead of fat `get()`.",
-            "vi": "**Quyết định.** Đây là lựa chọn **scale team / hình bài toán**, không phải Twitter.\n\n|  | **Redux Toolkit** | **Zustand** | **Jotai** |\n| --- | --- | --- | --- |\n| Shape | Một store, slices, convention | Một hoặc vài store, hook API | Nhiều atom, compose |\n| Analog Vue | Vuex (kỷ luật, DevTools) | Pinia | “nhiều ref nhỏ” |\n| Team 15–40 | **Default** nếu cần một cách làm, reviewer, time-travel, middleware | Ổn nếu bạn **viết convention** (selector, folder) | Ổn nếu domain là **graph**; loạn nếu ai cũng invent atom |\n| Solo / product nhỏ | Nặng | **Default** | Nếu derived state là sản phẩm |\n| Async / list | RTK Query (nếu đã ở trong RTK) | **Đừng** — dùng TanStack Query | Đừng — Query |\n| TS | Xuất sắc, nhiều type phải học | Nhẹ, infer từ `create` | Xuất sắc từng atom; graph sẽ khôn lỏi |\n| Client island Next | Được; ceremony provider nhiều hơn | **Fit** | Fit; coi hydration SSR từng atom |\n\n**Redux không chết.** Nó **tùy chọn**. Chọn RTK khi **tổ chức** cần đường đã lát (onboarding, DevTools, RTK Query đã có, middleware log event). Chọn Zustand khi muốn DX Pinia và bạn sẽ **enforce selector**. Chọn Jotai khi **một store thành god object** và update derived/atomic mới là model thật (editor, node graph, UI kiểu spreadsheet).\n\n**Ràng buộc.** **Đừng nhét list server vào Redux/Zustand/Jotai mặc định.** Cache, stale time, dedupe, retry, identity (`queryKey`) là việc của Query. Slice `fetchUsers` + chứa `users[]` là câu trả lời 2018. Ngoại lệ: bạn đang dựng **offline sync engine** với replication log riêng — lúc đó bạn biết vì sao, và Query không đủ.\n\n**Failure mode.** Đưa Jotai vì trendy, rồi tái tạo global store bằng soup `atom` không ownership. Đưa RTK cho SPA 6 component. Zustand **không selector** (`useStore()` cả store) → thrash hạng Context.\n\n**Cách đo.** Thời gian engineer mới thêm một field + story DevTools. Profiler trên input đang gõ: ai re-render. Số list nhân đôi trong Query **và** một slice (phải là 0).\n\n**Setup (mental model, không phải tutorial)**\n\n- RTK: `configureStore` + `createSlice` + `useSelector`/`useDispatch` (hoặc hook RTK Query).\n- Zustand: `create((set, get) => …)` + `useCart(s => s.items)` **hẹp**.\n- Jotai: `atom` + `useAtom`; derived atom thay vì `get()` béo."
+            "en": "Pick the store for the team and the shape of the client graph; never put server lists in it by default.",
+            "vi": "Chọn store theo team và hình graph client; mặc định không nhét list server vào đó."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** Redux is optional, not dead. RTK when the organization needs a paved road (onboarding, DevTools, RTK Query already there, event-logging middleware) — default for a team of 15–40. Zustand when you want Pinia DX and will **enforce selectors** — default for solo / small product. Jotai when a single store becomes a god object and derived/atomic updates are the actual model (editors, node graphs, spreadsheet-like UI). Do not run RTK Query and TanStack Query together.",
+              "vi": "**Quyết định.** Redux là tùy chọn, không chết. RTK khi tổ chức cần đường đã lát (onboarding, DevTools, RTK Query đã có, middleware log event) — default cho team 15–40. Zustand khi muốn DX Pinia và bạn sẽ **enforce selector** — default cho solo / product nhỏ. Jotai khi một store thành god object và update derived/atomic mới là model thật (editor, node graph, UI kiểu spreadsheet). Đừng chạy RTK Query và TanStack Query cùng lúc."
+            },
+            {
+              "en": "**Why.** Cache, stale time, dedupe, retries, identity (`queryKey`) are Query’s job. A slice that `fetchUsers` + stores `users[]` is a 2018 answer. Exception: you are building an offline sync engine with its own replication log — then you know why, and Query isn’t enough.",
+              "vi": "**Vì sao.** Cache, stale time, dedupe, retry, identity (`queryKey`) là việc của Query. Slice `fetchUsers` + chứa `users[]` là câu trả lời 2018. Ngoại lệ: bạn đang dựng offline sync engine với replication log riêng — lúc đó bạn biết vì sao, và Query không đủ."
+            },
+            {
+              "en": "**Trade-off.** RTK: more files, fewer arguments in code review. Zustand: less boilerplate, entropy without lint/review; `useStore()` of the whole store is Context-class thrash. Jotai: fine-grained updates closer to Vue, harder to see the data model in one file; atom soup with no ownership recreates a global store. Introducing RTK for a 6-component SPA is ceremony. Persist middleware + Next SSR mismatches ([22.8](#228-interview-pitfalls)). Missing Jotai Provider in tests/SSR yields wrong values with no throw.",
+              "vi": "**Đánh đổi / rủi ro.** RTK: nhiều file hơn, ít cãi trong code review. Zustand: ít boilerplate, entropy nếu không lint/review; `useStore()` cả store là thrash hạng Context. Jotai: update fine-grained gần Vue, khó nhìn data model trong một file; soup atom không ownership tái tạo global store. Đưa RTK cho SPA 6 component là nghi lễ. Persist middleware + Next SSR thì lệch ([22.8](#228-interview-pitfalls)). Thiếu Jotai Provider trong test/SSR thì value sai mà không throw."
+            },
+            {
+              "en": "**How to verify.** Time for a new engineer to add a field + DevTools story. Profiler on a typed input: who re-renders. Count of duplicated lists in Query **and** a slice (should be 0). RTK `useSelector` that returns a new object every time is a render storm.",
+              "vi": "**Cách kiểm chứng.** Thời gian engineer mới thêm một field + story DevTools. Profiler trên input đang gõ: ai re-render. Số list nhân đôi trong Query **và** một slice (phải là 0). RTK `useSelector` trả object mới mỗi lần là bão render."
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "",
+              "vi": ""
+            },
+            {
+              "en": "Redux Toolkit",
+              "vi": "Redux Toolkit"
+            },
+            {
+              "en": "Zustand",
+              "vi": "Zustand"
+            },
+            {
+              "en": "Jotai",
+              "vi": "Jotai"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Shape",
+                "vi": "Shape"
+              },
+              {
+                "en": "One store, slices, conventions",
+                "vi": "Một store, slice, convention"
+              },
+              {
+                "en": "One or few stores, hook API",
+                "vi": "Một hoặc vài store, hook API"
+              },
+              {
+                "en": "Many atoms, compose",
+                "vi": "Nhiều atom, compose"
+              }
+            ],
+            [
+              {
+                "en": "Vue analog",
+                "vi": "Analog Vue"
+              },
+              {
+                "en": "Vuex (discipline, DevTools)",
+                "vi": "Vuex (kỷ luật, DevTools)"
+              },
+              {
+                "en": "Pinia",
+                "vi": "Pinia"
+              },
+              {
+                "en": "Many small refs",
+                "vi": "Nhiều ref nhỏ"
+              }
+            ],
+            [
+              {
+                "en": "Team 15–40",
+                "vi": "Team 15–40"
+              },
+              {
+                "en": "Default if you need one paved road",
+                "vi": "Default nếu cần một đường đã lát"
+              },
+              {
+                "en": "Works if you write conventions",
+                "vi": "Ổn nếu bạn viết convention"
+              },
+              {
+                "en": "Works if the domain is a graph",
+                "vi": "Ổn nếu domain là graph"
+              }
+            ],
+            [
+              {
+                "en": "Async / lists",
+                "vi": "Async / list"
+              },
+              {
+                "en": "RTK Query if already in RTK",
+                "vi": "RTK Query nếu đã ở trong RTK"
+              },
+              {
+                "en": "Don’t — TanStack Query",
+                "vi": "Đừng — TanStack Query"
+              },
+              {
+                "en": "Don’t — Query",
+                "vi": "Đừng — Query"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "// Mental setup — not a tutorial.\n// RTK: configureStore + createSlice + useSelector / useDispatch\n// Zustand: create((set, get) => …) + narrow selector\nconst qty = useCart((s) => s.items.length)\n// Jotai: atom + useAtom; derived atoms instead of a fat get()",
+            "vi": "// Setup mental — không phải tutorial.\n// RTK: configureStore + createSlice + useSelector / useDispatch\n// Zustand: create((set, get) => …) + selector hẹp\nconst qty = useCart((s) => s.items.length)\n// Jotai: atom + useAtom; derived atom thay vì get() béo"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "RTK: more files, fewer arguments in code review. Zustand: less boilerplate, entropy without lint/review. Jotai: fine-grained updates (closer to Vue), harder to *see* the data model in one file.",
-            "vi": "RTK: nhiều file hơn, ít cãi trong code review. Zustand: ít boilerplate, entropy nếu không lint/review. Jotai: update fine-grained (gần Vue), khó *nhìn* data model trong một file."
+            "en": "Redux is not dead; it is optional. I pick RTK when the org needs a paved road, Zustand when I want Pinia DX and will enforce selectors, Jotai when the domain is a graph and a single store would become a god object. I do not put server lists in any of them — that is Query. Zustand without a selector is the same thrash as a fat Context.",
+            "vi": "Redux không chết; nó tùy chọn. Tôi chọn RTK khi org cần đường đã lát, Zustand khi muốn DX Pinia và sẽ enforce selector, Jotai khi domain là graph và một store sẽ thành god object. Tôi không nhét list server vào cái nào — đó là Query. Zustand không selector là cùng hạng thrash với Context béo."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- RTK `useSelector` without equality / returning a new object every time → render storm.\n- Zustand persist middleware + Next SSR → hydration mismatch (§22.8).\n- Jotai Provider missing in tests/SSR → silent wrong values.",
-            "vi": "- RTK `useSelector` không equality / trả object mới mỗi lần → bão render.\n- Zustand persist middleware + Next SSR → lệch hydration (§22.8).\n- Thiếu Jotai Provider trong test/SSR → value sai im lặng."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "RTK = paved road. Zustand = Pinia DX + selectors. Jotai = graph / atoms.",
+              "vi": "RTK = đường đã lát. Zustand = DX Pinia + selector. Jotai = graph / atom."
+            },
+            {
+              "en": "Do not put server lists in Redux / Zustand / Jotai by default.",
+              "vi": "Mặc định đừng nhét list server vào Redux / Zustand / Jotai."
+            },
+            {
+              "en": "Don’t run RTK Query and TanStack Query together.",
+              "vi": "Đừng chạy RTK Query và TanStack Query cùng lúc."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- “RTK Query vs TanStack Query?” — don’t run both. RTK Query if the team is all-in Redux; TanStack Query is the ecosystem default and pairs with Zustand.\n- Context vs these: §22.4.",
-            "vi": "- “RTK Query vs TanStack Query?” — đừng chạy cả hai. RTK Query nếu team all-in Redux; TanStack Query là default ecosystem và đi cặp Zustand.\n- Context vs những cái này: §22.4."
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "RTK Query vs TanStack Query — when is each the default?",
+              "vi": "RTK Query vs TanStack Query — khi nào cái nào là default?"
+            },
+            {
+              "en": "What convention would you write so Zustand does not rot on a team of 20?",
+              "vi": "Convention nào để Zustand không thối trên team 20 người?"
+            },
+            {
+              "en": "When is an offline sync engine a valid reason to store lists in a slice?",
+              "vi": "Khi nào offline sync engine là lý do hợp lệ để chứa list trong slice?"
+            },
+            {
+              "en": "Context vs these stores: see [22.4](#224-local-vs-context-vs-store-vs-server-cache).",
+              "vi": "Context vs những store này: xem [22.4](#224-local-vs-context-vs-store-vs-server-cache)."
+            }
+          ]
         },
         {
           "type": "thematic-break"
@@ -231,53 +561,195 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "- “Draw Redux data flow.”\n- “How is Zustand different from Pinia?”\n- “Where do side effects live?”",
-            "vi": "- “Vẽ data flow Redux.”\n- “Zustand khác Pinia chỗ nào?”\n- “Side effect sống ở đâu?”"
+            "en": "“Draw Redux data flow.” Then: where do GET lists live, how is Zustand different from Pinia, and why `useCart()` without a selector thrashes the tree?",
+            "vi": "“Vẽ data flow Redux.” Rồi: GET list sống ở đâu, Zustand khác Pinia chỗ nào, và vì sao `useCart()` không selector làm thrash cả tree?"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "**Decision.** All three are **client UI** flows. Server side effects (HTTP GET lists) should **exit this diagram** into Query/RSC.\n\n**Redux Toolkit (Flux-like)**\n\n1. UI `dispatch(action)`.\n1. Slice reducer updates **immutably** (Immer in RTK).\n1. Async: thunk / listener middleware / **RTK Query**.\n1. `useSelector` → re-render.\n\n**Pros:** replay, middleware, explicit events. **Cons:** ceremony; people stuff server cache into slices.\n\n**Zustand (Pinia-like)**\n\n1. UI calls `useCart(s => s.add)(id)`.\n1. `set` replaces a slice of the store (Immer optional).\n1. Subscribers whose **selected** slice `Object.is`-changed re-render.\n\n**Pros:** tiny, Vue-senior friendly. **Cons:** side effects in actions become an ungoverned `fetch` unless you forbid it.\n\n**Jotai**\n\n1. UI `setAtom`.\n1. Derived atoms recompute.\n1. Only components subscribed to those atoms re-render.\n\n**Pros:** granularity. **Cons:** the graph *is* the architecture — undocumented graphs don’t scale.\n\n```ts\n// Selector discipline is the production constraint (whole-store subscribe = thrash)\nconst qty = useCart((s) => s.items.length)\nconst add = useCart((s) => s.add)\n```\n\n**Constraint.** Actions should be **pure store updates** or call Query mutations. Mixing `fetch` inside Zustand actions recreates thunks without the cache.\n\n**Failure mode.** Dispatching into Redux from a Server Component (you can’t — no hooks, wrong runtime). Using Jotai atoms as a network cache.\n\n**Measure.** Redux DevTools action log vs “we have no idea why the cart emptied.” Zustand: log in `subscribe`. If you need the log to ship, maybe you needed RTK.\n\n**Vue bridge**\n\n| Feature | RTK | Zustand | Jotai |\n| --- | --- | --- | --- |\n| Boilerplate | Medium | Low | Low–medium |\n| Structure | Strong conventions | You define | Atom graph |\n| DevTools | Excellent | Good | Good |\n| Vue bridge | Vuex | Pinia | many refs |\n| Side effects | thunks / RTK Query | actions (keep thin) + Query | write atoms (keep thin) + Query |",
-            "vi": "**Quyết định.** Cả ba là flow **client UI**. Side effect server (HTTP GET list) phải **ra khỏi diagram này** vào Query/RSC.\n\n**Redux Toolkit (kiểu Flux)**\n\n1. UI `dispatch(action)`.\n1. Slice reducer update **immutable** (Immer trong RTK).\n1. Async: thunk / listener middleware / **RTK Query**.\n1. `useSelector` → re-render.\n\n**Ưu:** replay, middleware, event tường minh. **Nhược:** ceremony; người ta nhét server cache vào slice.\n\n**Zustand (kiểu Pinia)**\n\n1. UI gọi `useCart(s => s.add)(id)`.\n1. `set` thay một slice của store (Immer tùy chọn).\n1. Subscriber có slice **đã select** đổi `Object.is` thì re-render.\n\n**Ưu:** nhỏ, thân thiện Vue senior. **Nhược:** side effect trong action thành `fetch` không quản trừ khi bạn cấm.\n\n**Jotai**\n\n1. UI `setAtom`.\n1. Derived atom tính lại.\n1. Chỉ component subscribe atom đó re-render.\n\n**Ưu:** granularity. **Nhược:** graph *chính là* architecture — graph không document không scale.\n\n```ts\n// Selector discipline is the production constraint (whole-store subscribe = thrash)\nconst qty = useCart((s) => s.items.length)\nconst add = useCart((s) => s.add)\n```\n\n**Ràng buộc.** Action nên là **update store thuần** hoặc gọi Query mutation. Mix `fetch` trong action Zustand tái tạo thunk không có cache.\n\n**Failure mode.** Dispatch vào Redux từ Server Component (không được — không hook, sai runtime). Dùng Jotai atom làm network cache.\n\n**Cách đo.** Redux DevTools action log vs “không biết sao cart trống.” Zustand: log trong `subscribe`. Nếu cần log mới ship được, có lẽ bạn cần RTK.\n\n**Cầu nối Vue**\n\n| Feature | RTK | Zustand | Jotai |\n| --- | --- | --- | --- |\n| Boilerplate | Trung bình | Thấp | Thấp–TB |\n| Cấu trúc | Convention mạnh | Bạn định nghĩa | Atom graph |\n| DevTools | Xuất sắc | Tốt | Tốt |\n| Cầu nối Vue | Vuex | Pinia | nhiều ref |\n| Side effects | thunks / RTK Query | action (giữ mỏng) + Query | write atom (giữ mỏng) + Query |"
+            "en": "RTK, Zustand, and Jotai are client-UI flows; HTTP lists exit this diagram into Query/RSC.",
+            "vi": "RTK, Zustand, và Jotai là flow UI client; list HTTP ra khỏi diagram này vào Query/RSC."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** Redux Toolkit: UI `dispatch` → slice reducer updates immutably (Immer) → thunk / listener / RTK Query for async → `useSelector` re-renders. Zustand: UI calls `useCart(s => s.add)(id)` → `set` replaces a slice → subscribers whose **selected** slice `Object.is`-changed re-render. Jotai: `setAtom` → derived atoms recompute → only subscribed components re-render. Actions should be pure store updates or call Query mutations.",
+              "vi": "**Quyết định.** Redux Toolkit: UI `dispatch` → slice reducer update immutable (Immer) → thunk / listener / RTK Query cho async → `useSelector` re-render. Zustand: UI gọi `useCart(s => s.add)(id)` → `set` thay một slice → subscriber có slice **đã select** đổi `Object.is` thì re-render. Jotai: `setAtom` → derived atom tính lại → chỉ component đã subscribe re-render. Action nên là update store thuần hoặc gọi Query mutation."
+            },
+            {
+              "en": "**Why.** Selector discipline is the production constraint: whole-store subscribe is thrash. Mixing `fetch` inside Zustand actions recreates thunks without the cache. Flux is easier to audit; Pinia-like is easier to write — pick for the failure mode you cannot afford.",
+              "vi": "**Vì sao.** Kỷ luật selector là ràng buộc production: subscribe cả store là thrash. Mix `fetch` trong action Zustand tái tạo thunk không có cache. Flux dễ audit; kiểu Pinia dễ viết — chọn theo failure mode bạn không chịu nổi."
+            },
+            {
+              "en": "**Trade-off.** RTK ceremony tempts people to stuff server cache into slices. Zustand side effects in actions become an ungoverned `fetch` unless you forbid it. Jotai’s graph *is* the architecture — undocumented graphs don’t scale. `set({ items })` after mutating `items` in place may bail out; always new references for selected fields. `createAsyncThunk` for GET lists is a Query-shaped problem. You cannot `dispatch` from a Server Component.",
+              "vi": "**Đánh đổi / rủi ro.** Ceremony RTK dụ người ta nhét server cache vào slice. Side effect trong action Zustand thành `fetch` không quản trừ khi bạn cấm. Graph Jotai *chính là* architecture — graph không document không scale. `set({ items })` sau khi mutate `items` tại chỗ có thể bail out; luôn reference mới cho field đã select. `createAsyncThunk` cho GET list là bài toán dáng Query. Không `dispatch` được từ Server Component."
+            },
+            {
+              "en": "**How to verify.** Redux DevTools action log vs “we have no idea why the cart emptied.” Zustand: log in `subscribe`. If you need the log to ship, maybe you needed RTK. Profiler: who re-renders on `add`.",
+              "vi": "**Cách kiểm chứng.** Redux DevTools action log vs “không biết sao cart trống.” Zustand: log trong `subscribe`. Nếu cần log mới ship được, có lẽ bạn cần RTK. Profiler: ai re-render lúc `add`."
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Feature",
+              "vi": "Feature"
+            },
+            {
+              "en": "RTK",
+              "vi": "RTK"
+            },
+            {
+              "en": "Zustand",
+              "vi": "Zustand"
+            },
+            {
+              "en": "Jotai",
+              "vi": "Jotai"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Boilerplate",
+                "vi": "Boilerplate"
+              },
+              {
+                "en": "Medium",
+                "vi": "Trung bình"
+              },
+              {
+                "en": "Low",
+                "vi": "Thấp"
+              },
+              {
+                "en": "Low–medium",
+                "vi": "Thấp–TB"
+              }
+            ],
+            [
+              {
+                "en": "Structure",
+                "vi": "Cấu trúc"
+              },
+              {
+                "en": "Strong conventions",
+                "vi": "Convention mạnh"
+              },
+              {
+                "en": "You define",
+                "vi": "Bạn định nghĩa"
+              },
+              {
+                "en": "Atom graph",
+                "vi": "Atom graph"
+              }
+            ],
+            [
+              {
+                "en": "Vue bridge",
+                "vi": "Cầu nối Vue"
+              },
+              {
+                "en": "Vuex",
+                "vi": "Vuex"
+              },
+              {
+                "en": "Pinia",
+                "vi": "Pinia"
+              },
+              {
+                "en": "Many refs",
+                "vi": "Nhiều ref"
+              }
+            ],
+            [
+              {
+                "en": "Side effects",
+                "vi": "Side effects"
+              },
+              {
+                "en": "thunks / RTK Query",
+                "vi": "thunks / RTK Query"
+              },
+              {
+                "en": "Thin actions + Query",
+                "vi": "Action mỏng + Query"
+              },
+              {
+                "en": "Thin write atoms + Query",
+                "vi": "Write atom mỏng + Query"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "// Selector discipline is the production constraint.\n// Whole-store subscribe = thrash.\nconst qty = useCart((s) => s.items.length)\nconst add = useCart((s) => s.add)",
+            "vi": "// Kỷ luật selector là ràng buộc production.\n// Subscribe cả store = thrash.\nconst qty = useCart((s) => s.items.length)\nconst add = useCart((s) => s.add)"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "Flux is easier to **audit**. Pinia-like is easier to **write**. Pick for the failure mode you cannot afford (audit vs speed).",
-            "vi": "Flux dễ **audit**. Kiểu Pinia dễ **viết**. Chọn theo failure mode bạn không chịu nổi (audit vs tốc độ)."
+            "en": "All three are client-UI flows. GET lists leave this diagram for Query or RSC. I subscribe with a narrow selector — `useCart()` of the whole store is the same thrash as Context. Zustand actions stay thin and call Query for HTTP; mixing `fetch` inside `set` recreates thunks without a cache. If we need an action log to ship, I wanted RTK.",
+            "vi": "Cả ba là flow UI client. GET list rời diagram này sang Query hoặc RSC. Tôi subscribe bằng selector hẹp — `useCart()` cả store là cùng hạng thrash với Context. Action Zustand giữ mỏng và gọi Query cho HTTP; mix `fetch` trong `set` tái tạo thunk không cache. Nếu cần action log mới ship được, tôi đã muốn RTK."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- Zustand `set({ items })` mutating `items` in place first — React/Zustand may bail out; always new references for the fields you select.\n- RTK `createAsyncThunk` for GET lists — that’s a Query-shaped problem.",
-            "vi": "- Zustand `set({ items })` mutate `items` tại chỗ trước — React/Zustand có thể bail out; luôn reference mới cho field bạn select.\n- RTK `createAsyncThunk` cho GET list — đó là bài toán dáng Query."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "HTTP GET lists exit the store diagram into Query / RSC.",
+              "vi": "GET list HTTP ra khỏi diagram store vào Query / RSC."
+            },
+            {
+              "en": "Narrow selectors. Whole-store subscribe is Context-class thrash.",
+              "vi": "Selector hẹp. Subscribe cả store là thrash hạng Context."
+            },
+            {
+              "en": "Flux audits; Pinia-like writes fast. Pick for the failure you cannot afford.",
+              "vi": "Flux dễ audit; kiểu Pinia viết nhanh. Chọn theo failure bạn không chịu nổi."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- Immutability vs Vue mutation: [react.md §20.1.4](./react.md#2014-props-vs-state).",
-            "vi": "- Immutability vs mutation Vue: [react.md §20.1.4](./react.md#2014-props-vs-state)."
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "Immutability vs Vue mutation: [react.md §20.1.4](./react.md#2014-props-vs-state).",
+              "vi": "Immutability vs mutation Vue: [react.md §20.1.4](./react.md#2014-props-vs-state)."
+            },
+            {
+              "en": "What happens if you mutate `items` in place then `set({ items })`?",
+              "vi": "Mutate `items` tại chỗ rồi `set({ items })` thì sao?"
+            },
+            {
+              "en": "Why can’t a Server Component dispatch into Redux?",
+              "vi": "Vì sao Server Component không dispatch vào Redux được?"
+            },
+            {
+              "en": "When do you pick Flux auditability over Pinia-like speed?",
+              "vi": "Khi nào chọn khả năng audit Flux hơn tốc độ kiểu Pinia?"
+            }
+          ]
         },
         {
           "type": "thematic-break"
@@ -301,53 +773,167 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "- “When is Context enough?”\n- “Why not one React Context for the app?”\n- “What’s ‘state locality’?”",
-            "vi": "- “Khi nào Context đủ?”\n- “Sao không một React Context cho cả app?”\n- “‘State locality’ là gì?”"
+            "en": "“When is Context enough?” and “why not one React Context for the app?” They will hand you a cart in Context and ask you to move it — and to name **what does not move** (the item catalog stays Query).",
+            "vi": "“Khi nào Context đủ?” và “sao không một React Context cho cả app?” Họ sẽ đưa một cart trong Context và bắt bạn chuyển — và gọi tên **cái gì không chuyển** (catalog item vẫn Query)."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "**Decision — interview-ready rule**\n\n| If… | Then |\n| --- | --- |\n| One component / short tree, ephemeral | `useState` / `useReducer` |\n| Shareable / back-button / bookmark | **URL** |\n| Trusted identity / session | **Cookies + server** |\n| Remote data that can be stale | **TanStack Query / SWR** (or RSC for the document) |\n| Low-churn DI (theme, locale, flags, query client) | **Context** (split providers) |\n| High-frequency or complex **client** workflow | **Zustand / RTK / Jotai** with selectors |\n\n**Constraint.** Context **broadcasts** to all consumers on `value` change — `memo` does not skip it ([react.md §20.2.1](./react.md#2021-context-vs-vue-provide--inject)). A store with selectors is how you share **often-changing** client state. “State locality” means **push state down** until a sibling needs it; don’t lift to Redux for convenience.\n\n**Failure mode.** Keystrokes in Context. Theme + cart + user in one Provider. Query result copied into Context “so I don’t import Query.” Store as a mirror of `searchParams`.\n\n**Measure.** Profiler while typing. If the app shell highlights, the layer is wrong.\n\n**Use local state for:** one tree, hover/open, uncontrolled drafts until submit.\n\n**Use Context for:** rarely changing shared values; **injecting** services (QueryClient, i18n). Split **state** vs **dispatch** if the value would otherwise be a new object every render.\n\n**Use a client store for:** cross-route UI that is **not** URL-worthy and **not** server data (guest cart, design-tool selection, wizard that must not be in the URL for size/privacy).\n\n**Use server cache for:** lists, details, mutation + invalidate.",
-            "vi": "**Quyết định — rule mang vào phòng vấn**\n\n| Nếu… | Thì |\n| --- | --- |\n| Một component / cây ngắn, ephemeral | `useState` / `useReducer` |\n| Share được / back-button / bookmark | **URL** |\n| Identity / session được tin | **Cookie + server** |\n| Data remote có thể stale | **TanStack Query / SWR** (hoặc RSC cho document) |\n| DI ít churn (theme, locale, flag, query client) | **Context** (tách provider) |\n| Workflow **client** tần suất cao hoặc phức tạp | **Zustand / RTK / Jotai** kèm selector |\n\n**Ràng buộc.** Context **broadcast** tới mọi consumer khi `value` đổi — `memo` không skip ([react.md §20.2.1](./react.md#2021-context-vs-provide--inject)). Store có selector là cách share state client **đổi thường xuyên**. “State locality” nghĩa là **đẩy state xuống** đến khi sibling cần; đừng lift lên Redux cho tiện.\n\n**Failure mode.** Keystroke trong Context. Theme + cart + user một Provider. Copy kết quả Query vào Context “để khỏi import Query.” Store soi gương `searchParams`.\n\n**Cách đo.** Profiler lúc gõ. Nếu app shell highlight, tầng sai.\n\n**Dùng local state cho:** một cây, hover/open, draft uncontrolled đến lúc submit.\n\n**Dùng Context cho:** value share ít đổi; **inject** service (QueryClient, i18n). Tách **state** vs **dispatch** nếu value nếu không sẽ là object mới mỗi render.\n\n**Dùng client store cho:** UI cross-route **không** đáng URL và **không** phải data server (guest cart, selection design-tool, wizard không được lên URL vì size/privacy).\n\n**Dùng server cache cho:** list, detail, mutation + invalidate."
+            "en": "Context is low-churn DI; a store with selectors is for high-frequency client state; Query owns remote data.",
+            "vi": "Context là DI ít churn; store có selector cho state client tần suất cao; Query sở hữu data remote."
           }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** One component / short tree, ephemeral → `useState` / `useReducer`. Shareable / back-button / bookmark → URL. Trusted identity / session → cookies + server. Remote data that can be stale → TanStack Query / SWR (or RSC for the document). Low-churn DI (theme, locale, flags, QueryClient) → Context, split providers. High-frequency or complex client workflow → Zustand / RTK / Jotai with selectors. Push state down until a sibling needs it.",
+              "vi": "**Quyết định.** Một component / cây ngắn, ephemeral → `useState` / `useReducer`. Share được / back-button / bookmark → URL. Identity / session được tin → cookie + server. Data remote có thể stale → TanStack Query / SWR (hoặc RSC cho document). DI ít churn (theme, locale, flag, QueryClient) → Context, tách provider. Workflow client tần suất cao hoặc phức tạp → Zustand / RTK / Jotai kèm selector. Đẩy state xuống đến khi sibling cần."
+            },
+            {
+              "en": "**Why.** Context broadcasts to all consumers on `value` change — `memo` does not skip it ([react.md §20.2.1](./react.md#2021-context-vs-vue-provide--inject)). “State locality” means do not lift to Redux for convenience. URL for filters is slightly more plumbing than Zustand and wins share/reload/analytics.",
+              "vi": "**Vì sao.** Context broadcast tới mọi consumer khi `value` đổi — `memo` không skip ([react.md §20.2.1](./react.md#2021-context-vs-vue-provide--inject)). “State locality” nghĩa là đừng lift lên Redux cho tiện. URL cho filter plumbing hơi nhiều hơn Zustand và thắng share/reload/analytics."
+            },
+            {
+              "en": "**Trade-off.** Keystrokes in Context. Theme + cart + user in one Provider. Query result copied into Context “so I don’t import Query.” Store as a mirror of `searchParams`. `value={{ user, setUser }}` is a new object every render. A giant `user` Context updated when a profile form types — session vs draft must be split ([22.8](#228-interview-pitfalls)). Stores are explicit about client-only — dangerous on Next if you persist them blindly.",
+              "vi": "**Đánh đổi / rủi ro.** Keystroke trong Context. Theme + cart + user một Provider. Copy kết quả Query vào Context “để khỏi import Query.” Store soi gương `searchParams`. `value={{ user, setUser }}` là object mới mỗi render. Context `user` khổng lồ update khi form profile gõ — session vs draft phải tách ([22.8](#228-interview-pitfalls)). Store nói rõ client-only — nguy hiểm trên Next nếu persist mù."
+            },
+            {
+              "en": "**How to verify.** Profiler while typing. If the app shell highlights, the layer is wrong. Split **state** vs **dispatch** Context if the value would otherwise be a new object every render.",
+              "vi": "**Cách kiểm chứng.** Profiler lúc gõ. Nếu app shell highlight, tầng sai. Tách Context **state** vs **dispatch** nếu value nếu không sẽ là object mới mỗi render."
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "If…",
+              "vi": "Nếu…"
+            },
+            {
+              "en": "Then",
+              "vi": "Thì"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "One component / short tree, ephemeral",
+                "vi": "Một component / cây ngắn, ephemeral"
+              },
+              {
+                "en": "`useState` / `useReducer`",
+                "vi": "`useState` / `useReducer`"
+              }
+            ],
+            [
+              {
+                "en": "Shareable / back-button / bookmark",
+                "vi": "Share được / back-button / bookmark"
+              },
+              {
+                "en": "URL",
+                "vi": "URL"
+              }
+            ],
+            [
+              {
+                "en": "Trusted identity / session",
+                "vi": "Identity / session được tin"
+              },
+              {
+                "en": "Cookies + server",
+                "vi": "Cookie + server"
+              }
+            ],
+            [
+              {
+                "en": "Remote data that can be stale",
+                "vi": "Data remote có thể stale"
+              },
+              {
+                "en": "TanStack Query / SWR (or RSC)",
+                "vi": "TanStack Query / SWR (hoặc RSC)"
+              }
+            ],
+            [
+              {
+                "en": "Low-churn DI",
+                "vi": "DI ít churn"
+              },
+              {
+                "en": "Context (split providers)",
+                "vi": "Context (tách provider)"
+              }
+            ],
+            [
+              {
+                "en": "High-frequency client workflow",
+                "vi": "Workflow client tần suất cao"
+              },
+              {
+                "en": "Zustand / RTK / Jotai + selectors",
+                "vi": "Zustand / RTK / Jotai + selector"
+              }
+            ]
+          ]
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "URL for filters is slightly more plumbing than Zustand and wins share/reload/analytics. Context is zero deps and becomes a footgun at frequency. Stores are explicit about client-only — dangerous on Next if you persist them blindly.",
-            "vi": "URL cho filter plumbing hơi nhiều hơn Zustand và thắng share/reload/analytics. Context zero deps và thành footgun theo tần suất. Store nói rõ client-only — nguy hiểm trên Next nếu persist mù."
+            "en": "Context is enough for theme, locale, and injecting QueryClient — I split providers and I do not put keystrokes in it. A cart that updates often moves to Zustand with selectors; the item catalog stays Query. Filters stay in the URL. If the shell highlights while I type, the layer is wrong. I push state down until a sibling actually needs it.",
+            "vi": "Context đủ cho theme, locale, và inject QueryClient — tôi tách provider và không nhét keystroke vào đó. Cart update thường xuyên chuyển sang Zustand có selector; catalog item vẫn Query. Filter ở URL. Nếu shell highlight lúc tôi gõ, tầng sai. Tôi đẩy state xuống đến khi sibling thực sự cần."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- `value={{ user, setUser }}` new object every render.\n- Giant `user` Context updated when a profile form types (session vs **draft** must be split — §22.8).",
-            "vi": "- `value={{ user, setUser }}` object mới mỗi render.\n- Context `user` khổng lồ update khi form profile gõ (session vs **draft** phải tách — §22.8)."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "Context = low-churn DI. Store + selectors = high-frequency client state.",
+              "vi": "Context = DI ít churn. Store + selector = state client tần suất cao."
+            },
+            {
+              "en": "Push state down until a sibling needs it. Do not lift for convenience.",
+              "vi": "Đẩy state xuống đến khi sibling cần. Đừng lift cho tiện."
+            },
+            {
+              "en": "URL wins filters. Query owns lists. Don’t mirror either into a store.",
+              "vi": "URL thắng filter. Query sở hữu list. Đừng soi gương cái nào vào store."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- They will ask you to refactor a Context-shaped cart to Zustand and explain **what didn’t move** (item catalog stays Query).",
-            "vi": "- Họ sẽ bắt refactor cart dáng Context sang Zustand và giải thích **cái gì không chuyển** (catalog item vẫn Query)."
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "Refactor a Context-shaped cart to Zustand — what does not move?",
+              "vi": "Refactor cart dáng Context sang Zustand — cái gì không chuyển?"
+            },
+            {
+              "en": "Why doesn’t `memo` skip a Context consumer when `value` changes?",
+              "vi": "Vì sao `memo` không skip consumer Context khi `value` đổi?"
+            },
+            {
+              "en": "When do you split state Context from dispatch Context?",
+              "vi": "Khi nào tách Context state khỏi Context dispatch?"
+            },
+            {
+              "en": "Guest cart vs catalog — which layer is each?",
+              "vi": "Guest cart vs catalog — mỗi cái ở tầng nào?"
+            }
+          ]
         },
         {
           "type": "thematic-break"
@@ -371,53 +957,175 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "- “Why not `useEffect` + `useState`?”\n- “Why not Redux for the users list?”\n- “How do you invalidate after a POST?”",
-            "vi": "- “Sao không `useEffect` + `useState`?”\n- “Sao không Redux cho users list?”\n- “Invalidate sau POST thế nào?”"
+            "en": "“Why not `useEffect` + `useState` for the users list? Why not Redux?” Then they watch whether your `queryKey` includes the filter, and what you invalidate after a POST.",
+            "vi": "“Sao không `useEffect` + `useState` cho users list? Sao không Redux?” Rồi họ xem `queryKey` có gồm filter không, và bạn invalidate gì sau POST."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "**Decision.** Server state is **async, stale, keyed, shared**. Query/SWR already implement loading/error, **races**, dedupe, retries, focus refetch, `queryKey` identity, mutation → `invalidateQueries`. `useEffect` fetch recreates a worse version ([react.md §20.1.7](./react.md#2017-effects-useeffect-vs-vue-watch--lifecycle)). **Redux lists** recreate a worse version without stale-while-revalidate.\n\n**Constraint.** The **queryKey** is the cache identity (`['users', { page, q }]`) — same as Nuxt’s key string, but you will mess up object identity in the key. Mutations must declare **what they invalidate** (or update the cache). In Next, pair with `revalidateTag` when the **RSC** tree also shows that data.\n\n**Failure mode.** `queryKey: ['users']` for every filter. Putting `data` into Zustand in `onSuccess` “for convenience.” Fetching in both RSC and Query with **different** keys/shapes and no `initialData` contract. Disabling refetch so hard the UI never recovers.\n\n**Measure.** Query Devtools: hit vs miss, number of in-flight, who subscribed. Network: two components, one GET (dedupe) vs two.\n\n```ts\n// Invalidation is the production contract — not \"setUsers\" in a store\nconst qc = useQueryClient()\nuseMutation({\n  mutationFn: createUser,\n  onSuccess: () => qc.invalidateQueries({ queryKey: ['users'] }),\n})\n```\n\n**Don’t put API lists in Redux/Zustand by default.** Strong reasons only: offline-first replication, collaborative CRDT, or you *are* the cache (you’re not).\n\n**Vue / Nuxt bridge**\n\n| Concern | Vue / Nuxt | React |\n| --- | --- | --- |\n| Cached async data | `useAsyncData` / `useFetch` | TanStack Query / SWR |\n| Invalidate after write | `refreshNuxtData` | `invalidateQueries` + maybe `revalidateTag` |\n| Keyed cache | key string | `queryKey` array |\n| Deduped SSR fetch | Nuxt payload | RSC fetch cache **or** Query hydrate (`dehydrate`/`HydrationBoundary`) |",
-            "vi": "**Quyết định.** Server state là **async, stale, keyed, shared**. Query/SWR đã implement loading/error, **race**, dedupe, retry, focus refetch, identity `queryKey`, mutation → `invalidateQueries`. Fetch `useEffect` tái tạo bản tệ hơn ([react.md §20.1.7](./react.md#2017-effects-useeffect-vs-watch--lifecycle-vue)). **List Redux** tái tạo bản tệ hơn không stale-while-revalidate.\n\n**Ràng buộc.** **queryKey** là identity cache (`['users', { page, q }]`) — giống key string Nuxt, nhưng bạn sẽ làm hỏng object identity trong key. Mutation phải khai **chúng invalidate gì** (hoặc update cache). Trên Next, cặp `revalidateTag` khi cây **RSC** cũng hiện data đó.\n\n**Failure mode.** `queryKey: ['users']` cho mọi filter. Nhét `data` vào Zustand trong `onSuccess` “cho tiện.” Fetch cả RSC lẫn Query với key/shape **khác** và không có contract `initialData`. Tắt refetch đến mức UI không bao giờ hồi.\n\n**Cách đo.** Query Devtools: hit vs miss, số in-flight, ai subscribe. Network: hai component, một GET (dedupe) vs hai.\n\n```ts\n// Invalidation is the production contract — not \"setUsers\" in a store\nconst qc = useQueryClient()\nuseMutation({\n  mutationFn: createUser,\n  onSuccess: () => qc.invalidateQueries({ queryKey: ['users'] }),\n})\n```\n\n**Đừng nhét list API vào Redux/Zustand mặc định.** Chỉ lý do mạnh: replication offline-first, CRDT cộng tác, hoặc *bạn* là cache (bạn không phải).\n\n**Cầu nối Vue / Nuxt**\n\n| Nhu cầu | Vue / Nuxt | React |\n| --- | --- | --- |\n| Async data có cache | `useAsyncData` / `useFetch` | TanStack Query / SWR |\n| Invalidate sau ghi | `refreshNuxtData` | `invalidateQueries` + có thể `revalidateTag` |\n| Cache theo key | key string | `queryKey` array |\n| SSR fetch dedupe | Nuxt payload | cache fetch RSC **hoặc** hydrate Query (`dehydrate`/`HydrationBoundary`) |"
+            "en": "Server state is async, stale, keyed, and shared — Query already owns that contract; a Redux list does not.",
+            "vi": "Server state là async, stale, keyed, và shared — Query đã sở hữu contract đó; list Redux thì không."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** Use TanStack Query / SWR for lists, details, and mutation → `invalidateQueries`. In Next, pair with `revalidateTag` when the RSC tree also shows that data. Pattern: RSC for the document, Query for client interactions on that data (pagination that shouldn’t drop the shell, polling, optimistic rows). Don’t run SWR and Query together. Strong reasons only to put API lists in a store: offline-first replication, collaborative CRDT — you are not the cache.",
+              "vi": "**Quyết định.** Dùng TanStack Query / SWR cho list, detail, và mutation → `invalidateQueries`. Trên Next, cặp `revalidateTag` khi cây RSC cũng hiện data đó. Pattern: RSC cho document, Query cho tương tác client trên data đó (pagination không được drop shell, polling, hàng optimistic). Đừng chạy SWR và Query cùng lúc. Chỉ lý do mạnh mới nhét list API vào store: replication offline-first, CRDT cộng tác — bạn không phải cache."
+            },
+            {
+              "en": "**Why.** Query already implements loading/error, races, dedupe, retries, focus refetch, `queryKey` identity. `useEffect` fetch recreates a worse version ([react.md §20.1.7](./react.md#2017-effects-useeffect-vs-vue-watch--lifecycle)). A Redux list recreates a worse version without stale-while-revalidate. The `queryKey` is the cache identity (`['users', { page, q }]`) — same idea as Nuxt’s key string.",
+              "vi": "**Vì sao.** Query đã implement loading/error, race, dedupe, retry, focus refetch, identity `queryKey`. Fetch `useEffect` tái tạo bản tệ hơn ([react.md §20.1.7](./react.md#2017-effects-useeffect-vs-vue-watch--lifecycle)). List Redux tái tạo bản tệ hơn không stale-while-revalidate. `queryKey` là identity cache (`['users', { page, q }]`) — cùng ý với key string Nuxt."
+            },
+            {
+              "en": "**Trade-off.** Query is a **client** cache: after a full reload, RSC can be faster for first paint. `queryKey: ['users']` for every filter is a cache bug. Putting `data` into Zustand in `onSuccess` “for convenience” dual-writes. Fetching in both RSC and Query with different keys/shapes and no `initialData` contract diverges. `staleTime: Infinity` as a substitute for understanding invalidation. Hydrating user-specific rows into a shared cache key. Query errors are not render throws unless you opt into Suspense.",
+              "vi": "**Đánh đổi / rủi ro.** Query là cache **client**: sau full reload, RSC có thể nhanh hơn cho first paint. `queryKey: ['users']` cho mọi filter là bug cache. Nhét `data` vào Zustand trong `onSuccess` “cho tiện” là dual-write. Fetch cả RSC lẫn Query với key/shape khác và không có contract `initialData` thì lệch. `staleTime: Infinity` thay cho hiểu invalidation. Hydrate hàng riêng user vào cache key share. Lỗi Query không throw lúc render trừ khi bạn opt-in Suspense."
+            },
+            {
+              "en": "**How to verify.** Query Devtools: hit vs miss, in-flight count, who subscribed. Network: two components, one GET (dedupe) vs two. After POST, every surface that shows users refreshes from one `invalidateQueries`.",
+              "vi": "**Cách kiểm chứng.** Query Devtools: hit vs miss, số in-flight, ai subscribe. Network: hai component, một GET (dedupe) vs hai. Sau POST, mọi bề mặt hiện users refresh từ một `invalidateQueries`."
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Concern",
+              "vi": "Nhu cầu"
+            },
+            {
+              "en": "Vue / Nuxt",
+              "vi": "Vue / Nuxt"
+            },
+            {
+              "en": "React",
+              "vi": "React"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Cached async data",
+                "vi": "Async data có cache"
+              },
+              {
+                "en": "`useAsyncData` / `useFetch`",
+                "vi": "`useAsyncData` / `useFetch`"
+              },
+              {
+                "en": "TanStack Query / SWR",
+                "vi": "TanStack Query / SWR"
+              }
+            ],
+            [
+              {
+                "en": "Invalidate after write",
+                "vi": "Invalidate sau ghi"
+              },
+              {
+                "en": "`refreshNuxtData`",
+                "vi": "`refreshNuxtData`"
+              },
+              {
+                "en": "`invalidateQueries` + maybe `revalidateTag`",
+                "vi": "`invalidateQueries` + có thể `revalidateTag`"
+              }
+            ],
+            [
+              {
+                "en": "Keyed cache",
+                "vi": "Cache theo key"
+              },
+              {
+                "en": "Key string",
+                "vi": "Key string"
+              },
+              {
+                "en": "`queryKey` array",
+                "vi": "`queryKey` array"
+              }
+            ],
+            [
+              {
+                "en": "Deduped SSR fetch",
+                "vi": "SSR fetch dedupe"
+              },
+              {
+                "en": "Nuxt payload",
+                "vi": "Nuxt payload"
+              },
+              {
+                "en": "RSC fetch cache or Query `dehydrate` / `HydrationBoundary`",
+                "vi": "Cache fetch RSC hoặc Query `dehydrate` / `HydrationBoundary`"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "// Invalidation is the production contract — not setUsers in a store.\nconst qc = useQueryClient()\nuseMutation({\n  mutationFn: createUser,\n  onSuccess: () => qc.invalidateQueries({ queryKey: ['users'] }),\n})",
+            "vi": "// Invalidation là contract production — không phải setUsers trong store.\nconst qc = useQueryClient()\nuseMutation({\n  mutationFn: createUser,\n  onSuccess: () => qc.invalidateQueries({ queryKey: ['users'] }),\n})"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "Query is a **client** cache: after a full reload, RSC can be faster for first paint. Pattern: **RSC for the document**, Query for **client interactions** on that data (pagination that shouldn’t drop the shell, polling, optimistic rows).\n\nSWR vs Query: same layer. Query wins features/team default; SWR is smaller. Don’t run both.",
-            "vi": "Query là cache **client**: sau full reload, RSC có thể nhanh hơn cho first paint. Pattern: **RSC cho document**, Query cho **tương tác client** trên data đó (pagination không được drop shell, polling, hàng optimistic).\n\nSWR vs Query: cùng tầng. Query thắng feature/default team; SWR nhỏ hơn. Đừng chạy cả hai."
+            "en": "Server state is async, stale, keyed, and shared. I would not rebuild that with `useEffect` or a Redux `users[]`. The `queryKey` includes the filter. After a POST I `invalidateQueries`, and on Next I also `revalidateTag` if the RSC tree shows the same data. I do not copy Query `data` into Zustand on success. RSC owns first paint of the document; Query owns client interactions after that.",
+            "vi": "Server state là async, stale, keyed, và shared. Tôi không dựng lại cái đó bằng `useEffect` hay `users[]` trong Redux. `queryKey` gồm cả filter. Sau POST tôi `invalidateQueries`, và trên Next tôi cũng `revalidateTag` nếu cây RSC hiện cùng data. Tôi không copy `data` Query vào Zustand lúc success. RSC sở hữu first paint của document; Query sở hữu tương tác client sau đó."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- Hydrating Query with server data that included **user-specific** rows into a **shared** cache key.\n- `staleTime: Infinity` as a substitute for understanding invalidation.\n- Error/retry vs Error Boundaries — Query errors are **not** render throws unless you opt into suspense.",
-            "vi": "- Hydrate Query với data server gồm hàng **riêng user** vào cache key **share**.\n- `staleTime: Infinity` thay cho hiểu invalidation.\n- Error/retry vs Error Boundary — lỗi Query **không** throw lúc render trừ khi bạn opt-in suspense."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "`queryKey` is cache identity. Include filters. Invalidate after POST.",
+              "vi": "`queryKey` là identity cache. Gồm filter. Invalidate sau POST."
+            },
+            {
+              "en": "Do not put API lists in Redux/Zustand. Do not copy Query data into a store.",
+              "vi": "Đừng nhét list API vào Redux/Zustand. Đừng copy data Query vào store."
+            },
+            {
+              "en": "RSC for the document; Query for client interactions on that data.",
+              "vi": "RSC cho document; Query cho tương tác client trên data đó."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- Optimistic updates vs `useOptimistic` + Server Actions ([nextjs.md §21.9](./nextjs.md#219-server-actions--mutations)).\n- Abort / race: Query cancels; your effect must `AbortController`.",
-            "vi": "- Optimistic update vs `useOptimistic` + Server Action ([nextjs.md §21.9](./nextjs.md#219-server-actions--mutation)).\n- Abort / race: Query cancel; effect của bạn phải `AbortController`."
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "Optimistic updates vs `useOptimistic` + Server Actions ([nextjs.md §21.9](./nextjs.md#219-server-actions--mutations)).",
+              "vi": "Optimistic update vs `useOptimistic` + Server Action ([nextjs.md §21.9](./nextjs.md#219-server-actions--mutations))."
+            },
+            {
+              "en": "Abort / race: Query cancels; your effect must use `AbortController`.",
+              "vi": "Abort / race: Query cancel; effect của bạn phải dùng `AbortController`."
+            },
+            {
+              "en": "What goes wrong with `queryKey: ['users']` for every filter?",
+              "vi": "`queryKey: ['users']` cho mọi filter hỏng ở đâu?"
+            },
+            {
+              "en": "SWR vs Query — same layer. When would you pick SWR?",
+              "vi": "SWR vs Query — cùng tầng. Khi nào chọn SWR?"
+            }
+          ]
         },
         {
           "type": "thematic-break"
@@ -441,53 +1149,157 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "- “How does App Router change state management?”\n- “Where is the current user stored?”\n- “Zustand persist + Next?”",
-            "vi": "- “App Router đổi state management thế nào?”\n- “Current user lưu ở đâu?”\n- “Zustand persist + Next?”"
+            "en": "“How does App Router change state management?” Where is the current user stored, and what breaks if Zustand persist reads `localStorage` inside `create()` during SSR?",
+            "vi": "“App Router đổi state management thế nào?” Current user lưu ở đâu, và gì gãy nếu Zustand persist đọc `localStorage` trong `create()` lúc SSR?"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "**Decision.** App Router **moves the default source of truth to the server**:\n\n1. **Server Components** fetch and render **server data** — no `useState`, no Zustand inside them.\n1. **Client islands** (`'use client'`) hold interactive state — smallest island that needs hooks ([nextjs.md §21.5](./nextjs.md#215-app-router-fundamentals)).\n1. **URL** (`searchParams`) for shareable UI.\n1. **Cookies / server session** for **auth** — not a giant client `user` store. The cookie is what middleware and RSC can see; Zustand cannot be trusted as login truth.\n1. After mutations: **`revalidatePath` / `revalidateTag`** (server tree) and/or Query invalidation (client cache). Often **both** if both trees show the data.\n1. Pass **DTOs** across the RSC boundary, not class instances or secrets.\n\n**Constraint.** `cookies()` in a layout dynamizes rendering ([nextjs.md §21.10](./nextjs.md#2110-rendering--caching-cheat-sheet)). Client stores **must hydrate consistently** with server HTML. `localStorage` is **not** available during SSR — persist middleware that reads it in `create` will mismatch.\n\n**Failure mode.** `useUserStore.getState().setUser(localStorage)` in a module body. Root `'use client'` + Redux Provider wrapping the **RSC** children incorrectly (Providers are client; **compose children** from the server). Session in Query **without** `staleTime` refetch flashing logged-out chrome. Duplicating the cookie into Zustand and using **only** Zustand in UI while RSC used cookies — two truths.\n\n**Measure.** View-source of an authed page: is PII in HTML intentionally? Login/logout: does RSC HTML change, or only a client store? Hydration warnings on first load with persist.\n\n**Nuxt parallel**\n\n| Nuxt | Next |\n| --- | --- |\n| `useState` (SSR-shared) | usually **don’t** clone; cookie + RSC + small client island |\n| `useAsyncData` | RSC `fetch` + optional Query |\n| `refreshNuxtData` | `revalidatePath` / `revalidateTag` |\n| Pinia + SSR plugin | persist/hydrate **carefully** or skip; prefer server truth |\n| `useCookie` | `cookies()` server-side; client `document.cookie` only for non-httpOnly |",
-            "vi": "**Quyết định.** App Router **dời source of truth mặc định sang server**:\n\n1. **Server Component** fetch và render **server data** — không `useState`, không Zustand bên trong chúng.\n1. **Client island** (`'use client'`) giữ state tương tác — island nhỏ nhất cần hook ([nextjs.md §21.5](./nextjs.md#215-nền-tảng-app-router)).\n1. **URL** (`searchParams`) cho UI share được.\n1. **Cookie / server session** cho **auth** — không phải store `user` client khổng lồ. Cookie là thứ middleware và RSC thấy được; Zustand không được tin làm sự thật login.\n1. Sau mutation: **`revalidatePath` / `revalidateTag`** (cây server) và/hoặc invalidate Query (client cache). Thường **cả hai** nếu cả hai cây hiện data.\n1. Truyền **DTO** qua biên RSC, không class instance hay secret.\n\n**Ràng buộc.** `cookies()` trong layout dynamize render ([nextjs.md §21.10](./nextjs.md#2110-cheat-sheet-render--cache)). Client store **phải hydrate nhất quán** với HTML server. `localStorage` **không** có lúc SSR — persist middleware đọc nó trong `create` sẽ lệch.\n\n**Failure mode.** `useUserStore.getState().setUser(localStorage)` trong thân module. Root `'use client'` + Redux Provider bọc **RSC** children sai cách (Provider là client; **compose children** từ server). Session trong Query **không** `staleTime` refetch flash chrome logged-out. Nhân đôi cookie vào Zustand rồi UI dùng **chỉ** Zustand trong khi RSC dùng cookie — hai sự thật.\n\n**Cách đo.** View-source trang đã auth: PII trong HTML có chủ đích không? Login/logout: HTML RSC có đổi, hay chỉ client store? Hydration warning lúc load đầu với persist.\n\n**Song song Nuxt**\n\n| Nuxt | Next |\n| --- | --- |\n| `useState` (SSR-shared) | thường **đừng** clone; cookie + RSC + island client nhỏ |\n| `useAsyncData` | RSC `fetch` + Query tùy chọn |\n| `refreshNuxtData` | `revalidatePath` / `revalidateTag` |\n| Pinia + plugin SSR | persist/hydrate **cẩn thận** hoặc bỏ; ưu tiên sự thật server |\n| `useCookie` | `cookies()` phía server; client `document.cookie` chỉ cho non-httpOnly |"
+            "en": "App Router moves the default source of truth to the server: RSC + cookies + URL, then the smallest client island.",
+            "vi": "App Router dời source of truth mặc định sang server: RSC + cookie + URL, rồi client island nhỏ nhất."
           }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** Server Components fetch and render server data — no `useState`, no Zustand inside them. `'use client'` islands hold interactive state — smallest island that needs hooks ([nextjs.md §21.5](./nextjs.md#215-app-router-fundamentals)). URL (`searchParams`) for shareable UI. Cookies / server session for auth — Zustand cannot be trusted as login truth. After mutations: `revalidatePath` / `revalidateTag` and/or Query invalidation — often **both** if both trees show the data. Pass DTOs across the RSC boundary, not class instances or secrets. Theme: prefer a cookie so the server can class `<html>`.",
+              "vi": "**Quyết định.** Server Component fetch và render server data — không `useState`, không Zustand bên trong chúng. Island `'use client'` giữ state tương tác — island nhỏ nhất cần hook ([nextjs.md §21.5](./nextjs.md#215-app-router-fundamentals)). URL (`searchParams`) cho UI share được. Cookie / server session cho auth — Zustand không được tin làm sự thật login. Sau mutation: `revalidatePath` / `revalidateTag` và/hoặc invalidate Query — thường **cả hai** nếu cả hai cây hiện data. Truyền DTO qua biên RSC, không class instance hay secret. Theme: ưu tiên cookie để server class được `<html>`."
+            },
+            {
+              "en": "**Why.** The cookie is what middleware and RSC can see. `cookies()` in a layout dynamizes rendering ([nextjs.md §21.10](./nextjs.md#2110-rendering--caching-cheat-sheet)). `localStorage` is not available during SSR — persist middleware that reads it in `create` will mismatch. A client user blob is cache-friendly and **wrong**.",
+              "vi": "**Vì sao.** Cookie là thứ middleware và RSC thấy được. `cookies()` trong layout dynamize render ([nextjs.md §21.10](./nextjs.md#2110-rendering--caching-cheat-sheet)). `localStorage` không có lúc SSR — persist middleware đọc nó trong `create` sẽ lệch. Blob user phía client thân thiện cache và **sai**."
+            },
+            {
+              "en": "**Trade-off.** Server session is secure and cache-hostile (dynamic). PPR/partial: static shell + session in the hole. `useUserStore.getState().setUser(localStorage)` in a module body. Root `'use client'` + Redux Provider wrapping RSC children incorrectly — Providers are client; compose children from the server. Session in Query without `staleTime` refetch-flashes logged-out chrome. Duplicating the cookie into Zustand and using only Zustand in UI while RSC used cookies — two truths. Don’t `JSON.stringify` a session into a Client Component prop if it includes tokens.",
+              "vi": "**Đánh đổi / rủi ro.** Server session an toàn và thù cache (dynamic). PPR/partial: shell tĩnh + session trong lỗ. `useUserStore.getState().setUser(localStorage)` trong thân module. Root `'use client'` + Redux Provider bọc RSC children sai — Provider là client; compose children từ server. Session trong Query không `staleTime` thì refetch flash chrome logged-out. Nhân đôi cookie vào Zustand rồi UI dùng chỉ Zustand trong khi RSC dùng cookie — hai sự thật. Đừng `JSON.stringify` session vào prop Client Component nếu có token."
+            },
+            {
+              "en": "**How to verify.** View-source of an authed page: is PII in HTML intentionally? Login/logout: does RSC HTML change, or only a client store? Hydration warnings on first load with persist. Gate authed chrome on `hasHydrated`, or `useEffect`-fill after a server-matching default.",
+              "vi": "**Cách kiểm chứng.** View-source trang đã auth: PII trong HTML có chủ đích không? Login/logout: HTML RSC có đổi, hay chỉ client store? Hydration warning lúc load đầu với persist. Cổng chrome đã auth bằng `hasHydrated`, hoặc `useEffect` fill sau default khớp server."
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Nuxt",
+              "vi": "Nuxt"
+            },
+            {
+              "en": "Next",
+              "vi": "Next"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "`useState` (SSR-shared)",
+                "vi": "`useState` (SSR-shared)"
+              },
+              {
+                "en": "Usually don’t clone; cookie + RSC + small client island",
+                "vi": "Thường đừng clone; cookie + RSC + island client nhỏ"
+              }
+            ],
+            [
+              {
+                "en": "`useAsyncData`",
+                "vi": "`useAsyncData`"
+              },
+              {
+                "en": "RSC `fetch` + optional Query",
+                "vi": "RSC `fetch` + Query tùy chọn"
+              }
+            ],
+            [
+              {
+                "en": "`refreshNuxtData`",
+                "vi": "`refreshNuxtData`"
+              },
+              {
+                "en": "`revalidatePath` / `revalidateTag`",
+                "vi": "`revalidatePath` / `revalidateTag`"
+              }
+            ],
+            [
+              {
+                "en": "Pinia + SSR plugin",
+                "vi": "Pinia + plugin SSR"
+              },
+              {
+                "en": "Persist/hydrate carefully or skip; prefer server truth",
+                "vi": "Persist/hydrate cẩn thận hoặc bỏ; ưu tiên sự thật server"
+              }
+            ],
+            [
+              {
+                "en": "`useCookie`",
+                "vi": "`useCookie`"
+              },
+              {
+                "en": "`cookies()` server-side; `document.cookie` only for non-httpOnly",
+                "vi": "`cookies()` phía server; `document.cookie` chỉ cho non-httpOnly"
+              }
+            ]
+          ]
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "Server session is secure and cache-hostile (dynamic). A client user blob is cache-friendly and **wrong**. PPR/partial: static shell + session in the **hole**.",
-            "vi": "Server session an toàn và thù cache (dynamic). Blob user phía client thân thiện cache và **sai**. PPR/partial: shell tĩnh + session trong **lỗ**."
+            "en": "App Router moves the default source of truth to the server. RSC fetches the document; the cookie session is login truth; shareable UI lives in `searchParams`; the client island is the smallest tree that needs hooks. I do not read `localStorage` inside `create()` during SSR. After a mutation I revalidate the server tree and invalidate Query if both show the data. Zustand is not login truth — middleware cannot see it.",
+            "vi": "App Router dời source of truth mặc định sang server. RSC fetch document; session cookie là sự thật login; UI share được sống trong `searchParams`; client island là cây nhỏ nhất cần hook. Tôi không đọc `localStorage` trong `create()` lúc SSR. Sau mutation tôi revalidate cây server và invalidate Query nếu cả hai hiện data. Zustand không phải sự thật login — middleware không thấy nó."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- Hydration: `useEffect` to load persistor, `useState` default matching server (`undefined` / empty), then fill — or `skipHydration` + `hasHydrated` gate before painting authed chrome.\n- Theme: prefer a **cookie** (server can class `html`) over `localStorage` to avoid flash/mismatch.\n- Don’t `JSON.stringify` the session into a Client Component prop if it includes tokens.",
-            "vi": "- Hydration: `useEffect` load persistor, `useState` default khớp server (`undefined` / empty), rồi fill — hoặc `skipHydration` + cổng `hasHydrated` trước khi sơn chrome đã auth.\n- Theme: ưu tiên **cookie** (server class được `html`) hơn `localStorage` để tránh flash/mismatch.\n- Đừng `JSON.stringify` session vào prop Client Component nếu có token."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "RSC + cookies + URL first. Smallest `'use client'` island second.",
+              "vi": "RSC + cookie + URL trước. Island `'use client'` nhỏ nhất sau."
+            },
+            {
+              "en": "Zustand is not login truth. Persist-in-`create()` mismatches SSR.",
+              "vi": "Zustand không phải sự thật login. Persist trong `create()` lệch SSR."
+            },
+            {
+              "en": "After mutation: `revalidateTag` and/or `invalidateQueries` — often both.",
+              "vi": "Sau mutation: `revalidateTag` và/hoặc `invalidateQueries` — thường cả hai."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- Middleware cookie gate vs RSC `redirect` vs client `Navigate` — [nextjs.md §21.8](./nextjs.md#218-middleware), [react.md §20.2.9](./react.md#2029-route-guards--middleware-spa).\n- Production failures: [nextjs.md §21.12](./nextjs.md#2112-common-production-failures).",
-            "vi": "- Cổng cookie middleware vs RSC `redirect` vs client `Navigate` — [nextjs.md §21.8](./nextjs.md#218-middleware), [react.md §20.2.9](./react.md#2029-route-guards--middleware-spa).\n- Failure production: [nextjs.md §21.12](./nextjs.md#2112-lỗi-production-thường-gặp)."
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "Middleware cookie gate vs RSC `redirect` vs client `Navigate` — [nextjs.md §21.8](./nextjs.md#218-middleware).",
+              "vi": "Cổng cookie middleware vs RSC `redirect` vs client `Navigate` — [nextjs.md §21.8](./nextjs.md#218-middleware)."
+            },
+            {
+              "en": "How do you hydrate a persisted cart without flashing empty HTML?",
+              "vi": "Hydrate cart đã persist mà không flash HTML rỗng thế nào?"
+            },
+            {
+              "en": "Why does `cookies()` in a layout dynamize the whole render?",
+              "vi": "Vì sao `cookies()` trong layout dynamize cả render?"
+            },
+            {
+              "en": "What must never cross the RSC boundary as a prop?",
+              "vi": "Cái gì không bao giờ được qua biên RSC như một prop?"
+            }
+          ]
         },
         {
           "type": "thematic-break"
@@ -511,53 +1323,167 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "- “I know Pinia — where do I look in React?”\n- “What happened to mutations vs actions?”",
-            "vi": "- “Tôi biết Pinia — nhìn đâu bên React?”\n- “Mutation vs action đi đâu?”"
+            "en": "“I know Pinia — where do I look in React?” They want the habit map, then they watch you **drop** the parts Query/RSC replaced. A 1:1 Vuex module port including `state.loading` is the trap.",
+            "vi": "“Tôi biết Pinia — nhìn đâu bên React?” Họ muốn bản đồ thói quen, rồi xem bạn **bỏ** phần Query/RSC đã thay. Port Vuex module 1:1 kể cả `state.loading` là bẫy."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "**Decision.** Map **habits**, then **drop** the parts that Query/RSC replaced. Vuex mutations-vs-actions is RTK reducers-vs-thunks. Pinia “just call the action” is Zustand. Neither should own **server lists** the way many Vuex apps did.\n\n| Vue | React / Next |\n| --- | --- |\n| Component `ref` | `useState` / `useReducer` |\n| `computed` | derive in render / `useMemo` / Compiler |\n| `provide` / `inject` | Context (broadcast — split it) |\n| Vuex module | Redux slice |\n| Vuex mutation (sync) | RTK reducer |\n| Vuex action (async) | thunk / listener / **Query mutation** |\n| Pinia `defineStore` | Zustand `create` |\n| Pinia action async | Zustand action **or** Query |\n| Nuxt `useAsyncData` | RSC fetch + TanStack Query |\n| Route query | `useSearchParams` / `searchParams` |\n| `useCookie` | server `cookies()` + httpOnly session |\n\nDeep Vue store notes: [State Management](./state-management.md). Core hooks: [React](./react.md).\n\n**Constraint.** The map is **not** 1:1 for data fetching. A Pinia store that `async fetchOrders()` should become **`useOrders()` wrapping `useQuery`**, not `useOrderStore`.\n\n**Failure mode.** Recreating Vuex modules 1:1 in RTK including `state.loading` / `state.error` per list — that’s Query’s `isPending` / `error`.\n\n**Measure.** After a migration, grep for `fetch(` inside store files — should be rare.",
-            "vi": "**Quyết định.** Map **thói quen**, rồi **bỏ** phần Query/RSC đã thay. Vuex mutation-vs-action là RTK reducer-vs-thunk. Pinia “chỉ gọi action” là Zustand. Không cái nào nên own **list server** như nhiều app Vuex đã làm.\n\n| Vue | React / Next |\n| --- | --- |\n| `ref` component | `useState` / `useReducer` |\n| `computed` | derive trong render / `useMemo` / Compiler |\n| `provide` / `inject` | Context (broadcast — tách nó) |\n| Vuex module | Redux slice |\n| Vuex mutation (sync) | RTK reducer |\n| Vuex action (async) | thunk / listener / **Query mutation** |\n| Pinia `defineStore` | Zustand `create` |\n| Pinia action async | action Zustand **hoặc** Query |\n| Nuxt `useAsyncData` | RSC fetch + TanStack Query |\n| Route query | `useSearchParams` / `searchParams` |\n| `useCookie` | `cookies()` server + session httpOnly |\n\nGhi chú store Vue sâu: [State Management](./state-management.md). Hooks cốt lõi: [React](./react.md).\n\n**Ràng buộc.** Map **không** 1:1 cho data fetching. Pinia store `async fetchOrders()` nên thành **`useOrders()` bọc `useQuery`**, không phải `useOrderStore`.\n\n**Failure mode.** Tái tạo Vuex module 1:1 trong RTK kể cả `state.loading` / `state.error` từng list — đó là `isPending` / `error` của Query.\n\n**Cách đo.** Sau migrate, grep `fetch(` trong file store — phải hiếm."
+            "en": "Map habits, then drop the fetch: a Pinia `fetchOrders` becomes `useQuery`, not `useOrderStore`.",
+            "vi": "Map thói quen, rồi bỏ fetch: Pinia `fetchOrders` thành `useQuery`, không phải `useOrderStore`."
           }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** Vuex mutations-vs-actions is RTK reducers-vs-thunks. Pinia “just call the action” is Zustand. Neither should own server lists the way many Vuex apps did. A Pinia `async fetchOrders()` becomes `useOrders()` wrapping `useQuery`, not `useOrderStore`. Layered ports take a sprint and match how Next actually works.",
+              "vi": "**Quyết định.** Vuex mutation-vs-action là RTK reducer-vs-thunk. Pinia “chỉ gọi action” là Zustand. Không cái nào nên own list server như nhiều app Vuex đã làm. Pinia `async fetchOrders()` thành `useOrders()` bọc `useQuery`, không phải `useOrderStore`. Port theo tầng tốn một sprint và khớp cách Next thực sự chạy."
+            },
+            {
+              "en": "**Why.** The map is not 1:1 for data fetching. Recreating Vuex modules 1:1 in RTK including `state.loading` / `state.error` per list — that’s Query’s `isPending` / `error`. 1:1 store ports ship faster and keep the old bugs (lists in global state, SSR persist).",
+              "vi": "**Vì sao.** Map không 1:1 cho data fetching. Tái tạo Vuex module 1:1 trong RTK kể cả `state.loading` / `state.error` từng list — đó là `isPending` / `error` của Query. Port store 1:1 ship nhanh và giữ bug cũ (list trong global state, persist SSR)."
+            },
+            {
+              "en": "**Trade-off.** Pinia `$patch` mutation style in Zustand without new refs misses updates. Vuex persist plugins → Zustand persist → Next hydration — don’t port the plugin until you have a hydration story. Deep Vue store notes: [State Management](./state-management.md). Core hooks: [React](./react.md).",
+              "vi": "**Đánh đổi / rủi ro.** Style mutation Pinia `$patch` trong Zustand không reference mới thì miss update. Plugin persist Vuex → Zustand persist → hydration Next — đừng port plugin đến khi có story hydration. Ghi chú store Vue sâu: [State Management](./state-management.md). Hooks cốt lõi: [React](./react.md)."
+            },
+            {
+              "en": "**How to verify.** After a migration, grep for `fetch(` inside store files — should be rare. Migrate one Pinia store live: split URL / Query / leftover UI flags.",
+              "vi": "**Cách kiểm chứng.** Sau migrate, grep `fetch(` trong file store — phải hiếm. Migrate một Pinia store live: tách URL / Query / flag UI còn lại."
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Vue",
+              "vi": "Vue"
+            },
+            {
+              "en": "React / Next",
+              "vi": "React / Next"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Component `ref`",
+                "vi": "`ref` component"
+              },
+              {
+                "en": "`useState` / `useReducer`",
+                "vi": "`useState` / `useReducer`"
+              }
+            ],
+            [
+              {
+                "en": "`computed`",
+                "vi": "`computed`"
+              },
+              {
+                "en": "Derive in render / `useMemo` / Compiler",
+                "vi": "Derive trong render / `useMemo` / Compiler"
+              }
+            ],
+            [
+              {
+                "en": "`provide` / `inject`",
+                "vi": "`provide` / `inject`"
+              },
+              {
+                "en": "Context (broadcast — split it)",
+                "vi": "Context (broadcast — tách nó)"
+              }
+            ],
+            [
+              {
+                "en": "Vuex module / mutation / action",
+                "vi": "Vuex module / mutation / action"
+              },
+              {
+                "en": "Redux slice / RTK reducer / thunk or Query mutation",
+                "vi": "Redux slice / RTK reducer / thunk hoặc Query mutation"
+              }
+            ],
+            [
+              {
+                "en": "Pinia `defineStore` / async action",
+                "vi": "Pinia `defineStore` / action async"
+              },
+              {
+                "en": "Zustand `create` / action or Query",
+                "vi": "Zustand `create` / action hoặc Query"
+              }
+            ],
+            [
+              {
+                "en": "Nuxt `useAsyncData` / route query / `useCookie`",
+                "vi": "Nuxt `useAsyncData` / route query / `useCookie`"
+              },
+              {
+                "en": "RSC fetch + Query / `searchParams` / server `cookies()`",
+                "vi": "RSC fetch + Query / `searchParams` / `cookies()` server"
+              }
+            ]
+          ]
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "1:1 store ports ship faster and keep the old bugs (lists in global state, SSR persist). Layered ports take a sprint and match how Next actually works.",
-            "vi": "Port store 1:1 ship nhanh và giữ bug cũ (list trong global state, persist SSR). Port theo tầng tốn một sprint và khớp cách Next thực sự chạy."
+            "en": "I map habits, then I drop the fetch. Vuex’s mutation/action split is RTK reducer/thunk; Pinia’s “just call the action” is Zustand. A Pinia store that `fetchOrders()` becomes `useOrders()` wrapping `useQuery`, not `useOrderStore` with `loading` and `error`. I would not port a persist plugin to Next until I have a hydration story.",
+            "vi": "Tôi map thói quen, rồi bỏ fetch. Tách mutation/action Vuex là reducer/thunk RTK; “chỉ gọi action” của Pinia là Zustand. Pinia store `fetchOrders()` thành `useOrders()` bọc `useQuery`, không phải `useOrderStore` với `loading` và `error`. Tôi không port plugin persist sang Next đến khi có story hydration."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- Pinia `$patch` mutation style in Zustand without new refs.\n- Vuex persist plugins → Zustand persist → Next hydration (don’t port the plugin until you have a hydration story).",
-            "vi": "- Style mutation Pinia `$patch` trong Zustand không reference mới.\n- Plugin persist Vuex → Zustand persist → hydration Next (đừng port plugin đến khi có story hydration)."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "Vuex ≈ RTK. Pinia ≈ Zustand. Fetch ≈ Query / RSC — not a store.",
+              "vi": "Vuex ≈ RTK. Pinia ≈ Zustand. Fetch ≈ Query / RSC — không phải store."
+            },
+            {
+              "en": "`state.loading` per list is Query’s `isPending`. Don’t port it.",
+              "vi": "`state.loading` từng list là `isPending` của Query. Đừng port."
+            },
+            {
+              "en": "1:1 store ports keep the old bugs. Layer the port.",
+              "vi": "Port store 1:1 giữ bug cũ. Port theo tầng."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- Ask them to migrate **one** Pinia store live: split URL / Query / leftover UI flags.",
-            "vi": "- Bắt họ migrate **một** Pinia store live: tách URL / Query / flag UI còn lại."
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "Migrate one Pinia store live: split URL / Query / leftover UI flags.",
+              "vi": "Migrate một Pinia store live: tách URL / Query / flag UI còn lại."
+            },
+            {
+              "en": "Where did mutations vs actions go?",
+              "vi": "Mutation vs action đi đâu?"
+            },
+            {
+              "en": "What does grep `fetch(` in store files tell you after a migration?",
+              "vi": "Grep `fetch(` trong file store sau migrate nói gì?"
+            },
+            {
+              "en": "Why is a Vuex persist plugin dangerous to port onto Next as-is?",
+              "vi": "Vì sao plugin persist Vuex nguy hiểm khi port nguyên xi sang Next?"
+            }
+          ]
         },
         {
           "type": "thematic-break"
@@ -581,42 +1507,207 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "- “What mistakes do you see in React state?”\n- “Hydration — what did you break?”\n- They drop a snippet: Context on every keystroke, users in Redux, `useEffect` fetch, filters in two places.",
-            "vi": "- “Bạn thấy sai lầm nào trong React state?”\n- “Hydration — bạn phá gì?”\n- Họ thả snippet: Context mỗi phím gõ, users trong Redux, fetch `useEffect`, filter ở hai chỗ."
+            "en": "They drop a snippet: Context on every keystroke, users in Redux, `useEffect` fetch, filters in two places, persist reading `localStorage` during SSR. “What did you break?” — name the **layer violation**, the failure, and the measure.",
+            "vi": "Họ thả snippet: Context mỗi phím gõ, users trong Redux, fetch `useEffect`, filter ở hai chỗ, persist đọc `localStorage` lúc SSR. “Bạn phá gì?” — gọi tên **vi phạm tầng**, failure, và cách đo."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "**Decision.** Pitfalls are **layer violations**. Name the layer, name the failure, name the measure.\n\n**Constraint.** Vue-trained teams recreate Pinia/Vuex gravity. Next-trained juniors recreate “everything RSC” and then hide client state in module singletons.\n\n**Failure mode / catalog** (expand in the room from the snippet they give):\n\n1. **Everything in Context** → broadcast re-renders. Split providers or use a store with **selectors**. Measure: Profiler on type.\n1. **Everything in Redux/Zustand** → server lists belong in **Query/RSC**. `loading` flags per resource are Query. Measure: count of duplicated caches.\n1. **Fetch in `useEffect` without abort** → races, Strict Mode double-fire. Prefer Query. If you must: `AbortController` ([react.md §20.1.7](./react.md#2017-effects-useeffect-vs-vue-watch--lifecycle)).\n1. **Store mirrors URL** → two sources; back button fights the store. URL wins for filters. Derive UI from `searchParams`.\n1. **Hydration bugs in Next** → `localStorage` / `Date` / `window` / persist middleware in `create()` during SSR. Server HTML ≠ client first paint. Fix: same default on both sides, then `useEffect` fill; theme cookie; `suppressHydrationWarning` only on a known clock node ([nextjs.md §21.12](./nextjs.md#2112-common-production-failures)).\n1. **Giant `user` Context updated every keystroke** → session (rare) vs **form draft** (local/RHF). Split. Measure: shell re-rendering on input.\n1. **Context thrash via unstable `value`** — `value={{ theme, setTheme }}` new identity every parent render. Memoize or split state/dispatch contexts.\n1. **Zustand `useStore()` without selector** → every field update re-renders this component. Same class of bug as Context.\n1. **Auth in `localStorage` + client store as truth** → XSS, middleware can’t see it, RSC HTML is logged-out. Cookies/session win.\n1. **RSC data copied into a module-level `let cache`** → leaks across users on a long-lived server. Use the framework cache with keys, or Query on the client.\n1. **Optimistic UI with no rollback** → Query `onMutate`/`onError` or `useOptimistic` + server error.\n1. **Boolean prop / store flag soup for UI** → composition ([react.md §20.2.6](./react.md#2026-children-slots-mindset-and-composition)), not `modalOpen` in Redux.\n\n```tsx\n// Hydration pitfall: persist reads localStorage during SSR vs client\nconst useCart = create(\n  persist(() => ({ items: [] }), { name: 'cart' }),\n)\n// First client paint may already have items; server HTML was []\n// Gate UI on hasHydrated, or don't persist until after mount\n```\n\n```tsx\n// Context thrash\n<UserContext.Provider value={{ user, setUser, draft, setDraft }}>\n  {/* typing in draft re-renders every consumer of user too */}\n</UserContext.Provider>\n```\n\n**Measure (how you talk about incidents)**\n\n- Profiler + why-did-you-render for thrash.\n- Next hydration overlay / mismatch diff.\n- Network: one list GET vs the store *and* Query.\n- Security: cookie on the wire, not token in Redux DevTools.",
-            "vi": "**Quyết định.** Bẫy là **vi phạm tầng**. Gọi tên tầng, gọi failure, gọi cách đo.\n\n**Ràng buộc.** Team train Vue tái tạo trọng lực Pinia/Vuex. Junior train Next tái tạo “mọi thứ RSC” rồi giấu client state trong module singleton.\n\n**Failure mode / catalog** (mở rộng trong phòng từ snippet họ đưa):\n\n1. **Hết vào Context** → broadcast re-render. Tách provider hoặc dùng store có **selector**. Đo: Profiler lúc gõ.\n1. **Hết vào Redux/Zustand** → list server thuộc **Query/RSC**. Flag `loading` từng resource là Query. Đo: số cache nhân đôi.\n1. **Fetch trong `useEffect` không abort** → race, Strict Mode bắn đôi. Ưu tiên Query. Nếu phải: `AbortController` ([react.md §20.1.7](./react.md#2017-effects-useeffect-vs-watch--lifecycle-vue)).\n1. **Store soi gương URL** → hai nguồn; back button đánh store. URL thắng cho filter. Derive UI từ `searchParams`.\n1. **Bug hydration Next** → `localStorage` / `Date` / `window` / persist middleware trong `create()` lúc SSR. HTML server ≠ first paint client. Fix: cùng default hai phía, rồi `useEffect` fill; cookie theme; `suppressHydrationWarning` chỉ trên node đồng hồ đã biết ([nextjs.md §21.12](./nextjs.md#2112-lỗi-production-thường-gặp)).\n1. **Context `user` khổng lồ update mỗi phím gõ** → session (hiếm) vs **form draft** (local/RHF). Tách. Đo: shell re-render lúc input.\n1. **Context thrash qua `value` không ổn định** — `value={{ theme, setTheme }}` identity mới mỗi lần parent render. Memoize hoặc tách context state/dispatch.\n1. **Zustand `useStore()` không selector** → mọi field update re-render component này. Cùng hạng bug với Context.\n1. **Auth trong `localStorage` + client store làm sự thật** → XSS, middleware không thấy, HTML RSC logged-out. Cookie/session thắng.\n1. **Data RSC copy vào `let cache` mức module** → leak giữa user trên server sống lâu. Dùng cache framework có key, hoặc Query phía client.\n1. **Optimistic UI không rollback** → Query `onMutate`/`onError` hoặc `useOptimistic` + lỗi server.\n1. **Soup boolean prop / store flag cho UI** → composition ([react.md §20.2.6](./react.md#2026-children--tư-duy-slot)), không `modalOpen` trong Redux.\n\n```tsx\n// Hydration pitfall: persist reads localStorage during SSR vs client\nconst useCart = create(\n  persist(() => ({ items: [] }), { name: 'cart' }),\n)\n// First client paint may already have items; server HTML was []\n// Gate UI on hasHydrated, or don't persist until after mount\n```\n\n```tsx\n// Context thrash\n<UserContext.Provider value={{ user, setUser, draft, setDraft }}>\n  {/* typing in draft re-renders every consumer of user too */}\n</UserContext.Provider>\n```\n\n**Cách đo (cách nói về incident)**\n\n- Profiler + why-did-you-render cho thrash.\n- Overlay hydration Next / diff mismatch.\n- Network: một GET list vs store *và* Query.\n- Security: cookie trên dây, không token trong Redux DevTools."
+            "en": "Pitfalls are layer violations: name the layer, the failure, and how you would measure it.",
+            "vi": "Bẫy là vi phạm tầng: gọi tên tầng, failure, và cách bạn đo."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** Expand from the snippet they give. Everything in Context → split providers or a store with selectors. Everything in Redux/Zustand → lists belong in Query/RSC. `useEffect` fetch without abort → races, Strict Mode double-fire; prefer Query. Store mirrors URL → URL wins for filters. Hydration → same default on both sides, then `useEffect` fill; theme cookie; `suppressHydrationWarning` only on a known clock node. Auth in `localStorage` → cookies/session win. Optimistic UI needs rollback (`onMutate`/`onError` or `useOptimistic`). Boolean-flag soup for UI → composition, not `modalOpen` in Redux.",
+              "vi": "**Quyết định.** Mở rộng từ snippet họ đưa. Hết vào Context → tách provider hoặc store có selector. Hết vào Redux/Zustand → list thuộc Query/RSC. Fetch `useEffect` không abort → race, Strict Mode bắn đôi; ưu tiên Query. Store soi gương URL → URL thắng cho filter. Hydration → cùng default hai phía, rồi `useEffect` fill; cookie theme; `suppressHydrationWarning` chỉ trên node đồng hồ đã biết. Auth trong `localStorage` → cookie/session thắng. Optimistic UI cần rollback (`onMutate`/`onError` hoặc `useOptimistic`). Soup flag boolean cho UI → composition, không `modalOpen` trong Redux."
+            },
+            {
+              "en": "**Why.** Vue-trained teams recreate Pinia/Vuex gravity. Next-trained juniors recreate “everything RSC” and then hide client state in module singletons. A “simple” global store ships the feature and the incident. Layers look like over-engineering until the first hydration or stale-price bug. Pinia taught small intentional stores; in React add server cache vs client UI; in Next prefer server + URL + cookies before another global store.",
+              "vi": "**Vì sao.** Team train Vue tái tạo trọng lực Pinia/Vuex. Junior train Next tái tạo “mọi thứ RSC” rồi giấu client state trong module singleton. Một global store “đơn giản” ship feature và incident. Tầng trông như over-engineering đến bug hydration hay giá stale đầu tiên. Pinia dạy store nhỏ có chủ đích; sang React thêm server cache vs client UI; sang Next ưu tiên server + URL + cookie trước global store nữa."
+            },
+            {
+              "en": "**Trade-off.** Giant `user` Context updated every keystroke — split session from form draft. Unstable `value={{ theme, setTheme }}` new identity every parent render. Zustand `useStore()` without a selector. RSC data copied into a module-level `let cache` leaks across users on a long-lived server. Persist reads `localStorage` during SSR: server HTML was `[]`, first client paint already has items.",
+              "vi": "**Đánh đổi / rủi ro.** Context `user` khổng lồ update mỗi phím gõ — tách session khỏi form draft. `value={{ theme, setTheme }}` không ổn định, identity mới mỗi lần parent render. Zustand `useStore()` không selector. Data RSC copy vào `let cache` mức module leak giữa user trên server sống lâu. Persist đọc `localStorage` lúc SSR: HTML server là `[]`, first paint client đã có items."
+            },
+            {
+              "en": "**How to verify.** Profiler + why-did-you-render for thrash. Next hydration overlay / mismatch diff. Network: one list GET vs the store *and* Query. Security: cookie on the wire, not a token in Redux DevTools. Place six facts: product filters, current user, cart, toast queue, CMS article, websocket presence.",
+              "vi": "**Cách kiểm chứng.** Profiler + why-did-you-render cho thrash. Overlay hydration Next / diff mismatch. Network: một GET list vs store *và* Query. Security: cookie trên dây, không token trong Redux DevTools. Đặt sáu sự thật: filter product, current user, cart, hàng đợi toast, article CMS, presence websocket."
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Pitfall",
+              "vi": "Bẫy"
+            },
+            {
+              "en": "Failure",
+              "vi": "Failure"
+            },
+            {
+              "en": "Fix / measure",
+              "vi": "Fix / cách đo"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Everything in Context",
+                "vi": "Hết vào Context"
+              },
+              {
+                "en": "Broadcast re-renders",
+                "vi": "Broadcast re-render"
+              },
+              {
+                "en": "Split providers or selectors; Profiler on type",
+                "vi": "Tách provider hoặc selector; Profiler lúc gõ"
+              }
+            ],
+            [
+              {
+                "en": "Users list in Redux",
+                "vi": "Users list trong Redux"
+              },
+              {
+                "en": "Duplicated / stale cache",
+                "vi": "Cache nhân đôi / stale"
+              },
+              {
+                "en": "Query/RSC; count duplicated caches",
+                "vi": "Query/RSC; đếm cache nhân đôi"
+              }
+            ],
+            [
+              {
+                "en": "Store mirrors URL",
+                "vi": "Store soi gương URL"
+              },
+              {
+                "en": "Back button fights the store",
+                "vi": "Nút back đánh store"
+              },
+              {
+                "en": "URL wins; derive UI from `searchParams`",
+                "vi": "URL thắng; derive UI từ `searchParams`"
+              }
+            ],
+            [
+              {
+                "en": "Persist in `create()` during SSR",
+                "vi": "Persist trong `create()` lúc SSR"
+              },
+              {
+                "en": "HTML ≠ first client paint",
+                "vi": "HTML ≠ first paint client"
+              },
+              {
+                "en": "Same default, then `useEffect` fill / `hasHydrated`",
+                "vi": "Cùng default, rồi `useEffect` fill / `hasHydrated`"
+              }
+            ],
+            [
+              {
+                "en": "Auth in `localStorage`",
+                "vi": "Auth trong `localStorage`"
+              },
+              {
+                "en": "XSS; RSC HTML is logged-out",
+                "vi": "XSS; HTML RSC logged-out"
+              },
+              {
+                "en": "httpOnly cookie + server session",
+                "vi": "cookie httpOnly + server session"
+              }
+            ],
+            [
+              {
+                "en": "Module-level `let cache` on the server",
+                "vi": "`let cache` mức module trên server"
+              },
+              {
+                "en": "Leaks across users",
+                "vi": "Leak giữa user"
+              },
+              {
+                "en": "Framework cache with keys, or Query on the client",
+                "vi": "Cache framework có key, hoặc Query phía client"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "tsx",
+          "code": {
+            "en": "// Persist reads localStorage during SSR vs client — HTML was [], first paint has items.\nconst useCart = create(\n  persist(() => ({ items: [] }), { name: 'cart' }),\n)\n\n// Typing draft re-renders every consumer of user too.\n<UserContext.Provider value={{ user, setUser, draft, setDraft }}>\n  {children}\n</UserContext.Provider>",
+            "vi": "// Persist đọc localStorage lúc SSR vs client — HTML là [], first paint đã có items.\nconst useCart = create(\n  persist(() => ({ items: [] }), { name: 'cart' }),\n)\n\n// Gõ draft re-render mọi consumer của user.\n<UserContext.Provider value={{ user, setUser, draft, setDraft }}>\n  {children}\n</UserContext.Provider>"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "A “simple” global store ships the feature and the incident. Layers look like over-engineering until the first hydration or stale-price bug.\n\n**Vue one-liner**\n\nPinia taught **small intentional stores**. In React, add **server cache vs client UI**. In Next, prefer **server + URL + cookies** before another global store.",
-            "vi": "Một global store “đơn giản” ship feature và incident. Tầng trông như over-engineering đến bug hydration hay giá stale đầu tiên.\n\n**Một câu Vue**\n\nPinia dạy **store nhỏ có chủ đích**. Sang React, thêm **server cache vs client UI**. Sang Next, ưu tiên **server + URL + cookie** trước global store nữa."
+            "en": "Pitfalls are layer violations. I name the layer, the failure, and how I would measure it. Context on every keystroke is a broadcast bug — split providers or use selectors. Users in Redux are a Query problem. A store that mirrors the URL fights the back button. Persist that reads `localStorage` in `create()` mismatches SSR HTML. Auth in `localStorage` is XSS and invisible to middleware. A “simple” global store ships the feature and the incident.",
+            "vi": "Bẫy là vi phạm tầng. Tôi gọi tên tầng, failure, và cách tôi đo. Context mỗi phím gõ là bug broadcast — tách provider hoặc dùng selector. Users trong Redux là bài toán Query. Store soi gương URL đánh nhau với nút back. Persist đọc `localStorage` trong `create()` lệch HTML SSR. Auth trong `localStorage` là XSS và middleware không thấy. Global store “đơn giản” ship feature và incident."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- Place: product filters, current user, cart, toast queue, CMS-backed article, websocket presence — six different layers.\n- “Compiler / `memo` vs store choice” — wrong layer costs more than missing `useCallback` ([react.md §20.2.8](./react.md#2028-performance-checklist-for-seniors)).",
-            "vi": "- Đặt chỗ: filter product, current user, cart, hàng đợi toast, article CMS, presence websocket — sáu tầng khác nhau.\n- “Compiler / `memo` vs chọn store” — tầng sai đắt hơn thiếu `useCallback` ([react.md §20.2.8](./react.md#2028-checklist-performance-cho-senior))."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "Name the layer, the failure, and the measure. That is the senior answer.",
+              "vi": "Gọi tên tầng, failure, và cách đo. Đó là câu senior."
+            },
+            {
+              "en": "Wrong layer costs more than a missing `useCallback`.",
+              "vi": "Tầng sai đắt hơn thiếu một `useCallback`."
+            },
+            {
+              "en": "In Next, prefer server + URL + cookies before another global store.",
+              "vi": "Trên Next, ưu tiên server + URL + cookie trước global store nữa."
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "Place product filters, current user, cart, toast queue, CMS article, websocket presence — six layers.",
+              "vi": "Đặt chỗ filter product, current user, cart, hàng đợi toast, article CMS, presence websocket — sáu tầng."
+            },
+            {
+              "en": "Compiler / `memo` vs store choice — [react.md §20.2.8](./react.md#2028-performance-checklist-for-seniors).",
+              "vi": "Compiler / `memo` vs chọn store — [react.md §20.2.8](./react.md#2028-performance-checklist-for-seniors)."
+            },
+            {
+              "en": "How do you talk about a hydration incident without blaming React?",
+              "vi": "Nói về incident hydration mà không đổ lỗi React thế nào?"
+            },
+            {
+              "en": "Why is a module-level `let cache` on a long-lived server a security bug?",
+              "vi": "Vì sao `let cache` mức module trên server sống lâu là bug security?"
+            },
+            {
+              "en": "Optimistic UI with no rollback — which API do you reach for?",
+              "vi": "Optimistic UI không rollback — bạn với API nào?"
+            }
+          ]
         },
         {
           "type": "thematic-break"

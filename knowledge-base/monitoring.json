@@ -6,8 +6,8 @@
     "vi": "Monitoring"
   },
   "summary": {
-    "en": "This is senior frontend interview prep for **what you know about production after it ships**. They are not asking you to paste `Sentry.init`. They want **sampling, PII, releases, signal vs noise, what Vue actually catch…",
-    "vi": "Đây là tài liệu ôn phỏng vấn senior frontend về **những gì bạn biết về production sau khi đã ship**. Họ không hỏi bạn dán `Sentry.init`. Họ muốn **sampling, PII, release, signal vs noise, Vue thực sự bắt gì, INP không p…"
+    "en": "This is senior frontend interview prep for **what you know about production after it ships**. They are not asking you to paste `Sentry.init`. They want **sampling, PII, releases, signal vs noise, what Vue actually catches, INP not FID, and whether you would page a human**.",
+    "vi": "Đây là tài liệu ôn phỏng vấn senior frontend về **những gì bạn biết về production sau khi đã ship**. Họ không hỏi bạn dán `Sentry.init`. Họ muốn **sampling, PII, release, signal vs noise, Vue thực sự bắt gì, INP không phải FID, và bạn có page người không**."
   },
   "category": "pro",
   "order": 22,
@@ -98,53 +98,100 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "- “How do you use Sentry in production?”\n- “Why is this issue 50k events and nobody cares?”\n- “We have no readable stacks in prod — why?”",
-            "vi": "- “Dùng Sentry trên production thế nào?”\n- “Issue này 50k event mà không ai quan tâm — vì sao?”\n- “Prod không có stack đọc được — vì sao?”"
+            "en": "“How do you use Sentry in production?” An issue has 50k events and nobody cares; prod stacks say `chunk-7a2.js:1:20483`. They want sampling, PII, releases, and ownership — not `Sentry.init` pasted from the docs.",
+            "vi": "“Dùng Sentry trên production thế nào?” Một issue 50k event mà không ai quan tâm; stack prod nói `chunk-7a2.js:1:20483`. Họ muốn sampling, PII, release, và ownership — không phải `Sentry.init` dán từ docs."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "- **Decision:** Sentry (or equivalent) is a **product**: **release-aware**, **sampled**, **PII-scrubbed**, **owned**. You upload **hidden source maps** for that git SHA (12.1), set `release` + `environment` + `dist`, tag **feature flags**, and route issues to **codeowners** — not a `#frontend` firehose.\n- **Constraint:** Browsers generate infinite junk (extensions, network blips, ad blockers). Unlimited events cost money **and attention**. Unsampled 100% traces will melt the quota on a campaign (16.5).\n- **Failure mode:** DSN in the repo with no `beforeSend`; email in `setUser`; maps on the public CDN; `release: 'prod'` forever so maps never match; grouping 20 bugs as one; capturing handled 401s as fatal; Replay at 100% with PII in the DOM.\n- **Measure:** % of prod errors **with a mapped stack**, issue **age to owner**, **actionable** vs ignored, quota burn, correlation of a release with a spike.\n\n**Sampling**\n\n- **Errors:** often 100% of *events* is fine at modest traffic; at scale, sample **repeat** clients, keep **all** of a new issue’s first N. Don’t sample away Sev-1 uniqueness — sample **volume**.\n- **Traces / `tracesSampleRate`:** 0.1–0.2 typical; raise on a bad release. Transactions are not “more debugging,” they are a **budget**.\n- **Session Replay:** low for healthy sessions (`replaysSessionSampleRate: 0.01`), **1.0 on error** maybe — **mask all text/media** unless you have a legal story. Replay is how you leak addresses.\n\n**PII scrubbing**\n\nAssume the SDK will see it. `beforeSend`: strip `email`, `Authorization`, tokens in URLs, form bodies, `user.name`. Prefer **opaque user id**. Don’t put the access token in a breadcrumb. Nuxt server: don’t `captureException` the whole `event.node.req` headers.\n\nLegal: DPA, where the data lives, Replay = potentially **special category** data if health/finance is on screen.\n\n**Releases and source maps**\n\n- `Sentry.init({ release: SHA })` **equals** the GitOps digest you deployed (14.1).\n- Build `sourcemap: 'hidden'`, CI uploads, maps **not** on nginx.\n- `dist` / build id when you ship multiple artifacts per SHA (SSR server vs client).\n- If stacks say `chunk-7a2.js:1:20483`, the interview answer is **maps + release mismatch**, not “Vue minifies too hard.”\n\n**Noise vs signal**\n\n- Inbox: **regressions on this release**, new issues, spikes — not the 3-year-old `ResizeObserver` loop from an extension.\n- `denyUrls` for chrome-extension, `ignoreErrors` for known bot/network strings — **carefully**, review the list.\n- Don’t `captureException` on every `console.error` or every rejected `$fetch` 404.\n- **Grouping:** fingerprint by **stable message + route + feature**, not by user id. Custom fingerprint when minification groups unrelated bugs.\n\n**Ownership**\n\n- `CODEOWNERS` → Sentry ownership / team routing (`checkout` tag vs `marketing`).\n- An issue without an owner is a **process bug**. Alerting (19.5) pages the **service owner**, not Slack-at-everyone.\n\n```ts\nSentry.init({\n  app,\n  dsn: dsnFromRuntimeConfig, // not a hardcoded secret in a public gist\n  release: import.meta.env.VITE_COMMIT_SHA,\n  environment: \"production\",\n  tracesSampleRate: 0.15,\n  replaysOnErrorSampleRate: 1,\n  beforeSend(event) {\n    // Decision: drop network 401s; scrub email; keep stack.\n    if (event.tags?.http_status === \"401\") return null;\n    return scrubPii(event);\n  },\n});\n```",
-            "vi": "- **Quyết định:** Sentry (hoặc tương đương) là một **product**: **biết release**, **được sample**, **đã scrub PII**, **có owner**. Bạn upload **hidden source map** cho git SHA đó (12.1), set `release` + `environment` + `dist`, tag **feature flag**, và route issue tới **codeowners** — không phải vòi nước `#frontend`.\n- **Ràng buộc:** Browser sinh junk vô hạn (extension, network blip, ad blocker). Event không giới hạn tốn tiền **và attention**. Trace sample 100% sẽ chảy quota lúc campaign (16.5).\n- **Failure mode:** DSN trong repo không có `beforeSend`; email trong `setUser`; map trên CDN công khai; `release: 'prod'` mãi nên map không bao giờ khớp; gom 20 bug thành một; capture 401 đã handle như fatal; Replay 100% với PII trong DOM.\n- **Đo:** % lỗi prod **có mapped stack**, **tuổi issue đến owner**, **actionable** vs ignored, cháy quota, tương quan release với spike.\n\n**Sampling**\n\n- **Error:** thường 100% *event* ổn ở traffic vừa; khi scale, sample **client lặp**, giữ **hết** N issue mới đầu. Đừng sample mất tính unique Sev-1 — sample **volume**.\n- **Trace / `tracesSampleRate`:** 0.1–0.2 điển hình; tăng trên release xấu. Transaction không phải “debug nhiều hơn,” chúng là **budget**.\n- **Session Replay:** thấp cho session khỏe (`replaysSessionSampleRate: 0.01`), **1.0 lúc error** có thể — **mask hết text/media** trừ khi có câu chuyện legal. Replay là cách bạn leak địa chỉ.\n\n**Scrub PII**\n\nGiả định SDK sẽ thấy. `beforeSend`: lột `email`, `Authorization`, token trong URL, form body, `user.name`. Ưu tiên **opaque user id**. Đừng nhét access token vào breadcrumb. Nuxt server: đừng `captureException` cả header `event.node.req`.\n\nLegal: DPA, data sống ở đâu, Replay = có thể là data **special category** nếu health/finance hiện trên màn.\n\n**Release và source map**\n\n- `Sentry.init({ release: SHA })` **bằng** GitOps digest bạn deploy (14.1).\n- Build `sourcemap: 'hidden'`, CI upload, map **không** trên nginx.\n- `dist` / build id khi ship nhiều artifact mỗi SHA (SSR server vs client).\n- Nếu stack nói `chunk-7a2.js:1:20483`, câu trả lời phỏng vấn là **map + release lệch**, không phải “Vue minify quá mạnh.”\n\n**Noise vs signal**\n\n- Inbox: **regression trên release này**, issue mới, spike — không phải vòng `ResizeObserver` 3 năm tuổi từ extension.\n- `denyUrls` cho chrome-extension, `ignoreErrors` cho chuỗi bot/network đã biết — **cẩn thận**, review list.\n- Đừng `captureException` mọi `console.error` hoặc mọi `$fetch` 404 bị reject.\n- **Grouping:** fingerprint theo **message ổn định + route + feature**, không theo user id. Custom fingerprint khi minification gom bug unrelated.\n\n**Ownership**\n\n- `CODEOWNERS` → Sentry ownership / team routing (tag `checkout` vs `marketing`).\n- Issue không owner là **bug process**. Alerting (19.5) page **service owner**, không Slack-at-everyone.\n\n```ts\nSentry.init({\n  app,\n  dsn: dsnFromRuntimeConfig, // not a hardcoded secret in a public gist\n  release: import.meta.env.VITE_COMMIT_SHA,\n  environment: \"production\",\n  tracesSampleRate: 0.15,\n  replaysOnErrorSampleRate: 1,\n  beforeSend(event) {\n    // Decision: drop network 401s; scrub email; keep stack.\n    if (event.tags?.http_status === \"401\") return null;\n    return scrubPii(event);\n  },\n});\n```"
+            "en": "Sentry is a product: release-aware, sampled, PII-scrubbed, and routed to codeowners — not a `#frontend` firehose.",
+            "vi": "Sentry là một product: biết release, được sample, đã scrub PII, và route tới codeowners — không phải vòi nước `#frontend`."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** Upload hidden source maps for that git SHA, set `release` + `environment` + `dist`, tag feature flags, drop handled 401s in `beforeSend`. Errors: keep new-issue uniqueness, sample repeat volume. Traces 0.1–0.2. Replay low on healthy sessions, mask text/media. Prefer an opaque user id.",
+              "vi": "**Quyết định.** Upload hidden source map cho git SHA đó, set `release` + `environment` + `dist`, tag feature flag, drop 401 đã handle trong `beforeSend`. Error: giữ uniqueness issue mới, sample volume lặp. Trace 0.1–0.2. Replay thấp trên session khỏe, mask text/media. Ưu tiên opaque user id."
+            },
+            {
+              "en": "**Why.** Browsers generate infinite junk. `release: 'prod'` forever means maps never match. Grouping by user id merges unrelated bugs. Replay at 100% with PII in the DOM is how you leak addresses. Ad blockers kill the DSN — a first-party `/ingest` proxy if you care about those users.",
+              "vi": "**Vì sao.** Browser sinh junk vô hạn. `release: 'prod'` mãi nghĩa map không bao giờ khớp. Group theo user id gộp bug không liên quan. Replay 100% với PII trong DOM là cách leak địa chỉ. Ad blocker giết DSN — first-party proxy `/ingest` nếu bạn quan tâm những user đó."
+            },
+            {
+              "en": "**Trade-off.** One project vs split marketing/app is quota and ownership vs duplicate DSNs. Verbose breadcrumbs vs PII. SSR double-init, or capturing Node errors with the browser SDK. `sampleRate` on errors can hide a rare WebView crash you still support.",
+              "vi": "**Đánh đổi / rủi ro.** Một project vs tách marketing/app là quota và ownership vs DSN duplicate. Breadcrumb dài vs PII. SSR double-init, hoặc capture Node error bằng browser SDK. `sampleRate` trên error có thể giấu crash WebView hiếm bạn vẫn support."
+            },
+            {
+              "en": "**How to verify.** % of prod errors with a mapped stack, issue age to owner, actionable vs ignored, quota burn, release↔spike correlation. Fingerprint by stable message + route + feature. An issue without an owner is a process bug.",
+              "vi": "**Cách kiểm chứng.** % lỗi prod có mapped stack, tuổi issue đến owner, actionable vs ignored, cháy quota, tương quan release↔spike. Fingerprint theo message ổn định + route + feature. Issue không owner là bug process."
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "Sentry.init({\n  app,\n  dsn: dsnFromRuntimeConfig,\n  release: import.meta.env.VITE_COMMIT_SHA,\n  environment: \"production\",\n  tracesSampleRate: 0.15,\n  replaysOnErrorSampleRate: 1,\n  beforeSend(event) {\n    if (event.tags?.http_status === \"401\") return null\n    return scrubPii(event)\n  },\n})",
+            "vi": "Sentry.init({\n  app,\n  dsn: dsnFromRuntimeConfig,\n  release: import.meta.env.VITE_COMMIT_SHA,\n  environment: \"production\",\n  tracesSampleRate: 0.15,\n  replaysOnErrorSampleRate: 1,\n  beforeSend(event) {\n    if (event.tags?.http_status === \"401\") return null\n    return scrubPii(event)\n  },\n})"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "- Verbose breadcrumbs vs PII.\n- One project vs split marketing/app (quota and ownership vs duplicate DSNs).",
-            "vi": "- Breadcrumb dài vs PII.\n- Một project vs tách marketing/app (quota và ownership vs DSN duplicate)."
+            "en": "I treat Sentry as a product. `release` equals the GitOps digest, maps are hidden and uploaded in CI, and `beforeSend` drops 401s and strips email. Unreadable stacks are a map/release mismatch, not “Vue minifies too hard.” I route checkout issues to checkout owners. Replay is masked; it is how you leak addresses.",
+            "vi": "Tôi coi Sentry là một product. `release` bằng GitOps digest, map hidden và upload trên CI, và `beforeSend` drop 401 rồi lột email. Stack không đọc được là map/release lệch, không phải “Vue minify quá mạnh.” Tôi route issue checkout tới owner checkout. Replay được mask; đó là cách leak địa chỉ."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- Ad blocker kills the DSN — you need a **first-party proxy** (`/ingest`) if you care about those users.\n- SSR double-init, or capturing Node errors with the browser SDK.\n- `sampleRate` on errors hiding a rare IE/WebView crash you still support.",
-            "vi": "- Ad blocker giết DSN — bạn cần **first-party proxy** (`/ingest`) nếu quan tâm những user đó.\n- SSR double-init, hoặc capture Node error bằng browser SDK.\n- `sampleRate` trên error giấu crash IE/WebView hiếm bạn vẫn support."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "Inbox is regressions on this release, new issues, spikes — not a 3-year `ResizeObserver` from an extension.",
+              "vi": "Inbox là regression trên release này, issue mới, spike — không phải `ResizeObserver` 3 năm tuổi từ extension."
+            },
+            {
+              "en": "Do not `captureException` every `console.error` or rejected `$fetch` 404.",
+              "vi": "Đừng `captureException` mọi `console.error` hoặc `$fetch` 404 bị reject."
+            },
+            {
+              "en": "Tie an issue to a PR: release → git SHA → PR.",
+              "vi": "Gắn issue với PR: release → git SHA → PR."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- How do you tie a Sentry issue to a PR? (release → git SHA → PR)\n- Why did grouping merge two bugs? (fingerprints)",
-            "vi": "- Gắn Sentry issue với PR thế nào? (release → git SHA → PR)\n- Vì sao grouping merge hai bug? (fingerprint)"
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "How do you tie a Sentry issue to a PR?",
+              "vi": "Gắn Sentry issue với PR thế nào?"
+            },
+            {
+              "en": "Why did grouping merge two bugs?",
+              "vi": "Vì sao grouping merge hai bug?"
+            },
+            {
+              "en": "Why are maps on the public CDN a failure mode?",
+              "vi": "Vì sao map trên CDN công khai là failure mode?"
+            },
+            {
+              "en": "When do you raise `tracesSampleRate`?",
+              "vi": "Khi nào tăng `tracesSampleRate`?"
+            }
+          ]
         },
         {
           "type": "thematic-break"
@@ -168,53 +215,145 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "“Do you have error boundaries?” If you stop at `onErrorCaptured`, they will ask what it **misses**.",
-            "vi": "“Bạn có error boundary không?” Nếu dừng ở `onErrorCaptured`, họ sẽ hỏi nó **bỏ sót gì**."
+            "en": "“Do you have error boundaries?” If you stop at `onErrorCaptured`, they will ask what it misses — `submitOrder()`, click handlers, and the white-screen chart that took down the shell.",
+            "vi": "“Bạn có error boundary không?” Nếu dừng ở `onErrorCaptured`, họ sẽ hỏi nó bỏ sót gì — `submitOrder()`, click handler, và chart white-screen kéo theo cả shell."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "- **Decision:** Vue **does not** have React-style error boundaries that wrap everything. `onErrorCaptured` / `app.config.errorHandler` catch **render/lifecycle/setup sync errors in the child tree**. You still need **`window.onunhandledrejection`**, **`errorHandler`**, and **local try/catch around async** (event handlers, `watch`, `$fetch`). Isolate **widgets** so one chart doesn’t white-screen the shell.\n- **Constraint:** Most production FE bugs are **async** (API, click handler, `router.beforeEach`). Those **bypass** `onErrorCaptured`.\n- **Failure mode:** One `ErrorBoundary` at `App.vue` that returns `false` and swallows everything with no Sentry; “try again” that remounts into the same poison route; believing `onErrorCaptured` catches `submitOrder()`.\n- **Measure:** unhandledrejection count, white-screen RUM (`pageshow` + empty root), widget-level recovery rate.\n\n**What `onErrorCaptured` / errorHandler get**\n\n- Render function throws, `computed` throws, hook in setup throws **synchronously**.\n- Custom `errorHandler` in `main.ts` / Nuxt `vue:error` — **always** send to Sentry, then show a fallback.\n\n**What they don’t catch**\n\n| Miss | What you pair |\n| --- | --- |\n| `async` setup / `await $fetch` without handling | `try/catch`, `useAsyncData` error, TanStack Query `isError` |\n| `@click` / native listeners | `try/catch` in the handler or a wrapper |\n| `setTimeout` / `requestAnimationFrame` | same |\n| Promises without `await` | `unhandledrejection` |\n| Errors in **other** Vue apps / MF remotes | each runtime needs its own handler |\n| Plugin / native code | window `error` event |\n\n```ts\n// Decision: three layers. None of them is optional in prod.\napp.config.errorHandler = (err, _instance, info) => {\n  Sentry.captureException(err, { extra: { info } });\n};\n\nwindow.addEventListener(\"unhandledrejection\", (e) => {\n  Sentry.captureException(e.reason);\n});\n\nwindow.addEventListener(\"error\", (e) => {\n  Sentry.captureException(e.error ?? e.message);\n});\n```\n\nWidget boundary: `onErrorCaptured` → log → `return false` to **stop** the white-screen, show the widget fallback (13.3). **Don’t** return false at the root and hide the bug from Nuxt’s handler unless you already captured it.\n\nNuxt: `app.config.errorHandler` + `showError` / `error.vue` for **route-level** fatal; keep widget boundaries for dashboards (16.4).",
-            "vi": "- **Quyết định:** Vue **không** có error boundary kiểu React bọc mọi thứ. `onErrorCaptured` / `app.config.errorHandler` bắt **lỗi render/lifecycle/setup sync trong cây con**. Bạn vẫn cần **`window.onunhandledrejection`**, **`errorHandler`**, và **try/catch local quanh async** (event handler, `watch`, `$fetch`). Cô lập **widget** để một chart không white-screen shell.\n- **Ràng buộc:** Hầu hết bug FE production là **async** (API, click handler, `router.beforeEach`). Chúng **đi vòng** `onErrorCaptured`.\n- **Failure mode:** Một `ErrorBoundary` ở `App.vue` return `false` nuốt hết không Sentry; “try again” remount vào cùng poison route; tin `onErrorCaptured` bắt `submitOrder()`.\n- **Đo:** số unhandledrejection, RUM white-screen (`pageshow` + root rỗng), tỷ lệ recovery cấp widget.\n\n**`onErrorCaptured` / errorHandler bắt gì**\n\n- Render function throw, `computed` throw, hook trong setup throw **đồng bộ**.\n- Custom `errorHandler` trong `main.ts` / Nuxt `vue:error` — **luôn** gửi Sentry, rồi hiện fallback.\n\n**Chúng không bắt**\n\n| Bỏ sót | Bạn pair với |\n| --- | --- |\n| `async` setup / `await $fetch` không handle | `try/catch`, error `useAsyncData`, TanStack Query `isError` |\n| `@click` / native listener | `try/catch` trong handler hoặc wrapper |\n| `setTimeout` / `requestAnimationFrame` | tương tự |\n| Promise không `await` | `unhandledrejection` |\n| Lỗi trong Vue app **khác** / MF remote | mỗi runtime cần handler riêng |\n| Plugin / native code | window event `error` |\n\n```ts\n// Decision: three layers. None of them is optional in prod.\napp.config.errorHandler = (err, _instance, info) => {\n  Sentry.captureException(err, { extra: { info } });\n};\n\nwindow.addEventListener(\"unhandledrejection\", (e) => {\n  Sentry.captureException(e.reason);\n});\n\nwindow.addEventListener(\"error\", (e) => {\n  Sentry.captureException(e.error ?? e.message);\n});\n```\n\nWidget boundary: `onErrorCaptured` → log → `return false` để **chặn** white-screen, hiện fallback widget (13.3). **Đừng** return false ở root rồi giấu bug khỏi handler Nuxt trừ khi bạn đã capture.\n\nNuxt: `app.config.errorHandler` + `showError` / `error.vue` cho fatal **cấp route**; giữ widget boundary cho dashboard (16.4)."
+            "en": "Vue has no React-style wrap-everything boundary; `onErrorCaptured` gets sync render/lifecycle, and most production bugs are async.",
+            "vi": "Vue không có boundary bọc-hết kiểu React; `onErrorCaptured` bắt render/lifecycle sync, và hầu hết bug production là async."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** Three layers, all required in prod: `app.config.errorHandler` / Nuxt `vue:error` (always Sentry, then fallback), `unhandledrejection` + `window.error`, and local try/catch around async (handlers, `watch`, `$fetch`). Isolate widgets so one chart does not white-screen the shell. Nuxt `showError` / `error.vue` for route-level fatal.",
+              "vi": "**Quyết định.** Ba tầng, tất cả bắt buộc trên prod: `app.config.errorHandler` / Nuxt `vue:error` (luôn Sentry, rồi fallback), `unhandledrejection` + `window.error`, và try/catch local quanh async (handler, `watch`, `$fetch`). Cô lập widget để một chart không white-screen shell. Nuxt `showError` / `error.vue` cho fatal cấp route."
+            },
+            {
+              "en": "**Why.** `onErrorCaptured` misses `async` setup, `@click`, timers, una awaited promises, other Vue apps / MF remotes, and native plugins. React boundaries miss event handlers too — do not claim they are the same. `return false` at the root without Sentry hides the bug from Nuxt.",
+              "vi": "**Vì sao.** `onErrorCaptured` bỏ sót `async` setup, `@click`, timer, promise không await, Vue app khác / MF remote, và plugin native. React boundary cũng miss event handler — đừng claim chúng giống nhau. `return false` ở root không Sentry giấu bug khỏi Nuxt."
+            },
+            {
+              "en": "**Trade-off.** Granular boundaries keep UI alive; a dead totals widget on checkout is sometimes a reason to block. Teleported dialogs sit outside the boundary tree. A fallback that throws recurses. “Try again” that remounts the same poison route is not recovery.",
+              "vi": "**Đánh đổi / rủi ro.** Boundary mịn giữ UI sống; widget totals chết trên checkout đôi khi là lý do để chặn. Dialog teleport nằm ngoài cây boundary. Fallback throw thì đệ quy. “Try again” remount cùng poison route không phải recovery."
+            },
+            {
+              "en": "**How to verify.** Unhandledrejection count, white-screen RUM (`pageshow` + empty root), widget-level recovery rate. Test: a child that throws in render; assert fallback and a mock capture. Suspense / async setup: handle as data errors, not only render errors.",
+              "vi": "**Cách kiểm chứng.** Số unhandledrejection, RUM white-screen (`pageshow` + root rỗng), tỷ lệ recovery cấp widget. Test: child throw lúc render; assert fallback và mock capture. Suspense / async setup: handle như data error, không chỉ render error."
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Miss",
+              "vi": "Bỏ sót"
+            },
+            {
+              "en": "Pair with",
+              "vi": "Pair với"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "`await $fetch` / async setup",
+                "vi": "`await $fetch` / async setup"
+              },
+              {
+                "en": "`try/catch`, `useAsyncData` error, Query `isError`",
+                "vi": "`try/catch`, error `useAsyncData`, Query `isError`"
+              }
+            ],
+            [
+              {
+                "en": "`@click` / timers / una awaited promises",
+                "vi": "`@click` / timer / promise không await"
+              },
+              {
+                "en": "Handler try/catch + `unhandledrejection`",
+                "vi": "try/catch trong handler + `unhandledrejection`"
+              }
+            ],
+            [
+              {
+                "en": "MF remotes / other Vue apps",
+                "vi": "MF remote / Vue app khác"
+              },
+              {
+                "en": "Each runtime needs its own handler",
+                "vi": "Mỗi runtime cần handler riêng"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "app.config.errorHandler = (err, _instance, info) => {\n  Sentry.captureException(err, { extra: { info } })\n}\nwindow.addEventListener(\"unhandledrejection\", (e) => {\n  Sentry.captureException(e.reason)\n})\nwindow.addEventListener(\"error\", (e) => {\n  Sentry.captureException(e.error ?? e.message)\n})",
+            "vi": "app.config.errorHandler = (err, _instance, info) => {\n  Sentry.captureException(err, { extra: { info } })\n}\nwindow.addEventListener(\"unhandledrejection\", (e) => {\n  Sentry.captureException(e.reason)\n})\nwindow.addEventListener(\"error\", (e) => {\n  Sentry.captureException(e.error ?? e.message)\n})"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "- Granular boundaries (more UI surviving) vs user continuing in a **corrupt** state (checkout with a dead totals widget — sometimes you **should** block).\n- React error boundaries vs Vue: don’t claim they are the same in a mixed-stack interview; explain the async gap in **both** (React boundaries also miss event handlers).",
-            "vi": "- Boundary mịn (UI sống nhiều hơn) vs user tiếp tục trong state **hỏng** (checkout với widget totals chết — đôi khi bạn **nên** chặn).\n- React error boundary vs Vue: đừng claim chúng giống nhau trong phỏng vấn mixed-stack; giải thích lỗ hổng async ở **cả hai** (React boundary cũng miss event handler)."
+            "en": "I do not claim Vue has React error boundaries. `onErrorCaptured` is for sync render; checkout dies in a click handler, so I also install `errorHandler`, `unhandledrejection`, and try/catch around `$fetch`. A chart gets its own boundary and `return false` after capture so the shell survives. I would not swallow at `App.vue` with no Sentry.",
+            "vi": "Tôi không claim Vue có error boundary kiểu React. `onErrorCaptured` cho render sync; checkout chết trong click handler, nên tôi còn gắn `errorHandler`, `unhandledrejection`, và try/catch quanh `$fetch`. Chart có boundary riêng và `return false` sau khi capture để shell sống. Tôi không nuốt ở `App.vue` mà không Sentry."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- `return false` + no Sentry = silent failure, worst of all worlds.\n- Recursion: fallback component throws.\n- Teleported dialogs outside the boundary tree.",
-            "vi": "- `return false` + không Sentry = fail thầm, tệ nhất mọi thế giới.\n- Recursion: fallback component throw.\n- Dialog teleport ra ngoài cây boundary."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "`return false` + no Sentry is a silent failure — the worst outcome.",
+              "vi": "`return false` + không Sentry là fail thầm — outcome tệ nhất."
+            },
+            {
+              "en": "Most production FE bugs bypass `onErrorCaptured` because they are async.",
+              "vi": "Hầu hết bug FE production đi vòng `onErrorCaptured` vì chúng async."
+            },
+            {
+              "en": "Widget fallback vs blocking checkout is a product call, not a framework default.",
+              "vi": "Fallback widget vs chặn checkout là quyết định product, không phải default framework."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- How do you test a boundary? (a child that throws in render; assert fallback **and** a mock capture)\n- Suspense errors? (async setup — handle as data errors, not only render errors)",
-            "vi": "- Test boundary thế nào? (child throw lúc render; assert fallback **và** mock capture)\n- Lỗi Suspense? (async setup — handle như data error, không chỉ render error)"
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "How do you test a boundary?",
+              "vi": "Test boundary thế nào?"
+            },
+            {
+              "en": "What do Suspense / async setup errors look like?",
+              "vi": "Lỗi Suspense / async setup trông thế nào?"
+            },
+            {
+              "en": "Why do teleported dialogs escape the boundary?",
+              "vi": "Vì sao dialog teleport thoát boundary?"
+            },
+            {
+              "en": "React vs Vue — what do both miss?",
+              "vi": "React vs Vue — cả hai bỏ sót gì?"
+            }
+          ]
         },
         {
           "type": "thematic-break"
@@ -238,53 +377,147 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "“How do you track Core Web Vitals?” If you lead with **FID**, you are dated.",
-            "vi": "“Track Core Web Vitals thế nào?” Nếu bạn dẫn **FID**, bạn đã cũ."
+            "en": "“How do you track Core Web Vitals?” If you lead with FID you are dated. They want LCP / INP / CLS, RUM vs lab, and budgets per template — not a vanity Lighthouse 100.",
+            "vi": "“Track Core Web Vitals thế nào?” Nếu bạn dẫn FID thì đã cũ. Họ muốn LCP / INP / CLS, RUM vs lab, và budget theo template — không phải vanity Lighthouse 100."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "- **Decision:** Track **LCP, INP, CLS** (and TTFB/FCP as diagnostics) with **RUM** as the source of truth, **lab** (Lighthouse/WebPageTest CI) as a **budget/regression** gate. Set numeric budgets on templates (`/` vs `/app`), not a vanity 100 score.\n- **Constraint:** Lab is a median laptop with simulated throttle. RUM is real devices, real cache, real third-parties. They **will disagree**. You need both.\n- **Failure mode:** Optimizing FID forever; celebrating Lighthouse 98 while INP on mobile is 400ms; no attribution (element, route, country); injecting three analytics tags that **cause** the INP problem; gating PRs on noisy scores.\n- **Measure:** **p75 INP / LCP / CLS per route** (CrUX + your RUM), lab budgets on JS bytes and LCP, long-task attribution.\n\n**FID is outdated — use INP**\n\n- **FID** (First Input Delay) only measured the **first** interaction, often a lucky one. **Deprecated.**\n- **INP** (Interaction to Next Paint) looks at **responsiveness across the page life** — closer to “UI feels janky.” Fix: reduce main-thread work, break up long tasks, don’t do heavy work on input (filter 50k rows on each keystroke — debounce + worker/virtualize, 16.4).\n- **LCP:** largest paint — image, hero text, or SSR HTML. Marketing hybrid (16.5) lives or dies here.\n- **CLS:** fonts, images without dimensions, injected banners, ads. Skeletons should **reserve space** (13.3).\n\n**RUM vs lab**\n\n|  | Lab (Lighthouse CI) | RUM (web-vitals → your backend / Sentry / Datadog) |\n| --- | --- | --- |\n| Good for | PR budgets, reproducible | Reality, segments, regressions after ads |\n| Lies when | Cache, CPU, extensions, geography | Sampling, ad blockers, SPAs need **route** listeners |\n\nSPA/Nuxt: report vitals **per route**, not only first load. Soft navigations matter for INP/LCP (where supported).\n\n```ts\nimport { onINP, onLCP, onCLS } from \"web-vitals\";\n\nfunction report(m: { name: string; value: number; id: string }) {\n  sendToRum({ ...m, route: route.name, release: SHA });\n}\n\nonINP(report);\nonLCP(report);\nonCLS(report);\n```\n\n**Budgets**\n\n- CI: **bytes** (gzip entry, total JS on `/`) + maybe LCP screenshot lab — see 12.2.\n- Prod: p75 thresholds (good INP < 200ms, LCP < 2.5s, CLS < 0.1) **sliced** by route. Alert on **regression vs last week**, not a single bad session.",
-            "vi": "- **Quyết định:** Track **LCP, INP, CLS** (và TTFB/FCP như diagnostic) với **RUM** là source of truth, **lab** (Lighthouse/WebPageTest CI) như gate **budget/regression**. Đặt numeric budget trên template (`/` vs `/app`), không phải vanity score 100.\n- **Ràng buộc:** Lab là laptop median với throttle giả. RUM là device thật, cache thật, third-party thật. Chúng **sẽ lệch**. Bạn cần cả hai.\n- **Failure mode:** Tối ưu FID mãi; ăn mừng Lighthouse 98 trong khi INP mobile 400ms; không attribution (element, route, country); inject ba tag analytics **gây** vấn đề INP; gate PR trên score nhiễu.\n- **Đo:** **p75 INP / LCP / CLS theo route** (CrUX + RUM của bạn), lab budget trên byte JS và LCP, attribution long-task.\n\n**FID đã lỗi thời — dùng INP**\n\n- **FID** (First Input Delay) chỉ đo **tương tác đầu**, thường là cái may. **Deprecated.**\n- **INP** (Interaction to Next Paint) nhìn **responsiveness suốt đời page** — gần “UI cảm giác jank.” Fix: giảm việc main-thread, bẻ long task, đừng làm việc nặng lúc input (filter 50k hàng mỗi phím — debounce + worker/virtualize, 16.4).\n- **LCP:** paint lớn nhất — image, hero text, hoặc SSR HTML. Hybrid marketing (16.5) sống chết ở đây.\n- **CLS:** font, image không dimension, banner inject, ads. Skeleton phải **giữ chỗ** (13.3).\n\n**RUM vs lab**\n\n|  | Lab (Lighthouse CI) | RUM (web-vitals → backend / Sentry / Datadog) |\n| --- | --- | --- |\n| Tốt cho | Budget PR, reproducible | Thực tế, segment, regression sau ads |\n| Nói dối khi | Cache, CPU, extension, địa lý | Sampling, ad blocker, SPA cần listener **route** |\n\nSPA/Nuxt: report vital **theo route**, không chỉ first load. Soft navigation quan trọng với INP/LCP (nơi được support).\n\n```ts\nimport { onINP, onLCP, onCLS } from \"web-vitals\";\n\nfunction report(m: { name: string; value: number; id: string }) {\n  sendToRum({ ...m, route: route.name, release: SHA });\n}\n\nonINP(report);\nonLCP(report);\nonCLS(report);\n```\n\n**Budget**\n\n- CI: **bytes** (gzip entry, tổng JS trên `/`) + có thể lab screenshot LCP — xem 12.2.\n- Prod: ngưỡng p75 (INP tốt < 200ms, LCP < 2.5s, CLS < 0.1) **cắt** theo route. Alert trên **regression vs tuần trước**, không phải một session xấu."
+            "en": "RUM is the source of truth for LCP, INP, and CLS; lab is a budget and regression gate — they will disagree, and you need both.",
+            "vi": "RUM là source of truth cho LCP, INP, và CLS; lab là gate budget và regression — chúng sẽ lệch, và bạn cần cả hai."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** Numeric budgets on templates (`/` vs `/app`), not a score of 100. Report vitals per route on SPA/Nuxt, including soft navigations. INP is responsiveness across the page life — reduce main-thread work, break long tasks, debounce + virtualize 50k-row filters. CLS: dimensions, reserved skeleton space. LCP is the marketing-hybrid life-or-death paint.",
+              "vi": "**Quyết định.** Numeric budget trên template (`/` vs `/app`), không phải score 100. Report vital theo route trên SPA/Nuxt, kể cả soft navigation. INP là responsiveness suốt đời page — giảm việc main-thread, bẻ long task, debounce + virtualize filter 50k hàng. CLS: dimension, skeleton giữ chỗ. LCP là paint sống chết của hybrid marketing."
+            },
+            {
+              "en": "**Why.** FID only measured the first interaction and is deprecated. Lab is a median laptop with fake throttle; RUM is real devices, cache, and third parties. Celebrating Lighthouse 98 while mobile INP is 400ms is the tell. Three analytics tags can be the INP problem.",
+              "vi": "**Vì sao.** FID chỉ đo tương tác đầu và đã deprecated. Lab là laptop median với throttle giả; RUM là device thật, cache, và third-party. Ăn mừng Lighthouse 98 trong khi INP mobile 400ms là tín hiệu. Ba tag analytics có thể chính là vấn đề INP."
+            },
+            {
+              "en": "**Trade-off.** Load GTM/chat after interaction or on idle; kill them with a flag. CrUX lags; first-party RUM is how you see a release this afternoon. Hydration at 3s destroys INP on first click. Measuring LCP on a logged-in shell that is not the user’s LCP element is wasted instrumentation.",
+              "vi": "**Đánh đổi / rủi ro.** Load GTM/chat sau interaction hoặc lúc idle; giết chúng bằng flag. CrUX trễ; first-party RUM là cách thấy release chiều nay. Hydration lúc 3s phá INP click đầu. Đo LCP trên logged-in shell không phải LCP element của user là instrument phí."
+            },
+            {
+              "en": "**How to verify.** p75 INP / LCP / CLS per route (CrUX + your RUM), lab JS-byte and LCP budgets (12.2), long-task attribution. Alert on regression vs last week, not a single bad session. Use `web-vitals` attribution when you need the element.",
+              "vi": "**Cách kiểm chứng.** p75 INP / LCP / CLS theo route (CrUX + RUM của bạn), lab budget byte JS và LCP (12.2), attribution long-task. Alert trên regression vs tuần trước, không phải một session xấu. Dùng attribution `web-vitals` khi cần element."
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": " ",
+              "vi": " "
+            },
+            {
+              "en": "Lab (Lighthouse CI)",
+              "vi": "Lab (Lighthouse CI)"
+            },
+            {
+              "en": "RUM (web-vitals)",
+              "vi": "RUM (web-vitals)"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Good for",
+                "vi": "Tốt cho"
+              },
+              {
+                "en": "PR budgets, reproducible",
+                "vi": "Budget PR, reproducible"
+              },
+              {
+                "en": "Reality, segments, post-ad regressions",
+                "vi": "Thực tế, segment, regression sau ads"
+              }
+            ],
+            [
+              {
+                "en": "Lies when",
+                "vi": "Lệch khi"
+              },
+              {
+                "en": "Cache, CPU, extensions, geography",
+                "vi": "Cache, CPU, extension, địa lý"
+              },
+              {
+                "en": "Sampling, ad blockers, missing route listeners",
+                "vi": "Sampling, ad blocker, thiếu listener route"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "import { onINP, onLCP, onCLS } from \"web-vitals\"\n\nfunction report(m: { name: string; value: number; id: string }) {\n  sendToRum({ ...m, route: route.name, release: SHA })\n}\nonINP(report)\nonLCP(report)\nonCLS(report)",
+            "vi": "import { onINP, onLCP, onCLS } from \"web-vitals\"\n\nfunction report(m: { name: string; value: number; id: string }) {\n  sendToRum({ ...m, route: route.name, release: SHA })\n}\nonINP(report)\nonLCP(report)\nonCLS(report)"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "- Third-party tags (GTM, chat) vs INP. Seniors load them **after** interaction or on idle, and can **kill** them with a flag (19.6).\n- Field data delay (CrUX is lagged) vs first-party RUM.",
-            "vi": "- Third-party tag (GTM, chat) vs INP. Senior load chúng **sau** interaction hoặc lúc idle, và **giết** được bằng flag (19.6).\n- Độ trễ field data (CrUX lagged) vs first-party RUM."
+            "en": "I track LCP, INP, and CLS — not FID. RUM is truth; Lighthouse is a CI budget. I slice p75 by route and alert on week-over-week regression. If INP is bad I look at long tasks and input handlers, not a vanity score. Third-party tags load idle or they get a kill switch.",
+            "vi": "Tôi track LCP, INP, và CLS — không phải FID. RUM là sự thật; Lighthouse là budget CI. Tôi cắt p75 theo route và alert regression tuần-over-tuần. INP xấu thì nhìn long task và input handler, không phải vanity score. Tag third-party load lúc idle hoặc có kill switch."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- Measuring LCP on a logged-in shell that isn’t the user’s LCP element.\n- `web-vitals` without `attribution` when you need the element.\n- Hydration at 3s destroying INP on first click.",
-            "vi": "- Đo LCP trên logged-in shell không phải LCP element của user.\n- `web-vitals` không `attribution` khi bạn cần element.\n- Hydration lúc 3s phá INP click đầu."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "Good bars: INP < 200ms, LCP < 2.5s, CLS < 0.1 — sliced, not a homepage average.",
+              "vi": "Ngưỡng tốt: INP < 200ms, LCP < 2.5s, CLS < 0.1 — đã cắt, không phải average homepage."
+            },
+            {
+              "en": "TBT is lab-ish; INP is the field metric.",
+              "vi": "TBT thiên lab; INP là field metric."
+            },
+            {
+              "en": "Skeletons must reserve space or you buy CLS to hide loading.",
+              "vi": "Skeleton phải giữ chỗ nếu không bạn mua CLS để giấu loading."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- How do you debug INP? (Profiler, long tasks, INP attribution, interaction)\n- TBT vs INP? (TBT is lab-only-ish; INP is the field metric)",
-            "vi": "- Debug INP thế nào? (Profiler, long task, INP attribution, interaction)\n- TBT vs INP? (TBT thiên lab; INP là field metric)"
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "How do you debug INP?",
+              "vi": "Debug INP thế nào?"
+            },
+            {
+              "en": "TBT vs INP?",
+              "vi": "TBT vs INP?"
+            },
+            {
+              "en": "Why is FID the wrong lead?",
+              "vi": "Vì sao FID là lead sai?"
+            },
+            {
+              "en": "When do you gate a PR on Lighthouse vs only bytes?",
+              "vi": "Khi nào gate PR bằng Lighthouse vs chỉ bytes?"
+            }
+          ]
         },
         {
           "type": "thematic-break"
@@ -308,53 +541,100 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "“What do you log on the client?”",
-            "vi": "“Bạn log gì trên client?”"
+            "en": "“What do you log on the client?” They want structured events, PII rules, and a correlation id from the BFF — not leftover `console.log` in a Pinia store.",
+            "vi": "“Bạn log gì trên client?” Họ muốn structured event, rule PII, và correlation id từ BFF — không phải `console.log` sót trong Pinia store."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "- **Decision:** **No `console.log` in prod.** Client sends **structured events** to a collector (or Sentry breadcrumbs with a budget). **PII minimized**. **Correlation ids** come from the **BFF** (`x-request-id`) and are attached to `$fetch` failures so FE + API + traces stitch together. Debug verbosity is **not** on by default.\n- **Constraint:** The browser is hostile (quota, adblock, PII, untrusted). Server (Nitro) logs are the right place for secrets-adjacent context.\n- **Failure mode:** logging access tokens; `JSON.stringify(user)` including email; 200 logs per scroll handler; `console.log` left in a Pinia store; correlating nothing so a 500 is three tickets.\n- **Measure:** % of 5xx with a matching `request_id` in Sentry extra, log volume $, PII audit findings.\n\n**Levels**\n\n- DEBUG: local / `?debug=` gated, never sampled in prod by default.\n- INFO: rare on the client (nav to checkout, payment **attempt id** not card).\n- WARN: recovered problems (retry succeeded).\n- ERROR: captured exception path — **once**, with context, not in a loop.\n\n**Structured events**\n\n```ts\nlogger.error(\"checkout.pay_failed\", {\n  requestId: lastRequestId, // from BFF header\n  code: err.code,           // QUOTE_EXPIRED, not the raw Axios object\n  flag: flags.checkoutV2,\n  release: SHA,\n});\n```\n\nDo not log the payload of the order if it contains PII. Do log **ids**.\n\n**Correlation**\n\n- BFF generates `x-request-id` (or W3C `traceparent`). FE stores the last N ids per tab, attaches on error.\n- Sentry `trace` integration + OpenTelemetry if the org is there — don’t invent a second id.\n- Session id ≠ user id.",
-            "vi": "- **Quyết định:** **Không `console.log` trên prod.** Client gửi **structured event** tới collector (hoặc Sentry breadcrumb có budget). **PII tối thiểu**. **Correlation id** đến từ **BFF** (`x-request-id`) và gắn vào `$fetch` fail để FE + API + trace khâu lại. Verbosity debug **không** bật mặc định.\n- **Ràng buộc:** Browser thù địch (quota, adblock, PII, untrusted). Log server (Nitro) mới là chỗ đúng cho context sát secret.\n- **Failure mode:** log access token; `JSON.stringify(user)` gồm email; 200 log mỗi scroll handler; `console.log` sót trong Pinia store; không correlate gì nên một 500 thành ba ticket.\n- **Đo:** % 5xx có `request_id` khớp trong Sentry extra, log volume $, phát hiện audit PII.\n\n**Level**\n\n- DEBUG: local / `?debug=` gated, mặc định không sample trên prod.\n- INFO: hiếm trên client (nav tới checkout, **attempt id** payment không phải thẻ).\n- WARN: vấn đề đã recovery (retry thành công).\n- ERROR: đường captured exception — **một lần**, kèm context, không trong loop.\n\n**Structured event**\n\n```ts\nlogger.error(\"checkout.pay_failed\", {\n  requestId: lastRequestId, // from BFF header\n  code: err.code,           // QUOTE_EXPIRED, not the raw Axios object\n  flag: flags.checkoutV2,\n  release: SHA,\n});\n```\n\nĐừng log payload order nếu chứa PII. Có log **id**.\n\n**Correlation**\n\n- BFF generate `x-request-id` (hoặc W3C `traceparent`). FE giữ N id cuối mỗi tab, gắn lúc error.\n- Sentry `trace` integration + OpenTelemetry nếu org đã có — đừng invent id thứ hai.\n- Session id ≠ user id."
+            "en": "No `console.log` in prod: structured events, minimized PII, and `x-request-id` from the BFF so FE + API + traces stitch together.",
+            "vi": "Không `console.log` trên prod: structured event, PII tối thiểu, và `x-request-id` từ BFF để FE + API + trace khâu lại."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** DEBUG is local / `?debug=` and off by default in prod. INFO is rare (nav to checkout, payment attempt id — not the card). WARN is recovered retry. ERROR is captured once with context, not in a loop. Log ids, not order payloads that contain PII. Session id ≠ user id.",
+              "vi": "**Quyết định.** DEBUG là local / `?debug=` và tắt mặc định trên prod. INFO hiếm (nav tới checkout, attempt id payment — không phải thẻ). WARN là retry đã recovery. ERROR capture một lần kèm context, không trong loop. Log id, không payload order chứa PII. Session id ≠ user id."
+            },
+            {
+              "en": "**Why.** The browser is hostile: quota, adblock, PII, untrusted. Nitro logs are the place for secrets-adjacent context. Do not invent a second id if Sentry/OTel already has `traceparent`. `app.config.warnHandler` is how Vue warnings become prod `console`.",
+              "vi": "**Vì sao.** Browser thù địch: quota, adblock, PII, untrusted. Log Nitro mới là chỗ cho context sát secret. Đừng invent id thứ hai nếu Sentry/OTel đã có `traceparent`. `app.config.warnHandler` là cách Vue warning thành `console` trên prod."
+            },
+            {
+              "en": "**Trade-off.** Sentry is exceptions + traces; product analytics is a different sink — do not dual-write everything. 200 logs per scroll handler is how you buy a bill and lose the signal. GraphQL variables often contain passwords.",
+              "vi": "**Đánh đổi / rủi ro.** Sentry là exception + trace; product analytics là sink khác — đừng dual-write mọi thứ. 200 log mỗi scroll handler là cách mua bill và mất signal. Variable GraphQL thường chứa password."
+            },
+            {
+              "en": "**How to verify.** % of 5xx with a matching `request_id` in Sentry extra, log volume $, PII audit findings. Look at Sentry first for an unknown throw; logs/traces for a known business failure.",
+              "vi": "**Cách kiểm chứng.** % 5xx có `request_id` khớp trong Sentry extra, log volume $, phát hiện audit PII. Nhìn Sentry trước cho throw chưa biết; log/trace cho business failure đã biết."
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "logger.error(\"checkout.pay_failed\", {\n  requestId: lastRequestId,\n  code: err.code, // QUOTE_EXPIRED, not the raw Axios object\n  flag: flags.checkoutV2,\n  release: SHA,\n})",
+            "vi": "logger.error(\"checkout.pay_failed\", {\n  requestId: lastRequestId,\n  code: err.code, // QUOTE_EXPIRED, not the raw Axios object\n  flag: flags.checkoutV2,\n  release: SHA,\n})"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "- First-party log pipeline vs “Sentry is enough.” Sentry is for **exceptions + traces**; product analytics is a different sink. Don’t dual-write everything to both.",
-            "vi": "- First-party log pipeline vs “Sentry là đủ.” Sentry cho **exception + trace**; product analytics là sink khác. Đừng dual-write mọi thứ vào cả hai."
+            "en": "I do not ship `console.log`. The client sends a structured event with a BFF `x-request-id`, a stable error code, the flag, and the release — never the access token or the order payload. DEBUG stays off. If a 500 becomes three tickets, we failed correlation.",
+            "vi": "Tôi không ship `console.log`. Client gửi structured event với `x-request-id` từ BFF, error code ổn định, flag, và release — không bao giờ access token hay payload order. DEBUG giữ tắt. Nếu một 500 thành ba ticket, chúng tôi fail correlation."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- Source of `console` in Vue warnings in prod — `app.config.warnHandler`.\n- Logging full GraphQL queries with variables (passwords, tokens).\n- SSR printing user records to **pod stdout**.",
-            "vi": "- Nguồn `console` từ Vue warning trên prod — `app.config.warnHandler`.\n- Log full GraphQL query kèm variable (password, token).\n- SSR in user record ra **pod stdout**."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "SSR printing user records to pod stdout is a PII incident.",
+              "vi": "SSR in user record ra pod stdout là incident PII."
+            },
+            {
+              "en": "Replay + logs together need the same redaction story.",
+              "vi": "Replay + log cùng lúc cần cùng câu chuyện redact."
+            },
+            {
+              "en": "Do not log the raw Axios object — log `code`.",
+              "vi": "Đừng log object Axios thô — log `code`."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- Where do you look first, Sentry or logs? (Sentry for unknown throw; logs/traces for known business failures)\n- How do you avoid leaking PII in Replay + logs together?",
-            "vi": "- Nhìn Sentry hay log trước? (Sentry cho throw chưa biết; log/trace cho business failure đã biết)\n- Tránh leak PII khi Replay + log cùng lúc thế nào?"
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "Sentry or logs first?",
+              "vi": "Sentry hay log trước?"
+            },
+            {
+              "en": "How do you avoid leaking PII in Replay + logs together?",
+              "vi": "Tránh leak PII khi Replay + log cùng lúc thế nào?"
+            },
+            {
+              "en": "Where should secrets-adjacent context live?",
+              "vi": "Context sát secret sống ở đâu?"
+            },
+            {
+              "en": "What is wrong with `JSON.stringify(user)` in a breadcrumb?",
+              "vi": "`JSON.stringify(user)` trong breadcrumb sai chỗ nào?"
+            }
+          ]
         },
         {
           "type": "thematic-break"
@@ -378,53 +658,137 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "“Would you page someone for this?”",
-            "vi": "“Bạn có page người vì cái này không?”"
+            "en": "“Would you page someone for this?” A `TypeError`, CLS 0.12 on the blog at 3am, and a checkout error-rate cliff after deploy — which one wakes a human?",
+            "vi": "“Bạn có page người vì cái này không?” Một `TypeError`, CLS 0.12 trên blog lúc 3 giờ sáng, và vách error-rate checkout sau deploy — cái nào đánh thức người?"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "- **Decision:** **Page** (wake a human) only for **user-visible, currently happening, actionable** pain on a **critical path**, with a **runbook**. Everything else is a **ticket / Slack / next-business-day** issue. FE pages on **symptoms** (checkout conversion cliff, error rate on `/pay`, 404 chunk spike after deploy), not on a single `TypeError`.\n- **Constraint:** Alert fatigue is how you miss the real Sev-1. Quota and sample rates mean **raw event count** is a bad pager.\n- **Failure mode:** `#alerts` with 400 messages/day; paging on `window is not defined` from a crawler; no owner; paging at 3am for CLS 0.12 on the blog.\n- **Measure:** pages per week, **% that were real**, time-to-ack, time-to-mitigate, after-hours pages (should be rare for FE).\n\n| Page (on-call) | Ticket / Slack |\n| --- | --- |\n| Spike in **checkout/pay/login** JS errors vs baseline, same release | New non-critical issue in Sentry |\n| **Chunk 404** / white screen RUM on `/` after deploy | Slow INP on a rare admin route |\n| Error rate × flag **checkout_v2** (19.6) | Single-user bugs |\n| SSR **5xx** / pod crash loop on Nitro | Lighthouse score dip 4 points |\n| Auth **refresh storm** / logout loop (18.1) | Noise from a new browser version — investigate next day |\n\n**How you’d wire it**\n\n- Base on **rate + baseline** (z-score / same weekday), not absolute “> 50 events.”\n- Attach **release**, **route**, **flag**.\n- Page goes to **checkout owner** at 2am, not the intern who last touched CSS.\n- Every pageable alert has a **runbook link**: rollback, flag off, purge CDN.",
-            "vi": "- **Quyết định:** **Page** (đánh thức người) chỉ vì đau **user nhìn thấy, đang xảy ra, actionable** trên **critical path**, kèm **runbook**. Còn lại là issue **ticket / Slack / ngày làm việc sau**. FE page trên **triệu chứng** (vách conversion checkout, error rate trên `/pay`, spike chunk 404 sau deploy), không phải một `TypeError`.\n- **Ràng buộc:** Alert fatigue là cách bạn miss Sev-1 thật. Quota và sample rate nghĩa là **số event thô** là pager tồi.\n- **Failure mode:** `#alerts` 400 message/ngày; page vì `window is not defined` từ crawler; không owner; page 3 giờ sáng vì CLS 0.12 trên blog.\n- **Đo:** page mỗi tuần, **% là thật**, time-to-ack, time-to-mitigate, page ngoài giờ (phải hiếm với FE).\n\n| Page (on-call) | Ticket / Slack |\n| --- | --- |\n| Spike **JS error checkout/pay/login** vs baseline, cùng release | Issue Sentry mới không critical |\n| **Chunk 404** / RUM white screen trên `/` sau deploy | INP chậm trên admin route hiếm |\n| Error rate × flag **checkout_v2** (19.6) | Bug một user |\n| SSR **5xx** / pod crash loop Nitro | Lighthouse score tụt 4 điểm |\n| Auth **refresh storm** / logout loop (18.1) | Nhiễu từ browser version mới — điều tra ngày mai |\n\n**Cách bạn nối dây**\n\n- Dựa **rate + baseline** (z-score / cùng weekday), không tuyệt đối “> 50 event.”\n- Gắn **release**, **route**, **flag**.\n- Page tới **owner checkout** lúc 2 giờ sáng, không intern vừa đụng CSS.\n- Mọi alert pageable có **link runbook**: rollback, tắt flag, purge CDN."
+            "en": "Page only for user-visible, currently happening, actionable pain on a critical path, with a runbook — everything else is a ticket.",
+            "vi": "Page chỉ vì đau user nhìn thấy, đang xảy ra, actionable trên critical path, kèm runbook — còn lại là ticket."
           }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** FE pages on symptoms: checkout/pay/login JS errors vs baseline on this release, chunk 404 / white-screen RUM on `/` after deploy, error rate × `checkout_v2`, SSR 5xx / Nitro crash loop, auth refresh storm. Wire rate + weekday baseline, not “> 50 events.” Page goes to the checkout owner at 2am, not the intern who last touched CSS.",
+              "vi": "**Quyết định.** FE page trên triệu chứng: JS error checkout/pay/login vs baseline trên release này, chunk 404 / RUM white-screen trên `/` sau deploy, error rate × `checkout_v2`, SSR 5xx / crash loop Nitro, auth refresh storm. Nối rate + baseline weekday, không phải “> 50 event.” Page tới owner checkout lúc 2 giờ sáng, không intern vừa đụng CSS."
+            },
+            {
+              "en": "**Why.** Alert fatigue is how you miss the real Sev-1. Raw event count is a bad pager because of quota and sampling. A deploy causes a brief old-HTML blip — wait 2–3 minutes or page on a sustained spike. A sampling change looks like a drop in errors (false health).",
+              "vi": "**Vì sao.** Alert fatigue là cách bạn miss Sev-1 thật. Số event thô là pager tồi vì quota và sampling. Deploy gây blip HTML cũ ngắn — chờ 2–3 phút hoặc page trên spike kéo dài. Đổi sampling trông như error giảm (sức khỏe giả)."
+            },
+            {
+              "en": "**Trade-off.** Start too quiet, then tighten. A synthetic canary (login + pay every 5 minutes) often beats error-count paging. Soft SLO: availability of critical journeys and an INP budget. Static SPA still needs an on-call — CDN/GitOps.",
+              "vi": "**Đánh đổi / rủi ro.** Bắt đầu quá yên, rồi siết. Synthetic canary (login + pay mỗi 5 phút) thường thắng page theo error-count. SLO mềm: availability critical journey và INP budget. Static SPA vẫn cần on-call — CDN/GitOps."
+            },
+            {
+              "en": "**How to verify.** Pages per week, % that were real, time-to-ack, time-to-mitigate, after-hours pages (should be rare for FE). Every pageable alert has a runbook: rollback, flag off, purge CDN.",
+              "vi": "**Cách kiểm chứng.** Page mỗi tuần, % là thật, time-to-ack, time-to-mitigate, page ngoài giờ (phải hiếm với FE). Mọi alert pageable có runbook: rollback, tắt flag, purge CDN."
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Page (on-call)",
+              "vi": "Page (on-call)"
+            },
+            {
+              "en": "Ticket / Slack",
+              "vi": "Ticket / Slack"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Checkout/pay/login error spike vs baseline, same release",
+                "vi": "Spike error checkout/pay/login vs baseline, cùng release"
+              },
+              {
+                "en": "New non-critical Sentry issue",
+                "vi": "Issue Sentry mới không critical"
+              }
+            ],
+            [
+              {
+                "en": "Chunk 404 / white screen on `/` after deploy",
+                "vi": "Chunk 404 / white screen trên `/` sau deploy"
+              },
+              {
+                "en": "Slow INP on a rare admin route",
+                "vi": "INP chậm trên admin route hiếm"
+              }
+            ],
+            [
+              {
+                "en": "SSR 5xx / Nitro crash loop / refresh storm",
+                "vi": "SSR 5xx / crash loop Nitro / refresh storm"
+              },
+              {
+                "en": "Lighthouse dip 4 points; new browser noise",
+                "vi": "Lighthouse tụt 4 điểm; nhiễu browser mới"
+              }
+            ]
+          ]
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "- Sensitivity vs sleep. Start **too quiet**, then tighten — not the reverse.\n- Synthetic canary (login + pay in prod every 5 min) is often better than error-count paging.",
-            "vi": "- Độ nhạy vs giấc ngủ. Bắt đầu **quá yên**, rồi siết — không ngược lại.\n- Synthetic canary (login + pay trên prod mỗi 5 phút) thường tốt hơn page theo error-count."
+            "en": "I page on a checkout cliff, a chunk-404 after deploy, or a Nitro crash loop — not a single `TypeError` and not CLS on the blog at 3am. The alert carries release, route, and flag, and it pages the service owner with a runbook. I would rather start quiet and add a synthetic canary than live in `#alerts`.",
+            "vi": "Tôi page trên vách checkout, chunk-404 sau deploy, hoặc crash loop Nitro — không phải một `TypeError` và không phải CLS blog lúc 3 giờ sáng. Alert mang release, route, và flag, và page service owner kèm runbook. Tôi thà bắt đầu yên và thêm synthetic canary hơn là sống trong `#alerts`."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- Deploy causes a **brief** error blip (old HTML + new clients) — wait 2–3 minutes or page on **sustained** spike.\n- Sampling change looks like a drop in errors (false health).",
-            "vi": "- Deploy gây **blip** error ngắn (HTML cũ + client mới) — chờ 2–3 phút hoặc page trên spike **kéo dài**.\n- Đổi sampling trông như error giảm (sức khỏe giả)."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "A crawler `window is not defined` is not a page.",
+              "vi": "`window is not defined` từ crawler không phải page."
+            },
+            {
+              "en": "Attach release + route + flag or you cannot slice.",
+              "vi": "Gắn release + route + flag nếu không bạn không slice được."
+            },
+            {
+              "en": "FE after-hours pages should be rare; if they are not, the bar is wrong.",
+              "vi": "Page FE ngoài giờ phải hiếm; nếu không thì thanh đang sai."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- SLOs for FE? (availability of critical journeys, INP budget as a **soft** SLO)\n- Who is on-call for a static SPA? (still someone — CDN/GitOps)",
-            "vi": "- SLO cho FE? (availability critical journey, INP budget như SLO **mềm**)\n- Ai on-call cho static SPA? (vẫn phải có người — CDN/GitOps)"
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "SLOs for FE?",
+              "vi": "SLO cho FE?"
+            },
+            {
+              "en": "Who is on-call for a static SPA?",
+              "vi": "Ai on-call cho static SPA?"
+            },
+            {
+              "en": "Why is raw event count a bad pager?",
+              "vi": "Vì sao số event thô là pager tồi?"
+            },
+            {
+              "en": "Deploy blip vs sustained spike — how do you tell?",
+              "vi": "Blip deploy vs spike kéo dài — phân biệt thế nào?"
+            }
+          ]
         },
         {
           "type": "thematic-break"
@@ -448,63 +812,95 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "“You rolled a flag to 10% and Sentry exploded. Walk me through it.”",
-            "vi": "“Bạn rollout flag 10% rồi Sentry nổ. Kể từng bước.”"
+            "en": "“You rolled a flag to 10% and Sentry exploded. Walk me through it.” They want kill-first, sliced telemetry, and a re-roll — not twenty minutes of debugging at 30%.",
+            "vi": "“Bạn rollout flag 10% rồi Sentry nổ. Kể từng bước.” Họ muốn giết trước, telemetry đã cắt, và re-roll — không phải debug 20 phút ở 30%."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "- **Decision:** **Kill the flag first** if the spike is on a critical path and tracks the flag. Confirm with **sliced** telemetry (error rate **by flag variant**, release, route). Don’t debug for 20 minutes at 30% rollout. After mitigate: keep the flag off, **don’t delete evidence**, then RCA (maps, replay **if** PII-safe, HAR).\n- **Constraint:** Correlation isn’t causation — deploys, flags, and traffic often move together. You need **dimensions**. Fail-safe: if the flag service is itself down, the app must **default closed** for payments (14.4).\n- **Failure mode:** Raising the flag to 50% “to get more signal”; turning **all** flags off; fixing forward on `main` without disabling; blaming a random Sentry issue that existed last month; hydrating two variants (SSR/client mismatch) that **is** the bug.\n- **Measure:** time-to-disable, % of flagged users in the error set vs control, repeat incidents per flag, leftover flags at 100%.\n\n**Playbook**\n\n1. **Graph:** errors / INP / conversion **split by flag key**. If treatment >> control, you’ve got it.\n1. **Mitigate:** set flag to 0% (or to the previous implementation). Announce (17.7).\n1. **Stabilize:** confirm control is healthy; watch for **cached HTML** still showing the new UI (16.2).\n1. **Preserve:** Sentry issue links, release SHA, flag evaluation payload, a Replay **without** PII if possible.\n1. **RCA:** true root cause (null in a composable, 3MB extra on `/`, 401 loop). Add a **test** and a **gate** (budget, unit on the composable).\n1. **Re-roll:** 1% staff → 5% → 25%, same dashboards. Don’t jump to 100% because “we fixed it.”\n1. **Cleanup:** ticket to remove the flag when it graduates (14.4).\n\n**SSR / Nuxt extra**\n\nBucket **once**, send the variant in the payload, use it on client. A spike that is “Hydration node mismatch” after a flag is often **this**, not the feature logic.",
-            "vi": "- **Quyết định:** **Giết flag trước** nếu spike trên critical path và bám flag. Confirm bằng telemetry **đã cắt** (error rate **theo flag variant**, release, route). Đừng debug 20 phút ở rollout 30%. Sau mitigate: giữ flag tắt, **đừng xóa evidence**, rồi RCA (map, replay **nếu** PII-an toàn, HAR).\n- **Ràng buộc:** Correlation không phải causation — deploy, flag, và traffic thường dịch cùng lúc. Bạn cần **dimension**. Fail-safe: nếu chính flag service down, app phải **default closed** cho payment (14.4).\n- **Failure mode:** Tăng flag lên 50% “để có thêm signal”; tắt **hết** flag; fix forward trên `main` mà không disable; đổ một Sentry issue ngẫu nhiên tháng trước đã có; hydrate hai variant (SSR/client lệch) **chính là** bug.\n- **Đo:** time-to-disable, % user flagged trong error set vs control, incident lặp mỗi flag, flag sót ở 100%.\n\n**Playbook**\n\n1. **Graph:** error / INP / conversion **tách theo flag key**. Nếu treatment >> control, bạn đã có.\n1. **Mitigate:** set flag 0% (hoặc implementation trước). Announce (17.7).\n1. **Stabilize:** confirm control khỏe; để ý **HTML cache** vẫn hiện UI mới (16.2).\n1. **Preserve:** link Sentry issue, release SHA, payload đánh giá flag, Replay **không** PII nếu được.\n1. **RCA:** root cause thật (null trong composable, thêm 3MB trên `/`, loop 401). Thêm **test** và **gate** (budget, unit trên composable).\n1. **Re-roll:** 1% staff → 5% → 25%, cùng dashboard. Đừng nhảy 100% vì “đã fix.”\n1. **Cleanup:** ticket gỡ flag khi tốt nghiệp (14.4).\n\n**Thêm SSR / Nuxt**\n\nBucket **một lần**, gửi variant trong payload, dùng trên client. Spike “Hydration node mismatch” sau flag thường là **cái này**, không phải logic feature."
+            "en": "If the spike tracks the flag on a critical path, set it to 0% first; keep the evidence; then RCA and re-roll in steps.",
+            "vi": "Nếu spike bám flag trên critical path, set 0% trước; giữ evidence; rồi RCA và re-roll theo bước."
           }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** Graph errors / INP / conversion split by flag key. Mitigate to 0% or the previous implementation and announce (17.7). Stabilize — watch cached HTML still showing the new UI (16.2). Preserve Sentry links, SHA, flag payload, a Replay without PII. RCA, add a test and a gate, then 1% staff → 5% → 25%. Cleanup ticket when it graduates.",
+              "vi": "**Quyết định.** Graph error / INP / conversion tách theo flag key. Mitigate về 0% hoặc implementation trước và announce (17.7). Stabilize — để ý HTML cache vẫn hiện UI mới (16.2). Giữ link Sentry, SHA, payload flag, Replay không PII. RCA, thêm test và gate, rồi 1% staff → 5% → 25%. Ticket cleanup khi tốt nghiệp."
+            },
+            {
+              "en": "**Why.** Correlation is not causation — deploys, flags, and traffic move together. You need dimensions. If the flag service is down, payments default closed (14.4). A “Hydration node mismatch” spike after a flag is often two variants, not the feature logic. Turning the flag off does not unload an already-downloaded poisonous chunk — force reload on fatal.",
+              "vi": "**Vì sao.** Correlation không phải causation — deploy, flag, và traffic dịch cùng lúc. Bạn cần dimension. Flag service down thì payment default closed (14.4). Spike “Hydration node mismatch” sau flag thường là hai variant, không phải logic feature. Tắt flag không unload chunk độc đã tải — force reload lúc fatal."
+            },
+            {
+              "en": "**Trade-off.** Do not raise the flag to 50% “for more signal.” Do not turn all flags off. Do not fix-forward on `main` without disabling. Fast kill beats ten more minutes of Replay on pay/login. Experiments must have a kill path that is not “wait for a scientist.” Sticky `anonymousId` that resets makes “10%” a blender.",
+              "vi": "**Đánh đổi / rủi ro.** Đừng tăng flag lên 50% “để có thêm signal.” Đừng tắt hết flag. Đừng fix-forward trên `main` mà không disable. Giết nhanh thắng thêm mười phút Replay trên pay/login. Experiment phải có đường giết không phải “chờ scientist.” `anonymousId` sticky bị reset biến “10%” thành máy xay."
+            },
+            {
+              "en": "**How to verify.** Time-to-disable, % of flagged users in the error set vs control, repeat incidents per flag, leftover flags at 100%. If the flag is evaluated in GTM, you cannot slice Sentry.",
+              "vi": "**Cách kiểm chứng.** Time-to-disable, % user flagged trong error set vs control, incident lặp mỗi flag, flag sót ở 100%. Nếu flag evaluate trong GTM, bạn không slice Sentry được."
+            }
+          ]
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "- Fast kill vs gathering 10 more minutes of Replays — kill first on pay/login.\n- Experiment vs kill switch: experiments **must** have a kill path that isn’t “wait for a scientist.”",
-            "vi": "- Giết nhanh vs gom thêm 10 phút Replay — giết trước trên pay/login.\n- Experiment vs kill switch: experiment **phải** có đường giết không phải “chờ scientist.”"
+            "en": "I kill the flag first if treatment dwarfs control on a pay/login path. I do not debug at 30% and I do not raise to 50% for signal. After mitigate I keep the issue, the SHA, and the flag payload, then RCA and re-roll 1 → 5 → 25. A hydration mismatch after a flag is usually two buckets, so I pin the variant in the payload next time.",
+            "vi": "Tôi giết flag trước nếu treatment át control trên path pay/login. Tôi không debug ở 30% và không tăng 50% để lấy signal. Sau mitigate tôi giữ issue, SHA, và payload flag, rồi RCA và re-roll 1 → 5 → 25. Hydration mismatch sau flag thường là hai bucket, nên lần sau tôi pin variant trong payload."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- Flag evaluated in GTM, not your BFF — you can’t slice Sentry.\n- Sticky bucketing by `anonymousId` that resets, so “10%” is a blender.\n- Turning the flag off doesn’t unload a **already-downloaded** poisonous chunk until refresh — tell users / force reload on fatal.",
-            "vi": "- Flag evaluate trong GTM, không phải BFF — bạn không slice Sentry được.\n- Sticky bucketing theo `anonymousId` reset, nên “10%” là máy xay.\n- Tắt flag không unload chunk độc **đã tải** đến khi refresh — bảo user / force reload lúc fatal."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "CLS on the campaign hero is still a flag kill.",
+              "vi": "CLS trên campaign hero vẫn là lúc giết flag."
+            },
+            {
+              "en": "Do not delete evidence while you mitigate.",
+              "vi": "Đừng xóa evidence lúc mitigate."
+            },
+            {
+              "en": "Flag evaluated in GTM cannot be sliced in Sentry.",
+              "vi": "Flag evaluate trong GTM không slice được trong Sentry."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- How do you test both variants in CI? (14.4)\n- What if the spike is CLS not errors? (still a flag kill if it’s the campaign hero)",
-            "vi": "- Test cả hai variant trên CI thế nào? (14.4)\n- Nếu spike là CLS không phải error? (vẫn giết flag nếu là campaign hero)"
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "How do you test both variants in CI? (14.4)",
+              "vi": "Test cả hai variant trên CI thế nào? (14.4)"
+            },
+            {
+              "en": "What if the spike is CLS, not errors?",
+              "vi": "Nếu spike là CLS, không phải error?"
+            },
+            {
+              "en": "Why pin the SSR bucketing key?",
+              "vi": "Vì sao pin bucketing key SSR?"
+            },
+            {
+              "en": "Flag off but users still crash — what did you forget?",
+              "vi": "Tắt flag mà user vẫn crash — bạn quên gì?"
+            }
+          ]
         },
         {
           "type": "thematic-break"
-        },
-        {
-          "type": "paragraph",
-          "text": {
-            "en": "[← Back to Overview](../../README-en.md)",
-            "vi": "[← Back to Overview](../../README.md)"
-          }
         }
       ]
     }
