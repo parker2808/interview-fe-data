@@ -6,8 +6,8 @@
     "vi": "Security"
   },
   "summary": {
-    "en": "Seniors talk **threat model** and **defense in depth**, not a list of `escapeHTML` helpers. Frontend security is: what an attacker who can run JS in the origin can do, what a malicious other-site can do with the user’s…",
-    "vi": "Senior nói **threat model** và **defense in depth**, không phải list helper `escapeHTML`. Security frontend là: attacker chạy JS trong origin làm được gì, site độc hại khác làm được gì với cookie của user, thứ bạn vô tì…"
+    "en": "Seniors talk **threat model** and **defense in depth**, not a list of `escapeHTML` helpers. Frontend security is: what an attacker who can run JS in the origin can do, what a malicious other-site can do with the user’s cookies, what you accidentally shipped in the client bundle, and what you trusted from npm.",
+    "vi": "Senior nói **threat model** và **defense in depth**, không phải list helper `escapeHTML`. Security frontend là: attacker chạy JS trong origin làm được gì, site độc hại khác làm được gì với cookie của user, thứ bạn vô tình ship trong client bundle, và thứ bạn tin từ npm."
   },
   "category": "practices",
   "order": 13,
@@ -98,53 +98,165 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "- Types of XSS; is Vue safe; when is `v-html` OK; CSP; `javascript:` URLs.\n- They want you to connect XSS to **token theft** (10.3), not stop at `alert(1)`.",
-            "vi": "- Các loại XSS; Vue có an toàn không; `v-html` khi nào OK; CSP; URL `javascript:`.\n- Họ muốn bạn nối XSS với **cắp token** (10.3), không dừng ở `alert(1)`."
+            "en": "A CMS comment field ships with `v-html`, JWTs live in `localStorage`, and someone files `alert(1)` as the bug. They want you to name the XSS type, say whether Vue is “safe,” when `v-html` is allowed, what CSP actually contains, and how this becomes **token theft** — not a popup.",
+            "vi": "Field comment CMS ship kèm `v-html`, JWT nằm `localStorage`, và ai đó file bug `alert(1)`. Họ muốn bạn gọi đúng loại XSS, nói Vue có “an toàn” không, `v-html` khi nào được phép, CSP thực sự chứa được gì, và chuyện này thành **cắp token** thế nào — không phải một popup."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "- **Decision:** Treat XSS as **the** browser threat. Vue **text interpolation and most bindings escape**. The holes are **`v-html`**, markdown → HTML, `innerHTML` in widgets you wrote, `href`/`src` with user URLs, `style` injection, and `eval`. Sanitize with a real HTML policy (DOMPurify) **at the boundary**, not with regex. CSP is **mitigation and containment**, not a silver bullet — especially with `'unsafe-inline'` and widget CDNs.\n- **Constraint:** Product wants rich text, previews, and embed codes. You cannot “ban HTML” in a CMS. You can ban `v-html` of **unsanitized** strings in review (9.1.3).\n- **Failure mode:** “Vue is safe so we store JWTs in `localStorage`.” One CMS field with `v-html` later, session is gone. DOM XSS in a purpose-built datepicker/`innerHTML` highlight. Markdown libraries that allow raw HTML. CSP as a `<meta>` tag after a script (too late) or with `unsafe-inline` that neuters it.\n- **Measure:** Authed-user XSS bounty on rich text. CSP report-uri noise trending down. No `v-html` without a sanitizer in CI (ESLint `vue/no-v-html` + allowlist).\n\n**Vue 3 defaults**\n\n```vue\n<template>\n  <!-- Escaped: attacker strings stay text -->\n  <p>{{ comment.body }}</p>\n  <a :title=\"comment.author\">{{ comment.author }}</a>\n\n  <!-- Not escaped: you own the XSS now -->\n  <article v-html=\"sanitizedHtml\" />\n\n  <!-- URL sinks: Vue does not make javascript: safe -->\n  <a :href=\"safeHref(comment.website)\">Website</a>\n</template>\n```\n\n```ts\nimport DOMPurify from \"dompurify\";\n\nconst HTML_POLICY = { USE_PROFILES: { html: true } }; // no SVG/MathML unless you meant to\n\nexport function sanitizeCmsHtml(dirty: string): string {\n  return DOMPurify.sanitize(dirty, HTML_POLICY);\n}\n\nexport function safeHref(url: string): string {\n  const parsed = new URL(url, window.location.origin);\n  if (![\"http:\", \"https:\", \"mailto:\"].includes(parsed.protocol)) return \"#\";\n  return parsed.href;\n}\n```\n\n**DOM XSS in widgets**\n\nPurpose-built editors, syntax highlighters, and “copy this snippet” UIs often assign `innerHTML` on purpose. Vue’s compiler will not save you inside `onMounted(() => el.innerHTML = props.code)`. Prefer `textContent`, `document.createElement`, or sanitize. React `dangerouslySetInnerHTML` is the same sink.\n\n**CSP as defense in depth**\n\n- `default-src 'self'`; scripts via nonce or hash; no `'unsafe-eval'`.\n- Mitigates **some** XSS (inline handlers, unexpected origins). Does not fix `javascript:` navigations by itself, nor sanitizer bypasses, nor `v-html` of `<img onerror>` if you allowed it.\n- Report-Only first. Meta CSP is weaker than headers (no frame-ancestors, easy to ship late).\n\n**Types (say them accurately)**\n\n- **Stored:** payload in DB (comment, name). Hits every viewer.\n- **Reflected:** payload in URL/request, bounced into HTML. SSR search pages still do this.\n- **DOM-based:** client reads `location` / `postMessage` / `dataset` into a sink. Vue apps live here.",
-            "vi": "- **Quyết định:** Coi XSS là browser threat số một. Vue **text interpolation và hầu hết binding đều escape**. Lỗ là **`v-html`**, markdown → HTML, `innerHTML` trong widget bạn viết, `href`/`src` với URL user, inject `style`, và `eval`. Sanitize bằng HTML policy thật (DOMPurify) **ở boundary**, không bằng regex. CSP là **mitigation và containment**, không viên đạn bạc — nhất là với `'unsafe-inline'` và widget CDN.\n- **Ràng buộc:** Product muốn rich text, preview, và embed code. Bạn không “cấm HTML” trong CMS. Bạn cấm `v-html` chuỗi **chưa sanitize** lúc review (9.1.3).\n- **Failure mode:** “Vue an toàn nên JWT để `localStorage`.” Một field CMS `v-html` sau đó, session đi. DOM XSS trong datepicker/`innerHTML` highlight tự chế. Library markdown cho phép raw HTML. CSP dạng `<meta>` sau script (muộn) hoặc `unsafe-inline` làm nó bất lực.\n- **Đo:** XSS bounty user đã auth trên rich text. Noise CSP report-uri trending xuống. Không `v-html` thiếu sanitizer trên CI (ESLint `vue/no-v-html` + allowlist).\n\n**Default Vue 3**\n\n```vue\n<template>\n  <!-- Escaped: attacker strings stay text -->\n  <p>{{ comment.body }}</p>\n  <a :title=\"comment.author\">{{ comment.author }}</a>\n\n  <!-- Not escaped: you own the XSS now -->\n  <article v-html=\"sanitizedHtml\" />\n\n  <!-- URL sinks: Vue does not make javascript: safe -->\n  <a :href=\"safeHref(comment.website)\">Website</a>\n</template>\n```\n\n```ts\nimport DOMPurify from \"dompurify\";\n\nconst HTML_POLICY = { USE_PROFILES: { html: true } }; // no SVG/MathML unless you meant to\n\nexport function sanitizeCmsHtml(dirty: string): string {\n  return DOMPurify.sanitize(dirty, HTML_POLICY);\n}\n\nexport function safeHref(url: string): string {\n  const parsed = new URL(url, window.location.origin);\n  if (![\"http:\", \"https:\", \"mailto:\"].includes(parsed.protocol)) return \"#\";\n  return parsed.href;\n}\n```\n\n**DOM XSS trong widget**\n\nEditor tự chế, syntax highlighter, UI “copy snippet” thường gán `innerHTML` có chủ đích. Compiler Vue không cứu bạn trong `onMounted(() => el.innerHTML = props.code)`. Prefer `textContent`, `document.createElement`, hoặc sanitize. React `dangerouslySetInnerHTML` cùng sink.\n\n**CSP như defense in depth**\n\n- `default-src 'self'`; script qua nonce hoặc hash; không `'unsafe-eval'`.\n- Mitigate **một phần** XSS (inline handler, origin bất ngờ). Không tự fix navigate `javascript:`, sanitizer bypass, hay `v-html` của `<img onerror>` nếu bạn cho phép.\n- Report-Only trước. Meta CSP yếu hơn header (không frame-ancestors, dễ ship muộn).\n\n**Các loại (nói chính xác)**\n\n- **Stored:** payload trong DB (comment, name). Đánh mọi viewer.\n- **Reflected:** payload trong URL/request, nảy vào HTML. Page search SSR vẫn làm điều này.\n- **DOM-based:** client đọc `location` / `postMessage` / `dataset` vào sink. App Vue sống ở đây."
+            "en": "Vue escapes text; XSS is every other sink — `v-html`, `innerHTML`, `javascript:` URLs — and one sink plus `localStorage` tokens is a stolen session.",
+            "vi": "Vue escape text; XSS là mọi sink khác — `v-html`, `innerHTML`, URL `javascript:` — và một sink cộng token `localStorage` là session bị cắp."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** Treat XSS as the browser threat. Sanitize with a real HTML policy (DOMPurify) at the boundary, not regex. Ban unsanitized `v-html` in review. CSP is containment (`default-src 'self'`, nonce/hash, no `'unsafe-eval'`), not a silver bullet — especially with `'unsafe-inline'` and widget CDNs.",
+              "vi": "**Quyết định.** Coi XSS là browser threat số một. Sanitize bằng HTML policy thật (DOMPurify) ở boundary, không bằng regex. Cấm `v-html` chưa sanitize lúc review. CSP là containment (`default-src 'self'`, nonce/hash, không `'unsafe-eval'`), không viên đạn bạc — nhất là với `'unsafe-inline'` và widget CDN."
+            },
+            {
+              "en": "**Why.** Text interpolation and most Vue bindings escape. The holes are `v-html`, markdown → HTML, widget `innerHTML`, user `href`/`src`, `style` injection, and `eval`. Stored XSS lives in the DB; reflected still shows up on SSR search pages; Vue apps mostly hit DOM XSS via `location` / `postMessage` / `dataset`.",
+              "vi": "**Vì sao.** Text interpolation và hầu hết binding Vue đều escape. Lỗ là `v-html`, markdown → HTML, `innerHTML` trong widget, `href`/`src` user, inject `style`, và `eval`. Stored XSS sống trong DB; reflected vẫn hiện trên page search SSR; app Vue chủ yếu dính DOM XSS qua `location` / `postMessage` / `dataset`."
+            },
+            {
+              "en": "**Trade-off.** Product wants rich text — you cannot ban HTML in a CMS. A TipTap schema beats sanitize-after-the-fact. Payments get a narrow script allowlist, not `*`. `target=\"_blank\"` without `rel=\"noopener\"` is tab-nabbing, not XSS; still mention it.",
+              "vi": "**Đánh đổi / rủi ro.** Product muốn rich text — bạn không cấm HTML trong CMS. Schema TipTap thắng sanitize-sau. Payment được allowlist script hẹp, không `*`. `target=\"_blank\"` thiếu `rel=\"noopener\"` là tab-nabbing, không phải XSS; vẫn nhắc."
+            },
+            {
+              "en": "**How to verify.** Authed-user XSS bounty on rich text. CSP report-uri noise trending down. ESLint `vue/no-v-html` plus an allowlist. `rg` the built page for unsanitized sinks. Mutation XSS: sanitize last, after any HTML rewrite.",
+              "vi": "**Cách kiểm chứng.** XSS bounty user đã auth trên rich text. Noise CSP report-uri trending xuống. ESLint `vue/no-v-html` kèm allowlist. `rg` page đã build tìm sink chưa sanitize. Mutation XSS: sanitize cuối, sau mọi lần viết lại HTML."
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Type",
+              "vi": "Loại"
+            },
+            {
+              "en": "Where the payload lives",
+              "vi": "Payload sống ở đâu"
+            },
+            {
+              "en": "Who it hits",
+              "vi": "Đánh ai"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Stored",
+                "vi": "Stored"
+              },
+              {
+                "en": "DB — comment, name, CMS field",
+                "vi": "DB — comment, name, field CMS"
+              },
+              {
+                "en": "Every later viewer",
+                "vi": "Mọi viewer sau đó"
+              }
+            ],
+            [
+              {
+                "en": "Reflected",
+                "vi": "Reflected"
+              },
+              {
+                "en": "URL / request, bounced into HTML",
+                "vi": "URL / request, nảy vào HTML"
+              },
+              {
+                "en": "The requester; SSR search still does this",
+                "vi": "Người request; search SSR vẫn làm vậy"
+              }
+            ],
+            [
+              {
+                "en": "DOM-based",
+                "vi": "DOM-based"
+              },
+              {
+                "en": "Client reads `location` / `postMessage` / `dataset` into a sink",
+                "vi": "Client đọc `location` / `postMessage` / `dataset` vào sink"
+              },
+              {
+                "en": "Whoever runs that client path — typical Vue app",
+                "vi": "Ai chạy path client đó — app Vue điển hình"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "import DOMPurify from \"dompurify\"\n\nconst HTML_POLICY = { USE_PROFILES: { html: true } } // no SVG/MathML unless you meant to\n\nexport function sanitizeCmsHtml(dirty: string): string {\n  return DOMPurify.sanitize(dirty, HTML_POLICY)\n}\n\nexport function safeHref(url: string): string {\n  const parsed = new URL(url, window.location.origin)\n  if (![\"http:\", \"https:\", \"mailto:\"].includes(parsed.protocol)) return \"#\"\n  return parsed.href\n}",
+            "vi": "import DOMPurify from \"dompurify\"\n\nconst HTML_POLICY = { USE_PROFILES: { html: true } } // không SVG/MathML trừ khi cố ý\n\nexport function sanitizeCmsHtml(dirty: string): string {\n  return DOMPurify.sanitize(dirty, HTML_POLICY)\n}\n\nexport function safeHref(url: string): string {\n  const parsed = new URL(url, window.location.origin)\n  if (![\"http:\", \"https:\", \"mailto:\"].includes(parsed.protocol)) return \"#\"\n  return parsed.href\n}"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "- Markdown + sanitizer vs a locked subset editor (TipTap schema). Schema > sanitizer-after-the-fact.\n- Strict CSP vs third-party scripts (analytics, payments). Payments get a narrow allowlist, not `*`.",
-            "vi": "- Markdown + sanitizer vs editor subset khóa (TipTap schema). Schema > sanitize-sau.\n- CSP chặt vs script third-party (analytics, payment). Payment được allowlist hẹp, không `*`."
+            "en": "Vue escaping text is not a security program — `v-html`, widget `innerHTML`, and `javascript:` hrefs are still sinks. I sanitize at the boundary with DOMPurify, not regex, and I treat CSP as containment: Report-Only first, headers not a late `<meta>`, no `'unsafe-inline'`. I connect XSS to token theft: if JWTs sit in `localStorage`, one CMS field is a stolen session. CSP does not replace sanitization, and I sanitize last so I do not reintroduce mutation XSS.",
+            "vi": "Vue escape text không phải chương trình bảo mật — `v-html`, `innerHTML` trong widget, và href `javascript:` vẫn là sink. Tôi sanitize ở boundary bằng DOMPurify, không regex, và coi CSP là containment: Report-Only trước, header chứ không `<meta>` muộn, không `'unsafe-inline'`. Tôi nối XSS với cắp token: JWT nằm `localStorage` thì một field CMS là session bị cắp. CSP không thay sanitization, và tôi sanitize cuối để không mở lại mutation XSS."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- `target=\"_blank\"` without `rel=\"noopener\"` is a tab-nabbing story; still mention it, it is not XSS.\n- `v-html` + i18n interpolating user names into HTML translations.\n- Server-rendered Nuxt: XSS in `useHead` / raw `<script>` JSON. Serialize with `json` helpers, not string concat.\n- `innerHTML` of JSON-LD: still parse/serialize, do not paste user text.",
-            "vi": "- `target=\"_blank\"` thiếu `rel=\"noopener\"` là chuyện tab-nabbing; vẫn nhắc, không phải XSS.\n- `v-html` + i18n interpolate tên user vào bản dịch HTML.\n- Nuxt render server: XSS trong `useHead` / raw `<script>` JSON. Serialize bằng helper `json`, không concat string.\n- `innerHTML` của JSON-LD: vẫn parse/serialize, đừng dán text user."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "`v-html` / `innerHTML` / user URLs are the Vue holes. Compiler will not save `el.innerHTML = props.code`.",
+              "vi": "`v-html` / `innerHTML` / URL user là lỗ Vue. Compiler không cứu `el.innerHTML = props.code`."
+            },
+            {
+              "en": "CSP mitigates some XSS; it does not fix `javascript:` navigation or a sanitizer you bypassed.",
+              "vi": "CSP mitigate một phần XSS; không fix navigate `javascript:` hay sanitizer bạn đã bypass."
+            },
+            {
+              "en": "Nuxt `useHead` / raw `<script>` JSON and i18n HTML translations are XSS too — serialize, do not concat.",
+              "vi": "`useHead` Nuxt / raw `<script>` JSON và bản dịch HTML i18n cũng là XSS — serialize, đừng concat."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- Can CSP replace sanitization? (No.)\n- Mutation XSS after DOMPurify if you mangle HTML afterwards — sanitize last.\n- React/Next: same model; `next/link` href still needs protocol checks for user URLs.",
-            "vi": "- CSP thay được sanitization? (Không.)\n- Mutation XSS sau DOMPurify nếu bạn mangle HTML về sau — sanitize cuối cùng.\n- React/Next: cùng model; href `next/link` vẫn cần check protocol cho URL user."
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "Can CSP replace sanitization? (No.)",
+              "vi": "CSP thay được sanitization? (Không.)"
+            },
+            {
+              "en": "Why sanitize last after you rewrite HTML? (Mutation XSS.)",
+              "vi": "Vì sao sanitize cuối sau khi viết lại HTML? (Mutation XSS.)"
+            },
+            {
+              "en": "How do you make a user URL safe on `next/link` or `:href`? (Protocol allowlist.)",
+              "vi": "Làm URL user an toàn trên `next/link` hoặc `:href` thế nào? (Allowlist protocol.)"
+            },
+            {
+              "en": "Stored vs reflected vs DOM XSS — which one is a typical Vue app?",
+              "vi": "Stored vs reflected vs DOM XSS — app Vue điển hình dính loại nào?"
+            },
+            {
+              "en": "Why is a `<meta>` CSP after a script too late?",
+              "vi": "Vì sao CSP `<meta>` sau script là quá muộn?"
+            }
+          ]
         },
         {
           "type": "thematic-break"
@@ -168,53 +280,161 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "- What CSRF is; tokens vs SameSite; does an SPA need CSRF if it uses Bearer headers?",
-            "vi": "- CSRF là gì; token vs SameSite; SPA có cần CSRF nếu dùng Bearer header?"
+            "en": "Login is a cookie session. A teammate says “we are an SPA with Bearer headers, CSRF vanished.” They want you to say when CSRF still exists, tokens vs SameSite, and whether a malicious page can change state with the user’s cookie and no extra header.",
+            "vi": "Login là session cookie. Đồng nghiệp nói “ta là SPA với Bearer header, CSRF biến mất.” Họ muốn bạn nói CSRF còn khi nào, token vs SameSite, và page độc hại có đổi state bằng cookie user mà không extra header không."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "- **Decision:** CSRF matters when the **browser automatically attaches credentials** (cookies) to a state-changing request the attacker can trigger. **Bearer tokens in `Authorization` from memory are not auto-attached**, so classic CSRF is usually a non-issue. Cookie-authenticated SPAs: **SameSite=Lax + HTTPS + POST for mutations** is often enough. Add **custom header** (`X-Requested-With` / CSRF token) when you have older browsers, `SameSite=None` (embedded), or GET-with-side-effects you cannot kill yet. Double-submit cookie is the pragmatic SPA pattern when the server wants a token without server-side session storage.\n- **Constraint:** You do not control every WebView or the next product embed. Lax does not send cookies on cross-site **subresource POST** from other origins, but **top-level GET** still sends Lax cookies (the old “logout CSRF via `<img>`” / “change state on GET” class).\n- **Failure mode:** Cookie session + CORS `Access-Control-Allow-Origin: *` + `credentials`. JSON APIs that accept `text/plain` to skip preflight. Assuming “we are an SPA so CSRF vanished.” Synchronizer tokens copied from a 2012 form app onto a Bearer API.\n- **Measure:** Can a malicious page cause a **state change** with the user’s cookie and no extra header? If yes, you still have CSRF. Test with a cross-origin form POST in a fixture.\n\n**When CSRF still matters**\n\n- Session in cookies (including httpOnly refresh that **also** performs POST `/logout` or `/transfer` as a cookie-only call).\n- Mutations on GET (unsubscribe, approve).\n- `SameSite=None` for an embedded admin.\n- Cookie auth to a subdomain API (`api.example.com`) from a site the attacker can operate in a related-site world — know your eTLD+1.\n\n**When it usually does not**\n\n- Access token in memory, sent as `Authorization: Bearer`, no cookie for that API.\n- Strict SameSite session cookies and no cross-site embeds.\n\n```ts\n// Cookie-auth API: custom header is a CSRF control (not a secret)\nawait api.post(\"/orders\", body, {\n  headers: { \"X-Requested-With\": \"XMLHttpRequest\" },\n  withCredentials: true,\n});\n```\n\nServers that require a non-simple header force a **preflight**; a cross-origin HTML form cannot set it.\n\n**Double-submit**\n\nServer sets a readable `XSRF-TOKEN` cookie (not httpOnly) **and** requires it echoed in a header. Attacker sites cannot read it (same-origin). Axios/ky can copy it. XSS can still read it — CSRF tokens do not survive XSS; that is a different threat.\n\n**SameSite**\n\n- `Strict`: strongest, breaks some inbound GET flows (user clicks a link from email into an authed app — cookie withheld on that first navigation).\n- `Lax`: usual SPA default for session cookies.\n- `None; Secure`: third-party / embeds only.",
-            "vi": "- **Quyết định:** CSRF quan trọng khi **browser tự gắn credential** (cookie) vào request đổi state mà attacker trigger được. **Bearer token trong `Authorization` từ memory không tự gắn**, nên CSRF cổ điển thường không phải vấn đề. SPA auth bằng cookie: **SameSite=Lax + HTTPS + POST cho mutation** thường đủ. Thêm **custom header** (`X-Requested-With` / CSRF token) khi còn browser cũ, `SameSite=None` (embed), hoặc GET-có-side-effect chưa giết được. Double-submit cookie là pattern SPA thực dụng khi server muốn token mà không session storage phía server.\n- **Ràng buộc:** Bạn không kiểm soát mọi WebView hay product embed tiếp theo. Lax không gửi cookie trên **subresource POST** cross-site từ origin khác, nhưng **top-level GET** vẫn gửi cookie Lax (class cũ “logout CSRF qua `<img>`” / “đổi state trên GET”).\n- **Failure mode:** Cookie session + CORS `Access-Control-Allow-Origin: *` + `credentials`. JSON API nhận `text/plain` để skip preflight. Cho rằng “ta là SPA nên CSRF biến mất.” Synchronizer token copy từ form app 2012 lên Bearer API.\n- **Đo:** Page độc hại có gây **đổi state** bằng cookie user mà không extra header? Có thì bạn vẫn còn CSRF. Test bằng form POST cross-origin trong fixture.\n\n**Khi CSRF vẫn quan trọng**\n\n- Session trong cookie (kể cả httpOnly refresh **cũng** POST `/logout` hoặc `/transfer` như cookie-only call).\n- Mutation trên GET (unsubscribe, approve).\n- `SameSite=None` cho admin embed.\n- Cookie auth tới API subdomain (`api.example.com`) từ site attacker vận hành trong thế related-site — biết eTLD+1 của bạn.\n\n**Khi thường không**\n\n- Access token trong memory, gửi `Authorization: Bearer`, không cookie cho API đó.\n- Session cookie SameSite Strict và không embed cross-site.\n\n```ts\n// Cookie-auth API: custom header is a CSRF control (not a secret)\nawait api.post(\"/orders\", body, {\n  headers: { \"X-Requested-With\": \"XMLHttpRequest\" },\n  withCredentials: true,\n});\n```\n\nServer đòi header không-simple thì buộc **preflight**; HTML form cross-origin không set được.\n\n**Double-submit**\n\nServer set cookie `XSRF-TOKEN` đọc được (không httpOnly) **và** đòi echo trong header. Site attacker không đọc được (same-origin). Axios/ky copy được. XSS vẫn đọc được — CSRF token không sống sót XSS; đó là threat khác.\n\n**SameSite**\n\n- `Strict`: mạnh nhất, gãy một số inbound GET (user click link email vào app đã auth — cookie bị giữ ở navigation đầu).\n- `Lax`: default SPA thường cho session cookie.\n- `None; Secure`: chỉ third-party / embed."
+            "en": "CSRF exists when the browser auto-attaches cookies to a state-changing request the attacker can trigger; a Bearer token in memory is not auto-attached.",
+            "vi": "CSRF tồn tại khi browser tự gắn cookie vào request đổi state mà attacker trigger được; Bearer token trong memory không tự gắn."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** Cookie-auth SPA: SameSite=Lax + HTTPS + POST for mutations is often enough. Add a custom header (`X-Requested-With` / CSRF token) for older browsers, `SameSite=None` embeds, or GET-with-side-effects you cannot kill. Double-submit is the pragmatic SPA token when the server wants a token without session storage. Bearer-in-memory APIs usually skip classic CSRF.",
+              "vi": "**Quyết định.** SPA auth cookie: SameSite=Lax + HTTPS + POST cho mutation thường đủ. Thêm custom header (`X-Requested-With` / CSRF token) cho browser cũ, embed `SameSite=None`, hoặc GET-có-side-effect chưa giết được. Double-submit là token SPA thực dụng khi server muốn token mà không session storage. API Bearer-trong-memory thường bỏ CSRF cổ điển."
+            },
+            {
+              "en": "**Why.** Lax does not send cookies on cross-site subresource POST, but top-level GET still sends Lax cookies — the old logout-via-`<img>` / mutate-on-GET class. A non-simple header forces a preflight; a cross-origin HTML form cannot set it. XSS can still read a double-submit cookie — CSRF tokens do not survive XSS.",
+              "vi": "**Vì sao.** Lax không gửi cookie trên subresource POST cross-site, nhưng top-level GET vẫn gửi cookie Lax — class cũ logout-qua-`<img>` / đổi-state-trên-GET. Header không-simple buộc preflight; HTML form cross-origin không set được. XSS vẫn đọc được cookie double-submit — CSRF token không sống sót XSS."
+            },
+            {
+              "en": "**Trade-off.** Cookie UX (no refresh flash) vs a CSRF program. Bearer in memory drops CSRF and becomes XSS-sensitive the moment you put it in Web Storage. `www` / `app` / `api` on one eTLD+1 are same-site for SameSite cookies — sibling-subdomain CSRF is a real design question.",
+              "vi": "**Đánh đổi / rủi ro.** Cookie UX (không flash refresh) vs chương trình CSRF. Bearer trong memory hết CSRF và trở nên nhạy XSS ngay khi bạn để Web Storage. `www` / `app` / `api` trên một eTLD+1 là same-site với cookie SameSite — CSRF qua sibling subdomain là câu hỏi thiết kế thật."
+            },
+            {
+              "en": "**How to verify.** Can a malicious page cause a state change with the user’s cookie and no extra header? If yes, you still have CSRF. Fixture: cross-origin form POST. Also check logout-as-GET and `credentials: 'include'` with a loose CORS origin.",
+              "vi": "**Cách kiểm chứng.** Page độc hại có gây đổi state bằng cookie user mà không extra header? Có thì bạn vẫn còn CSRF. Fixture: form POST cross-origin. Cũng check logout-dạng-GET và `credentials: 'include'` với CORS origin lỏng."
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "SameSite",
+              "vi": "SameSite"
+            },
+            {
+              "en": "Use when",
+              "vi": "Dùng khi"
+            },
+            {
+              "en": "Breaks",
+              "vi": "Gãy gì"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "`Strict`",
+                "vi": "`Strict`"
+              },
+              {
+                "en": "Highest first-party bar",
+                "vi": "Ngưỡng first-party cao nhất"
+              },
+              {
+                "en": "Inbound GET from email — cookie withheld on first navigation",
+                "vi": "Inbound GET từ email — cookie bị giữ ở navigation đầu"
+              }
+            ],
+            [
+              {
+                "en": "`Lax`",
+                "vi": "`Lax`"
+              },
+              {
+                "en": "Usual SPA session default",
+                "vi": "Default session SPA thường"
+              },
+              {
+                "en": "Does not stop mutate-on-GET or sibling-site designs",
+                "vi": "Không chặn đổi-state-trên-GET hay thiết kế sibling-site"
+              }
+            ],
+            [
+              {
+                "en": "`None; Secure`",
+                "vi": "`None; Secure`"
+              },
+              {
+                "en": "Third-party / embeds only",
+                "vi": "Chỉ third-party / embed"
+              },
+              {
+                "en": "Needs an extra CSRF control",
+                "vi": "Cần thêm CSRF control"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "// Cookie-auth API: custom header is a CSRF control (not a secret)\nawait api.post(\"/orders\", body, {\n  headers: { \"X-Requested-With\": \"XMLHttpRequest\" },\n  withCredentials: true,\n})",
+            "vi": "// Cookie-auth API: custom header is a CSRF control (not a secret)\nawait api.post(\"/orders\", body, {\n  headers: { \"X-Requested-With\": \"XMLHttpRequest\" },\n  withCredentials: true,\n})"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "- Cookie UX (no refresh flash) vs CSRF program.\n- Bearer in memory vs CSRF-free but XSS-sensitive if you ever put it in Web Storage.",
-            "vi": "- Cookie UX (không flash refresh) vs chương trình CSRF.\n- Bearer trong memory vs hết CSRF nhưng nhạy XSS nếu bạn từng để Web Storage."
+            "en": "CSRF matters when the browser attaches cookies for the attacker. Bearer from memory is not auto-attached, so classic CSRF is usually gone — until someone stores that token or the refresh cookie also POSTs `/logout` alone. For cookie sessions I default SameSite=Lax, HTTPS, POST mutations, and a custom header that forces preflight. Double-submit is fine; it does not survive XSS. I never treat “we are an SPA” as the control.",
+            "vi": "CSRF quan trọng khi browser gắn cookie giúp attacker. Bearer từ memory không tự gắn, nên CSRF cổ điển thường hết — đến khi ai đó lưu token hoặc cookie refresh cũng POST `/logout` một mình. Session cookie tôi default SameSite=Lax, HTTPS, mutation POST, và custom header buộc preflight. Double-submit ổn; nó không sống sót XSS. Tôi không coi “ta là SPA” là control."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- Same-site vs same-origin: `www` vs `app` vs `api` on one eTLD+1 are **same-site** for SameSite cookies. CSRF via sibling subdomain is a real design question.\n- Fetch `credentials: 'include'` without a tight CORS origin allowlist.\n- Logout as GET.",
-            "vi": "- Same-site vs same-origin: `www` vs `app` vs `api` trên một eTLD+1 là **same-site** với cookie SameSite. CSRF qua sibling subdomain là câu hỏi thiết kế thật.\n- Fetch `credentials: 'include'` mà CORS origin allowlist không chặt.\n- Logout dạng GET."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "Cookie session + CORS `*` + credentials is CSRF. JSON that accepts `text/plain` skips preflight.",
+              "vi": "Cookie session + CORS `*` + credentials là CSRF. JSON nhận `text/plain` thì skip preflight."
+            },
+            {
+              "en": "Logout / unsubscribe / approve on GET is still CSRF under Lax.",
+              "vi": "Logout / unsubscribe / approve trên GET vẫn là CSRF với Lax."
+            },
+            {
+              "en": "Login CSRF is separate: anti-automation + SameSite + noticing an account switch.",
+              "vi": "Login CSRF là bài riêng: anti-automation + SameSite + nhận ra account switch."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- Login CSRF (attacker logs you into their account) — separate, usually anti-automation + `SameSite` + noticing account switch.\n- Mobile/native apps: CSRF is a browser concept; they still need authz.",
-            "vi": "- Login CSRF (attacker login bạn vào account chúng) — riêng, thường anti-automation + `SameSite` + nhận ra account switch.\n- App mobile/native: CSRF là khái niệm browser; chúng vẫn cần authz."
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "Does an SPA with Bearer headers still need CSRF? When?",
+              "vi": "SPA với Bearer header còn cần CSRF không? Khi nào?"
+            },
+            {
+              "en": "Why can a cross-origin form not send `X-Requested-With`?",
+              "vi": "Vì sao form cross-origin không gửi được `X-Requested-With`?"
+            },
+            {
+              "en": "Same-site vs same-origin for `www`, `app`, and `api` on one eTLD+1?",
+              "vi": "Same-site vs same-origin với `www`, `app`, và `api` trên một eTLD+1?"
+            },
+            {
+              "en": "Does CSRF apply to a native mobile app? (Browser concept; they still need authz.)",
+              "vi": "CSRF áp dụng cho app mobile native? (Khái niệm browser; chúng vẫn cần authz.)"
+            }
+          ]
         },
         {
           "type": "thematic-break"
@@ -238,53 +458,177 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "- Where is the access token? Refresh rotation? 401 storms? Logout across tabs?",
-            "vi": "- Access token để đâu? Refresh rotation? Bão 401? Logout across tab?"
+            "en": "A burst of 401s hits `/refresh` at once, one tab logs out and the others stay in, and someone persisted the user store. Where does the access token live, how do you rotate refresh, how do you single-flight 401s, and how do you log out every tab?",
+            "vi": "Một burst 401 cùng đụng `/refresh`, một tab logout còn tab khác vẫn vào, và ai đó persist user store. Access token sống ở đâu, rotate refresh thế nào, single-flight 401 ra sao, và logout mọi tab thế nào?"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "- **Decision:** **Access token in memory** (or a short httpOnly cookie). **Refresh token in httpOnly + Secure + SameSite cookie**, rotated on use. Axios/fetch **401 interceptor with single-flight refresh** so a burst of 401s does not stampede `/refresh`. **Logout all tabs** via `BroadcastChannel` (or `storage` event if you must). Treat **XSS as game over for any non-httpOnly secret**.\n- **Constraint:** Hard refresh drops memory tokens — you need a refresh call on boot (silent). Cookie refresh needs CSRF posture (10.2). Reverse proxies must not log `Authorization`.\n- **Failure mode:** `localStorage.setItem('token')`. Parallel 401s all hitting refresh, rotating the refresh token, **all but one fail**, user kicked out. Refresh not rotated → stolen refresh lives forever. Logout only clears this tab’s memory. Putting the access token in Pinia persisted state (that writes `localStorage`).\n- **Measure:** Session fixation tests, refresh reuse detection (server), time-to-revoke on logout, XSS tabletop: “what can the attacker steal?”\n\n```ts\nlet refreshInFlight: Promise<string> | null = null;\n\nasync function refreshAccess(): Promise<string> {\n  if (!refreshInFlight) {\n    refreshInFlight = api\n      .post(\"/auth/refresh\")\n      .then((r) => {\n        tokenMemory.set(r.accessToken);\n        return r.accessToken;\n      })\n      .finally(() => {\n        refreshInFlight = null;\n      });\n  }\n  return refreshInFlight;\n}\n\napi.interceptors.response.use(undefined, async (error) => {\n  const original = error.config;\n  if (error.response?.status !== 401 || original._retried) throw error;\n  original._retried = true;\n  const token = await refreshAccess();\n  original.headers.Authorization = `Bearer ${token}`;\n  return api.request(original);\n});\n```\n\n```ts\nconst authCh = new BroadcastChannel(\"auth\");\n\nexport function logoutAllTabs() {\n  tokenMemory.set(null);\n  authCh.postMessage({ type: \"logout\" });\n  void api.post(\"/auth/logout\"); // invalidate refresh server-side\n}\n\nauthCh.onmessage = (e) => {\n  if (e.data?.type === \"logout\") tokenMemory.set(null);\n};\n```\n\n**Rotation**\n\nServer issues a new refresh, invalidates the old. Reuse of an old refresh = theft → revoke the family. Frontend: single-flight is what makes rotation survivable.\n\n**OAuth / OIDC**\n\nAuthorization Code + PKCE for SPAs. Do not implement implicit flow. Next.js: httpOnly session cookies via Auth.js / similar BFF. Vue SPA talking to a BFF is the same idea.",
-            "vi": "- **Quyết định:** **Access token trong memory** (hoặc cookie httpOnly ngắn). **Refresh token trong cookie httpOnly + Secure + SameSite**, rotate lúc dùng. Axios/fetch **401 interceptor với single-flight refresh** để burst 401 không stampede `/refresh`. **Logout mọi tab** qua `BroadcastChannel` (hoặc `storage` event nếu bắt buộc). Coi **XSS là game over cho mọi secret không-httpOnly**.\n- **Ràng buộc:** Hard refresh làm mất memory token — cần refresh call lúc boot (silent). Cookie refresh cần posture CSRF (10.2). Reverse proxy không được log `Authorization`.\n- **Failure mode:** `localStorage.setItem('token')`. 401 song song cùng đụng refresh, rotate refresh token, **tất cả trừ một fail**, user bị đá. Refresh không rotate → refresh bị cắp sống mãi. Logout chỉ xóa memory tab này. Nhét access token vào Pinia persist (ghi `localStorage`).\n- **Đo:** Test session fixation, phát hiện reuse refresh (server), time-to-revoke lúc logout, XSS tabletop: “attacker cắp được gì?”\n\n```ts\nlet refreshInFlight: Promise<string> | null = null;\n\nasync function refreshAccess(): Promise<string> {\n  if (!refreshInFlight) {\n    refreshInFlight = api\n      .post(\"/auth/refresh\")\n      .then((r) => {\n        tokenMemory.set(r.accessToken);\n        return r.accessToken;\n      })\n      .finally(() => {\n        refreshInFlight = null;\n      });\n  }\n  return refreshInFlight;\n}\n\napi.interceptors.response.use(undefined, async (error) => {\n  const original = error.config;\n  if (error.response?.status !== 401 || original._retried) throw error;\n  original._retried = true;\n  const token = await refreshAccess();\n  original.headers.Authorization = `Bearer ${token}`;\n  return api.request(original);\n});\n```\n\n```ts\nconst authCh = new BroadcastChannel(\"auth\");\n\nexport function logoutAllTabs() {\n  tokenMemory.set(null);\n  authCh.postMessage({ type: \"logout\" });\n  void api.post(\"/auth/logout\"); // invalidate refresh server-side\n}\n\nauthCh.onmessage = (e) => {\n  if (e.data?.type === \"logout\") tokenMemory.set(null);\n};\n```\n\n**Rotation**\n\nServer phát refresh mới, invalidate cái cũ. Reuse refresh cũ = trộm → revoke cả family. Frontend: single-flight là thứ khiến rotation sống sót được.\n\n**OAuth / OIDC**\n\nAuthorization Code + PKCE cho SPA. Đừng implement implicit flow. Next.js: session cookie httpOnly qua Auth.js / BFF tương tự. Vue SPA nói chuyện với BFF cùng ý."
+            "en": "Access token in memory (or a short httpOnly cookie); refresh in httpOnly + Secure + SameSite, rotated on use, single-flighted on 401, broadcast on logout.",
+            "vi": "Access token trong memory (hoặc cookie httpOnly ngắn); refresh trong httpOnly + Secure + SameSite, rotate lúc dùng, single-flight khi 401, broadcast lúc logout."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** Axios/fetch 401 interceptor with one in-flight refresh so a burst does not stampede `/refresh`. Logout all tabs via `BroadcastChannel` (or `storage` if you must) and invalidate refresh server-side. XSS is game over for any non-httpOnly secret. OAuth/OIDC: Authorization Code + PKCE; do not implement implicit. Vue SPA + BFF is the same idea as Auth.js cookies.",
+              "vi": "**Quyết định.** 401 interceptor Axios/fetch với một refresh in-flight để burst không stampede `/refresh`. Logout mọi tab qua `BroadcastChannel` (hoặc `storage` nếu bắt buộc) và invalidate refresh phía server. XSS là game over cho mọi secret không-httpOnly. OAuth/OIDC: Authorization Code + PKCE; đừng implement implicit. Vue SPA + BFF cùng ý với cookie Auth.js."
+            },
+            {
+              "en": "**Why.** Hard refresh drops memory tokens — silent refresh on boot. Cookie refresh needs CSRF posture (10.2). Server issues a new refresh and invalidates the old; reuse means theft → revoke the family. Single-flight is what makes rotation survivable.",
+              "vi": "**Vì sao.** Hard refresh làm mất memory token — silent refresh lúc boot. Cookie refresh cần posture CSRF (10.2). Server phát refresh mới và invalidate cái cũ; reuse nghĩa là trộm → revoke cả family. Single-flight khiến rotation sống sót được."
+            },
+            {
+              "en": "**Trade-off.** Cookie session is simplest against XSS and reintroduces CSRF on mutations. `localStorage` tokens are simplest and not the senior answer. Pinia `persist: true` is the same invention. Hidden-iframe silent refresh is third-party-cookie dead — first-party BFF.",
+              "vi": "**Đánh đổi / rủi ro.** Session cookie đơn giản nhất chống XSS và mở lại CSRF trên mutation. Token `localStorage` đơn giản nhất và không phải câu senior. Pinia `persist: true` cùng một phát minh. Silent refresh iframe ẩn chết vì third-party-cookie — BFF first-party."
+            },
+            {
+              "en": "**How to verify.** Session-fixation tests, server refresh-reuse detection, time-to-revoke on logout, XSS tabletop: “what can the attacker steal?” 401 on `/refresh` must not recurse the interceptor. Refresh a minute early for JWT clock skew; do not treat the client as authz.",
+              "vi": "**Cách kiểm chứng.** Test session fixation, phát hiện reuse refresh phía server, time-to-revoke lúc logout, XSS tabletop: “attacker cắp được gì?” 401 trên `/refresh` không được recurse interceptor. Refresh sớm một phút vì clock skew JWT; đừng coi client là authz."
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Pattern",
+              "vi": "Pattern"
+            },
+            {
+              "en": "XSS",
+              "vi": "XSS"
+            },
+            {
+              "en": "CSRF",
+              "vi": "CSRF"
+            },
+            {
+              "en": "UX",
+              "vi": "UX"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Memory access + httpOnly refresh",
+                "vi": "Access memory + httpOnly refresh"
+              },
+              {
+                "en": "Access hard to steal",
+                "vi": "Access khó cắp"
+              },
+              {
+                "en": "Refresh cookie needs SameSite/header",
+                "vi": "Refresh cookie cần SameSite/header"
+              },
+              {
+                "en": "Refresh on reload",
+                "vi": "Refresh lúc reload"
+              }
+            ],
+            [
+              {
+                "en": "httpOnly session cookie only",
+                "vi": "Chỉ session cookie httpOnly"
+              },
+              {
+                "en": "Best against XSS",
+                "vi": "Tốt nhất chống XSS"
+              },
+              {
+                "en": "CSRF on mutations",
+                "vi": "CSRF trên mutation"
+              },
+              {
+                "en": "Simplest",
+                "vi": "Đơn giản nhất"
+              }
+            ],
+            [
+              {
+                "en": "Token in `localStorage`",
+                "vi": "Token trong `localStorage`"
+              },
+              {
+                "en": "Worst",
+                "vi": "Tệ nhất"
+              },
+              {
+                "en": "CSRF usually N/A",
+                "vi": "CSRF thường N/A"
+              },
+              {
+                "en": "Simplest — not the senior answer",
+                "vi": "Đơn giản nhất — không phải câu senior"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "let refreshInFlight: Promise<string> | null = null\n\nasync function refreshAccess(): Promise<string> {\n  if (!refreshInFlight) {\n    refreshInFlight = api\n      .post(\"/auth/refresh\")\n      .then((r) => {\n        tokenMemory.set(r.accessToken)\n        return r.accessToken\n      })\n      .finally(() => {\n        refreshInFlight = null\n      })\n  }\n  return refreshInFlight\n}\n\nconst authCh = new BroadcastChannel(\"auth\")\nexport function logoutAllTabs() {\n  tokenMemory.set(null)\n  authCh.postMessage({ type: \"logout\" })\n  void api.post(\"/auth/logout\")\n}\nauthCh.onmessage = (e) => {\n  if (e.data?.type === \"logout\") tokenMemory.set(null)\n}",
+            "vi": "let refreshInFlight: Promise<string> | null = null\n\nasync function refreshAccess(): Promise<string> {\n  if (!refreshInFlight) {\n    refreshInFlight = api\n      .post(\"/auth/refresh\")\n      .then((r) => {\n        tokenMemory.set(r.accessToken)\n        return r.accessToken\n      })\n      .finally(() => {\n        refreshInFlight = null\n      })\n  }\n  return refreshInFlight\n}\n\nconst authCh = new BroadcastChannel(\"auth\")\nexport function logoutAllTabs() {\n  tokenMemory.set(null)\n  authCh.postMessage({ type: \"logout\" })\n  void api.post(\"/auth/logout\")\n}\nauthCh.onmessage = (e) => {\n  if (e.data?.type === \"logout\") tokenMemory.set(null)\n}"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "| Pattern | XSS | CSRF | UX |\n| --- | --- | --- | --- |\n| Memory access + httpOnly refresh | Access hard to steal | Refresh cookie needs SameSite/header | Refresh on reload |\n| httpOnly session cookie only | Best against XSS | CSRF on mutations | Simplest |\n| Token in `localStorage` | Worst | CSRF usually N/A | Simplest and **not the senior answer** |",
-            "vi": "| Pattern | XSS | CSRF | UX |\n| --- | --- | --- | --- |\n| Access memory + httpOnly refresh | Access khó cắp | Refresh cookie cần SameSite/header | Refresh lúc reload |\n| Chỉ session cookie httpOnly | Tốt nhất chống XSS | CSRF trên mutation | Đơn giản nhất |\n| Token trong `localStorage` | Tệ nhất | CSRF thường N/A | Đơn giản nhất và **không phải câu senior** |"
+            "en": "Access token stays in memory; refresh is httpOnly, Secure, SameSite, rotated on use. A 401 interceptor single-flights refresh so a burst does not rotate the family out from under other tabs. Logout broadcasts and hits `/auth/logout` so the server revokes. I treat XSS as game over for anything JS can read — Pinia persist is just `localStorage` with extra steps. I do not implement implicit OAuth.",
+            "vi": "Access token ở memory; refresh là httpOnly, Secure, SameSite, rotate lúc dùng. Interceptor 401 single-flight refresh để burst không rotate family khỏi các tab khác. Logout broadcast và gọi `/auth/logout` để server revoke. Tôi coi XSS là game over cho thứ JS đọc được — Pinia persist chỉ là `localStorage` thêm bước. Tôi không implement implicit OAuth."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- Pinia `persist: true` on the user store. You just invented `localStorage` tokens.\n- 401 on `/refresh` must **not** recurse the interceptor.\n- Clock skew on JWT `exp` — refresh a minute early; do not trust the client as authz.\n- “Silent refresh” in a hidden iframe is third-party-cookie dead; use first-party BFF.",
-            "vi": "- Pinia `persist: true` trên user store. Bạn vừa phát minh token `localStorage`.\n- 401 trên `/refresh` **không** được recurse interceptor.\n- Clock skew JWT `exp` — refresh sớm một phút; đừng tin client như authz.\n- “Silent refresh” trong iframe ẩn chết vì third-party-cookie; dùng BFF first-party."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "Parallel 401s without single-flight + rotation = everyone but one kicked out.",
+              "vi": "401 song song không single-flight + rotation = mọi tab trừ một bị đá."
+            },
+            {
+              "en": "Reverse proxies must not log `Authorization`.",
+              "vi": "Reverse proxy không được log `Authorization`."
+            },
+            {
+              "en": "Step-up auth (password / WebAuthn) for money moves; expire-all is a server session list or token version bump.",
+              "vi": "Step-up auth (password / WebAuthn) cho lệnh tiền; expire-all là list session server hoặc bump token version."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- Step-up auth for money moves (re-entry of password / WebAuthn).\n- How do you expire all sessions? (Server-side session list; logout-all endpoint; bump token version.)",
-            "vi": "- Step-up auth cho lệnh tiền (nhập lại password / WebAuthn).\n- Expire mọi session thế nào? (List session phía server; endpoint logout-all; bump token version.)"
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "What happens if `/refresh` itself 401s?",
+              "vi": "`/refresh` mà 401 thì sao?"
+            },
+            {
+              "en": "How do you expire every session? (Server list, logout-all, token version.)",
+              "vi": "Expire mọi session thế nào? (List server, logout-all, token version.)"
+            },
+            {
+              "en": "Why is silent refresh in a hidden iframe dead?",
+              "vi": "Vì sao silent refresh trong iframe ẩn đã chết?"
+            },
+            {
+              "en": "Pinia `persist: true` on the user store — what did you just invent?",
+              "vi": "Pinia `persist: true` trên user store — bạn vừa phát minh gì?"
+            }
+          ]
         },
         {
           "type": "thematic-break"
@@ -308,53 +652,161 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "- Client vs server validation; Zod; sanitization vs validation.",
-            "vi": "- Validation client vs server; Zod; sanitization vs validation."
+            "en": "A checkout form validates email with a regex, the API trusts `role: 'admin'` from the body, and a teammate skipped Zod in the Nitro handler “because TypeScript.” They want client vs server, Zod shared or not, and why sanitization is not validation.",
+            "vi": "Form checkout validate email bằng regex, API tin `role: 'admin'` từ body, và đồng nghiệp skip Zod trong Nitro handler “vì TypeScript.” Họ muốn client vs server, share Zod hay không, và vì sao sanitization không phải validation."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "- **Decision:** **Client validation is UX** (instant errors, disable Pay, constrain keyboards). **Server validation is the security boundary.** Share a **Zod (or similar) schema** on both sides when you own both (Nuxt server routes, monorepo). **Sanitizing HTML is not validation** and validation is not sanitization: a “valid” markdown string can still be XSS; a sanitized string can still be an invalid email.\n- **Constraint:** Attackers do not run your Vue form. Native apps, Postman, and old clients hit the API. SSR still needs the same parser.\n- **Failure mode:** Regex-only email on the client, API trusts `role: 'admin'` from the body. `sanitize()` that strips `<script>` then you `v-html` without DOMPurify (markdown XSS). Using Zod `.parse` on the client and skipping it in the Nitro handler because “TypeScript.”\n- **Measure:** Contract tests with illegal payloads (8.6). Authz tests: user cannot set `isAdmin`. Fuzz rich-text through the sanitizer.\n\n```ts\nconst createOrderSchema = z.object({\n  sku: z.string().min(1).max(64),\n  qty: z.number().int().positive().max(99),\n});\n\n// Client: UX\nconst parsed = createOrderSchema.safeParse(form);\nif (!parsed.success) return parsed.error.flatten();\n\n// Server: same schema, then authz\nconst body = createOrderSchema.parse(await readBody(event));\n```\n\nNever take `priceCents` from the client as truth.\n\n**Sanitize vs validate**\n\n|  | Validation (Zod) | Sanitization (DOMPurify / schema) |\n| --- | --- | --- |\n| Question | Is this an order? | Is this HTML safe to render? |\n| Failure | 400, show field errors | Strip/reject; do not try to “repair” into business data |\n| SQL/NoSQL | Parameterized queries / ORM | Irrelevant to HTML |\n\nFrontend does not “prevent SQL injection” — it avoids building SQL. If they ask, parameterized queries/ORM on the server; never string concat. GraphQL the same with parameterized variables.",
-            "vi": "- **Quyết định:** **Validation client là UX** (lỗi tức thì, disable Pay, constrain keyboard). **Validation server là security boundary.** Share **schema Zod (hoặc tương tự)** hai phía khi bạn own cả hai (Nuxt server route, monorepo). **Sanitize HTML không phải validation** và validation không phải sanitization: chuỗi markdown “valid” vẫn có thể XSS; chuỗi đã sanitize vẫn có thể email không hợp lệ.\n- **Ràng buộc:** Attacker không chạy form Vue của bạn. Native app, Postman, client cũ đụng API. SSR vẫn cần cùng parser.\n- **Failure mode:** Email chỉ regex trên client, API tin `role: 'admin'` từ body. `sanitize()` strip `<script>` rồi bạn `v-html` thiếu DOMPurify (markdown XSS). Dùng Zod `.parse` trên client rồi skip trong Nitro handler vì “TypeScript.”\n- **Đo:** Contract test với payload bất hợp pháp (8.6). Test authz: user không set `isAdmin`. Fuzz rich-text xuyên sanitizer.\n\n```ts\nconst createOrderSchema = z.object({\n  sku: z.string().min(1).max(64),\n  qty: z.number().int().positive().max(99),\n});\n\n// Client: UX\nconst parsed = createOrderSchema.safeParse(form);\nif (!parsed.success) return parsed.error.flatten();\n\n// Server: same schema, then authz\nconst body = createOrderSchema.parse(await readBody(event));\n```\n\nKhông bao giờ lấy `priceCents` từ client làm sự thật.\n\n**Sanitize vs validate**\n\n|  | Validation (Zod) | Sanitization (DOMPurify / schema) |\n| --- | --- | --- |\n| Câu hỏi | Đây có phải order? | HTML này render có an toàn? |\n| Failure | 400, hiện lỗi field | Strip/reject; đừng “sửa” thành business data |\n| SQL/NoSQL | Parameterized query / ORM | Không liên quan HTML |\n\nFrontend không “chặn SQL injection” — nó tránh dựng SQL. Nếu họ hỏi: parameterized query/ORM trên server; không concat string. GraphQL cũng vậy với parameterized variable."
+            "en": "Client validation is UX; server validation is the security boundary; sanitizing HTML is a different question than “is this an order?”",
+            "vi": "Validation client là UX; validation server là security boundary; sanitize HTML là câu khác với “đây có phải order?”"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** Share a Zod (or similar) schema on both sides when you own both (Nuxt server routes, monorepo). Allowlists (enum, max qty) beat blocklists. Never take `priceCents` from the client as truth. Frontend does not “prevent SQL injection” — parameterized queries/ORM on the server; GraphQL the same with variables.",
+              "vi": "**Quyết định.** Share schema Zod (hoặc tương tự) hai phía khi bạn own cả hai (Nuxt server route, monorepo). Allowlist (enum, max qty) thắng blocklist. Không bao giờ lấy `priceCents` từ client làm sự thật. Frontend không “chặn SQL injection” — parameterized query/ORM trên server; GraphQL cũng vậy với variable."
+            },
+            {
+              "en": "**Why.** Attackers do not run your Vue form. Native apps, Postman, and old clients hit the API. A valid markdown string can still be XSS; a sanitized string can still be an invalid email. `z.string().email()` is not RFC-complete and is fine — do not bikeshed.",
+              "vi": "**Vì sao.** Attacker không chạy form Vue của bạn. Native app, Postman, client cũ đụng API. Chuỗi markdown hợp lệ vẫn có thể XSS; chuỗi đã sanitize vẫn có thể email không hợp lệ. `z.string().email()` không RFC-complete và vẫn ổn — đừng bikeshed."
+            },
+            {
+              "en": "**Trade-off.** One shared schema is DRY and forces versioning; separate schemas drift. Coerce form strings to numbers once at the edge. File uploads: magic bytes on the server, not `file.type`. Redact PAN/PII in logs.",
+              "vi": "**Đánh đổi / rủi ro.** Một schema share thì DRY và buộc versioning; schema tách thì drift. Coerce string form thành số một lần ở edge. File upload: magic byte trên server, không `file.type`. Redact PAN/PII trong log."
+            },
+            {
+              "en": "**How to verify.** Contract tests with illegal payloads (8.6). Authz tests: user cannot set `isAdmin`. Fuzz rich-text through the sanitizer. Prototype pollution: freeze options, no `__proto__` merge from `JSON.parse` into `Object.assign`.",
+              "vi": "**Cách kiểm chứng.** Contract test với payload bất hợp pháp (8.6). Test authz: user không set `isAdmin`. Fuzz rich-text xuyên sanitizer. Prototype pollution: freeze option, không merge `__proto__` từ `JSON.parse` vào `Object.assign`."
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": " ",
+              "vi": " "
+            },
+            {
+              "en": "Validation (Zod)",
+              "vi": "Validation (Zod)"
+            },
+            {
+              "en": "Sanitization (DOMPurify / schema)",
+              "vi": "Sanitization (DOMPurify / schema)"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Question",
+                "vi": "Câu hỏi"
+              },
+              {
+                "en": "Is this an order?",
+                "vi": "Đây có phải order?"
+              },
+              {
+                "en": "Is this HTML safe to render?",
+                "vi": "HTML này render có an toàn?"
+              }
+            ],
+            [
+              {
+                "en": "Failure",
+                "vi": "Failure"
+              },
+              {
+                "en": "400, show field errors",
+                "vi": "400, hiện lỗi field"
+              },
+              {
+                "en": "Strip/reject; do not “repair” into business data",
+                "vi": "Strip/reject; đừng “sửa” thành business data"
+              }
+            ],
+            [
+              {
+                "en": "SQL/NoSQL",
+                "vi": "SQL/NoSQL"
+              },
+              {
+                "en": "Parameterized queries / ORM",
+                "vi": "Parameterized query / ORM"
+              },
+              {
+                "en": "Irrelevant to HTML",
+                "vi": "Không liên quan HTML"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "const createOrderSchema = z.object({\n  sku: z.string().min(1).max(64),\n  qty: z.number().int().positive().max(99),\n})\n\nconst parsed = createOrderSchema.safeParse(form)\nif (!parsed.success) return parsed.error.flatten()\n\nconst body = createOrderSchema.parse(await readBody(event))",
+            "vi": "const createOrderSchema = z.object({\n  sku: z.string().min(1).max(64),\n  qty: z.number().int().positive().max(99),\n})\n\nconst parsed = createOrderSchema.safeParse(form)\nif (!parsed.success) return parsed.error.flatten()\n\nconst body = createOrderSchema.parse(await readBody(event))"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "- One shared schema: DRY, forces versioning. Separate schemas: drift.\n- Allowlists (enum, max qty) beat blocklists.",
-            "vi": "- Một schema share: DRY, buộc versioning. Schema tách: drift.\n- Allowlist (enum, max qty) thắng blocklist."
+            "en": "The form is UX; the server is the boundary. I share one Zod schema when I own both sides, then I still do authz — a parsed body is not allowed to set `isAdmin`. Sanitizing HTML does not make an email valid and a valid markdown string can still be XSS. I never take price from the client, and I do not claim the frontend prevents SQL injection.",
+            "vi": "Form là UX; server là boundary. Tôi share một schema Zod khi own cả hai phía, rồi vẫn làm authz — body đã parse không được set `isAdmin`. Sanitize HTML không làm email hợp lệ và markdown hợp lệ vẫn có thể XSS. Tôi không lấy giá từ client, và không nhận frontend chặn SQL injection."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- `z.string().email()` is not RFC-complete and is fine; do not bikeshed.\n- Parsing numbers from form `<input>` (strings) — coerce once at the edge.\n- File uploads: validate **type/size on server** by magic bytes, not `file.type`.\n- Log payloads: redaction for PAN/PII.",
-            "vi": "- `z.string().email()` không RFC-complete và vẫn ổn; đừng bikeshed.\n- Parse số từ form `<input>` (string) — coerce một lần ở edge.\n- File upload: validate **type/size trên server** bằng magic byte, không `file.type`.\n- Log payload: redact PAN/PII."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "Skipping server `.parse` because TypeScript is a security bug.",
+              "vi": "Skip `.parse` trên server vì TypeScript là bug bảo mật."
+            },
+            {
+              "en": "Allowlists beat blocklists. Shared schema drifts less than two copies.",
+              "vi": "Allowlist thắng blocklist. Schema share drift ít hơn hai bản."
+            },
+            {
+              "en": "i18n Zod errors without leaking schema internals.",
+              "vi": "i18n lỗi Zod mà không leak internals schema."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- Prototype pollution via `JSON.parse` into `Object.assign` — freeze options, no `__proto__` merge.\n- i18n of Zod errors without leaking schema internals.",
-            "vi": "- Prototype pollution qua `JSON.parse` vào `Object.assign` — freeze option, không merge `__proto__`.\n- i18n lỗi Zod mà không leak internals schema."
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "Why is a “valid” markdown string still XSS?",
+              "vi": "Vì sao chuỗi markdown “valid” vẫn XSS?"
+            },
+            {
+              "en": "Who validates `file.type` — browser or magic bytes?",
+              "vi": "Ai validate `file.type` — browser hay magic byte?"
+            },
+            {
+              "en": "How do you stop prototype pollution on a merge of parsed JSON?",
+              "vi": "Chặn prototype pollution lúc merge JSON đã parse thế nào?"
+            },
+            {
+              "en": "What do you never take from the client on an order?",
+              "vi": "Thứ gì bạn không bao giờ lấy từ client trên một order?"
+            }
+          ]
         },
         {
           "type": "thematic-break"
@@ -378,53 +830,100 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "- CORS headers; cookies; is CORS a security layer for the API?",
-            "vi": "- Header CORS; cookie; CORS có phải lớp bảo mật cho API?"
+            "en": "The browser blocks the API, cookies do not show up, and a teammate wants `Access-Control-Allow-Origin: *` plus credentials. Is CORS a security layer for the API, which cookie flags matter, and why HTTPS everywhere is not “we redirect in Vue Router”?",
+            "vi": "Browser chặn API, cookie không hiện, và đồng nghiệp muốn `Access-Control-Allow-Origin: *` kèm credentials. CORS có phải lớp bảo mật cho API, flag cookie nào quan trọng, và vì sao HTTPS everywhere không phải “redirect trong Vue Router”?"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "- **Decision:** **HTTPS everywhere** (HSTS, Secure cookies, no mixed content). **CORS is a browser policy**, not an ACL. Postman, curl, mobile apps, and your own server ignore it. Real authz is **sessions + permission checks**. When the SPA needs cookies: `Access-Control-Allow-Credentials: true` and a **specific origin**, never `*`. Know **simple vs preflighted** requests so you do not “fix CORS” by weakening the API.\n- **Constraint:** Localhost vs preview URLs vs prod — allowlists must be explicit. Reverse proxies strip or duplicate CORS headers.\n- **Failure mode:** `origin: true` reflect-any-origin **with credentials**. Solving a missing header by allowing `*` and moving tokens to query strings. Believing “CORS blocked” means the API is safe from CSRF/SSRF. Cookies without `Secure` / `HttpOnly` / `Path`.\n- **Measure:** Header review on the auth API. Mix content reports. Cookie flags in staging (`Secure`, `HttpOnly`, `SameSite`).\n\n**CORS that is actually correct**\n\n```ts\nconst allow = new Set([\"https://app.example.com\", \"https://admin.example.com\"]);\n\nres.setHeader(\"Vary\", \"Origin\");\nif (origin && allow.has(origin)) {\n  res.setHeader(\"Access-Control-Allow-Origin\", origin);\n  res.setHeader(\"Access-Control-Allow-Credentials\", \"true\");\n  res.setHeader(\"Access-Control-Allow-Headers\", \"Content-Type, X-Requested-With\");\n  res.setHeader(\"Access-Control-Allow-Methods\", \"GET,POST,PUT,PATCH,DELETE\");\n}\n```\n\nPreflight (`OPTIONS`) must return the same allowlists. `Max-Age` caches preflight — keep it short while debugging, longer in prod.\n\n**Cookies**\n\n- `Secure`: HTTPS only.\n- `HttpOnly`: not JS-readable (refresh/session).\n- `SameSite=Lax` default for first-party SPA.\n- `Path=/` unless you intentionally scope.\n- `__Host-` prefix when you want the strictest cookie naming.\n\n**HTTPS**\n\n- HSTS `max-age` with `includeSubDomains` once you are sure.\n- Redirect at the edge, not in Vue Router.\n- Mixed content: one `http://` image on an HTTPS app is a report and a trust leak.",
-            "vi": "- **Quyết định:** **HTTPS everywhere** (HSTS, cookie Secure, không mixed content). **CORS là browser policy**, không phải ACL. Postman, curl, mobile app, và server của bạn ignore nó. Authz thật là **session + check permission**. Khi SPA cần cookie: `Access-Control-Allow-Credentials: true` và **origin cụ thể**, không bao giờ `*`. Biết request **simple vs preflight** để không “fix CORS” bằng cách làm yếu API.\n- **Ràng buộc:** Localhost vs preview URL vs prod — allowlist phải tường minh. Reverse proxy strip hoặc nhân đôi header CORS.\n- **Failure mode:** `origin: true` reflect-mọi-origin **kèm credentials**. Giải missing header bằng cho `*` rồi nhét token vào query string. Tin “CORS blocked” nghĩa API an toàn khỏi CSRF/SSRF. Cookie thiếu `Secure` / `HttpOnly` / `Path`.\n- **Đo:** Review header trên auth API. Report mixed content. Cookie flag trên staging (`Secure`, `HttpOnly`, `SameSite`).\n\n**CORS đúng nghĩa**\n\n```ts\nconst allow = new Set([\"https://app.example.com\", \"https://admin.example.com\"]);\n\nres.setHeader(\"Vary\", \"Origin\");\nif (origin && allow.has(origin)) {\n  res.setHeader(\"Access-Control-Allow-Origin\", origin);\n  res.setHeader(\"Access-Control-Allow-Credentials\", \"true\");\n  res.setHeader(\"Access-Control-Allow-Headers\", \"Content-Type, X-Requested-With\");\n  res.setHeader(\"Access-Control-Allow-Methods\", \"GET,POST,PUT,PATCH,DELETE\");\n}\n```\n\nPreflight (`OPTIONS`) phải trả cùng allowlist. `Max-Age` cache preflight — ngắn lúc debug, dài hơn trên prod.\n\n**Cookie**\n\n- `Secure`: chỉ HTTPS.\n- `HttpOnly`: JS không đọc được (refresh/session).\n- `SameSite=Lax` default cho SPA first-party.\n- `Path=/` trừ khi bạn cố ý scope.\n- Prefix `__Host-` khi muốn naming cookie chặt nhất.\n\n**HTTPS**\n\n- HSTS `max-age` với `includeSubDomains` khi đã chắc.\n- Redirect ở edge, không trong Vue Router.\n- Mixed content: một ảnh `http://` trên app HTTPS là report và leak tin cậy."
+            "en": "CORS is a browser policy, not an ACL; real authz is sessions plus permission checks, and cookie APIs never pair credentials with `*`.",
+            "vi": "CORS là browser policy, không phải ACL; authz thật là session cộng check permission, và API cookie không bao giờ cặp credentials với `*`."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** HTTPS everywhere: HSTS, Secure cookies, no mixed content, redirect at the edge. When the SPA needs cookies: `Access-Control-Allow-Credentials: true` and a specific origin, `Vary: Origin`. Know simple vs preflight so you do not “fix CORS” by weakening the API. A same-origin BFF (Nuxt `/api`) eliminates CORS for the browser — often the senior architecture.",
+              "vi": "**Quyết định.** HTTPS everywhere: HSTS, cookie Secure, không mixed content, redirect ở edge. Khi SPA cần cookie: `Access-Control-Allow-Credentials: true` và origin cụ thể, `Vary: Origin`. Biết simple vs preflight để không “fix CORS” bằng cách làm yếu API. BFF same-origin (Nuxt `/api`) xóa CORS với browser — thường là kiến trúc senior."
+            },
+            {
+              "en": "**Why.** Postman, curl, mobile apps, and your own server ignore CORS. `origin: true` reflecting any origin with credentials is the classic hole. `Authorization` forces preflight; cookie-only simple POSTs may not — another CSRF reason to require a custom header. Never allow origin `null`.",
+              "vi": "**Vì sao.** Postman, curl, mobile app, và server của bạn ignore CORS. `origin: true` reflect mọi origin kèm credentials là lỗ cổ điển. `Authorization` buộc preflight; POST simple chỉ-cookie có thể không — thêm một lý do CSRF để đòi custom header. Không bao giờ allow origin `null`."
+            },
+            {
+              "en": "**Trade-off.** Tight allowlist vs developer preview URLs: patterned `*.preview.example.com`, not `*`. Two CORS middlewares stacking `*` is a production classic. Next/Nuxt rewrites: the browser origin is the page, not the upstream.",
+              "vi": "**Đánh đổi / rủi ro.** Allowlist chặt vs preview URL của developer: pattern `*.preview.example.com`, không `*`. Hai CORS middleware chồng `*` là classic production. Rewrite Next/Nuxt: origin browser là page, không phải upstream."
+            },
+            {
+              "en": "**How to verify.** Header review on the auth API. Mixed-content reports. Cookie flags in staging (`Secure`, `HttpOnly`, `SameSite`, `Path`, `__Host-` when you want the strictest name). Preflight `Max-Age` short while debugging.",
+              "vi": "**Cách kiểm chứng.** Review header trên auth API. Report mixed content. Cookie flag trên staging (`Secure`, `HttpOnly`, `SameSite`, `Path`, `__Host-` khi muốn tên chặt nhất). Preflight `Max-Age` ngắn lúc debug."
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "const allow = new Set([\"https://app.example.com\", \"https://admin.example.com\"])\n\nres.setHeader(\"Vary\", \"Origin\")\nif (origin && allow.has(origin)) {\n  res.setHeader(\"Access-Control-Allow-Origin\", origin)\n  res.setHeader(\"Access-Control-Allow-Credentials\", \"true\")\n  res.setHeader(\"Access-Control-Allow-Headers\", \"Content-Type, X-Requested-With\")\n  res.setHeader(\"Access-Control-Allow-Methods\", \"GET,POST,PUT,PATCH,DELETE\")\n}",
+            "vi": "const allow = new Set([\"https://app.example.com\", \"https://admin.example.com\"])\n\nres.setHeader(\"Vary\", \"Origin\")\nif (origin && allow.has(origin)) {\n  res.setHeader(\"Access-Control-Allow-Origin\", origin)\n  res.setHeader(\"Access-Control-Allow-Credentials\", \"true\")\n  res.setHeader(\"Access-Control-Allow-Headers\", \"Content-Type, X-Requested-With\")\n  res.setHeader(\"Access-Control-Allow-Methods\", \"GET,POST,PUT,PATCH,DELETE\")\n}"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "- Tight allowlist vs developer preview URLs (use a patterned allowlist for `*.preview.example.com`, not `*`).\n- BFF same-origin (Nuxt `/api`) **eliminates CORS** for the browser — often the senior architecture.",
-            "vi": "- Allowlist chặt vs preview URL của developer (allowlist theo pattern `*.preview.example.com`, không `*`).\n- BFF same-origin (Nuxt `/api`) **xóa CORS** với browser — thường là kiến trúc senior."
+            "en": "CORS does not protect the API from curl. I put real authz in sessions and permission checks, and if the SPA needs cookies I allow a specific origin with credentials — never `*`. HTTPS is HSTS and Secure cookies at the edge, not a Vue Router redirect. A same-origin BFF is how I stop having this conversation.",
+            "vi": "CORS không bảo vệ API khỏi curl. Tôi để authz thật trong session và check permission, và nếu SPA cần cookie tôi allow một origin cụ thể kèm credentials — không bao giờ `*`. HTTPS là HSTS và cookie Secure ở edge, không phải redirect Vue Router. BFF same-origin là cách tôi hết phải nói chuyện này."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- Two CORS middlewares stacking `*`.\n- `null` origin (sandboxed iframe, file://) — never allow `null`.\n- `Authorization` header forces preflight; cookie-only simple POSTs may **not** — another CSRF reason to require a custom header.\n- Next/Nuxt rewrites: browser origin is the page, not the upstream.",
-            "vi": "- Hai CORS middleware chồng `*`.\n- Origin `null` (iframe sandbox, file://) — không bao giờ allow `null`.\n- Header `Authorization` buộc preflight; POST simple chỉ-cookie có thể **không** — thêm một lý do CSRF để đòi custom header.\n- Rewrite Next/Nuxt: origin browser là page, không phải upstream."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "Cookies: `Secure`, `HttpOnly` for refresh/session, `SameSite=Lax` first-party, `Path` scoped on purpose.",
+              "vi": "Cookie: `Secure`, `HttpOnly` cho refresh/session, `SameSite=Lax` first-party, `Path` scope có chủ đích."
+            },
+            {
+              "en": "One `http://` image on an HTTPS app is mixed content — a report and a trust leak.",
+              "vi": "Một ảnh `http://` trên app HTTPS là mixed content — report và leak tin cậy."
+            },
+            {
+              "en": "CORS ≠ CSP ≠ COOP/COEP. Private Network Access is not CORS trivia.",
+              "vi": "CORS ≠ CSP ≠ COOP/COEP. Private Network Access không phải trivia CORS."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- CORS vs CSP vs COOP/COEP (isolation for SharedArrayBuffer — different problem).\n- Private Network Access / local network permissions — do not treat as CORS trivia.",
-            "vi": "- CORS vs CSP vs COOP/COEP (isolation cho SharedArrayBuffer — bài khác).\n- Private Network Access / local network permission — đừng coi trivia CORS."
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "Does “CORS blocked” mean the API is safe from CSRF/SSRF? (No.)",
+              "vi": "“CORS blocked” nghĩa API an toàn khỏi CSRF/SSRF? (Không.)"
+            },
+            {
+              "en": "Why must OPTIONS return the same allowlists as the real request?",
+              "vi": "Vì sao OPTIONS phải trả cùng allowlist với request thật?"
+            },
+            {
+              "en": "When would you allow `*.preview.example.com` and still refuse `*`?",
+              "vi": "Khi nào allow `*.preview.example.com` mà vẫn từ chối `*`?"
+            },
+            {
+              "en": "Why is origin `null` never on the allowlist?",
+              "vi": "Vì sao origin `null` không bao giờ nằm trong allowlist?"
+            }
+          ]
         },
         {
           "type": "thematic-break"
@@ -448,53 +947,92 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "- lockfiles, `npm audit`, what you would do about a compromised maintainer.",
-            "vi": "- lockfile, `npm audit`, bạn làm gì khi maintainer bị compromise."
+            "en": "A lockfile conflict tempts someone to delete `package-lock.json`, `npm audit` is red on a transitive, and a 10-line CSS helper has `preinstall: curl | sh`. What do you commit, what does audit actually tell you, and what do you do about a compromised maintainer?",
+            "vi": "Conflict lockfile khiến ai đó muốn xóa `package-lock.json`, `npm audit` đỏ trên một transitive, và helper CSS 10 dòng có `preinstall: curl | sh`. Bạn commit gì, audit thực sự nói gì, và bạn làm gì khi maintainer bị compromise?"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "- **Decision:** **Commit the lockfile** and install with `npm ci` / `pnpm install --frozen-lockfile` in CI. Review **new** dependencies like production code (9.1.3): size, maintainers, provenance. `npm audit` is a **signal**, not a gate you blindly fail — it is noisy, CVSS ≠ reachable, and teams disable it. Prefer **reachable** analysis, `pnpm overrides` / `npm overrides` for surgical pins, and a process for **lockfile-only PRs**.\n- **Constraint:** You will not personally vet every transitive. You can vet direct deps, pin, and avoid `postinstall` scripts from random CSS packages.\n- **Failure mode:** Deleting `package-lock.json` “to fix conflicts.” `^` floating on a compromised minor. Blind `npm audit --force` that upgrades Vue major on a Friday. Ignoring a 10-line utility that runs `preinstall: curl | sh`.\n- **Measure:** Time to pin/override a exploited transitive. Whether CI can reproduce the tree. Provenance/attestations where the registry supports them.\n\n**What `npm audit` cannot do**\n\n- Tell you if the vulnerable function is **called**.\n- Distinguish a dev-only markdown parser from runtime checkout.\n- Replace reviewing `install` scripts and new network destinations.\n\n**Practical controls**\n\n- Frozen lockfile; no `latest` in Dockerfiles.\n- Dependabot/Renovate **grouped** and **auto-merge only for known-safe** (dev lint, not vue/vite).\n- Disable or ignore scripts in CI when possible (`ignore-scripts`) except the ones you allowlist (e.g. `esbuild`).\n- SBOM on release if the org requires it — do not pretend it blocks XSS.\n- Design-system / internal packages: lock the registry, not random GitHub tarball URLs.",
-            "vi": "- **Quyết định:** **Commit lockfile** và install bằng `npm ci` / `pnpm install --frozen-lockfile` trên CI. Review dependency **mới** như production code (9.1.3): size, maintainer, provenance. `npm audit` là **tín hiệu**, không gate fail mù — nó ồn, CVSS ≠ reachable, team tắt nó. Prefer phân tích **reachable**, `pnpm overrides` / `npm overrides` để pin phẫu thuật, và process cho **PR chỉ lockfile**.\n- **Ràng buộc:** Bạn không tự vet mọi transitive. Bạn vet direct dep, pin, và tránh `postinstall` từ package CSS random.\n- **Failure mode:** Xóa `package-lock.json` “cho hết conflict.” `^` float trên minor bị compromise. `npm audit --force` mù upgrade Vue major thứ Sáu. Ignore utility 10 dòng chạy `preinstall: curl | sh`.\n- **Đo:** Thời gian pin/override một transitive bị exploit. CI có reproduce được cây không. Provenance/attestation khi registry hỗ trợ.\n\n**`npm audit` không làm được**\n\n- Nói function dễ tổn thương có **được gọi**.\n- Phân biệt markdown parser chỉ-dev với checkout runtime.\n- Thay review script `install` và đích network mới.\n\n**Control thực dụng**\n\n- Lockfile đóng băng; không `latest` trong Dockerfile.\n- Dependabot/Renovate **group** và **auto-merge chỉ known-safe** (dev lint, không vue/vite).\n- Disable hoặc ignore script trên CI khi được (`ignore-scripts`) trừ allowlist (ví dụ `esbuild`).\n- SBOM lúc release nếu org đòi — đừng giả vờ nó chặn XSS.\n- Package design-system / nội bộ: khóa registry, không URL tarball GitHub random."
+            "en": "Commit the lockfile, install frozen in CI, treat `npm audit` as a noisy signal, and pin or override what is reachable — do not `audit --force` Vue on a Friday.",
+            "vi": "Commit lockfile, install đóng băng trên CI, coi `npm audit` là tín hiệu ồn, và pin hoặc override thứ reachable — đừng `audit --force` Vue vào Friday."
           }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** Review new direct deps like production code: size, maintainers, provenance. Prefer reachable analysis, `pnpm overrides` / `npm overrides` for surgical pins, and lockfile-only PRs. Frozen lockfile; no `latest` in Dockerfiles. Disable install scripts in CI except an allowlist (`esbuild`). Internal packages lock the registry, not random GitHub tarball URLs.",
+              "vi": "**Quyết định.** Review direct dep mới như production code: size, maintainer, provenance. Ưu tiên phân tích reachable, `pnpm overrides` / `npm overrides` để pin phẫu thuật, và PR chỉ lockfile. Lockfile đóng băng; không `latest` trong Dockerfile. Disable script install trên CI trừ allowlist (`esbuild`). Package nội bộ khóa registry, không URL tarball GitHub random."
+            },
+            {
+              "en": "**Why.** `npm audit` cannot tell you if the vulnerable function is called, cannot distinguish a dev-only markdown parser from runtime checkout, and does not replace reviewing `install` scripts and new network destinations. You will not personally vet every transitive — you can vet direct deps and avoid `postinstall` from random CSS packages.",
+              "vi": "**Vì sao.** `npm audit` không nói function dễ tổn thương có được gọi, không phân biệt markdown parser chỉ-dev với checkout runtime, và không thay review script `install` cùng đích network mới. Bạn không tự vet mọi transitive — bạn vet direct dep và tránh `postinstall` từ package CSS random."
+            },
+            {
+              "en": "**Trade-off.** Pin everything vs receiving patches: overrides + tests beat freeze-the-world. Dependabot/Renovate grouped; auto-merge only known-safe (dev lint, not vue/vite). SPA runtime attack surface is the compiled assets; the install machine is the risk. SBOM on release if the org requires it — it does not block XSS.",
+              "vi": "**Đánh đổi / rủi ro.** Pin mọi thứ vs nhận patch: override + test thắng đóng băng cả thế giới. Dependabot/Renovate group; auto-merge chỉ known-safe (dev lint, không vue/vite). Attack surface runtime SPA là compiled asset; máy install mới là risk. SBOM lúc release nếu org đòi — nó không chặn XSS."
+            },
+            {
+              "en": "**How to verify.** Time to pin/override an exploited transitive. Whether CI can reproduce the tree. Provenance/attestations where the registry supports them. Check names on first add (typosquat `lodahs`). Mixed `package-lock` / `pnpm-lock` / `yarn.lock` in one repo is a process bug.",
+              "vi": "**Cách kiểm chứng.** Thời gian pin/override một transitive bị exploit. CI có reproduce được cây không. Provenance/attestation khi registry hỗ trợ. Check tên lúc add lần đầu (typosquat `lodahs`). Lẫn `package-lock` / `pnpm-lock` / `yarn.lock` một repo là bug process."
+            }
+          ]
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "- Pin everything vs receiving security patches. Overrides + tests beat freeze-the-world.\n- Bundling vs leaving `node_modules` in the image — smaller attack surface at runtime for SPAs (you ship compiled assets; the install machine is the risk).",
-            "vi": "- Pin mọi thứ vs nhận security patch. Override + test thắng đóng băng cả thế giới.\n- Bundle vs để `node_modules` trong image — attack surface runtime nhỏ hơn cho SPA (bạn ship compiled asset; máy install mới là risk)."
+            "en": "I commit the lockfile and CI installs frozen. `npm audit` is a signal I triage for reachability, not a gate I blindly fail. A compromised maintainer means remove, pin, and rotate secrets that were in the build env — a malicious Vite plugin is build-time RCE, not just XSS. I never delete the lockfile to fix conflicts and I never `audit --force` a major on Friday.",
+            "vi": "Tôi commit lockfile và CI install đóng băng. `npm audit` là tín hiệu tôi triage theo reachability, không phải gate fail mù. Maintainer bị compromise nghĩa là gỡ, pin, và rotate secret từng nằm trong build env — plugin Vite độc là RCE lúc build, không chỉ XSS. Tôi không xóa lockfile cho hết conflict và không `audit --force` major vào Friday."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- `package-lock` vs `pnpm-lock` vs `yarn.lock` mixed in one repo.\n- Nuxt/Vite plugins executing at build time — a malicious plugin is **build-time RCE**, not just XSS.\n- Typosquatting (`lodahs`). Check names on first add.",
-            "vi": "- `package-lock` vs `pnpm-lock` vs `yarn.lock` lẫn một repo.\n- Plugin Nuxt/Vite chạy lúc build — plugin độc là **RCE lúc build**, không chỉ XSS.\n- Typosquat (`lodahs`). Check tên lúc add lần đầu."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "`^` floating on a compromised minor is how `event-stream` happens again.",
+              "vi": "`^` float trên minor bị compromise là cách `event-stream` xảy ra lại."
+            },
+            {
+              "en": "Signed commits / protected branches are process, not npm — interviewers like the connection.",
+              "vi": "Signed commit / protected branch là process, không phải npm — interviewer thích mối nối."
+            },
+            {
+              "en": "Nuxt/Vite plugins run at build time. Review them like you review production code.",
+              "vi": "Plugin Nuxt/Vite chạy lúc build. Review chúng như production code."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- What if `event-stream` happens again? (Remove, pin, rotate secrets that were in the build env — see 10.7.)\n- Signed commits / protected branches are process, not npm, but interviewers like the connection.",
-            "vi": "- Nếu `event-stream` xảy ra lại? (Gỡ, pin, rotate secret từng nằm trong build env — xem 10.7.)\n- Signed commit / protected branch là process, không phải npm, nhưng interviewer thích mối nối."
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "What if `event-stream` happens again? (Remove, pin, rotate build-env secrets — 10.7.)",
+              "vi": "Nếu `event-stream` xảy ra lại? (Gỡ, pin, rotate secret build env — 10.7.)"
+            },
+            {
+              "en": "What can `npm audit` not tell you?",
+              "vi": "`npm audit` không nói được gì?"
+            },
+            {
+              "en": "Why is a malicious Vite plugin worse than a runtime XSS helper?",
+              "vi": "Vì sao plugin Vite độc tệ hơn helper XSS lúc runtime?"
+            },
+            {
+              "en": "When do you auto-merge Dependabot?",
+              "vi": "Khi nào auto-merge Dependabot?"
+            }
+          ]
         },
         {
           "type": "thematic-break"
@@ -518,63 +1056,103 @@
             "vi": "Họ thực sự hỏi gì"
           },
           "text": {
-            "en": "- “We put the API key in `.env` — is that fine?”\n- `VITE_` prefix; Nuxt `runtimeConfig`.",
-            "vi": "- “Để API key trong `.env` — ổn chứ?”\n- Prefix `VITE_`; Nuxt `runtimeConfig`."
+            "en": "“We put the Stripe key in `.env` — is that fine?” They want the `VITE_` / `NUXT_PUBLIC_` rule, what `runtimeConfig` actually ships, and what you do when `rg` finds the secret in `dist`.",
+            "vi": "“Để key Stripe trong `.env` — ổn chứ?” Họ muốn rule `VITE_` / `NUXT_PUBLIC_`, `runtimeConfig` thực sự ship gì, và bạn làm gì khi `rg` thấy secret trong `dist`."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "How a senior answers",
-            "vi": "Cách senior trả lời"
+            "en": "Takeaway",
+            "vi": "Ý chính"
           },
           "text": {
-            "en": "- **Decision:** Anything prefixed **`VITE_`** (Vite) or **`NUXT_PUBLIC_`** / `runtimeConfig.public` **is not a secret**. It is inlined into the client bundle. Real secrets live only on the **server** (`runtimeConfig` private, `NUXT_` without public, server env, CI secrets). Frontend talks to **your** BFF; the BFF holds Stripe secret, DB, and third-party keys. Mapbox/Stripe **publishable** keys are designed for the client — still restrict them by domain, do not confuse them with secret keys.\n- **Constraint:** SSR blurs the line: a key in `useRuntimeConfig().apiSecret` is fine in a Nitro handler and a disaster if you `return` it from `useAsyncData`.\n- **Failure mode:** `VITE_STRIPE_SECRET`, `VITE_DATABASE_URL`, private npm tokens in `NUXT_PUBLIC_*`. Secrets in client source maps. Dumping `runtimeConfig` into `window.__NUXT__` by returning it from a composable. Slack-webhooks in the Vue app “just for errors.”\n- **Measure:** `rg` the built `dist` for the secret. If it greps, it shipped. Treat that as an incident: rotate.\n\n```ts\n// nuxt.config.ts — mental model\nruntimeConfig: {\n  stripeSecret: \"\",          // server-only; env NUXT_STRIPE_SECRET\n  public: {\n    stripePk: \"\",            // client; env NUXT_PUBLIC_STRIPE_PK\n  },\n}\n```\n\n```ts\n// Vite: only VITE_* is exposed to client code\nconst publishable = import.meta.env.VITE_MAPBOX_TOKEN; // OK if it is publishable\n// import.meta.env.DATABASE_URL is undefined in the browser — do not “fix” that by prefixing VITE_\n```",
-            "vi": "- **Quyết định:** Thứ prefix **`VITE_`** (Vite) hoặc **`NUXT_PUBLIC_`** / `runtimeConfig.public` **không phải secret**. Nó được inline vào client bundle. Secret thật chỉ sống trên **server** (`runtimeConfig` private, `NUXT_` không public, server env, CI secret). Frontend nói với **BFF của bạn**; BFF giữ Stripe secret, DB, và key third-party. Key Mapbox/Stripe **publishable** được thiết kế cho client — vẫn restrict theo domain, đừng nhầm với secret key.\n- **Ràng buộc:** SSR làm mờ ranh: key trong `useRuntimeConfig().apiSecret` ổn trong Nitro handler và thảm họa nếu bạn `return` nó từ `useAsyncData`.\n- **Failure mode:** `VITE_STRIPE_SECRET`, `VITE_DATABASE_URL`, private npm token trong `NUXT_PUBLIC_*`. Secret trong client source map. Đổ `runtimeConfig` vào `window.__NUXT__` bằng cách return từ composable. Slack-webhook trong app Vue “chỉ để báo lỗi.”\n- **Đo:** `rg` `dist` đã build tìm secret. Grep được là đã ship. Coi là incident: rotate.\n\n```ts\n// nuxt.config.ts — mental model\nruntimeConfig: {\n  stripeSecret: \"\",          // server-only; env NUXT_STRIPE_SECRET\n  public: {\n    stripePk: \"\",            // client; env NUXT_PUBLIC_STRIPE_PK\n  },\n}\n```\n\n```ts\n// Vite: only VITE_* is exposed to client code\nconst publishable = import.meta.env.VITE_MAPBOX_TOKEN; // OK if it is publishable\n// import.meta.env.DATABASE_URL is undefined in the browser — do not “fix” that by prefixing VITE_\n```"
+            "en": "Anything prefixed `VITE_` or `NUXT_PUBLIC_` / `runtimeConfig.public` is not a secret — it is inlined into the client bundle.",
+            "vi": "Thứ prefix `VITE_` hoặc `NUXT_PUBLIC_` / `runtimeConfig.public` không phải secret — nó được inline vào client bundle."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Decision.** Real secrets live only on the server (`runtimeConfig` private, `NUXT_` without public, server env, CI secrets). The frontend talks to your BFF; the BFF holds Stripe secret, DB, and third-party keys. Mapbox/Stripe publishable keys are designed for the client — still restrict them by domain. Inject CI secrets into the hosting runtime for Nitro, not into the client define.",
+              "vi": "**Quyết định.** Secret thật chỉ sống trên server (`runtimeConfig` private, `NUXT_` không public, server env, CI secret). Frontend nói với BFF của bạn; BFF giữ Stripe secret, DB, và key third-party. Key Mapbox/Stripe publishable được thiết kế cho client — vẫn restrict theo domain. Inject secret CI vào hosting runtime cho Nitro, không vào client define."
+            },
+            {
+              "en": "**Why.** SSR blurs the line: `useRuntimeConfig().apiSecret` is fine in a Nitro handler and a disaster if you `return` it from `useAsyncData`. Next.js `NEXT_PUBLIC_` is the same trap; a server-only env in a Client Component serializes it.",
+              "vi": "**Vì sao.** SSR làm mờ ranh: `useRuntimeConfig().apiSecret` ổn trong Nitro handler và thảm họa nếu bạn `return` nó từ `useAsyncData`. `NEXT_PUBLIC_` của Next.js cùng bẫy; server-only env trong Client Component sẽ serialize nó."
+            },
+            {
+              "en": "**Trade-off.** BFF adds a hop vs leaking the secret — there is no senior debate for secret keys. Public analytics IDs in the client are acceptable; still no PII in the ID. Feature-flag SaaS keys are usually publishable and still origin-restricted.",
+              "vi": "**Đánh đổi / rủi ro.** BFF thêm một hop vs leak secret — không có tranh luận senior cho secret key. Public analytics ID trên client chấp nhận được; vẫn không PII trong ID. Key SaaS feature flag thường publishable và vẫn origin-restrict."
+            },
+            {
+              "en": "**How to verify.** `rg` the built `dist` for the secret. If it greps, it shipped — treat as an incident and rotate. Same if it was committed, even in `.env.example`. Preview deploys must not inherit production secrets.",
+              "vi": "**Cách kiểm chứng.** `rg` `dist` đã build tìm secret. Grep được là đã ship — coi là incident và rotate. Cùng vậy nếu đã commit, kể cả nhầm `.env.example`. Preview deploy không được thừa hưởng production secret."
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "// nuxt.config.ts — mental model\nruntimeConfig: {\n  stripeSecret: \"\", // server-only; env NUXT_STRIPE_SECRET\n  public: {\n    stripePk: \"\", // client; env NUXT_PUBLIC_STRIPE_PK\n  },\n}\n\n// Vite: only VITE_* is exposed to client code\nconst publishable = import.meta.env.VITE_MAPBOX_TOKEN // OK if publishable\n// import.meta.env.DATABASE_URL is undefined in the browser\n// — do not \"fix\" that by prefixing VITE_",
+            "vi": "// nuxt.config.ts — mental model\nruntimeConfig: {\n  stripeSecret: \"\", // chỉ server; env NUXT_STRIPE_SECRET\n  public: {\n    stripePk: \"\", // client; env NUXT_PUBLIC_STRIPE_PK\n  },\n}\n\n// Vite: chỉ VITE_* lộ ra client\nconst publishable = import.meta.env.VITE_MAPBOX_TOKEN // OK nếu publishable\n// import.meta.env.DATABASE_URL là undefined trên browser\n// — đừng \"fix\" bằng cách thêm prefix VITE_"
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Tradeoffs",
-            "vi": "Tradeoff"
+            "en": "Interview phrasing",
+            "vi": "Nói khi phỏng vấn"
           },
           "text": {
-            "en": "- BFF adds a hop vs leaking the secret. There is no senior debate here for secret keys.\n- Public analytics IDs in the client: acceptable; still no PII in the ID.",
-            "vi": "- BFF thêm một hop vs leak secret. Không có tranh luận senior ở đây cho secret key.\n- Public analytics ID trên client: chấp nhận được; vẫn không PII trong ID."
+            "en": "`.env` is not a secrecy boundary. `VITE_` and `NUXT_PUBLIC_` are inlined into the bundle — I grep `dist` and rotate if it hits. Secrets stay on Nitro / CI / the BFF. I do not “fix” an undefined `DATABASE_URL` in the browser by prefixing `VITE_`, and I do not `console.log(config)` in a plugin.",
+            "vi": "`.env` không phải boundary bí mật. `VITE_` và `NUXT_PUBLIC_` bị inline vào bundle — tôi grep `dist` và rotate nếu dính. Secret ở lại Nitro / CI / BFF. Tôi không “fix” `DATABASE_URL` undefined trên browser bằng prefix `VITE_`, và không `console.log(config)` trong plugin."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Production gotchas",
-            "vi": "Gotcha production"
-          },
-          "text": {
-            "en": "- Preview deploys with production secrets.\n- `console.log(config)` in a plugin.\n- Git history: rotating is not optional if it was committed, even in `.env.example` mistakes.\n- Next.js: `NEXT_PUBLIC_` is the same trap as `VITE_`. Server-only env in a Client Component serializes it.",
-            "vi": "- Preview deploy với production secret.\n- `console.log(config)` trong plugin.\n- Git history: rotate không optional nếu đã commit, kể cả nhầm `.env.example`.\n- Next.js: `NEXT_PUBLIC_` cùng bẫy với `VITE_`. Server-only env trong Client Component sẽ serialize nó."
-          }
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "`VITE_STRIPE_SECRET` / `NUXT_PUBLIC_*` private tokens / Slack webhooks in Vue are incidents.",
+              "vi": "`VITE_STRIPE_SECRET` / token private `NUXT_PUBLIC_*` / Slack webhook trong Vue là incident."
+            },
+            {
+              "en": "Returning private `runtimeConfig` from a composable dumps it into `window.__NUXT__`.",
+              "vi": "Return `runtimeConfig` private từ composable đổ nó vào `window.__NUXT__`."
+            },
+            {
+              "en": "Secrets in client source maps count as shipped.",
+              "vi": "Secret trong client source map coi như đã ship."
+            }
+          ]
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Follow-ups",
-            "vi": "Câu hỏi nối"
-          },
-          "text": {
-            "en": "- How do you inject secrets in CI for `nuxt build`? (Not into the client define; into the hosting runtime for Nitro.)\n- Feature flags SaaS keys — usually publishable; still origin-restrict.",
-            "vi": "- Inject secret trên CI cho `nuxt build` thế nào? (Không vào client define; vào hosting runtime cho Nitro.)\n- Key SaaS feature flag — thường publishable; vẫn origin-restrict."
-          }
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "How do you inject secrets in CI for `nuxt build`? (Hosting runtime for Nitro, not client define.)",
+              "vi": "Inject secret trên CI cho `nuxt build` thế nào? (Hosting runtime cho Nitro, không client define.)"
+            },
+            {
+              "en": "Publishable vs secret Stripe keys — what is allowed in the client?",
+              "vi": "Key Stripe publishable vs secret — client được phép cái nào?"
+            },
+            {
+              "en": "Why is `NEXT_PUBLIC_` the same trap as `VITE_`?",
+              "vi": "Vì sao `NEXT_PUBLIC_` cùng bẫy với `VITE_`?"
+            },
+            {
+              "en": "Preview deploys with production secrets — what do you rotate?",
+              "vi": "Preview deploy với production secret — bạn rotate gì?"
+            }
+          ]
         },
         {
           "type": "thematic-break"
-        },
-        {
-          "type": "paragraph",
-          "text": {
-            "en": "[← Back to Overview](../../README-en.md)",
-            "vi": "[← Back to Overview](../../README.md)"
-          }
         }
       ]
     }
