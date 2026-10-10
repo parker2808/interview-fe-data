@@ -89,8 +89,41 @@ if (existsSync(path.join(resolvedRoot, 'plan/days')) && days.length !== 30) {
   fail('plan/days', `expected 30 day files, found ${days.length}`)
 }
 
-if (!existsSync(path.join(resolvedRoot, 'qna/questions.json'))) {
+const qnaPath = path.join(resolvedRoot, 'qna/questions.json')
+const MIN_QUESTION_COUNT = 142
+const MIN_CATEGORY_COUNTS = { soft: 29, technical: 86, situational: 27 }
+
+if (!existsSync(qnaPath)) {
   fail('qna/questions.json', 'missing Q&A bank')
+} else {
+  const bank = readJson(qnaPath)
+  const questions = Array.isArray(bank?.questions) ? bank.questions : []
+  const byCategory = {}
+  for (const question of questions) {
+    const category = question?.category || 'unknown'
+    byCategory[category] = (byCategory[category] || 0) + 1
+  }
+  const counts = Object.entries(byCategory)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([category, count]) => `${category}=${count}`)
+    .join(', ')
+  console.log(`Q&A counts: total=${questions.length} (${counts || 'none'})`)
+
+  if (questions.length < MIN_QUESTION_COUNT) {
+    fail(
+      'qna/questions.json',
+      `question count dropped (${questions.length} < ${MIN_QUESTION_COUNT})`,
+    )
+  }
+  for (const [category, min] of Object.entries(MIN_CATEGORY_COUNTS)) {
+    const count = byCategory[category] || 0
+    if (count < min) {
+      fail(
+        'qna/questions.json',
+        `${category} count dropped (${count} < ${min})`,
+      )
+    }
+  }
 }
 
 if (errors.length) {
