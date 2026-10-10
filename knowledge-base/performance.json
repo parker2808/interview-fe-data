@@ -1,0 +1,884 @@
+{
+  "kind": "knowledge-doc",
+  "slug": "performance",
+  "title": {
+    "en": "Performance",
+    "vi": "Performance"
+  },
+  "summary": {
+    "en": "Seniors do not open with “I use debounce and lazy-load images.” Interviewers want a **measure-first** loop: pick a user-visible metric, find the constraint (network, main thread, memory, cache), name the failure mode, t…",
+    "vi": "Senior không mở đầu bằng “tôi dùng debounce và lazy-load ảnh.” Interviewer muốn vòng **measure-first**: chọn metric user thấy, tìm constraint (network, main thread, memory, cache), gọi tên failure mode, rồi đổi một thứ…"
+  },
+  "category": "practices",
+  "order": 12,
+  "tags": [
+    "practices",
+    "performance"
+  ],
+  "sections": [
+    {
+      "id": {
+        "en": "intro",
+        "vi": "intro"
+      },
+      "title": {
+        "en": "Performance",
+        "vi": "Performance"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": {
+            "en": "Performance & Optimization",
+            "vi": "Performance & Optimization"
+          },
+          "id": {
+            "en": "performance-optimization",
+            "vi": "performance-optimization"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Seniors do not open with “I use debounce and lazy-load images.” Interviewers want a **measure-first** loop: pick a user-visible metric, find the constraint (network, main thread, memory, cache), name the failure mode, then change one thing and **re-measure**. Vue 3 + TypeScript first; the same CWV / splitting story applies to Next.",
+            "vi": "Senior không mở đầu bằng “tôi dùng debounce và lazy-load ảnh.” Interviewer muốn vòng **measure-first**: chọn metric user thấy, tìm constraint (network, main thread, memory, cache), gọi tên failure mode, rồi đổi một thứ và **đo lại**. Vue 3 + TypeScript trước; cùng câu chuyện CWV / splitting áp cho Next."
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Default answers that lose points: putting **access tokens in `localStorage`**, premature `computed`/memo everywhere, and quoting lab Lighthouse scores as if they were field data.",
+            "vi": "Câu default mất điểm: **access token trong `localStorage`**, `computed`/memo sớm khắp nơi, và trích score Lighthouse lab như thể đó là field data."
+          }
+        },
+        {
+          "type": "thematic-break"
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "table-of-contents",
+        "vi": "table-of-contents"
+      },
+      "title": {
+        "en": "Table of Contents",
+        "vi": "Table of Contents"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Table of Contents",
+            "vi": "Table of Contents"
+          },
+          "id": {
+            "en": "table-of-contents",
+            "vi": "table-of-contents"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "**Core Performance**\n\n1.1. [Storage: localStorage vs sessionStorage vs Cookie](#911-storage-localstorage-vs-sessionstorage-vs-cookie)\n\n1.2. [Performance Optimization](#912-performance-optimization)\n\n1.3. [Code Review Checklist](#913-code-review-checklist)\n\n1.4. [Performance Case Studies](#914-performance-case-studies)",
+              "vi": "**Core Performance**\n\n1.1. [Storage: localStorage vs sessionStorage vs Cookie](#911-storage-localstorage-vs-sessionstorage-vs-cookie)\n\n1.2. [Performance Optimization](#912-performance-optimization)\n\n1.3. [Code Review Checklist](#913-code-review-checklist)\n\n1.4. [Performance Case Studies](#914-performance-case-studies)"
+            },
+            {
+              "en": "**Advanced Optimization**\n\n2.1. [Code Splitting Strategies](#921-code-splitting-strategies)\n\n2.2. [Tree Shaking](#922-tree-shaking)\n\n2.3. [Debounce vs Throttle](#923-debounce-vs-throttle)\n\n2.4. [Image & Font Optimization](#924-image--font-optimization)\n\n2.5. [Core Web Vitals in 2026](#925-core-web-vitals-in-2026)",
+              "vi": "**Advanced Optimization**\n\n2.1. [Code Splitting Strategies](#921-code-splitting-strategies)\n\n2.2. [Tree Shaking](#922-tree-shaking)\n\n2.3. [Debounce vs Throttle](#923-debounce-vs-throttle)\n\n2.4. [Image & Font Optimization](#924-image--font-optimization)\n\n2.5. [Core Web Vitals năm 2026](#925-core-web-vitals-năm-2026)"
+            }
+          ]
+        },
+        {
+          "type": "thematic-break"
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "9-performance-optimization",
+        "vi": "9-performance-optimization"
+      },
+      "title": {
+        "en": "9. Performance & Optimization",
+        "vi": "9. Performance & Optimization"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "9. Performance & Optimization",
+            "vi": "9. Performance & Optimization"
+          },
+          "id": {
+            "en": "9-performance-optimization",
+            "vi": "9-performance-optimization"
+          }
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "9.1. Core Performance",
+            "vi": "9.1. Core Performance"
+          },
+          "id": {
+            "en": "91-core-performance",
+            "vi": "91-core-performance"
+          }
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "9.1.1. Storage: localStorage vs sessionStorage vs Cookie",
+            "vi": "9.1.1. Storage: localStorage vs sessionStorage vs Cookie"
+          },
+          "id": {
+            "en": "911-storage-localstorage-vs-sessionstorage-vs-cookie",
+            "vi": "911-storage-localstorage-vs-sessionstorage-vs-cookie"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “Where do you store the JWT?”\n- “localStorage vs cookie vs memory?”\n- If your first sentence is “token in `localStorage`,” you have already failed the senior bar.",
+            "vi": "- “JWT để đâu?”\n- “localStorage vs cookie vs memory?”\n- Câu đầu là “token trong `localStorage`” thì bạn đã trượt thanh senior."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** **Do not put access tokens in `localStorage` as the default.** Prefer **httpOnly + Secure + SameSite cookies** for the session, or **access token in memory + httpOnly refresh cookie**. Use `localStorage` for non-sensitive preferences (theme, locale) you can afford to lose. Use `sessionStorage` for **tab-scoped** wizard state. Use cookies when the server must see the value on the next request **and** the payload is tiny.\n- **Constraint:** ~5–10 MB for Web Storage (origin quota, not a guarantee). Cookies ~4 KB each and **ride on every matching request** — they are not a cache. Safari **ITP** and related partitioning make client-set cookies short-lived and third-party storage unreliable.\n- **Failure mode:** XSS reads `localStorage.token` and exfiltrates the session. QuotaExceededError on a heavy cache. Cookies blowing up request headers. Assuming `localStorage` is durable in private mode / WebView. Using `sessionStorage` for auth and wondering why a second tab is logged out (or worse, copying tokens into `localStorage` “to sync tabs”).\n- **Measure:** Auth threat model (XSS vs CSRF — see security). Storage usage via Application panel. Cookie size on the critical API. Session survival on Safari after 7 days for **client-set** cookies.\n\n| Mechanism | Lifetime | Size | JS access | Cross-tab | Senior use |\n| --- | --- | --- | --- | --- | --- |\n| Memory | Until refresh/navigation away | RAM | Yes | No (unless you broadcast) | Access token |\n| httpOnly cookie | Server-defined | ~4 KB | No | Yes | Refresh / session |\n| `localStorage` | Until cleared / eviction | ~5–10 MB | Yes | Yes | Theme, non-secrets, cache with version key |\n| `sessionStorage` | Tab | ~5 MB | Yes | No | Wizard draft, per-tab filters |\n\n```ts\n// Production decision: access token never hits Web Storage\nlet accessToken: string | null = null;\n\nexport const tokenMemory = {\n  get: () => accessToken,\n  set: (t: string | null) => {\n    accessToken = t;\n  },\n};\n// Refresh cookie is Set-Cookie from the API (httpOnly, Secure, SameSite=Lax).\n```\n\n**Safari ITP / partitioning (say this out loud)**\n\n- Client-side JS cookies have been capped on a short clock (ITP); do not design “remember me” on a JS-set cookie.\n- Third-party cookies are effectively gone; SSO popups need first-party relationships.\n- Storage in iframes is partitioned. A widget on another origin does not see your `localStorage`.\n- Private browsing: tiny quotas, aggressive eviction.",
+            "vi": "- **Quyết định:** **Đừng để access token trong `localStorage` làm default.** Prefer **cookie httpOnly + Secure + SameSite** cho session, hoặc **access token trong memory + refresh cookie httpOnly**. `localStorage` cho preference không nhạy (theme, locale) mà mất được. `sessionStorage` cho state wizard **theo tab**. Cookie khi server phải thấy value ở request tiếp **và** payload nhỏ.\n- **Ràng buộc:** ~5–10 MB cho Web Storage (quota origin, không phải bảo đảm). Cookie ~4 KB mỗi cái và **đi theo mọi matching request** — chúng không phải cache. Safari **ITP** và partitioning liên quan khiến cookie set từ client sống ngắn, third-party storage không đáng tin.\n- **Failure mode:** XSS đọc `localStorage.token` rồi exfiltrate session. QuotaExceededError trên cache nặng. Cookie thổi header request. Cho rằng `localStorage` bền trong private mode / WebView. Dùng `sessionStorage` cho auth rồi thắc mắc tab hai logout (hoặc tệ hơn, copy token vào `localStorage` “để sync tab”).\n- **Đo:** Threat model auth (XSS vs CSRF — xem security). Dung lượng storage qua Application panel. Size cookie trên API critical. Session sống trên Safari sau 7 ngày với cookie **set từ client**.\n\n| Mechanism | Lifetime | Size | JS access | Cross-tab | Senior dùng |\n| --- | --- | --- | --- | --- | --- |\n| Memory | Đến refresh/navigate đi | RAM | Có | Không (trừ khi broadcast) | Access token |\n| httpOnly cookie | Server định | ~4 KB | Không | Có | Refresh / session |\n| `localStorage` | Đến khi xóa / eviction | ~5–10 MB | Có | Có | Theme, non-secret, cache có version key |\n| `sessionStorage` | Tab | ~5 MB | Có | Không | Draft wizard, filter theo tab |\n\n```ts\n// Production decision: access token never hits Web Storage\nlet accessToken: string | null = null;\n\nexport const tokenMemory = {\n  get: () => accessToken,\n  set: (t: string | null) => {\n    accessToken = t;\n  },\n};\n// Refresh cookie is Set-Cookie from the API (httpOnly, Secure, SameSite=Lax).\n```\n\n**Safari ITP / partitioning (nói to điều này)**\n\n- Cookie JS phía client bị khóa đồng hồ ngắn (ITP); đừng thiết kế “remember me” trên cookie JS set.\n- Third-party cookie coi như chết; SSO popup cần quan hệ first-party.\n- Storage trong iframe bị partition. Widget origin khác không thấy `localStorage` của bạn.\n- Private browsing: quota bé, eviction hung hãn."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- httpOnly cookie session: XSS cannot steal the cookie; you now own CSRF (SameSite=Lax is often enough for SPAs; see security 10.2).\n- Memory access + refresh cookie: best XSS posture for the access token; hard refresh means a refresh round-trip (design for it).\n- `localStorage` token: trivial and **wrong** as a default.",
+            "vi": "- Session cookie httpOnly: XSS không cắp được cookie; bạn giờ own CSRF (SameSite=Lax thường đủ cho SPA; xem security 10.2).\n- Access memory + refresh cookie: posture XSS tốt nhất cho access token; hard refresh nghĩa là một round-trip refresh (thiết kế cho nó).\n- Token `localStorage`: tầm thường và **sai** làm default."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Nuxt/SSR: `localStorage` does not exist on the server — gate with `import.meta.client` / `onMounted`.\n- Do not store PII or card data in Web Storage (PCI / GDPR). Encrypted `localStorage` is still XSS-readable in the same origin.\n- Version your cache keys (`catalog:v3`) or a deploy will serve stale JSON forever.\n- `QuotaExceededError`: catch it; LRU the cache; never let it crash checkout.",
+            "vi": "- Nuxt/SSR: `localStorage` không tồn tại trên server — gate bằng `import.meta.client` / `onMounted`.\n- Đừng lưu PII hay card data trong Web Storage (PCI / GDPR). `localStorage` “encrypted” vẫn XSS-readable cùng origin.\n- Version cache key (`catalog:v3`) không thì deploy phục vụ JSON stale mãi.\n- `QuotaExceededError`: catch; LRU cache; đừng để nó crash checkout."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How do tabs share a memory access token? (`BroadcastChannel` or `lock` + refresh; do not sync the access token into `localStorage`.)\n- IndexedDB vs `localStorage` for a large offline catalog? (IndexedDB; `localStorage` is synchronous and blocks the main thread.)",
+            "vi": "- Tab share memory access token thế nào? (`BroadcastChannel` hoặc `lock` + refresh; đừng sync access token vào `localStorage`.)\n- IndexedDB vs `localStorage` cho catalog offline lớn? (IndexedDB; `localStorage` synchronous và block main thread.)"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "9.1.2. Performance Optimization",
+            "vi": "9.1.2. Performance Optimization"
+          },
+          "id": {
+            "en": "912-performance-optimization",
+            "vi": "912-performance-optimization"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “How do you optimize a Vue app?”\n- They want **Profiler + Core Web Vitals first**, not a laundry list.",
+            "vi": "- “Tối ưu app Vue thế nào?”\n- Họ muốn **Profiler + Core Web Vitals trước**, không phải laundry list."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** Measure **field CWV** (CrUX / RUM) and a **performance profile on a mid-tier device** before changing code. **INP replaced FID** as the interactivity vital (FID is gone from CWV). Then attack the actual constraint: TTFB, fat JS, long tasks, huge lists, images, hydration.\n- **Constraint:** Vue already batches updates and compiles static trees. Premature `shallowRef` / `v-memo` / React `useMemo` is noise until the profiler shows a hot component. You cannot memo your way out of a 400 ms API or a 2 MB hero PNG.\n- **Failure mode:** Optimizing DevTools “slow” on a M3 laptop. Virtualizing a 20-row table. Wrapping every child in `computed`. Shipping all of `lodash` to save a 3-line helper. Hydrating a dashboard the user cannot see yet.\n- **Measure:** LCP / INP / CLS (9.2.5), long tasks (>50 ms), INP sub-parts (input delay, processing, presentation), main-thread time in the Vue/React profiler, bundle bytes per route (`rollup-plugin-visualizer` / Vite inspect).\n\n**Order of attack**\n\n1. **Is it the network?** TTFB, payload size, waterfalls. SSR/Nuxt caching, HTTP cache, CDN.\n1. **Is it the JS?** Route/vendor split, drop dead deps, defer third parties.\n1. **Is it the main thread?** Long tasks, sync parse of giant JSON into `reactive()`, expensive watchers on input.\n1. **Is it the DOM?** Virtualize (tanstack-vue-virtual / `content-visibility` for simpler cases). Stable `key`s. Do not `v-for` 5k rows.\n1. **Is it hydration?** Nuxt `<ClientOnly>` for charts; islands / lazy hydration where the stack supports it.\n\n**Vue-specific knobs (after evidence)**\n\n- `shallowRef` / `shallowReactive` for large, rarely mutated blobs (API documents, map GeoJSON).\n- `computed` for derived state (cached); `watch` for side effects. `watchEffect` that writes to the DOM on every keystroke is an INP bug.\n- `<KeepAlive>` for tab UIs — memory cost; cap `max`.\n- `defineAsyncComponent` / Nuxt automatic route split for heavy widgets.\n- `v-once` / `v-memo` on hot lists when the profiler says the list itself is the cost.\n\n**React / Next parallel:** `memo` / `useMemo` / `useCallback` only where the profiler shows. RSC / `dynamic(() => import(), { ssr: false })` is the same decision as Nuxt `ClientOnly` + async components.\n\n**SSR (Nuxt)**\n\n- Do not SSR a WebGL chart. Payload: do not dump 2 MB of JSON into `__NUXT__`.\n- `useAsyncData` with a real `getCachedData` / SWR window; Nitro cache for anonymous pages.\n- Hydration mismatch is a **correctness and CLS** bug, not a warning to ignore.",
+            "vi": "- **Quyết định:** Đo **field CWV** (CrUX / RUM) và **performance profile trên máy mid-tier** trước khi đổi code. **INP thay FID** làm vital tương tác (FID đã biến khỏi CWV). Rồi đánh constraint thật: TTFB, JS béo, long task, list khổng lồ, ảnh, hydration.\n- **Ràng buộc:** Vue đã batch update và compile static tree. `shallowRef` / `v-memo` / React `useMemo` sớm là nhiễu đến khi profiler chỉ ra component nóng. Bạn không memo được ra khỏi API 400 ms hay hero PNG 2 MB.\n- **Failure mode:** Tối ưu DevTools “chậm” trên laptop M3. Virtualize table 20 hàng. Bọc mọi child trong `computed`. Ship cả `lodash` để tiết helper 3 dòng. Hydrate dashboard user chưa thấy.\n- **Đo:** LCP / INP / CLS (9.2.5), long task (>50 ms), phần con INP (input delay, processing, presentation), thời gian main-thread trong Vue/React profiler, byte bundle mỗi route (`rollup-plugin-visualizer` / Vite inspect).\n\n**Thứ tự đánh**\n\n1. **Network?** TTFB, size payload, waterfall. Cache SSR/Nuxt, HTTP cache, CDN.\n1. **JS?** Split route/vendor, bỏ dep chết, defer third-party.\n1. **Main thread?** Long task, parse sync JSON khổng lồ vào `reactive()`, watcher đắt trên input.\n1. **DOM?** Virtualize (tanstack-vue-virtual / `content-visibility` cho case đơn). `key` ổn định. Đừng `v-for` 5k hàng.\n1. **Hydration?** Nuxt `<ClientOnly>` cho chart; island / lazy hydration khi stack hỗ trợ.\n\n**Núm Vue-specific (sau khi có evidence)**\n\n- `shallowRef` / `shallowReactive` cho blob lớn, ít mutate (API document, map GeoJSON).\n- `computed` cho derived state (có cache); `watch` cho side effect. `watchEffect` ghi DOM mỗi keystroke là bug INP.\n- `<KeepAlive>` cho UI tab — cost memory; cap `max`.\n- `defineAsyncComponent` / Nuxt automatic route split cho widget nặng.\n- `v-once` / `v-memo` trên list nóng khi profiler nói chính list là cost.\n\n**Song song React / Next:** `memo` / `useMemo` / `useCallback` chỉ nơi profiler chỉ. RSC / `dynamic(() => import(), { ssr: false })` cùng quyết định với Nuxt `ClientOnly` + async component.\n\n**SSR (Nuxt)**\n\n- Đừng SSR chart WebGL. Payload: đừng đổ 2 MB JSON vào `__NUXT__`.\n- `useAsyncData` với `getCachedData` / cửa sổ SWR thật; Nitro cache cho page anonymous.\n- Hydration mismatch là bug **correctness và CLS**, không phải warning để ignore."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Virtualization: 60 fps lists; broken find-in-page, a11y, and variable-height pain.\n- KeepAlive: instant tab switch; leaked subscriptions if you skip `onDeactivated`.\n- Client-only widgets: better TTI; worse SEO/LCP if you client-only the hero.",
+            "vi": "- Virtualization: list 60 fps; find-in-page gãy, a11y, và đau height biến thiên.\n- KeepAlive: đổi tab tức thì; subscription rò nếu skip `onDeactivated`.\n- Widget client-only: TTI tốt hơn; SEO/LCP tệ nếu bạn client-only cái hero."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Pinia/Vuex dumping the entire catalog into global state → every unrelated subscriber pays.\n- Analytics/CMP scripts on `load` stealing INP.\n- `JSON.parse` of a 5 MB report on the main thread — worker or stream it.\n- Premature memo hiding a stale-closure bug.",
+            "vi": "- Pinia/Vuex đổ cả catalog vào global state → mọi subscriber không liên quan phải trả.\n- Script analytics/CMP trên `load` cướp INP.\n- `JSON.parse` report 5 MB trên main thread — worker hoặc stream.\n- Memo sớm giấu bug stale-closure."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How do you prove a fix? (Before/after field RUM, not one Lighthouse run.)\n- What is a long task and why 50 ms? (One frame budget ~16 ms; 50 ms is the LoAF/long-task threshold that delays input.)",
+            "vi": "- Chứng minh fix thế nào? (RUM field trước/sau, không một lần chạy Lighthouse.)\n- Long task là gì và sao 50 ms? (Budget một frame ~16 ms; 50 ms là ngưỡng LoAF/long-task làm trễ input.)"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "9.1.3. Code Review Checklist",
+            "vi": "9.1.3. Code Review Checklist"
+          },
+          "id": {
+            "en": "913-code-review-checklist",
+            "vi": "913-code-review-checklist"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “What do you look for in a PR?”\n- Seniors review **risk**, not style (the linter already owns style).",
+            "vi": "- “Bạn nhìn gì trong PR?”\n- Senior review **risk**, không phải style (linter đã own style)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** Read the ticket and the diff’s **user flow** first. Then walk a fixed checklist: **security, a11y, bundle, API contract, feature flags**, plus Vue correctness. Run the path, do not only read it.\n- **Constraint:** Review time is limited. Spend it on authz UI, money, new dependencies, and public API changes — not import order.\n- **Failure mode:** Nitpicking Tailwind class sort while a `v-html` lands, a 200 KB date library joins the vendor chunk, or a flag defaults **on** in production.\n- **Measure:** Escaped defects by category (sec, a11y, perf). Review turnaround on critical paths. Bundle delta on the PR (sizebot / vite-plugin-inspect comment).\n\n**Senior checklist**\n\n1. **Context** — Bug, feature, or refactor? Feature flag name and **default**? Rollback plan?\n1. **Security** — `v-html` / `innerHTML` / `javascript:` hrefs; tokens in storage; secrets in `VITE_` / logs; CSRF on new cookie calls; permissions checked as UX only (server remains source of truth). See security.md.\n1. **Accessibility** — Native control vs fake `div role=\"button\"`; focus on new dialogs; name/role/value; contrast. See accessibility.md.\n1. **API contract** — Types match OpenAPI; error/empty/loading; idempotency on pay; no silent drop of fields; pagination.\n1. **Bundle / perf** — New dependency weight and `sideEffects`; route vs global import; images have dimensions; list virtualized if large; no accidental barrel import of `lodash`.\n1. **Feature flags** — Off by default; no PII in flag keys; cleanup ticket or the flag *is* the product forever.\n1. **Vue / TS correctness** — Keys, watch vs computed, no mutating props, SSR guards, error/empty states.\n1. **A11y of the review itself** — i18n strings not concatenated; dates/timezone.\n\nKeep the boring bar too: names, no deep nesting, no secrets in screenshots, Conventional Commits if that is the repo rule. That is hygiene, not the senior signal.",
+            "vi": "- **Quyết định:** Đọc ticket và **user flow** của diff trước. Rồi đi checklist cố định: **security, a11y, bundle, API contract, feature flag**, cộng correctness Vue. Chạy path, đừng chỉ đọc.\n- **Ràng buộc:** Thời gian review có hạn. Chi cho authz UI, tiền, dependency mới, và thay đổi public API — không import order.\n- **Failure mode:** Nitpick sort class Tailwind trong khi `v-html` đáp xuống, date library 200 KB vào vendor chunk, hoặc flag default **on** trên production.\n- **Đo:** Defect thoát theo category (sec, a11y, perf). Turnaround review trên critical path. Bundle delta trên PR (sizebot / comment vite-plugin-inspect).\n\n**Checklist senior**\n\n1. **Context** — Bug, feature, hay refactor? Tên feature flag và **default**? Rollback plan?\n1. **Security** — `v-html` / `innerHTML` / href `javascript:`; token trong storage; secret trong `VITE_` / log; CSRF trên cookie call mới; permission chỉ check như UX (server vẫn source of truth). Xem security.md.\n1. **Accessibility** — Native control vs `div role=\"button\"` giả; focus dialog mới; name/role/value; contrast. Xem accessibility.md.\n1. **API contract** — Type khớp OpenAPI; error/empty/loading; idempotency lúc pay; không drop field im lặng; pagination.\n1. **Bundle / perf** — Weight dependency mới và `sideEffects`; import route vs global; ảnh có dimension; list virtualize nếu lớn; không barrel import `lodash` tình cờ.\n1. **Feature flag** — Off by default; không PII trong flag key; ticket cleanup không thì flag *là* product mãi.\n1. **Correctness Vue / TS** — Key, watch vs computed, không mutate prop, SSR guard, error/empty state.\n1. **A11y của chính review** — chuỗi i18n không concat; date/timezone.\n\nGiữ thanh nhàm nữa: tên, không nest sâu, không secret trong screenshot, Conventional Commits nếu đó là rule repo. Đó là hygiene, không phải tín hiệu senior."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- A 40-item checklist nobody uses vs a 8-item one the team actually runs.\n- Blocking on bundle +5 KB for a date formatter vs letting it in “just this once” (it never leaves).",
+            "vi": "- Checklist 40 mục không ai dùng vs 8 mục team thực sự chạy.\n- Block bundle +5 KB cho date formatter vs cho vào “chỉ lần này” (nó không bao giờ ra)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Generated files and lockfile-only changes still need a glance (supply chain).\n- “Tiny PR” that adds one composable importing a cloud SDK.\n- Reviewing only the Vue file and missing `nuxt.config` / CSP / headers.",
+            "vi": "- File generated và thay đổi lockfile-only vẫn cần liếc (supply chain).\n- “PR tí” thêm một composable import cloud SDK.\n- Review chỉ file Vue, miss `nuxt.config` / CSP / header."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How do you review a design-system PR? (A11y + visual regression + bundle; see 11.5 / 8.6.)\n- Would you approve with a follow-up ticket? (Yes for polish; never for auth/money holes.)",
+            "vi": "- Review PR design-system thế nào? (A11y + visual regression + bundle; xem 11.5 / 8.6.)\n- Approve kèm ticket follow-up? (Có cho polish; không bao giờ cho lỗ auth/tiền.)"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "9.1.4. Performance Case Studies",
+            "vi": "9.1.4. Performance Case Studies"
+          },
+          "id": {
+            "en": "914-performance-case-studies",
+            "vi": "914-performance-case-studies"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "_Format: Problem → Cause → Solution → Result. Numbers below are **illustrative**. In an interview, say you would **verify with traces** (RUM + Performance profile + network waterfall), not quote them as facts from a blog._",
+            "vi": "_Format: Problem → Cause → Solution → Result. Số bên dưới là **minh họa**. Trong interview, nói bạn sẽ **verify bằng trace** (RUM + Performance profile + network waterfall), không trích chúng như fact từ blog._"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**Case 1 — Slow UI with a large list**",
+            "vi": "**Case 1 — UI chậm với list lớn**"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Problem:** Catalog/admin grid with thousands of rows stutters on scroll and filter.",
+              "vi": "**Problem:** Grid catalog/admin hàng nghìn row giật khi scroll và filter."
+            },
+            {
+              "en": "**Cause:** Full DOM render; each row a rich component; no windowing. Vue spends frames patching nodes offscreen.",
+              "vi": "**Cause:** Render full DOM; mỗi row là component giàu; không windowing. Vue tốn frame patch node offscreen."
+            },
+            {
+              "en": "**Solution:** Virtualize (`@tanstack/vue-virtual` or equivalent). Flatten row components. Filter/sort in a worker or as a pure function, not by mounting 5k watchers. For “print / a11y dump,” a separate unvirtualized export path.",
+              "vi": "**Solution:** Virtualize (`@tanstack/vue-virtual` hoặc tương đương). Flatten row component. Filter/sort trong worker hoặc function thuần, không mount 5k watcher. Path export “print / a11y dump” riêng, không virtualize."
+            },
+            {
+              "en": "**Result (illustrative):** Scroll INP/long tasks drop; frames closer to 60 fps; initial render from seconds to tens of ms for the window. **Verify** with Performance panel (long tasks on scroll) and INP attribution, not FPS folklore.",
+              "vi": "**Result (minh họa):** INP/long task lúc scroll giảm; frame gần 60 fps; initial render từ vài giây xuống chục ms cho window. **Verify** bằng Performance panel (long task lúc scroll) và attribution INP, không folklore FPS."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**Case 2 — Redundant API calls**",
+            "vi": "**Case 2 — API call thừa**"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Problem:** Tab switches and focus-refetch hammer the same endpoint; search fires per keystroke.",
+              "vi": "**Problem:** Đổi tab và focus-refetch đập cùng endpoint; search bắn mỗi keystroke."
+            },
+            {
+              "en": "**Cause:** No client cache; no in-flight dedupe; no abort; debounce missing or bound wrong.",
+              "vi": "**Cause:** Không client cache; không in-flight dedupe; không abort; debounce thiếu hoặc bind sai."
+            },
+            {
+              "en": "**Solution:** TanStack Query / `useAsyncData` with `staleTime` and request dedupe. Debounce the **query**, abort in-flight (`AbortController`). Cache per tab with a store only if Query is not in the stack.",
+              "vi": "**Solution:** TanStack Query / `useAsyncData` với `staleTime` và request dedupe. Debounce **query**, abort in-flight (`AbortController`). Cache theo tab bằng store chỉ khi stack không có Query."
+            },
+            {
+              "en": "**Result (illustrative):** 60–80% fewer identical GETs, tab switches feel instant while data is fresh. **Verify** with Network waterfall and server QPS, not “it feels smoother.”",
+              "vi": "**Result (minh họa):** 60–80% GET giống nhau ít hơn, đổi tab thấy tức thì khi data còn tươi. **Verify** bằng Network waterfall và QPS server, không “cảm giác mượt hơn.”"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**Case 3 — Fat JS bundle**",
+            "vi": "**Case 3 — JS bundle béo**"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Problem:** First load downloads megabytes of JS; TTI/LCP suffer on 4G.",
+              "vi": "**Problem:** First load tải megabyte JS; TTI/LCP khổ trên 4G."
+            },
+            {
+              "en": "**Cause:** Eager charts, full `lodash`, barrel files, one vendor chunk, uncompressed images blamed on “JS.”",
+              "vi": "**Cause:** Chart eager, full `lodash`, barrel file, một vendor chunk, ảnh không nén bị đổ lỗi cho “JS.”"
+            },
+            {
+              "en": "**Solution:** Route split; `defineAsyncComponent` for charts; `lodash-es` or native; kill barrels; visualizer to find the real offender; image/font work in 9.2.4.",
+              "vi": "**Solution:** Route split; `defineAsyncComponent` cho chart; `lodash-es` hoặc native; giết barrel; visualizer để tìm thủ phạm thật; việc ảnh/font ở 9.2.4."
+            },
+            {
+              "en": "**Result (illustrative):** Main chunk 3 MB → ~900 KB, LCP 4 s → ~1.2 s on a lab mid-tier profile. **Verify** with transfer size per route and field LCP, not only gzipped “bundle” marketing numbers.",
+              "vi": "**Result (minh họa):** Main chunk 3 MB → ~900 KB, LCP 4 s → ~1.2 s trên lab profile mid-tier. **Verify** bằng transfer size mỗi route và field LCP, không chỉ số “bundle” gzip marketing."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**Case 4 — Reactivity over-invalidating**",
+            "vi": "**Case 4 — Reactivity invalidate quá đà**"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Problem:** Typing in a filter re-renders a dashboard of unrelated widgets.",
+              "vi": "**Problem:** Gõ filter re-render dashboard widget không liên quan."
+            },
+            {
+              "en": "**Cause:** Fat global store; passing new object identity each time; `watch` on a giant `reactive` document; (React) unstable context value.",
+              "vi": "**Cause:** Global store béo; pass object identity mới mỗi lần; `watch` trên `reactive` document khổng lồ; (React) context value không ổn định."
+            },
+            {
+              "en": "**Solution:** Colocate state. Split stores. `shallowRef` for read-mostly blobs. Pass primitives. Profile before `v-memo` / `React.memo`.",
+              "vi": "**Solution:** Colocate state. Tách store. `shallowRef` cho blob read-mostly. Pass primitive. Profile trước `v-memo` / `React.memo`."
+            },
+            {
+              "en": "**Result (illustrative):** ~70% fewer component updates on keypress; INP processing time down. **Verify** with Vue/React profiler + INP breakdown.",
+              "vi": "**Result (minh họa):** ~70% ít component update lúc gõ; thời gian processing INP giảm. **Verify** bằng Vue/React profiler + breakdown INP."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**Case 5 — SSR hydration mismatch**",
+            "vi": "**Case 5 — SSR hydration mismatch**"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "**Problem:** “Hydration node mismatch,” flash/jump, CLS spike.",
+              "vi": "**Problem:** “Hydration node mismatch,” flash/jump, CLS spike."
+            },
+            {
+              "en": "**Cause:** `Date.now()` / `Math.random()` / locale in render; client-only markup in SSR HTML; auth-gated UI rendered differently on server vs first client paint.",
+              "vi": "**Cause:** `Date.now()` / `Math.random()` / locale trong render; markup client-only trong SSR HTML; UI gated auth render khác server vs first client paint."
+            },
+            {
+              "en": "**Solution:** Stable IDs. `<ClientOnly>` / `ClientOnly` for truly browser-only UI. Same data on server and client (`useAsyncData` payload). Format dates with an explicit timezone after mount if they must be local.",
+              "vi": "**Solution:** ID ổn định. `<ClientOnly>` / `ClientOnly` cho UI thật sự browser-only. Cùng data server và client (payload `useAsyncData`). Format date với timezone tường minh sau mount nếu phải local."
+            },
+            {
+              "en": "**Result:** Warnings gone; CLS/LCP stop taking a layout hit from re-render. **Verify** with hydration logs in staging and CLS traces, not “console is clean on my machine.”",
+              "vi": "**Result:** Warning biến; CLS/LCP thôi ăn layout hit vì re-render. **Verify** bằng hydration log trên staging và CLS trace, không “console sạch trên máy tôi.”"
+            }
+          ]
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "9.2. Advanced Optimization",
+            "vi": "9.2. Advanced Optimization"
+          },
+          "id": {
+            "en": "92-advanced-optimization",
+            "vi": "92-advanced-optimization"
+          }
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "9.2.1. Code Splitting Strategies",
+            "vi": "9.2.1. Code Splitting Strategies"
+          },
+          "id": {
+            "en": "921-code-splitting-strategies",
+            "vi": "921-code-splitting-strategies"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- Route vs component vs vendor split; prefetch; what the user sees while the chunk loads.",
+            "vi": "- Split route vs component vs vendor; prefetch; user thấy gì trong lúc chunk load."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** **Route-level split by default** (Vue Router `() => import()`, Nuxt pages, Next `app/` segments). **Component split** heavy, below-the-fold, or rare widgets (charts, editors, admin). **Vendor split** only when a cacheable shared chunk actually helps (a stable `vue`+`pinia` chunk) — not a 40-vendor spaghetti graph. **Prefetch** the next likely route after idle (`router` prefetch / `<Link prefetch>` in Next) when bandwidth is not the constraint.\n- **Constraint:** Each extra chunk is a request and a loading state you must design. HTTP/2 helps; 80 tiny chunks on 3G still hurt. SSR must know what to inline vs defer.\n- **Failure mode:** Splitting a 2 KB button. Not splitting a 400 KB markdown editor on every page. Prefetching the entire admin on a marketing landing page. Blank screen with no skeleton (feels slower than a bigger bundle).\n- **Measure:** JS bytes **per route**, LCP/INP per landing, chunk waterfall, cache hit rate on vendor hashes after deploys.\n\n```ts\nconst routes = [\n  { path: \"/\", component: () => import(\"@/pages/Home.vue\") },\n  { path: \"/dashboard\", component: () => import(\"@/pages/Dashboard.vue\") },\n];\n```\n\n```vue\n<script setup lang=\"ts\">\nimport { defineAsyncComponent } from \"vue\";\n\nconst HeavyChart = defineAsyncComponent({\n  loader: () => import(\"@/components/HeavyChart.vue\"),\n  delay: 150,\n  timeout: 15_000,\n});\n</script>\n\n<template>\n  <Suspense>\n    <HeavyChart />\n    <template #fallback>\n      <div class=\"chart-skeleton\" aria-busy=\"true\">Loading chart</div>\n    </template>\n  </Suspense>\n</template>\n```\n\n**Loading UX** is part of the split: skeleton with reserved height (CLS), `aria-busy`, timeout + retry, not a spinner that jumps the page.",
+            "vi": "- **Quyết định:** **Split theo route làm default** (Vue Router `() => import()`, Nuxt pages, Next `app/` segment). **Split component** widget nặng, below-the-fold, hoặc hiếm (chart, editor, admin). **Split vendor** chỉ khi shared chunk cacheable thực sự giúp (chunk `vue`+`pinia` ổn định) — không đồ spaghetti 40 vendor. **Prefetch** route kế tiếp có khả năng sau idle (`router` prefetch / `<Link prefetch>` trên Next) khi bandwidth không phải constraint.\n- **Ràng buộc:** Mỗi chunk thêm là một request và loading state bạn phải thiết kế. HTTP/2 giúp; 80 chunk tí hon trên 3G vẫn đau. SSR phải biết cái gì inline vs defer.\n- **Failure mode:** Split button 2 KB. Không split markdown editor 400 KB trên mọi page. Prefetch cả admin trên landing marketing. Màn trắng không skeleton (cảm giác chậm hơn bundle lớn hơn).\n- **Đo:** Byte JS **mỗi route**, LCP/INP mỗi landing, waterfall chunk, cache hit rate trên vendor hash sau deploy.\n\n```ts\nconst routes = [\n  { path: \"/\", component: () => import(\"@/pages/Home.vue\") },\n  { path: \"/dashboard\", component: () => import(\"@/pages/Dashboard.vue\") },\n];\n```\n\n```vue\n<script setup lang=\"ts\">\nimport { defineAsyncComponent } from \"vue\";\n\nconst HeavyChart = defineAsyncComponent({\n  loader: () => import(\"@/components/HeavyChart.vue\"),\n  delay: 150,\n  timeout: 15_000,\n});\n</script>\n\n<template>\n  <Suspense>\n    <HeavyChart />\n    <template #fallback>\n      <div class=\"chart-skeleton\" aria-busy=\"true\">Loading chart</div>\n    </template>\n  </Suspense>\n</template>\n```\n\n**Loading UX** là một phần của split: skeleton với height dành sẵn (CLS), `aria-busy`, timeout + retry, không spinner làm nhảy page."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "| Split | Good for | Cost |\n| --- | --- | --- |\n| Route | Pages users do not always visit | Waterfall on first navigation |\n| Component | Optional widgets | Suspense/skeleton design |\n| Vendor | Long-cache shared runtime | Stale hashing, over-splitting |",
+            "vi": "| Split | Tốt cho | Cost |\n| --- | --- | --- |\n| Route | Page user không phải lúc nào cũng vào | Waterfall lần navigate đầu |\n| Component | Widget tùy chọn | Thiết kế Suspense/skeleton |\n| Vendor | Runtime share cache lâu | Hash stale, over-split |"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Magic comments (`webpackChunkName`) vs Vite’s hashed names — do not copy Webpack folklore blindly.\n- Prefetch on `saveData` / slow networks should back off.\n- Nuxt/Next both auto-split routes; **manually** importing a page into `main` undoes it.",
+            "vi": "- Magic comment (`webpackChunkName`) vs tên hash của Vite — đừng copy folklore Webpack mù.\n- Prefetch trên `saveData` / mạng chậm nên back off.\n- Nuxt/Next đều auto-split route; **import tay** một page vào `main` là hoàn tác."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How do you split a design system? (Do not put the whole DS in the app entry; import per component, watch barrels — 9.2.2.)\n- Module federation vs split? (Org/team boundary, not a perf first move.)",
+            "vi": "- Split design system thế nào? (Đừng nhét cả DS vào app entry; import từng component, coi barrel — 9.2.2.)\n- Module federation vs split? (Ranh giới org/team, không phải nước cờ perf đầu.)"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "9.2.2. Tree Shaking",
+            "vi": "9.2.2. Tree Shaking"
+          },
+          "id": {
+            "en": "922-tree-shaking",
+            "vi": "922-tree-shaking"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- Why is `lodash` in the bundle if you imported one function?\n- What does `sideEffects` do?",
+            "vi": "- Sao `lodash` vẫn trong bundle nếu bạn import một function?\n- `sideEffects` làm gì?"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** ESM + `sideEffects: false` (or a precise glob) lets Rollup/Vite drop unused exports. Import **leaf modules**, not barrels. Prefer **native** (`Array.toSorted`, `structuredClone`) then `lodash-es` per-function, never default `lodash`.\n- **Constraint:** Tree shaking only sees static ESM. CJS, dynamic `import(variable)`, and files with unmarked side effects stay. Vue SFCs with CSS side effects need accurate `sideEffects`.\n- **Failure mode:** A design-system barrel that re-exports every component from one `index`. An `index.ts` that imports every icon. `sideEffects: false` on a package whose CSS is imported as a side effect — production loses styles.\n- **Measure:** Visualizer before/after. Fail CI if a forbidden package appears in the main chunk.\n\n```ts\n// Decision: named ESM path, not the CJS barrel\nimport debounce from \"lodash-es/debounce\";\n```\n\n```json\n{\n  \"sideEffects\": [\"**/*.css\", \"**/*.vue\"]\n}\n```\n\nA library of pure `ts` utilities can use `\"sideEffects\": false`. A Vue component library usually cannot.\n\n**lodash vs lodash-es vs native**\n\n- `lodash` (CJS): often **not** shaken; pulls large graphs.\n- `lodash-es`: ESM, per-file imports shake — still heavier than native.\n- Native: zero bytes, but check the baseline (your actual browsers, not only “ES2023 on my laptop”).",
+            "vi": "- **Quyết định:** ESM + `sideEffects: false` (hoặc glob chính xác) để Rollup/Vite drop export không dùng. Import **leaf module**, không barrel. Prefer **native** (`Array.toSorted`, `structuredClone`) rồi `lodash-es` từng function, không default `lodash`.\n- **Ràng buộc:** Tree shaking chỉ thấy ESM tĩnh. CJS, `import(variable)` động, và file side effect không đánh dấu thì ở lại. SFC Vue có CSS side effect cần `sideEffects` đúng.\n- **Failure mode:** Barrel design-system re-export mọi component từ một `index`. Barrel `index.ts` import mọi icon. `sideEffects: false` trên package mà CSS được import như side effect — production mất style.\n- **Đo:** Visualizer trước/sau. Fail CI nếu package cấm xuất hiện trong main chunk.\n\n```ts\n// Decision: named ESM path, not the CJS barrel\nimport debounce from \"lodash-es/debounce\";\n```\n\n```json\n{\n  \"sideEffects\": [\"**/*.css\", \"**/*.vue\"]\n}\n```\n\nLibrary utility `ts` thuần có thể `\"sideEffects\": false`. Vue component library thì thường không.\n\n**lodash vs lodash-es vs native**\n\n- `lodash` (CJS): thường **không** shake; kéo graph lớn.\n- `lodash-es`: ESM, import theo file thì shake — vẫn nặng hơn native.\n- Native: zero byte, nhưng check baseline (browser thật, không chỉ “ES2023 trên laptop tôi”)."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Micro-imports (`lodash-es/get`) vs one well-shaken `radash` — measure, do not ideology.\n- Forbidding barrels vs DX. Some teams `eslint-plugin-import` ban `antd` / `@mui` root imports; same idea for an internal DS.",
+            "vi": "- Micro-import (`lodash-es/get`) vs một `radash` shake tốt — đo, đừng ý thức hệ.\n- Cấm barrel vs DX. Một số team `eslint-plugin-import` cấm root import `antd` / `@mui`; cùng ý cho DS nội bộ."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Re-exporting a component from `index.ts` **and** running its `console.log` / CSS import at load time.\n- Moment.js / full icon packs. `import { Foo } from '@icons'` pulling 1k SVG components.\n- Nuxt auto-import can hide a heavy import in a composable used on the home page.",
+            "vi": "- Re-export component từ `index.ts` **và** chạy `console.log` / CSS import lúc load.\n- Moment.js / full icon pack. `import { Foo } from '@icons'` kéo 1k SVG component.\n- Nuxt auto-import có thể giấu import nặng trong composable dùng trên home."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How do you tree-shake a Vue plugin that `app.use`s everything? (You don’t — split plugins or tree-shakeable `import { createX }`).\n- `pure` annotations / `#__PURE__` — compiler hint, not a substitute for clean ESM.",
+            "vi": "- Tree-shake Vue plugin `app.use` mọi thứ thế nào? (Không được — tách plugin hoặc `import { createX }` tree-shakeable.)\n- Annotation `pure` / `#__PURE__` — gợi ý compiler, không thay ESM sạch."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "9.2.3. Debounce vs Throttle",
+            "vi": "9.2.3. Debounce vs Throttle"
+          },
+          "id": {
+            "en": "923-debounce-vs-throttle",
+            "vi": "923-debounce-vs-throttle"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- Difference; leading vs trailing; search boxes that race.",
+            "vi": "- Khác nhau; leading vs trailing; search box đua nhau."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** **Debounce** when you care about the **quiet period** (search, resize-end, form validate-after-pause). **Throttle** when you need **regular samples** during a stream (scroll position, drag). For search: debounce the request **and abort in-flight** so a slow older response cannot overwrite a newer query. Prefer VueUse (`useDebounceFn`, `useThrottleFn`, `watchDebounced`) over a hand-rolled closure you will get wrong under unmount.\n- **Constraint:** Debounce adds latency (the delay is UX). Throttle can skip the **last** event unless you trailing-call. Both must cancel on unmount.\n- **Failure mode:** Debouncing the **input value** so the field lags. Not aborting: “s” finishes after “sql” and the list flashes the wrong results. Leading-edge throttle that never fires on the last scroll position. Fake timers not used in tests (8.1).\n- **Measure:** Extra requests per session, INP on keypress (debounce work must leave the keystroke cheap), race incidents in logs.\n\n| Event | Default | Notes |\n| --- | --- | --- |\n| Typeahead search | Debounce **trailing** 200–400 ms + abort | Leading only if you want an immediate first hit |\n| Window resize | Debounce trailing, or `ResizeObserver` | Throttle if you paint during resize |\n| Scroll spy | Throttle / rAF | Trailing so the end state is correct |\n| Drag / pointermove | Throttle to rAF |  |\n| Autosave | Debounce trailing | Flush on `visibilitychange` / unmount |\n\n```ts\nimport { watchDebounced } from \"@vueuse/core\";\n\nwatchDebounced(\n  query,\n  async (q, _prev, onCleanup) => {\n    const ac = new AbortController();\n    onCleanup(() => ac.abort());\n    results.value = await searchCatalog(q, { signal: ac.signal });\n  },\n  { debounce: 300 }\n);\n```\n\n**Leading vs trailing**\n\n- **Trailing:** fire after silence (search).\n- **Leading:** fire immediately, then ignore (prevent double-submit).\n- **Both:** first click pays, last event also pays (some resize cases). VueUse exposes this; a one-liner `setTimeout` does not.",
+            "vi": "- **Quyết định:** **Debounce** khi bạn quan tâm **khoảng im** (search, hết resize, validate form sau pause). **Throttle** khi cần **sample đều** trong một stream (vị trí scroll, drag). Search: debounce request **và abort in-flight** để response cũ chậm không ghi đè query mới. Prefer VueUse (`useDebounceFn`, `useThrottleFn`, `watchDebounced`) hơn closure tự viết sẽ sai lúc unmount.\n- **Ràng buộc:** Debounce thêm latency (delay chính là UX). Throttle có thể skip event **cuối** trừ khi trailing-call. Cả hai phải cancel lúc unmount.\n- **Failure mode:** Debounce **giá trị input** khiến field lag. Không abort: “s” xong sau “sql” và list flash kết quả sai. Leading-edge throttle không bao giờ fire vị trí scroll cuối. Test không dùng fake timer (8.1).\n- **Đo:** Request thừa mỗi session, INP lúc gõ (việc debounce phải để keystroke rẻ), incident race trong log.\n\n| Event | Default | Notes |\n| --- | --- | --- |\n| Typeahead search | Debounce **trailing** 200–400 ms + abort | Leading chỉ khi muốn hit đầu ngay |\n| Window resize | Debounce trailing, hoặc `ResizeObserver` | Throttle nếu paint trong lúc resize |\n| Scroll spy | Throttle / rAF | Trailing để end state đúng |\n| Drag / pointermove | Throttle theo rAF |  |\n| Autosave | Debounce trailing | Flush lúc `visibilitychange` / unmount |\n\n```ts\nimport { watchDebounced } from \"@vueuse/core\";\n\nwatchDebounced(\n  query,\n  async (q, _prev, onCleanup) => {\n    const ac = new AbortController();\n    onCleanup(() => ac.abort());\n    results.value = await searchCatalog(q, { signal: ac.signal });\n  },\n  { debounce: 300 }\n);\n```\n\n**Leading vs trailing**\n\n- **Trailing:** fire sau im lặng (search).\n- **Leading:** fire ngay, rồi ignore (chặn double-submit).\n- **Both:** click đầu trả, event cuối cũng trả (một số case resize). VueUse expose cái này; `setTimeout` một dòng thì không."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- 300 ms debounce vs “feels dead.” Tune with analytics on abandoned searches, not cargo cult.\n- Throttle vs `requestAnimationFrame`: rAF is the right throttle for visual follow.",
+            "vi": "- Debounce 300 ms vs “cảm giác chết.” Tune bằng analytics search bỏ dở, không cargo cult.\n- Throttle vs `requestAnimationFrame`: rAF là throttle đúng cho follow visual."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- VueUse vs lodash: lodash debounce has `cancel`/`flush` — you must call `cancel` in `onUnmounted`. VueUse ties to owner scope if you use the composable form.\n- Server still needs rate limits; debounce is not a security control.\n- IME composition (CJK): do not search mid-composition; watch `isComposing`.",
+            "vi": "- VueUse vs lodash: lodash debounce có `cancel`/`flush` — phải gọi `cancel` trong `onUnmounted`. VueUse gắn owner scope nếu dùng dạng composable.\n- Server vẫn cần rate limit; debounce không phải security control.\n- IME composition (CJK): đừng search giữa composition; watch `isComposing`."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How do you test it? (Fake timers + MSW; assert abort.)\n- Distinct from **request coalescing** (TanStack Query) — you often want both.",
+            "vi": "- Test thế nào? (Fake timer + MSW; assert abort.)\n- Khác **request coalescing** (TanStack Query) — thường muốn cả hai."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "9.2.4. Image & Font Optimization",
+            "vi": "9.2.4. Image & Font Optimization"
+          },
+          "id": {
+            "en": "924-image-font-optimization",
+            "vi": "924-image-font-optimization"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- CLS from images/fonts; LCP image; `font-display`; Nuxt Image.",
+            "vi": "- CLS từ ảnh/font; ảnh LCP; `font-display`; Nuxt Image."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** Give **every image width/height (or aspect-ratio)** so CLS is zero. The **LCP image** is not `loading=\"lazy\"` — it is **priority** (`fetchpriority=\"high\"`, NuxtImg `preload` / `priority`, Next `priority`). Modern formats (AVIF/WebP) with a fallback. Fonts: **subset**, `font-display: optional` or `swap` with a close fallback metric, preload **one** critical family. Prefer **NuxtImg / `ipx`** (or Next `Image`) over hand-rolled `picture` on every page.\n- **Constraint:** CDN/image optimizer must exist in prod; local PNG in `/public` bypasses it. Preloading three font files fights LCP.\n- **Failure mode:** Lazy-loading the hero. Web fonts that swap late (CLS + FOIT). Unsized banners injected by CMP. 4× retina assets without `sizes`.\n- **Measure:** LCP element in traces (is it the hero image?). CLS attribution (was it a font or a late ad?). Bytes on the LCP request.\n\n```vue\n<NuxtImg\n  src=\"/hero.jpg\"\n  width=\"1200\"\n  height=\"630\"\n  format=\"webp\"\n  densities=\"1 2\"\n  sizes=\"100vw\"\n  preload\n  alt=\"Product hero\"\n/>\n```\n\nDo **not** `loading=\"lazy\"` that hero. Below-the-fold images: lazy + `decoding=\"async\"`.\n\n```css\n@font-face {\n  font-family: InterVar;\n  src: url(\"/fonts/inter-subset.woff2\") format(\"woff2\");\n  font-display: optional;\n  unicode-range: U+0000-00FF;\n}\n```",
+            "vi": "- **Quyết định:** Cho **mọi ảnh width/height (hoặc aspect-ratio)** để CLS bằng không. **Ảnh LCP** không `loading=\"lazy\"` — nó là **priority** (`fetchpriority=\"high\"`, NuxtImg `preload` / `priority`, Next `priority`). Format hiện đại (AVIF/WebP) có fallback. Font: **subset**, `font-display: optional` hoặc `swap` với fallback metric gần, preload **một** family critical. Prefer **NuxtImg / `ipx`** (hoặc Next `Image`) hơn `picture` viết tay mọi page.\n- **Ràng buộc:** CDN/image optimizer phải tồn tại trên prod; PNG local trong `/public` bypass nó. Preload ba file font đánh LCP.\n- **Failure mode:** Lazy-load hero. Web font swap muộn (CLS + FOIT). Banner không size do CMP inject. Asset retina 4× không có `sizes`.\n- **Đo:** Element LCP trong trace (có phải hero image?). Attribution CLS (font hay ad muộn?). Byte trên request LCP.\n\n```vue\n<NuxtImg\n  src=\"/hero.jpg\"\n  width=\"1200\"\n  height=\"630\"\n  format=\"webp\"\n  densities=\"1 2\"\n  sizes=\"100vw\"\n  preload\n  alt=\"Product hero\"\n/>\n```\n\n**Đừng** `loading=\"lazy\"` hero đó. Ảnh below-the-fold: lazy + `decoding=\"async\"`.\n\n```css\n@font-face {\n  font-family: InterVar;\n  src: url(\"/fonts/inter-subset.woff2\") format(\"woff2\");\n  font-display: optional;\n  unicode-range: U+0000-00FF;\n}\n```"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- `font-display: swap` → fast text, possible CLS. `optional` → no late swap, may stay system font on slow networks (often the senior choice for body text).\n- AVIF: smaller, slower encode, some old WebViews struggle — always fallback.",
+            "vi": "- `font-display: swap` → text nhanh, có thể CLS. `optional` → không swap muộn, có thể kẹt system font trên mạng chậm (thường là lựa chọn senior cho body text).\n- AVIF: nhỏ hơn, encode chậm, một số WebView cũ khổ — luôn fallback."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- CLS from **cookies banner / top alert** after hydration — reserve height or accept the CWV hit in the product decision.\n- SVG icons inlined vs sprite vs URL — inlining a 200-path illustration in the LCP HTML is a trap.\n- `background-image` cannot be LCP-priority’d as easily as `<img>`; prefer real `<img>` for heroes.\n- Next/Nuxt image domains allowlist: missing remote patterns break prod images only.",
+            "vi": "- CLS từ **cookies banner / top alert** sau hydration — dành height hoặc chấp nhận hit CWV trong quyết định product.\n- SVG icon inline vs sprite vs URL — inline illustration 200-path trong HTML LCP là bẫy.\n- `background-image` không dễ LCP-priority như `<img>`; prefer `<img>` thật cho hero.\n- Allowlist domain ảnh Next/Nuxt: thiếu remote pattern gãy ảnh **chỉ** trên prod."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- How do you handle art direction? (`<picture>` / NuxtImg `sizes` + densities.)\n- Third-party images (UGC): constrain max dimensions on the optimizer or one 20 MB upload nukes LCP.",
+            "vi": "- Art direction thế nào? (`<picture>` / NuxtImg `sizes` + densities.)\n- Ảnh third-party (UGC): constrain max dimension trên optimizer không thì một upload 20 MB hủy LCP."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": {
+            "en": "9.2.5. Core Web Vitals in 2026",
+            "vi": "9.2.5. Core Web Vitals năm 2026"
+          },
+          "id": {
+            "en": "925-core-web-vitals-in-2026",
+            "vi": "925-core-web-vitals-nam-2026"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What they actually ask",
+            "vi": "Họ thực sự hỏi gì"
+          },
+          "text": {
+            "en": "- “What are Core Web Vitals now?”\n- “FID vs INP?”\n- How would you debug a regression?",
+            "vi": "- “Core Web Vitals bây giờ là gì?”\n- “FID vs INP?”\n- Debug regression thế nào?"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How a senior answers",
+            "vi": "Cách senior trả lời"
+          },
+          "text": {
+            "en": "- **Decision:** The field vitals that matter in 2026 are **LCP, INP, and CLS**. **INP replaced FID** (FID is historical trivia). Debug with **field data first** (CrUX, RUM with `web-vitals` attribution), then **lab** (Lighthouse, Performance panel, throttled CPU) to reproduce. Fix the element/task the attribution points at — not a random `v-once`.\n- **Constraint:** Lab is a phone-shaped desktop. Field includes mid-tier Android, 4G, extensions, CMP, and A/B flags. A perfect Lighthouse 100 with bad p75 INP means you optimized the wrong thing.\n- **Failure mode:** Reporting FID in 2026. Chasing TBT in lab while INP is a single slow click handler. “We improved LCP” by lazy-loading the hero (you made it worse). Ignoring TTFB because “frontend-only.”\n- **Measure:** p75 per vital per **route template**, mobile vs desktop, with and without the CMP. Budget: e.g. LCP < 2.5 s, INP < 200 ms, CLS < 0.1 — as **field p75**, not a local run.\n\n**The three vitals**\n\n| Vital | What it captures | Typical frontend causes | Senior debug |\n| --- | --- | --- | --- |\n| **LCP** | When the largest hero (image/text) paints | Slow TTFB, unoptimized hero, waiting on JS/CSS, lazy hero, font delay | Performance: LCP marker; Resource Timing; is LCP the `<img>`, `<h1>`, or a late banner? Priority hints, SSR HTML, preload **that** asset |\n| **INP** | Worst (almost) interaction latency | Long tasks, huge listeners, sync rendering on input, third-party, hydration | Event Timing / LoAF; INP breakdown (input delay vs processing vs presentation); Vue profiler on the click; split long tasks (`scheduler.yield`) |\n| **CLS** | Unexpected layout shift | Unsized media, late fonts, injected ads/banners, hydration swap | Layout Shift Regions; which node? Reserve space; `font-display`; do not insert above existing content |\n\n**How a senior debugs (playbook)**\n\n1. **Confirm it is real:** RUM p75 for the route, last 28 days, mobile. Segment by country/device if needed.\n1. **Attribute:** `web-vitals` `{attribution: true}` — LCP element, INP event target and next paint, CLS largest shift node.\n1. **Reproduce in lab** with 4× CPU throttle + slow 4G. If you cannot, it is likely a field-only third party — still your problem if it is on the page.\n1. **Change one lever**, ship behind a flag, watch the same RUM board. Traces or it did not happen.\n\n**Vue / Nuxt notes**\n\n- Hydration is INP: the first click during hydrate competes with Vue. Reduce island size; delay non-critical plugins.\n- Giant `reactive` stores make processing time explode on input — Case 4.\n- Route changes: LCP restarts; announce and manage focus (a11y) without adding CLS.",
+            "vi": "- **Quyết định:** Field vital quan trọng năm 2026 là **LCP, INP, và CLS**. **INP thay FID** (FID là trivia lịch sử). Debug **field data trước** (CrUX, RUM với attribution `web-vitals`), rồi **lab** (Lighthouse, Performance panel, CPU throttle) để reproduce. Fix element/task mà attribution chỉ — không `v-once` ngẫu nhiên.\n- **Ràng buộc:** Lab là desktop hình điện thoại. Field gồm Android mid-tier, 4G, extension, CMP, và flag A/B. Lighthouse 100 hoàn hảo với p75 INP xấu nghĩa bạn tối ưu nhầm thứ.\n- **Failure mode:** Báo FID năm 2026. Đuổi TBT trên lab trong khi INP là một click handler chậm. “Cải thiện LCP” bằng lazy-load hero (bạn làm tệ hơn). Bỏ TTFB vì “chỉ frontend.”\n- **Đo:** p75 mỗi vital mỗi **route template**, mobile vs desktop, có và không CMP. Budget: ví dụ LCP < 2.5 s, INP < 200 ms, CLS < 0.1 — là **field p75**, không run local.\n\n**Ba vital**\n\n| Vital | Nó bắt | Typical frontend cause | Debug senior |\n| --- | --- | --- | --- |\n| **LCP** | Khi hero lớn nhất (ảnh/text) paint | TTFB chậm, hero chưa tối ưu, chờ JS/CSS, lazy hero, font trễ | Performance: marker LCP; Resource Timing; LCP là `<img>`, `<h1>`, hay banner muộn? Priority hint, SSR HTML, preload **đúng** asset đó |\n| **INP** | Latency tương tác tệ nhất (gần như) | Long task, listener khổng lồ, render sync lúc input, third-party, hydration | Event Timing / LoAF; breakdown INP (input delay vs processing vs presentation); Vue profiler lúc click; tách long task (`scheduler.yield`) |\n| **CLS** | Layout shift bất ngờ | Media không size, font muộn, ad/banner inject, hydration swap | Layout Shift Regions; node nào? Dành chỗ; `font-display`; đừng chèn phía trên nội dung sẵn có |\n\n**Cách senior debug (playbook)**\n\n1. **Xác nhận thật:** RUM p75 của route, 28 ngày gần, mobile. Segment country/device nếu cần.\n1. **Attribute:** `web-vitals` `{attribution: true}` — element LCP, INP event target và next paint, node shift CLS lớn nhất.\n1. **Reproduce lab** với CPU throttle 4× + 4G chậm. Không được thì khả năng third-party chỉ trên field — vẫn là vấn đề của bạn nếu nó nằm trên page.\n1. **Đổi một đòn bẩy**, ship sau flag, nhìn cùng board RUM. Có trace hoặc nó không xảy ra.\n\n**Ghi chú Vue / Nuxt**\n\n- Hydration là INP: click đầu lúc hydrate cạnh tranh với Vue. Giảm island; delay plugin không critical.\n- Store `reactive` khổng lồ làm processing time nổ lúc input — Case 4.\n- Đổi route: LCP restart; announce và quản lý focus (a11y) mà không thêm CLS."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Tradeoffs",
+            "vi": "Tradeoff"
+          },
+          "text": {
+            "en": "- Preload everything → fights LCP bandwidth. Preload **the** LCP image + critical CSS.\n- Aggressive third-party wrappers (tag manager) vs marketing. Make the cost visible in RUM or you will lose the argument.",
+            "vi": "- Preload mọi thứ → đánh bandwidth LCP. Preload **đúng** ảnh LCP + critical CSS.\n- Wrapper third-party hung hãn (tag manager) vs marketing. Làm cost hiện trên RUM không thì bạn thua tranh luận."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Production gotchas",
+            "vi": "Gotcha production"
+          },
+          "text": {
+            "en": "- Single-page navigations: still measure; soft-nav CWV support is evolving — know what your RUM vendor actually records.\n- bfcache restores can look like “instant LCP” — do not mix them blindly into averages.\n- INP is **interaction** latency, not “page is busy on load.” A quiet page with a 400 ms Pay click still fails.",
+            "vi": "- Navigate SPA: vẫn đo; hỗ trợ soft-nav CWV đang tiến hóa — biết RUM vendor thực sự ghi gì.\n- Restore bfcache trông như “LCP tức thì” — đừng trộn mù vào average.\n- INP là latency **tương tác**, không “page bận lúc load.” Page im với click Pay 400 ms vẫn fail."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Follow-ups",
+            "vi": "Câu hỏi nối"
+          },
+          "text": {
+            "en": "- What replaced FID and why? (FID only measured the first interaction’s delay, not processing; INP observes throughout the session.)\n- How do you debug INP in Safari vs Chrome? (Chrome has LoAF + rich Performance; Safari is weaker — lean on field + simpler profiles.)",
+            "vi": "- Cái gì thay FID và vì sao? (FID chỉ đo delay tương tác đầu, không đo processing; INP quan sát suốt session.)\n- Debug INP Safari vs Chrome thế nào? (Chrome có LoAF + Performance giàu; Safari yếu hơn — dựa field + profile đơn giản hơn.)"
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "[← Back to Overview](../../README-en.md)",
+            "vi": "[← Back to Overview](../../README.md)"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,436 @@
+{
+  "kind": "plan-day",
+  "day": 22,
+  "date": "24/10/2026",
+  "week": 4,
+  "title": {
+    "en": "Design an admin dashboard",
+    "vi": "Thiết kế một admin dashboard"
+  },
+  "goal": {
+    "en": "Move up one level: orchestrate APIs, loading behavior, failure isolation, and observability for a real frontend surface.",
+    "vi": "Nâng lên một mức: điều phối API, loading behavior, cô lập lỗi và observability cho một bề mặt frontend thật."
+  },
+  "studyLinks": [
+    {
+      "kind": "docs",
+      "slug": "system-design",
+      "label": {
+        "en": "System design notes",
+        "vi": "Tài liệu system design"
+      }
+    },
+    {
+      "kind": "docs",
+      "slug": "architecture",
+      "label": {
+        "en": "Architecture notes",
+        "vi": "Tài liệu architecture"
+      }
+    },
+    {
+      "kind": "docs",
+      "slug": "monitoring",
+      "label": {
+        "en": "Monitoring notes",
+        "vi": "Tài liệu monitoring"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "dashboard-15-apis",
+      "label": {
+        "en": "Dashboard with 15 APIs",
+        "vi": "Dashboard gọi 15 API"
+      }
+    },
+    {
+      "id": "bff-when",
+      "label": {
+        "en": "When to introduce a BFF",
+        "vi": "Khi nào nên thêm BFF"
+      }
+    },
+    {
+      "id": "adr-when-you-write-one",
+      "label": {
+        "en": "When to write an ADR",
+        "vi": "Khi nào viết ADR"
+      }
+    }
+  ],
+  "handsOn": [
+    {
+      "en": "Take one admin/dashboard idea and outline widgets, API dependencies, failure boundaries, and which data can arrive progressively.",
+      "vi": "Chọn một ý tưởng admin/dashboard và vẽ ra widget, phụ thuộc API, boundary của lỗi và phần data nào có thể hiện dần."
+    },
+    {
+      "en": "State whether a BFF is justified or whether better API contracts are enough.",
+      "vi": "Kết luận xem có cần BFF thật hay chỉ cần API contract tốt hơn là đủ."
+    }
+  ],
+  "algorithm": {
+    "resourceId": "algo-day-22",
+    "path": "artifacts/algo/problems/day-22.md",
+    "label": {
+      "en": "House Robber · DP 1D",
+      "vi": "House Robber · DP 1D"
+    }
+  },
+  "checklist": [
+    {
+      "en": "The dashboard plan separates architecture from UX behavior.",
+      "vi": "Kế hoạch dashboard đã tách rõ kiến trúc với hành vi UX."
+    },
+    {
+      "en": "There is a clear opinion on BFF vs direct APIs.",
+      "vi": "Đã có quan điểm rõ về BFF so với gọi API trực tiếp."
+    },
+    {
+      "en": "Algo is done and the rolling-DP idea is clear.",
+      "vi": "Bài algo xong và hiểu được ý tưởng DP cuộn."
+    }
+  ],
+  "lab": {
+    "resourceId": "lab-day-22",
+    "title": {
+      "en": "Day 22 — Lab",
+      "vi": "Day 22 — Lab"
+    },
+    "sections": [
+      {
+        "id": {
+          "en": "intro",
+          "vi": "intro"
+        },
+        "title": {
+          "en": "Day 22 — Lab",
+          "vi": "Day 22 — Lab"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 1,
+            "text": {
+              "en": "Day 22 — Lab",
+              "vi": "Day 22 — Lab"
+            },
+            "id": {
+              "en": "day-22-lab",
+              "vi": "day-22-lab"
+            }
+          },
+          {
+            "type": "callout",
+            "kind": "quote",
+            "text": {
+              "en": "Timebox 45-60 minutes. Interview drill, not a product build.",
+              "vi": "Timebox 45-60 phút. Drill phỏng vấn, không phải dựng sản phẩm."
+            }
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "what-they-will-ask",
+          "vi": "ho-se-hoi-gi"
+        },
+        "title": {
+          "en": "What they will ask",
+          "vi": "Họ sẽ hỏi gì"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "What they will ask",
+              "vi": "Họ sẽ hỏi gì"
+            },
+            "id": {
+              "en": "what-they-will-ask",
+              "vi": "ho-se-hoi-gi"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Design a dashboard that calls 15 APIs. What loads first, what fails independently, and do you need a BFF? What would you watch in production?",
+              "vi": "Thiết kế dashboard gọi 15 API. Cái gì load trước, cái gì fail độc lập, và có cần BFF không? Bạn sẽ watch gì trên production?"
+            }
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "what-you-will-produce",
+          "vi": "ban-se-produce-gi"
+        },
+        "title": {
+          "en": "What you will produce",
+          "vi": "Bạn sẽ produce gì"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "What you will produce",
+              "vi": "Bạn sẽ produce gì"
+            },
+            "id": {
+              "en": "what-you-will-produce",
+              "vi": "ban-se-produce-gi"
+            }
+          },
+          {
+            "type": "list",
+            "style": "ul",
+            "items": [
+              {
+                "en": "Take one admin/dashboard idea and outline widgets, API dependencies, failure boundaries, and which data can arrive progressively.",
+                "vi": "Chọn một ý tưởng admin/dashboard và vẽ ra widget, phụ thuộc API, boundary của lỗi và phần data nào có thể hiện dần."
+              },
+              {
+                "en": "State whether a BFF is justified or whether better API contracts are enough.",
+                "vi": "Kết luận xem có cần BFF thật hay chỉ cần API contract tốt hơn là đủ."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "how-a-senior-works-this",
+          "vi": "senior-lam-the-nao"
+        },
+        "title": {
+          "en": "How a senior works this",
+          "vi": "Senior làm thế nào"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "How a senior works this",
+              "vi": "Senior làm thế nào"
+            },
+            "id": {
+              "en": "how-a-senior-works-this",
+              "vi": "senior-lam-the-nao"
+            }
+          },
+          {
+            "type": "list",
+            "style": "ul",
+            "items": [
+              {
+                "en": "**Decision:** Separate architecture from UX behavior. Shell + critical widgets first; non-critical widgets isolate their own errors. BFF only if aggregation, auth, or chattiness is the real constraint.",
+                "vi": "**Quyết định:** Tách kiến trúc khỏi hành vi UX. Shell + widget tối quan trọng trước; widget phụ cô lập lỗi của chúng. BFF chỉ khi aggregation, auth hoặc độ nói chuyện nhiều mới là constraint thật."
+              },
+              {
+                "en": "**Constraint:** An outline, not a built dashboard. 45–60 minutes. Vue-first examples are fine.",
+                "vi": "**Constraint:** Một outline, không phải dashboard dựng sẵn. 45–60 phút. Ví dụ Vue-first cũng được."
+              },
+              {
+                "en": "**Failure mode:** A box diagram with no failure story. ‘We should have a BFF’ with no fan-out or contract pain. Observability as ‘we would add Sentry’.",
+                "vi": "**Failure mode:** Sơ đồ hộp không có story lỗi. ‘Nên có BFF’ mà không có fan-out hay đau contract. Observability kiểu ‘sẽ thêm Sentry’."
+              },
+              {
+                "en": "**Measure:** The plan separates architecture from UX behavior and has a clear BFF vs direct-API opinion.",
+                "vi": "**Cách đo:** Kế hoạch tách kiến trúc với hành vi UX và có quan điểm rõ BFF vs gọi API trực tiếp."
+              },
+              {
+                "en": "**Tradeoff:** Direct APIs keep ownership clear and multiply round-trips. A BFF hides backend seams and becomes another deploy + cache to reason about.",
+                "vi": "**Trade-off:** Gọi API trực tiếp thì ownership rõ và nhân số round-trip. BFF giấu đường nối backend và thành thêm một deploy + cache phải lý giải."
+              },
+              {
+                "en": "**Production gotcha:** A single loading gate for 15 calls. Correlation IDs that never make it to the browser. Widget retries that DDoS a dying endpoint.",
+                "vi": "**Gotcha production:** Một cổng loading cho 15 call. Correlation ID không bao giờ tới browser. Widget retry DDoS một endpoint đang chết."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "done-when",
+          "vi": "tieu-chi-xong"
+        },
+        "title": {
+          "en": "Done when",
+          "vi": "Tiêu chí xong"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "Done when",
+              "vi": "Tiêu chí xong"
+            },
+            "id": {
+              "en": "done-when",
+              "vi": "tieu-chi-xong"
+            }
+          },
+          {
+            "type": "list",
+            "style": "ul",
+            "items": [
+              {
+                "en": "The dashboard plan separates architecture from UX behavior.",
+                "vi": "Kế hoạch dashboard đã tách rõ kiến trúc với hành vi UX."
+              },
+              {
+                "en": "There is a clear opinion on BFF vs direct APIs.",
+                "vi": "Đã có quan điểm rõ về BFF so với gọi API trực tiếp."
+              },
+              {
+                "en": "Algo is done and the rolling-DP idea is clear.",
+                "vi": "Bài algo xong và hiểu được ý tưởng DP cuộn."
+              },
+              {
+                "en": "You can explain one trade-off from today in under 2 minutes (decision → constraint → failure → measure).",
+                "vi": "Giải thích được một trade-off của hôm nay dưới 2 phút (quyết định → constraint → failure → cách đo)."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "stretch",
+          "vi": "stretch"
+        },
+        "title": {
+          "en": "Stretch",
+          "vi": "Stretch"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "Stretch",
+              "vi": "Stretch"
+            },
+            "id": {
+              "en": "stretch",
+              "vi": "stretch"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Name the three frontend signals you would alert on (JS errors, empty-widget rate, LCP of the shell).",
+              "vi": "Gọi tên ba tín hiệu frontend bạn sẽ alert (lỗi JS, tỉ lệ widget rỗng, LCP của shell)."
+            }
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "algorithm",
+          "vi": "thuat-toan"
+        },
+        "title": {
+          "en": "Algorithm",
+          "vi": "Thuật toán"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "Algorithm",
+              "vi": "Thuật toán"
+            },
+            "id": {
+              "en": "algorithm",
+              "vi": "thuat-toan"
+            }
+          },
+          {
+            "type": "list",
+            "style": "ul",
+            "items": [
+              {
+                "en": "**Problem:** House Robber · DP 1D",
+                "vi": "**Bài:** House Robber · DP 1D"
+              },
+              {
+                "en": "**Constraints:**",
+                "vi": "**Ràng buộc:**"
+              },
+              {
+                "en": "1 ≤ nums.length ≤ 100",
+                "vi": "1 ≤ nums.length ≤ 100"
+              },
+              {
+                "en": "**Hint:** dp[i] = max(dp[i-1], dp[i-2] + nums[i]).",
+                "vi": "**Hint:** dp[i] = max(dp[i-1], dp[i-2] + nums[i])."
+              }
+            ]
+          },
+          {
+            "type": "code",
+            "lang": "text",
+            "code": {
+              "en": "algorithms/day-22/solution.ts\nalgorithms/day-22/solution.test.ts",
+              "vi": "algorithms/day-22/solution.ts\nalgorithms/day-22/solution.test.ts"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Run: `pnpm test:algo -- day-22`",
+              "vi": "Chạy: `pnpm test:algo -- day-22`"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Open the full prompt: [day-22.md](../artifacts/algo/problems/day-22.md)",
+              "vi": "Mở đề đầy đủ: [day-22.md](../artifacts/algo/problems/day-22.md)"
+            }
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "suggested-commit",
+          "vi": "commit-goi-y"
+        },
+        "title": {
+          "en": "Suggested commit",
+          "vi": "Commit gợi ý"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "Suggested commit",
+              "vi": "Commit gợi ý"
+            },
+            "id": {
+              "en": "suggested-commit",
+              "vi": "commit-goi-y"
+            }
+          },
+          {
+            "type": "code",
+            "lang": "text",
+            "code": {
+              "en": "day-22: dashboard outline with failure boundaries and BFF call",
+              "vi": "day-22: dashboard outline with failure boundaries and BFF call"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

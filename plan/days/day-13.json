@@ -1,0 +1,436 @@
+{
+  "kind": "plan-day",
+  "day": 13,
+  "date": "15/10/2026",
+  "week": 2,
+  "title": {
+    "en": "State ownership, Pinia, and cache boundaries",
+    "vi": "State ownership, Pinia và cache boundary"
+  },
+  "goal": {
+    "en": "Clarify what belongs in component state, URL state, server cache, and app-level stores.",
+    "vi": "Làm rõ thứ gì nên nằm ở component state, URL state, server cache hay app-level store."
+  },
+  "studyLinks": [
+    {
+      "kind": "docs",
+      "slug": "state-management",
+      "label": {
+        "en": "State management notes",
+        "vi": "Tài liệu state management"
+      }
+    },
+    {
+      "kind": "docs",
+      "slug": "nuxt",
+      "label": {
+        "en": "Nuxt notes",
+        "vi": "Tài liệu Nuxt"
+      }
+    },
+    {
+      "kind": "docs",
+      "slug": "monitoring",
+      "label": {
+        "en": "Monitoring notes",
+        "vi": "Tài liệu monitoring"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "pinia-design",
+      "label": {
+        "en": "What belongs in Pinia?",
+        "vi": "Cái gì nên đưa vào Pinia?"
+      }
+    },
+    {
+      "id": "tanstack-query-vs-global-store",
+      "label": {
+        "en": "Server state vs Pinia",
+        "vi": "Server state hay Pinia"
+      }
+    },
+    {
+      "id": "role-permission-ui",
+      "label": {
+        "en": "Role and permission handling in UI",
+        "vi": "Thiết kế role/permission trong UI"
+      }
+    }
+  ],
+  "handsOn": [
+    {
+      "en": "Draw a state map for one flow: who owns it, who reads it, and how stale data is refreshed.",
+      "vi": "Vẽ state map cho một flow: ai sở hữu, ai đọc và dữ liệu stale được làm mới ra sao."
+    },
+    {
+      "en": "Mark one piece of state that should move out of the store and one that should move into a shared layer.",
+      "vi": "Đánh dấu một state nên đưa ra khỏi store và một state nên đưa vào layer dùng chung."
+    }
+  ],
+  "algorithm": {
+    "resourceId": "algo-day-13",
+    "path": "artifacts/algo/problems/day-13.md",
+    "label": {
+      "en": "Linked List Cycle · Floyd pointers",
+      "vi": "Linked List Cycle · Floyd pointers"
+    }
+  },
+  "checklist": [
+    {
+      "en": "The state map has a clear source of truth.",
+      "vi": "State map có source of truth rõ ràng."
+    },
+    {
+      "en": "Store vs cache vs URL choices are written down.",
+      "vi": "Đã ghi rõ quyết định store vs cache vs URL."
+    },
+    {
+      "en": "Algo is done and the Floyd pattern makes sense.",
+      "vi": "Bài algo xong và pattern Floyd đã thấy hợp lý."
+    }
+  ],
+  "lab": {
+    "resourceId": "lab-day-13",
+    "title": {
+      "en": "Day 13 — Lab",
+      "vi": "Day 13 — Lab"
+    },
+    "sections": [
+      {
+        "id": {
+          "en": "intro",
+          "vi": "intro"
+        },
+        "title": {
+          "en": "Day 13 — Lab",
+          "vi": "Day 13 — Lab"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 1,
+            "text": {
+              "en": "Day 13 — Lab",
+              "vi": "Day 13 — Lab"
+            },
+            "id": {
+              "en": "day-13-lab",
+              "vi": "day-13-lab"
+            }
+          },
+          {
+            "type": "callout",
+            "kind": "quote",
+            "text": {
+              "en": "Timebox 45-60 minutes. Interview drill, not a product build.",
+              "vi": "Timebox 45-60 phút. Drill phỏng vấn, không phải dựng sản phẩm."
+            }
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "what-they-will-ask",
+          "vi": "ho-se-hoi-gi"
+        },
+        "title": {
+          "en": "What they will ask",
+          "vi": "Họ sẽ hỏi gì"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "What they will ask",
+              "vi": "Họ sẽ hỏi gì"
+            },
+            "id": {
+              "en": "what-they-will-ask",
+              "vi": "ho-se-hoi-gi"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "What belongs in Pinia vs the URL vs Nuxt/server cache? How do you handle role/permission in the UI without making the store the security layer?",
+              "vi": "Cái gì vào Pinia, cái gì vào URL, cái gì vào cache Nuxt/server? Role/permission trên UI thế nào mà store không thành lớp bảo mật?"
+            }
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "what-you-will-produce",
+          "vi": "ban-se-produce-gi"
+        },
+        "title": {
+          "en": "What you will produce",
+          "vi": "Bạn sẽ produce gì"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "What you will produce",
+              "vi": "Bạn sẽ produce gì"
+            },
+            "id": {
+              "en": "what-you-will-produce",
+              "vi": "ban-se-produce-gi"
+            }
+          },
+          {
+            "type": "list",
+            "style": "ul",
+            "items": [
+              {
+                "en": "Draw a state map for one flow: who owns it, who reads it, and how stale data is refreshed.",
+                "vi": "Vẽ state map cho một flow: ai sở hữu, ai đọc và dữ liệu stale được làm mới ra sao."
+              },
+              {
+                "en": "Mark one piece of state that should move out of the store and one that should move into a shared layer.",
+                "vi": "Đánh dấu một state nên đưa ra khỏi store và một state nên đưa vào layer dùng chung."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "how-a-senior-works-this",
+          "vi": "senior-lam-the-nao"
+        },
+        "title": {
+          "en": "How a senior works this",
+          "vi": "Senior làm thế nào"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "How a senior works this",
+              "vi": "Senior làm thế nào"
+            },
+            "id": {
+              "en": "how-a-senior-works-this",
+              "vi": "senior-lam-the-nao"
+            }
+          },
+          {
+            "type": "list",
+            "style": "ul",
+            "items": [
+              {
+                "en": "**Decision:** Draw the map first: source of truth per field. URL for shareable filters, component for ephemeral UI, Pinia for cross-tree client session, server cache for remote data.",
+                "vi": "**Quyết định:** Vẽ map trước: source of truth từng field. URL cho filter share được, component cho UI thoáng qua, Pinia cho session client xuyên cây, server cache cho data remote."
+              },
+              {
+                "en": "**Constraint:** A state map on paper or in a note. Do not refactor a Pinia store in the product today.",
+                "vi": "**Constraint:** State map trên giấy hoặc trong note. Hôm nay không refactor Pinia store trên product."
+              },
+              {
+                "en": "**Failure mode:** Putting current page, table rows, and auth user in the same store. Hiding permission only in CSS. Cache that never invalidates after a mutation.",
+                "vi": "**Failure mode:** Nhét current page, hàng table và auth user vào cùng store. Giấu permission chỉ bằng CSS. Cache không invalidate sau mutation."
+              },
+              {
+                "en": "**Measure:** The map has one source of truth per piece of state, and store vs cache vs URL is written down.",
+                "vi": "**Cách đo:** Map có một source of truth cho từng mảnh state, và store vs cache vs URL đã được ghi."
+              },
+              {
+                "en": "**Tradeoff:** A fat Pinia store is easy to find and hard to test. Colocated server cache stays fresh and is awkward to share across distant trees.",
+                "vi": "**Trade-off:** Pinia store béo thì dễ tìm và khó test. Server cache đặt cạnh chỗ dùng thì tươi và khó share sang cây xa."
+              },
+              {
+                "en": "**Production gotcha:** SSR Pinia hydration mismatches. Permission checks that exist only in the UI. Filters in Pinia that should have been query params — refresh loses them.",
+                "vi": "**Gotcha production:** Lệch hydration Pinia lúc SSR. Check permission chỉ tồn tại trên UI. Filter trong Pinia đáng ra là query param — refresh là mất."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "done-when",
+          "vi": "tieu-chi-xong"
+        },
+        "title": {
+          "en": "Done when",
+          "vi": "Tiêu chí xong"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "Done when",
+              "vi": "Tiêu chí xong"
+            },
+            "id": {
+              "en": "done-when",
+              "vi": "tieu-chi-xong"
+            }
+          },
+          {
+            "type": "list",
+            "style": "ul",
+            "items": [
+              {
+                "en": "The state map has a clear source of truth.",
+                "vi": "State map có source of truth rõ ràng."
+              },
+              {
+                "en": "Store vs cache vs URL choices are written down.",
+                "vi": "Đã ghi rõ quyết định store vs cache vs URL."
+              },
+              {
+                "en": "Algo is done and the Floyd pattern makes sense.",
+                "vi": "Bài algo xong và pattern Floyd đã thấy hợp lý."
+              },
+              {
+                "en": "You can explain one trade-off from today in under 2 minutes (decision → constraint → failure → measure).",
+                "vi": "Giải thích được một trade-off của hôm nay dưới 2 phút (quyết định → constraint → failure → cách đo)."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "stretch",
+          "vi": "stretch"
+        },
+        "title": {
+          "en": "Stretch",
+          "vi": "Stretch"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "Stretch",
+              "vi": "Stretch"
+            },
+            "id": {
+              "en": "stretch",
+              "vi": "stretch"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Add the invalidation arrow: which mutation clears which cache key.",
+              "vi": "Thêm mũi tên invalidate: mutation nào xoá cache key nào."
+            }
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "algorithm",
+          "vi": "thuat-toan"
+        },
+        "title": {
+          "en": "Algorithm",
+          "vi": "Thuật toán"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "Algorithm",
+              "vi": "Thuật toán"
+            },
+            "id": {
+              "en": "algorithm",
+              "vi": "thuat-toan"
+            }
+          },
+          {
+            "type": "list",
+            "style": "ul",
+            "items": [
+              {
+                "en": "**Problem:** Linked List Cycle · Floyd pointers",
+                "vi": "**Bài:** Linked List Cycle · Floyd pointers"
+              },
+              {
+                "en": "**Constraints:**",
+                "vi": "**Ràng buộc:**"
+              },
+              {
+                "en": "Floyd cycle detection",
+                "vi": "Floyd cycle detection"
+              },
+              {
+                "en": "**Hint:** slow/fast: if they meet, there is a cycle.",
+                "vi": "**Hint:** slow/fast: nếu gặp nhau → cycle."
+              }
+            ]
+          },
+          {
+            "type": "code",
+            "lang": "text",
+            "code": {
+              "en": "algorithms/day-13/solution.ts\nalgorithms/day-13/solution.test.ts",
+              "vi": "algorithms/day-13/solution.ts\nalgorithms/day-13/solution.test.ts"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Run: `pnpm test:algo -- day-13`",
+              "vi": "Chạy: `pnpm test:algo -- day-13`"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Open the full prompt: [day-13.md](../artifacts/algo/problems/day-13.md)",
+              "vi": "Mở đề đầy đủ: [day-13.md](../artifacts/algo/problems/day-13.md)"
+            }
+          }
+        ]
+      },
+      {
+        "id": {
+          "en": "suggested-commit",
+          "vi": "commit-goi-y"
+        },
+        "title": {
+          "en": "Suggested commit",
+          "vi": "Commit gợi ý"
+        },
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "text": {
+              "en": "Suggested commit",
+              "vi": "Commit gợi ý"
+            },
+            "id": {
+              "en": "suggested-commit",
+              "vi": "commit-goi-y"
+            }
+          },
+          {
+            "type": "code",
+            "lang": "text",
+            "code": {
+              "en": "day-13: state map with store vs cache vs URL ownership",
+              "vi": "day-13: state map with store vs cache vs URL ownership"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,372 @@
+{
+  "kind": "plan-resource",
+  "id": "algo-day-10",
+  "title": {
+    "en": "Day 10 — Algo: Longest Substring Without Repeating Characters",
+    "vi": "Day 10 — Algo: Longest Substring Without Repeating Characters"
+  },
+  "aliases": [
+    "artifacts/algo/problems/day-10.md"
+  ],
+  "sections": [
+    {
+      "id": {
+        "en": "intro",
+        "vi": "intro"
+      },
+      "title": {
+        "en": "Day 10 — Algo: Longest Substring Without Repeating Characters",
+        "vi": "Day 10 — Algo: Longest Substring Without Repeating Characters"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": {
+            "en": "Day 10 — Algo: Longest Substring Without Repeating Characters",
+            "vi": "Day 10 — Algo: Longest Substring Without Repeating Characters"
+          },
+          "id": {
+            "en": "day-10-algo-longest-substring-without-repeating-characters",
+            "vi": "day-10-algo-longest-substring-without-repeating-characters"
+          }
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "",
+              "vi": ""
+            },
+            {
+              "en": "",
+              "vi": ""
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Difficulty",
+                "vi": "Difficulty"
+              },
+              {
+                "en": "Medium",
+                "vi": "Medium"
+              }
+            ],
+            [
+              {
+                "en": "Pattern",
+                "vi": "Pattern"
+              },
+              {
+                "en": "Sliding window",
+                "vi": "Sliding window"
+              }
+            ],
+            [
+              {
+                "en": "LeetCode",
+                "vi": "LeetCode"
+              },
+              {
+                "en": "3",
+                "vi": "3"
+              }
+            ],
+            [
+              {
+                "en": "Target complexity",
+                "vi": "Target complexity"
+              },
+              {
+                "en": "O(n) time",
+                "vi": "O(n) time"
+              }
+            ]
+          ],
+          "align": [
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "e-bai",
+        "vi": "e-bai"
+      },
+      "title": {
+        "en": "Đề bài",
+        "vi": "Đề bài"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Đề bài",
+            "vi": "Đề bài"
+          },
+          "id": {
+            "en": "e-bai",
+            "vi": "e-bai"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Cho chuỗi `s`, tìm độ dài substring dài nhất **không chứa ký tự lặp**.",
+            "vi": "Cho chuỗi `s`, tìm độ dài substring dài nhất **không chứa ký tự lặp**."
+          }
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "function-signature",
+        "vi": "function-signature"
+      },
+      "title": {
+        "en": "Function signature",
+        "vi": "Function signature"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Function signature",
+            "vi": "Function signature"
+          },
+          "id": {
+            "en": "function-signature",
+            "vi": "function-signature"
+          }
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "function lengthOfLongestSubstring(s: string): number",
+            "vi": "function lengthOfLongestSubstring(s: string): number"
+          }
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "vi-du",
+        "vi": "vi-du"
+      },
+      "title": {
+        "en": "Ví dụ",
+        "vi": "Ví dụ"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Ví dụ",
+            "vi": "Ví dụ"
+          },
+          "id": {
+            "en": "vi-du",
+            "vi": "vi-du"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**Example 1**",
+            "vi": "**Example 1**"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "Input: `s = \"abcabcbb\"`",
+              "vi": "Input: `s = \"abcabcbb\"`"
+            },
+            {
+              "en": "Output: `3`",
+              "vi": "Output: `3`"
+            },
+            {
+              "en": "Giải thích: \"abc\"",
+              "vi": "Giải thích: \"abc\""
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**Example 2**",
+            "vi": "**Example 2**"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "Input: `s = \"bbbbb\"`",
+              "vi": "Input: `s = \"bbbbb\"`"
+            },
+            {
+              "en": "Output: `1`",
+              "vi": "Output: `1`"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**Example 3**",
+            "vi": "**Example 3**"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "Input: `s = \"pwwkew\"`",
+              "vi": "Input: `s = \"pwwkew\"`"
+            },
+            {
+              "en": "Output: `3`",
+              "vi": "Output: `3`"
+            },
+            {
+              "en": "Giải thích: \"wke\"",
+              "vi": "Giải thích: \"wke\""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "constraints",
+        "vi": "constraints"
+      },
+      "title": {
+        "en": "Constraints",
+        "vi": "Constraints"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Constraints",
+            "vi": "Constraints"
+          },
+          "id": {
+            "en": "constraints",
+            "vi": "constraints"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "0 ≤ s.length ≤ 5·10^4",
+              "vi": "0 ≤ s.length ≤ 5·10^4"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "hint-chi-mo-khi-ket-12",
+        "vi": "hint-chi-mo-khi-ket-12"
+      },
+      "title": {
+        "en": "Hint (chỉ mở khi kẹt >12′)",
+        "vi": "Hint (chỉ mở khi kẹt >12′)"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Hint (chỉ mở khi kẹt >12′)",
+            "vi": "Hint (chỉ mở khi kẹt >12′)"
+          },
+          "id": {
+            "en": "hint-chi-mo-khi-ket-12",
+            "vi": "hint-chi-mo-khi-ket-12"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Window [l,r] + Set/Map last index; khi trùng thì co l.",
+            "vi": "Window [l,r] + Set/Map last index; khi trùng thì co l."
+          }
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "nop-bai-o-au",
+        "vi": "nop-bai-o-au"
+      },
+      "title": {
+        "en": "Nộp bài ở đâu?",
+        "vi": "Nộp bài ở đâu?"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Nộp bài ở đâu?",
+            "vi": "Nộp bài ở đâu?"
+          },
+          "id": {
+            "en": "nop-bai-o-au",
+            "vi": "nop-bai-o-au"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Trong companion lab repo:",
+            "vi": "Trong companion lab repo:"
+          }
+        },
+        {
+          "type": "code",
+          "lang": "text",
+          "code": {
+            "en": "algo/day-10/solution.ts\nalgo/day-10/solution.test.ts",
+            "vi": "algo/day-10/solution.ts\nalgo/day-10/solution.test.ts"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Chạy: `npm run algo:test:day -- 10` (trong lab repo)",
+            "vi": "Chạy: `npm run algo:test:day -- 10` (trong lab repo)"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Xem flow tổng: [algorithms-track.md](../../algorithms-track.md) · [lab-repo.md](../../lab-repo.md)",
+            "vi": "Xem flow tổng: [algorithms-track.md](../../algorithms-track.md) · [lab-repo.md](../../lab-repo.md)"
+          }
+        }
+      ]
+    }
+  ]
+}

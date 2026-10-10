@@ -1,0 +1,322 @@
+{
+  "kind": "plan-resource",
+  "id": "algo-day-18",
+  "title": {
+    "en": "Day 18 — Algo: Number of Islands",
+    "vi": "Day 18 — Algo: Number of Islands"
+  },
+  "aliases": [
+    "artifacts/algo/problems/day-18.md"
+  ],
+  "sections": [
+    {
+      "id": {
+        "en": "intro",
+        "vi": "intro"
+      },
+      "title": {
+        "en": "Day 18 — Algo: Number of Islands",
+        "vi": "Day 18 — Algo: Number of Islands"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": {
+            "en": "Day 18 — Algo: Number of Islands",
+            "vi": "Day 18 — Algo: Number of Islands"
+          },
+          "id": {
+            "en": "day-18-algo-number-of-islands",
+            "vi": "day-18-algo-number-of-islands"
+          }
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "",
+              "vi": ""
+            },
+            {
+              "en": "",
+              "vi": ""
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Difficulty",
+                "vi": "Difficulty"
+              },
+              {
+                "en": "Medium",
+                "vi": "Medium"
+              }
+            ],
+            [
+              {
+                "en": "Pattern",
+                "vi": "Pattern"
+              },
+              {
+                "en": "Grid BFS/DFS",
+                "vi": "Grid BFS/DFS"
+              }
+            ],
+            [
+              {
+                "en": "LeetCode",
+                "vi": "LeetCode"
+              },
+              {
+                "en": "200",
+                "vi": "200"
+              }
+            ],
+            [
+              {
+                "en": "Target complexity",
+                "vi": "Target complexity"
+              },
+              {
+                "en": "O(m·n)",
+                "vi": "O(m·n)"
+              }
+            ]
+          ],
+          "align": [
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "e-bai",
+        "vi": "e-bai"
+      },
+      "title": {
+        "en": "Đề bài",
+        "vi": "Đề bài"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Đề bài",
+            "vi": "Đề bài"
+          },
+          "id": {
+            "en": "e-bai",
+            "vi": "e-bai"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Grid `m x n` gồm `'1'` (đất) và `'0'` (nước). Đếm số island (đất nối 4 hướng).",
+            "vi": "Grid `m x n` gồm `'1'` (đất) và `'0'` (nước). Đếm số island (đất nối 4 hướng)."
+          }
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "function-signature",
+        "vi": "function-signature"
+      },
+      "title": {
+        "en": "Function signature",
+        "vi": "Function signature"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Function signature",
+            "vi": "Function signature"
+          },
+          "id": {
+            "en": "function-signature",
+            "vi": "function-signature"
+          }
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "function numIslands(grid: string[][]): number",
+            "vi": "function numIslands(grid: string[][]): number"
+          }
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "vi-du",
+        "vi": "vi-du"
+      },
+      "title": {
+        "en": "Ví dụ",
+        "vi": "Ví dụ"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Ví dụ",
+            "vi": "Ví dụ"
+          },
+          "id": {
+            "en": "vi-du",
+            "vi": "vi-du"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**Example 1**",
+            "vi": "**Example 1**"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "Input: `[[\"1\",\"1\",\"0\"],[\"1\",\"1\",\"0\"],[\"0\",\"0\",\"1\"]]`",
+              "vi": "Input: `[[\"1\",\"1\",\"0\"],[\"1\",\"1\",\"0\"],[\"0\",\"0\",\"1\"]]`"
+            },
+            {
+              "en": "Output: `2`",
+              "vi": "Output: `2`"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "constraints",
+        "vi": "constraints"
+      },
+      "title": {
+        "en": "Constraints",
+        "vi": "Constraints"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Constraints",
+            "vi": "Constraints"
+          },
+          "id": {
+            "en": "constraints",
+            "vi": "constraints"
+          }
+        },
+        {
+          "type": "list",
+          "style": "ul",
+          "items": [
+            {
+              "en": "1 ≤ m,n ≤ 300",
+              "vi": "1 ≤ m,n ≤ 300"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "hint-chi-mo-khi-ket-12",
+        "vi": "hint-chi-mo-khi-ket-12"
+      },
+      "title": {
+        "en": "Hint (chỉ mở khi kẹt >12′)",
+        "vi": "Hint (chỉ mở khi kẹt >12′)"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Hint (chỉ mở khi kẹt >12′)",
+            "vi": "Hint (chỉ mở khi kẹt >12′)"
+          },
+          "id": {
+            "en": "hint-chi-mo-khi-ket-12",
+            "vi": "hint-chi-mo-khi-ket-12"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Gặp \"1\" → tăng đếm → flood-fill thành \"0\".",
+            "vi": "Gặp \"1\" → tăng đếm → flood-fill thành \"0\"."
+          }
+        }
+      ]
+    },
+    {
+      "id": {
+        "en": "nop-bai-o-au",
+        "vi": "nop-bai-o-au"
+      },
+      "title": {
+        "en": "Nộp bài ở đâu?",
+        "vi": "Nộp bài ở đâu?"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": {
+            "en": "Nộp bài ở đâu?",
+            "vi": "Nộp bài ở đâu?"
+          },
+          "id": {
+            "en": "nop-bai-o-au",
+            "vi": "nop-bai-o-au"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Trong companion lab repo:",
+            "vi": "Trong companion lab repo:"
+          }
+        },
+        {
+          "type": "code",
+          "lang": "text",
+          "code": {
+            "en": "algo/day-18/solution.ts\nalgo/day-18/solution.test.ts",
+            "vi": "algo/day-18/solution.ts\nalgo/day-18/solution.test.ts"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Chạy: `npm run algo:test:day -- 18` (trong lab repo)",
+            "vi": "Chạy: `npm run algo:test:day -- 18` (trong lab repo)"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Xem flow tổng: [algorithms-track.md](../../algorithms-track.md) · [lab-repo.md](../../lab-repo.md)",
+            "vi": "Xem flow tổng: [algorithms-track.md](../../algorithms-track.md) · [lab-repo.md](../../lab-repo.md)"
+          }
+        }
+      ]
+    }
+  ]
+}
