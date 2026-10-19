@@ -3,11 +3,11 @@
   "slug": "system-design",
   "title": {
     "en": "System Design",
-    "vi": "System Design"
+    "vi": "Thiết kế hệ thống"
   },
   "summary": {
-    "en": "This is a **45-minute frontend system design** round, not a folder-structure quiz. Interviewers watch whether you **clarify the product**, pick **SPA vs SSR vs hybrid**, draw **boxes with failure modes**, and talk **caching invalidation** — the hard part.",
-    "vi": "Đây là vòng **system design frontend 45 phút**, không phải quiz folder structure. Interviewer xem bạn có **làm rõ product**, chọn **SPA vs SSR vs hybrid**, vẽ **hộp kèm failure mode**, và nói **cache invalidation** — phần khó."
+    "en": "Frontend system design is clarify, then boxes with failures, then cache and rollout — not a folder tree. Start with 16.1, then 16.2 invalidation. Dashboards and marketing hybrids are the two worked shapes.",
+    "vi": "System design frontend là làm rõ, rồi hộp kèm kịch bản lỗi, rồi cache và rollout — không phải cây thư mục. Bắt đầu từ 16.1, rồi invalidation 16.2. Dashboard và hybrid marketing là hai shape làm sẵn."
   },
   "category": "pro",
   "order": 19,
@@ -23,7 +23,7 @@
       },
       "title": {
         "en": "System Design",
-        "vi": "System Design"
+        "vi": "Thiết kế hệ thống"
       },
       "blocks": [
         {
@@ -31,7 +31,7 @@
           "level": 1,
           "text": {
             "en": "System Design",
-            "vi": "System Design"
+            "vi": "Thiết kế hệ thống"
           },
           "id": {
             "en": "system-design",
@@ -41,15 +41,15 @@
         {
           "type": "paragraph",
           "text": {
-            "en": "This is a **45-minute frontend system design** round, not a folder-structure quiz. Interviewers watch whether you **clarify the product**, pick **SPA vs SSR vs hybrid**, draw **boxes with failure modes**, and talk **caching invalidation** — the hard part.",
-            "vi": "Đây là vòng **system design frontend 45 phút**, không phải quiz folder structure. Interviewer xem bạn có **làm rõ product**, chọn **SPA vs SSR vs hybrid**, vẽ **hộp kèm failure mode**, và nói **cache invalidation** — phần khó."
+            "en": "This doc is a **45-minute frontend system-design** round, not a folder-structure quiz. Interviewers watch whether you **clarify the product**, pick **SPA vs SSR vs hybrid**, draw **boxes with failure modes**, place **cache and invalidation**, and name **a11y, auth, and rollout**. Vue/Nuxt first; Next is the same hybrid idea with RSC.",
+            "vi": "Tài liệu này là vòng **system-design frontend 45 phút**, không phải quiz cây thư mục. Người phỏng vấn xem bạn **làm rõ product**, chọn **SPA khác SSR khác hybrid**, vẽ **hộp kèm kịch bản lỗi**, đặt **cache và invalidation**, và gọi tên **a11y, auth, và rollout**. Vue/Nuxt trước; Next là cùng ý hybrid với RSC."
           }
         },
         {
           "type": "paragraph",
           "text": {
-            "en": "Run every answer as **decision → constraint → failure mode → measure.** Vue 3 / Nuxt-first; Next.js when they ask hybrid React or you need an RSC comparison.",
-            "vi": "Chạy mọi câu trả lời theo **decision → constraint → failure mode → measure.** Vue 3 / Nuxt-first; Next.js khi họ hỏi hybrid React hoặc bạn cần so sánh RSC."
+            "en": "Study 16.1 first (the spoken framework and the whiteboard). 16.2 is cache layers and invalidation — the usual follow-up. 16.3 is a component library as a product. 16.4 and 16.5 are worked examples: an internal dashboard, then a high-traffic marketing + app hybrid. Folders belong in 15.5; they are not the architecture.",
+            "vi": "Hãy học 16.1 trước (khung nói và whiteboard). 16.2 là tầng cache và invalidation — câu nối tiếp thường gặp. 16.3 là component library như một product. 16.4 và 16.5 là ví dụ làm sẵn: dashboard nội bộ, rồi hybrid marketing + app traffic cao. Thư mục thuộc 15.5; chúng không phải kiến trúc."
           }
         },
         {
@@ -64,7 +64,7 @@
       },
       "title": {
         "en": "16. System Design",
-        "vi": "16. System Design"
+        "vi": "16. Thiết kế hệ thống"
       },
       "blocks": [
         {
@@ -72,7 +72,7 @@
           "level": 2,
           "text": {
             "en": "16. System Design",
-            "vi": "16. System Design"
+            "vi": "16. Thiết kế hệ thống"
           },
           "id": {
             "en": "16-system-design",
@@ -84,7 +84,7 @@
           "level": 3,
           "text": {
             "en": "16.1. Frontend Architecture Decisions",
-            "vi": "16.1. Quyết định Kiến trúc Frontend"
+            "vi": "16.1. Quyết định kiến trúc frontend"
           },
           "id": {
             "en": "161-frontend-architecture-decisions",
@@ -92,291 +92,183 @@
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "What they actually ask",
-            "vi": "Họ thực sự hỏi gì"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "“Design the frontend for X.” If you start with `src/components/base/`, you already lost the plot. They want constraints first, a rendering model, boxes with failure modes — folder structure is a footnote.",
-            "vi": "“Design frontend cho X.” Nếu bạn bắt đầu bằng `src/components/base/`, bạn đã lạc đề. Họ muốn constraint trước, mô hình render, hộp kèm failure mode — folder structure là chú thích cuối."
+            "en": "**In short:** A frontend system-design answer is a **spoken framework**: clarify requirements, name components, place data and state, then performance, then a11y/security, then rollout. Folders are not architecture (that is 15.5). SPA vs SSR vs hybrid is a product decision, not a default.",
+            "vi": "**Tóm tắt:** Câu system-design frontend là **khung nói**: làm rõ yêu cầu, gọi tên component, đặt data và state, rồi hiệu năng, rồi a11y/bảo mật, rồi rollout. Thư mục không phải kiến trúc (đó là 15.5). SPA khác SSR khác hybrid là quyết định product, không phải mặc định."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Takeaway",
-            "vi": "Ý chính"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "Spend the first 5–8 minutes on constraints, then pick a rendering model, then draw runtime boxes — architecture is boundaries and what happens when a box dies.",
-            "vi": "Dành 5–8 phút đầu cho constraint, rồi chọn mô hình render, rồi vẽ hộp runtime — architecture là boundary và chuyện gì xảy ra khi một hộp chết."
+            "en": "**Why it matters:** Forty-five minutes. Juniors draw a folder tree. Seniors clarify the user, SEO, realtime, regions, auth, scale, team/deploy, offline, SLAs — then pick SPA vs SSR vs SSG/ISR vs hybrid route rules. SSR’ing an authenticated dashboard that did not need SEO, or micro-frontends for six people, are the tells.",
+            "vi": "**Vì sao quan trọng:** Bốn mươi lăm phút. Junior vẽ cây thư mục. Senior làm rõ user, SEO, realtime, region, auth, scale, team/deploy, offline, SLA — rồi chọn SPA khác SSR khác SSG/ISR khác hybrid route rules. SSR dashboard đã auth không cần SEO, hoặc micro-frontend cho sáu người, là tín hiệu."
           }
-        },
-        {
-          "type": "list",
-          "style": "ul",
-          "items": [
-            {
-              "en": "**Decision.** Clarify user, SEO, realtime, regions, auth, scale, team/deploy, offline, SLAs. Then state SPA vs SSR vs SSG/ISR vs hybrid route rules. Default one app; do not pick microfrontends unless they forced team/deploy constraints. BFF almost always for dashboards. Propose measures: LCP/INP, TTFB, error budget, p95 API, rollback time, TTI on a mid-tier phone in the worst region.",
-              "vi": "**Quyết định.** Làm rõ user, SEO, realtime, region, auth, scale, team/deploy, offline, SLA. Rồi nêu SPA vs SSR vs SSG/ISR vs hybrid route rules. Default một app; đừng chọn microfrontend trừ khi họ ép constraint team/deploy. BFF gần như luôn cho dashboard. Đề xuất thước đo: LCP/INP, TTFB, error budget, p95 API, thời gian rollback, TTI trên máy mid-tier ở region tệ nhất."
-            },
-            {
-              "en": "**Why.** SSR’ing an authenticated dashboard that did not need SEO, a SPA that cannot be crawled for a content site, and designing an MF platform for a 6-person team are the tells. Hydration mismatch from `Date.now()`, `Math.random()`, flags, `window`. SPA fallback swallowing `/api` 404s. Global Pinia for server data that should be a query cache.",
-              "vi": "**Vì sao.** SSR dashboard đã auth không cần SEO, SPA không crawl được cho site content, và design platform MF cho team 6 người là tín hiệu. Hydration mismatch từ `Date.now()`, `Math.random()`, flag, `window`. SPA fallback nuốt 404 `/api`. Pinia global cho server data lẽ ra phải là query cache."
-            },
-            {
-              "en": "**Trade-off.** SSR CPU vs SEO/LCP. BFF vs FE waterfall. Edge rendering vs origin SSR (personalization vs cache hit ratio). A 10-line feature-folder tree proves you have shipped Vue — then pivot to boundaries, SLAs, and failure modes.",
-              "vi": "**Đánh đổi / rủi ro.** CPU SSR vs SEO/LCP. BFF vs waterfall FE. Edge rendering vs origin SSR (personalization vs cache hit ratio). Cây feature-folder 10 dòng chứng minh đã ship Vue — rồi pivot sang boundary, SLA, và failure mode."
-            },
-            {
-              "en": "**How to verify.** Talk through one failure per box: CDN stale HTML, BFF timeout, WS drop, flag service down, JS 404 after deploy — user-visible result and mitigation. Next App Router: RSC for content, client for dashboard widgets — same hybrid idea.",
-              "vi": "**Cách kiểm chứng.** Nói một failure mỗi hộp: CDN HTML stale, BFF timeout, WS drop, flag service down, JS 404 sau deploy — kết quả user thấy và mitigation. Next App Router: RSC cho content, client cho dashboard widget — cùng ý hybrid."
-            }
-          ]
-        },
-        {
-          "type": "heading",
-          "level": 4,
-          "text": {
-            "en": "How to run the interview (out loud)",
-            "vi": "Cách chạy vòng phỏng vấn (nói to)"
-          },
-          "id": {
-            "en": "how-to-run-the-interview-out-loud",
-            "vi": "cach-chay-vong-phong-van-noi-to"
-          }
-        },
-        {
-          "type": "table",
-          "headers": [
-            {
-              "en": "Ask",
-              "vi": "Hỏi"
-            },
-            {
-              "en": "Why it changes the design",
-              "vi": "Vì sao nó đổi design"
-            }
-          ],
-          "rows": [
-            [
-              {
-                "en": "Who is the user?",
-                "vi": "User là ai?"
-              },
-              {
-                "en": "Auth, SEO, density, a11y bar",
-                "vi": "Auth, SEO, mật độ UI, thanh a11y"
-              }
-            ],
-            [
-              {
-                "en": "SEO / shareable URLs / OG?",
-                "vi": "SEO / URL share / OG?"
-              },
-              {
-                "en": "SSR/SSG vs SPA + prerender",
-                "vi": "SSR/SSG vs SPA + prerender"
-              }
-            ],
-            [
-              {
-                "en": "Realtime?",
-                "vi": "Realtime?"
-              },
-              {
-                "en": "WS/SSE vs poll vs none",
-                "vi": "WS/SSE vs poll vs không"
-              }
-            ],
-            [
-              {
-                "en": "Regions / latency?",
-                "vi": "Region / latency?"
-              },
-              {
-                "en": "CDN, edge, multi-region API, i18n",
-                "vi": "CDN, edge, API multi-region, i18n"
-              }
-            ],
-            [
-              {
-                "en": "Auth?",
-                "vi": "Auth?"
-              },
-              {
-                "en": "BFF, CSRF, SSR user payload",
-                "vi": "BFF, CSRF, payload user SSR"
-              }
-            ],
-            [
-              {
-                "en": "Scale?",
-                "vi": "Scale?"
-              },
-              {
-                "en": "Caching, SSR cost, virtualization",
-                "vi": "Cache, chi phí SSR, virtualization"
-              }
-            ],
-            [
-              {
-                "en": "Team / deploy?",
-                "vi": "Team / deploy?"
-              },
-              {
-                "en": "Packages vs MF — default one app",
-                "vi": "Package vs MF — default một app"
-              }
-            ],
-            [
-              {
-                "en": "Offline / mobile WebView?",
-                "vi": "Offline / mobile WebView?"
-              },
-              {
-                "en": "SW, payload size",
-                "vi": "SW, kích thước payload"
-              }
-            ],
-            [
-              {
-                "en": "SLAs?",
-                "vi": "SLA?"
-              },
-              {
-                "en": "Isolation, error boundaries, BFF timeouts",
-                "vi": "Isolation, error boundary, timeout BFF"
-              }
-            ]
-          ]
-        },
-        {
-          "type": "list",
-          "style": "ul",
-          "items": [
-            {
-              "en": "SPA (Vite + Vue): logged-in tools, weak SEO, lots of interaction — still a shell + CDN + BFF.",
-              "vi": "SPA (Vite + Vue): tool đã login, SEO yếu, nhiều interaction — vẫn shell + CDN + BFF."
-            },
-            {
-              "en": "SSR (Nuxt): first paint + SEO + per-request personalization — costs Node, cache carefully.",
-              "vi": "SSR (Nuxt): first paint + SEO + personalization mỗi request — tốn Node, cache cẩn thận."
-            },
-            {
-              "en": "SSG / ISR: marketing, docs, catalogs that can be stale N seconds.",
-              "vi": "SSG / ISR: marketing, docs, catalog chịu stale N giây."
-            },
-            {
-              "en": "Hybrid: the usual adult answer — route rules. Marketing SSR/SSG, app CSR after auth.",
-              "vi": "Hybrid: câu người lớn thường gặp — route rules. Marketing SSR/SSG, app CSR sau auth."
-            }
-          ]
-        },
-        {
-          "type": "heading",
-          "level": 4,
-          "text": {
-            "en": "Draw boxes (whiteboard)",
-            "vi": "Vẽ hộp (whiteboard)"
-          },
-          "id": {
-            "en": "draw-boxes-whiteboard",
-            "vi": "ve-hop-whiteboard"
-          }
-        },
-        {
-          "type": "code",
-          "lang": "text",
-          "code": {
-            "en": "[User] → [CDN / edge] → [HTML: Nuxt/Nitro or static]\n                           ├─ hashed JS/CSS\n                           ├─ BFF (same origin /api)\n                           │    ├─ product APIs\n                           │    ├─ auth / session\n                           │    └─ aggregate DTOs\n                           ├─ WS/SSE gateway (optional)\n                           └─ flag service (short timeout, fail-safe)\n         Browser cache ← → Service worker (optional, mostly static)",
-            "vi": "[User] → [CDN / edge] → [HTML: Nuxt/Nitro or static]\n                           ├─ hashed JS/CSS\n                           ├─ BFF (same origin /api)\n                           │    ├─ product APIs\n                           │    ├─ auth / session\n                           │    └─ aggregate DTOs\n                           ├─ WS/SSE gateway (optional)\n                           └─ flag service (short timeout, fail-safe)\n         Browser cache ← → Service worker (optional, mostly static)"
-          }
-        },
-        {
-          "type": "heading",
-          "level": 4,
-          "text": {
-            "en": "Folder structure is not architecture",
-            "vi": "Folder structure không phải architecture"
-          },
-          "id": {
-            "en": "folder-structure-is-not-architecture",
-            "vi": "folder-structure-khong-phai-architecture"
-          }
-        },
-        {
-          "type": "list",
-          "style": "ul",
-          "items": [
-            {
-              "en": "Boundaries: features cannot deep-import each other; BFF owns aggregation; DS is a package.",
-              "vi": "Boundary: feature không deep-import nhau; BFF sở hữu aggregation; DS là package."
-            },
-            {
-              "en": "SLAs: checkout p95, dashboard usable if one widget fails, marketing TTFB.",
-              "vi": "SLA: p95 checkout, dashboard dùng được nếu một widget fail, TTFB marketing."
-            },
-            {
-              "en": "Failure modes: session expiry, region failover, poison WS message, deploy rollback.",
-              "vi": "Failure mode: session hết hạn, failover region, poison message WS, rollback deploy."
-            },
-            {
-              "en": "Data: server state (TanStack / `useAsyncData`) vs client UI state vs URL state.",
-              "vi": "Data: server state (TanStack / `useAsyncData`) vs client UI state vs URL state."
-            }
-          ]
-        },
-        {
-          "type": "senior-answer",
-          "label": {
-            "en": "Interview phrasing",
-            "vi": "Nói khi phỏng vấn"
-          },
-          "text": {
-            "en": "I spend the first minutes on who the user is, SEO, auth, scale, and SLAs, then I pick hybrid route rules unless they forced something else. I draw CDN, HTML, BFF, flags, and one failure each. I do not start in `src/components`. Folder trees are a footnote after the boxes.",
-            "vi": "Tôi dành phút đầu cho user là ai, SEO, auth, scale, và SLA, rồi chọn hybrid route rules trừ khi họ ép thứ khác. Tôi vẽ CDN, HTML, BFF, flag, và một failure mỗi hộp. Tôi không bắt đầu ở `src/components`. Cây folder là chú thích sau các hộp."
-          }
-        },
-        {
-          "type": "key-takeaways",
-          "items": [
-            {
-              "en": "Do not pick microfrontends for a 6-person team.",
-              "vi": "Đừng chọn microfrontend cho team 6 người."
-            },
-            {
-              "en": "Propose measures out loud — that is part of the design.",
-              "vi": "Đề xuất thước đo thành tiếng — đó là một phần design."
-            },
-            {
-              "en": "Multi-tenant theming is a token + host decision, not a folder.",
-              "vi": "Theming multi-tenant là quyết định token + host, không phải folder."
-            }
-          ]
         },
         {
           "type": "list",
           "style": "ol",
           "items": [
             {
-              "en": "Multi-tenant theming?",
-              "vi": "Theming multi-tenant?"
+              "en": "**How it works:** **1. Requirements.** User, SEO, realtime, regions, auth, scale, team/deploy clocks, offline, SLAs. Speak this out loud for two minutes before you draw.",
+              "vi": "**Cách hoạt động:** **1. Yêu cầu.** User, SEO, realtime, region, auth, scale, đồng hồ team/deploy, offline, SLA. Nói to hai phút trước khi vẽ."
             },
             {
-              "en": "How would this look on Next App Router?",
-              "vi": "Trông thế nào trên Next App Router?"
+              "en": "**2. Components (boxes).** CDN/edge, HTML (Nuxt/Nitro or static), hashed JS/CSS, BFF `/api`, product APIs, auth/session, optional WS/SSE, flag service. One failure per box: CDN stale HTML, BFF timeout, WS drop, flag down, JS 404 after deploy.",
+              "vi": "**2. Component (hộp).** CDN/edge, HTML (Nuxt/Nitro hoặc static), JS/CSS hash, BFF `/api`, API product, auth/session, WS/SSE tùy chọn, dịch vụ flag. Một kịch bản lỗi mỗi hộp: HTML CDN cũ, BFF timeout, WS rớt, flag down, JS 404 sau deploy."
             },
             {
-              "en": "When is SSR the wrong default?",
-              "vi": "Khi nào SSR là default sai?"
+              "en": "**3. Data and state.** URL for shareable filters. Query cache for server data. Pinia for client UX. **4. Performance.** LCP/INP, TTFB, mid-tier phone in the worst region. **5. A11y and security.** Keyboard, authz on the server, cookies not on cacheable HTML. **6. Rollout.** Flags, rollback time, error budget.",
+              "vi": "**3. Data và state.** URL cho filter chia sẻ được. Query cache cho data server. Pinia cho UX client. **4. Hiệu năng.** LCP/INP, TTFB, điện thoại tầm trung ở region tệ nhất. **5. A11y và bảo mật.** Bàn phím, authz trên server, cookie không trên HTML cache được. **6. Rollout.** Flag, thời gian rollback, error budget."
             },
             {
-              "en": "What is one failure for the flag-service box?",
-              "vi": "Một failure của hộp flag-service là gì?"
+              "en": "Default **one app**. Do not pick micro-frontends unless they forced team/deploy constraints (15.4). BFF almost always for dashboards. Next App Router: RSC for content, client for dashboard widgets — same hybrid idea. Hydration mismatch from `Date.now()`, flags, `window` is a box you name.",
+              "vi": "Mặc định **một app**. Đừng chọn micro-frontend trừ khi họ buộc ràng buộc team/deploy (15.4). BFF gần như luôn cho dashboard. Next App Router: RSC cho content, client cho widget dashboard — cùng ý hybrid. Hydration mismatch từ `Date.now()`, flag, `window` là hộp bạn gọi tên."
             }
           ]
+        },
+        {
+          "type": "code",
+          "lang": "text",
+          "code": {
+            "en": "[User] → [CDN / edge] → [HTML: Nuxt/Nitro or static]\n                         ├─ hashed JS/CSS (immutable)\n                         ├─ BFF (same origin /api)\n                         │    ├─ product APIs\n                         │    ├─ auth / session\n                         │    └─ aggregate DTOs\n                         ├─ WS/SSE gateway (optional)\n                         └─ flag service (short timeout, fail-safe)\n       Browser cache ← → Service worker (optional, mostly static)\nFailures to name: stale HTML, BFF timeout, WS drop, flag down, JS 404 after deploy\nNot architecture: app/features/orders/components/  ← that is 15.5",
+            "vi": "[User] → [CDN / edge] → [HTML: Nuxt/Nitro hoặc static]\n                         ├─ JS/CSS hash (immutable)\n                         ├─ BFF (cùng origin /api)\n                         │    ├─ API product\n                         │    ├─ auth / session\n                         │    └─ DTO gộp\n                         ├─ WS/SSE gateway (tùy chọn)\n                         └─ dịch vụ flag (timeout ngắn, fail-safe)\n       Browser cache ← → Service worker (tùy chọn, chủ yếu static)\nKịch bản lỗi cần gọi: HTML cũ, BFF timeout, WS rớt, flag down, JS 404 sau deploy\nKhông phải kiến trúc: app/features/orders/components/  ← đó là 15.5"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** The whiteboard is boxes and seams, not folders. Each box has a failure. The folder tree is a ten-line proof you have shipped Vue — then you pivot to boundaries, SLAs, and rollback.",
+            "vi": "**Điều gì xảy ra:** Whiteboard là hộp và seam, không phải thư mục. Mỗi hộp có một kịch bản lỗi. Cây thư mục là bằng chứng mười dòng bạn đã đưa Vue lên — rồi bạn rẽ sang ranh giới, SLA, và rollback."
+          }
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Step (say it)",
+              "vi": "Bước (nói)"
+            },
+            {
+              "en": "Trap if skipped",
+              "vi": "Bẫy nếu bỏ"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "1. Requirements out loud",
+                "vi": "1. Yêu cầu nói to"
+              },
+              {
+                "en": "SSR a private dashboard; SPA a content site",
+                "vi": "SSR dashboard riêng tư; SPA site content"
+              }
+            ],
+            [
+              {
+                "en": "2. Boxes + one failure each",
+                "vi": "2. Hộp + một lỗi mỗi hộp"
+              },
+              {
+                "en": "Happy-path-only diagram",
+                "vi": "Sơ đồ chỉ happy path"
+              }
+            ],
+            [
+              {
+                "en": "3. Data/state ownership",
+                "vi": "3. Ownership data/state"
+              },
+              {
+                "en": "Global Pinia for server lists",
+                "vi": "Pinia global cho list server"
+              }
+            ],
+            [
+              {
+                "en": "4–6. Perf, a11y/security, rollout",
+                "vi": "4–6. Hiệu năng, a11y/bảo mật, rollout"
+              },
+              {
+                "en": "No INP, no authz, no rollback",
+                "vi": "Không INP, không authz, không rollback"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- Speak requirements for two minutes before you draw. Clarifying is the senior signal.\n- One failure per box. A diagram without stale HTML / BFF timeout / JS 404 is a sketch, not a design.\n- Folders are 15.5. Ten lines of feature folders prove you have shipped — then pivot.\n- Default one app. Micro-frontends only when 15.4’s org constraints are real.\n- Next: RSC for content, client for widgets. Same hybrid idea as Nuxt `routeRules`.",
+            "vi": "- Nói yêu cầu hai phút trước khi vẽ. Làm rõ là tín hiệu senior.\n- Một kịch bản lỗi mỗi hộp. Sơ đồ không có HTML cũ / BFF timeout / JS 404 là phác, không phải thiết kế.\n- Thư mục là 15.5. Mười dòng thư mục feature chứng minh bạn đã đưa lên — rồi rẽ.\n- Mặc định một app. Micro-frontend chỉ khi ràng buộc tổ chức 15.4 là thật.\n- Next: RSC cho content, client cho widget. Cùng ý hybrid với `routeRules` Nuxt."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: folder tree as the whole answer. Cause: skipped boxes. Fix: the six-step framework, then 15.5.\n- Symptom: SSR a logged-in dashboard. Cause: SSR as a default. Fix: SEO/LCP need, else CSR + BFF.\n- Symptom: micro-frontends for six people. Cause: fashion. Fix: one app, packages (15.4).\n- Symptom: happy-path-only. Cause: no failures. Fix: one failure per box, spoken.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: cây thư mục là cả câu trả lời. Nguyên nhân: bỏ hộp. Cách xử lý: khung sáu bước, rồi 15.5.\n- Triệu chứng: SSR dashboard đã login. Nguyên nhân: SSR như mặc định. Cách xử lý: cần SEO/LCP, không thì CSR + BFF.\n- Triệu chứng: micro-frontend cho sáu người. Nguyên nhân: mốt. Cách xử lý: một app, package (15.4).\n- Triệu chứng: chỉ happy path. Nguyên nhân: không kịch bản lỗi. Cách xử lý: một lỗi mỗi hộp, nói to."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+          },
+          "text": {
+            "en": "Design the frontend for X. They want you to run the interview out loud, draw boxes with failures, and refuse a folder tree as architecture.",
+            "vi": "Thiết kế frontend cho X. Họ muốn bạn chạy vòng phỏng vấn nói to, vẽ hộp kèm kịch bản lỗi, và từ chối cây thư mục như kiến trúc."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "I run the round out loud. Two minutes on users, SEO, realtime, regions, auth, scale, deploy clocks, SLAs. Then I draw boxes: CDN, HTML, hashed assets, a BFF, product APIs, auth, optional WS, a flag service with a short timeout. Each box gets a failure — stale HTML, BFF timeout, WS drop, flag down, JS 404 after deploy. Shareable state lives in the URL; server lists in a query cache; Pinia is client UX. I pick SPA versus SSR versus hybrid from those requirements, not as a default. Folders are ten lines if they ask, then I pivot — that is 15.5, not this answer. On a dashboard I almost always add a BFF. Rollback and flags are the last minute.",
+            "vi": "Tôi chạy vòng nói to. Hai phút về user, SEO, realtime, region, auth, scale, đồng hồ deploy, SLA. Rồi tôi vẽ hộp: CDN, HTML, asset hash, BFF, API product, auth, WS tùy chọn, dịch vụ flag với timeout ngắn. Mỗi hộp có một kịch bản lỗi — HTML cũ, BFF timeout, WS rớt, flag down, JS 404 sau deploy. State chia sẻ được sống ở URL; list server trong query cache; Pinia là UX client. Tôi chọn SPA khác SSR khác hybrid từ những yêu cầu đó, không phải mặc định. Thư mục là mười dòng nếu họ hỏi, rồi tôi rẽ — đó là 15.5, không phải câu này. Trên dashboard tôi gần như luôn thêm BFF. Rollback và flag là phút cuối."
+          }
+        },
+        {
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "Six steps: requirements, boxes, data/state, perf, a11y/security, rollout.",
+              "vi": "Sáu bước: yêu cầu, hộp, data/state, hiệu năng, a11y/bảo mật, rollout."
+            },
+            {
+              "en": "One failure per box. Folders are 15.5, not the design.",
+              "vi": "Một kịch bản lỗi mỗi hộp. Thư mục là 15.5, không phải thiết kế."
+            },
+            {
+              "en": "SPA vs SSR vs hybrid is a product decision. Default one app.",
+              "vi": "SPA khác SSR khác hybrid là quyết định product. Mặc định một app."
+            },
+            {
+              "en": "Speak requirements before you draw. Clarifying is the senior signal.",
+              "vi": "Nói yêu cầu trước khi vẽ. Làm rõ là tín hiệu senior."
+            }
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **When is SSR the wrong default?** Authenticated dashboards with no SEO need. CSR plus a BFF.\n- **What is one failure for the flag-service box?** Timeout; fail-safe to the last known variant.\n- **Where do folders fit?** Ten lines, then 15.5. They are not the boxes.\n- **Nuxt vs Next in this framework?** Same hybrid. RSC vs `routeRules` is the mapping, not a new framework.",
+            "vi": "- **Khi nào SSR là mặc định sai?** Dashboard đã auth không cần SEO. CSR kèm BFF.\n- **Một kịch bản lỗi cho hộp dịch vụ flag?** Timeout; fail-safe về variant biết sau cùng.\n- **Thư mục vừa chỗ nào?** Mười dòng, rồi 15.5. Chúng không phải các hộp.\n- **Nuxt khác Next trong khung này?** Cùng hybrid. RSC khác `routeRules` là map, không phải framework mới."
+          }
         },
         {
           "type": "thematic-break"
@@ -386,7 +278,7 @@
           "level": 3,
           "text": {
             "en": "16.2. Caching Strategy",
-            "vi": "16.2. Chiến lược Caching"
+            "vi": "16.2. Chiến lược cache"
           },
           "id": {
             "en": "162-caching-strategy",
@@ -394,59 +286,50 @@
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "What they actually ask",
-            "vi": "Họ thực sự hỏi gì"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "“How do you cache?” Juniors list `localStorage`. Seniors talk layers and invalidation — “user changed their avatar, which caches still show the old one?”",
-            "vi": "“Cache thế nào?” Junior liệt kê `localStorage`. Senior nói tầng và invalidation — “user đổi avatar, cache nào còn hiện cái cũ?”"
+            "en": "**In short:** Cache at the **outermost safe layer**. Invalidation is the interview. Hashed statics live forever (`immutable`). HTML and JSON get TTL plus **tags**. Personalized HTML is never `public`. `localStorage` holds preferences and drafts — not auth tokens.",
+            "vi": "**Tóm tắt:** Cache ở **tầng ngoài cùng còn an toàn**. Invalidation là câu phỏng vấn. Static đã hash sống mãi (`immutable`). HTML và JSON nhận TTL kèm **tag**. HTML cá nhân hóa không bao giờ `public`. `localStorage` giữ preference và bản nháp — không phải token auth."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Takeaway",
-            "vi": "Ý chính"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "Cache at the outermost safe layer; invalidation is the hard part — hashed statics forever, HTML/JSON with TTL plus tags, never personalized HTML as `public`.",
-            "vi": "Cache ở tầng ngoài cùng an toàn; invalidation là phần khó — static hashed mãi, HTML/JSON với TTL cộng tag, không bao giờ HTML cá nhân hóa như `public`."
+            "en": "**Why it matters:** “How do you cache?” Juniors list `localStorage`. Seniors talk layers and invalidation — “user changed their avatar, which caches still show the old one?” Anyone can set `max-age`. Missing a cache key is a **security** bug (`Cache-Control: public` on `/api/me`).",
+            "vi": "**Vì sao quan trọng:** “Bạn cache thế nào?” Junior liệt kê `localStorage`. Senior nói tầng và invalidation — “user đổi avatar, cache nào còn hiện cái cũ?” Ai cũng gán được `max-age`. Thiếu cache key là bug **bảo mật** (`Cache-Control: public` trên `/api/me`)."
           }
         },
         {
           "type": "list",
-          "style": "ul",
+          "style": "ol",
           "items": [
             {
-              "en": "**Decision.** Browser HTTP for hashed `/_nuxt` `immutable` and public GET JSON. Memory / TanStack Query for screen data, keyed and invalidated on mutation. CDN/edge with surrogate keys, purge on publish, short HTML TTL. Nitro/BFF tagged per entity. SW only with a kill switch — many seniors skip SW on a rapidly shipping SaaS. Key by `userId`, `locale`, `flag-bucket`, `currency`.",
-              "vi": "**Quyết định.** Browser HTTP cho `/_nuxt` hashed `immutable` và GET JSON public. Memory / TanStack Query cho data màn, có key và invalidate lúc mutation. CDN/edge với surrogate key, purge lúc publish, HTML TTL ngắn. Nitro/BFF tag theo entity. SW chỉ khi có kill switch — nhiều senior bỏ SW trên SaaS ship nhanh. Key theo `userId`, `locale`, `flag-bucket`, `currency`."
+              "en": "**How it works:** **Browser HTTP** for hashed `/_nuxt` `immutable` and some public GET JSON. **Memory / TanStack Query** for screen data, keyed, `invalidateQueries` after a mutation. **localStorage / IDB** for preferences and drafts, versioned, wiped on logout — never tokens. **CDN / edge** for HTML, public JSON, images, purged by surrogate keys. **Origin / BFF** (Nitro, Redis) for SSR payload and aggregates — tag per entity, do not double-cache blind.",
+              "vi": "**Cách hoạt động:** **HTTP browser** cho `/_nuxt` đã hash `immutable` và một ít JSON GET public. **Memory / TanStack Query** cho data màn hình, có key, `invalidateQueries` sau mutation. **localStorage / IDB** cho preference và bản nháp, có version, xóa lúc logout — không bao giờ token. **CDN / edge** cho HTML, JSON public, ảnh, purge bằng surrogate key. **Origin / BFF** (Nitro, Redis) cho payload SSR và bản gộp — tag theo entity, đừng cache kép mù."
             },
             {
-              "en": "**Why.** Anyone can set `max-age`. Missing a cache key is a security bug. `Cache-Control: public` on `/api/me`. SW serving year-old `index.html` that points at deleted hashes. Redis TTL 24h on prices. Query cache showing user A’s orders to user B after login. `index.html` `max-age=31536000`.",
-              "vi": "**Vì sao.** Ai cũng set `max-age`. Thiếu cache key là bug security. `Cache-Control: public` trên `/api/me`. SW serve `index.html` một năm tuổi trỏ hash đã xóa. Redis TTL 24h trên giá. Query cache hiện order user A cho user B sau login. `index.html` `max-age=31536000`."
+              "en": "**Invalidation patterns to name:** (1) Hash the filename — best cache; HTML must not live as long as the JS. (2) TTL for “good enough”; ETag / `If-None-Match` for cheap polling. (3) Surrogate-Key / cache tags: purge everything tagged `product:9` or `user:9`. (4) Event-driven purge on publish. Key the cache (`locale`, auth) or it is a security bug. A service worker precaches hashed assets and is network-first for HTML, with a **kill switch** — never cache HTML forever on a SaaS that ships daily.",
+              "vi": "**Pattern invalidation cần gọi tên:** (1) Hash tên file — cache tốt nhất; HTML không được sống lâu bằng JS. (2) TTL cho “đủ tốt”; ETag / `If-None-Match` cho polling rẻ. (3) Surrogate-Key / cache tag: purge mọi thứ gắn `product:9` hoặc `user:9`. (4) Purge theo event lúc publish. Key cache (`locale`, auth) nếu không là bug bảo mật. Service worker precache asset đã hash và network-first cho HTML, có **kill switch** — đừng cache HTML mãi trên SaaS đưa lên hằng ngày."
             },
             {
-              "en": "**Trade-off.** Freshness vs origin cost vs tag complexity. TTL is fine for marketing ISR 60s and wrong for inventory. GraphQL at the CDN: persisted queries + GET, or mostly don’t. Prefer HTTP cache for static over putting HTML in the SW.",
-              "vi": "**Đánh đổi / rủi ro.** Độ tươi vs chi phí origin vs độ phức tạp tag. TTL ổn cho marketing ISR 60s và sai cho inventory. GraphQL ở CDN: persisted query + GET, hoặc phần lớn đừng. Ưu tiên HTTP cache cho static hơn nhét HTML vào SW."
-            },
-            {
-              "en": "**How to verify.** CDN hit ratio, stale-content incidents, LCP vs TTL, origin QPS after deploy, purge latency. Nuxt: `useAsyncData` keys, `cachedEventHandler`, SWR. Next: `revalidate`, `revalidateTag`. Same design.",
-              "vi": "**Cách kiểm chứng.** CDN hit ratio, incident nội dung stale, LCP vs TTL, origin QPS sau deploy, độ trễ purge. Nuxt: key `useAsyncData`, `cachedEventHandler`, SWR. Next: `revalidate`, `revalidateTag`. Cùng design."
+              "en": "GraphQL at the CDN: per-query hashes or a short TTL; POST is hard to cache. Nuxt: `useAsyncData` keys, `cachedEventHandler`, `routeRules`. Next 15: `fetch` is uncached by default; `revalidateTag` / `revalidatePath` after mutations. Hard refresh is not an invalidation strategy.",
+              "vi": "GraphQL ở CDN: hash theo query hoặc TTL ngắn; POST khó cache. Nuxt: key `useAsyncData`, `cachedEventHandler`, `routeRules`. Next 15: `fetch` mặc định không cache; `revalidateTag` / `revalidatePath` sau mutation. Hard refresh không phải strategy invalidation."
             }
           ]
         },
         {
-          "type": "heading",
-          "level": 4,
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "// Avatar changed: touch every layer that could still show the old one.\nawait fetch(\"/api/me/avatar\", { method: \"POST\", body })\nqueryClient.invalidateQueries({ queryKey: [\"me\"] }) // memory / TanStack Query\n// CDN: PURGE /cdn-cgi/tags/user:9  (surrogate-key) — not a hard refresh\n// HTML for /app is no-store; hashed /_nuxt/avatar-hash.js is immutable\nlocalStorage.removeItem(\"draft:profile\") // never stored the token here\n// Next 15: revalidateTag(\"user-9\") after the Server Action\n// SW: network-first for HTML; kill switch header bypasses precache",
+            "vi": "// Avatar đổi: chạm mọi tầng còn có thể hiện cái cũ.\nawait fetch(\"/api/me/avatar\", { method: \"POST\", body })\nqueryClient.invalidateQueries({ queryKey: [\"me\"] }) // memory / TanStack Query\n// CDN: PURGE /cdn-cgi/tags/user:9  (surrogate-key) — không phải hard refresh\n// HTML cho /app là no-store; /_nuxt/avatar-hash.js đã hash là immutable\nlocalStorage.removeItem(\"draft:profile\") // không bao giờ cất token ở đây\n// Next 15: revalidateTag(\"user-9\") sau Server Action\n// SW: network-first cho HTML; header kill switch bỏ qua precache"
+          }
+        },
+        {
+          "type": "paragraph",
           "text": {
-            "en": "Layers (browser → origin)",
-            "vi": "Các tầng (browser → origin)"
-          },
-          "id": {
-            "en": "layers-browser-origin",
-            "vi": "cac-tang-browser-origin"
+            "en": "**What happens here:** The mutation invalidates the query, purges the CDN tag, and leaves hashed assets alone. The token was never in `localStorage`. A hard refresh is not in the list.",
+            "vi": "**Điều gì xảy ra:** Mutation invalidate query, purge tag CDN, và để asset đã hash yên. Token không bao giờ ở `localStorage`. Hard refresh không nằm trong list."
           }
         },
         {
@@ -457,27 +340,27 @@
               "vi": "Tầng"
             },
             {
-              "en": "What belongs",
-              "vi": "Thứ thuộc về đây"
+              "en": "Store",
+              "vi": "Cất"
             },
             {
-              "en": "Invalidation",
-              "vi": "Invalidation"
+              "en": "Invalidate",
+              "vi": "Làm mất hiệu lực"
             }
           ],
           "rows": [
             [
               {
                 "en": "Browser HTTP",
-                "vi": "Browser HTTP"
+                "vi": "HTTP browser"
               },
               {
                 "en": "Hashed JS `immutable`; some GET JSON",
-                "vi": "JS hashed `immutable`; một số GET JSON"
+                "vi": "JS đã hash `immutable`; một ít JSON GET"
               },
               {
                 "en": "Change the hash; ETag for unhashed",
-                "vi": "Đổi hash; ETag cho thứ chưa hash"
+                "vi": "Đổi hash; ETag cho chưa hash"
               }
             ],
             [
@@ -487,7 +370,7 @@
               },
               {
                 "en": "Screen data, seconds–minutes",
-                "vi": "Data màn, vài giây–vài phút"
+                "vi": "Data màn hình, vài giây–phút"
               },
               {
                 "en": "Query key + `invalidateQueries`",
@@ -500,8 +383,8 @@
                 "vi": "`localStorage` / IDB"
               },
               {
-                "en": "Preferences, drafts — not auth tokens",
-                "vi": "Preference, draft — không phải auth token"
+                "en": "Preferences, drafts — not tokens",
+                "vi": "Preference, bản nháp — không token"
               },
               {
                 "en": "Version key; wipe on logout",
@@ -515,126 +398,101 @@
               },
               {
                 "en": "HTML, public JSON, images",
-                "vi": "HTML, JSON public, image"
+                "vi": "HTML, JSON public, ảnh"
               },
               {
-                "en": "Surrogate keys / tags, short HTML TTL",
-                "vi": "Surrogate key / tag, HTML TTL ngắn"
+                "en": "Tags / surrogate keys; short HTML TTL",
+                "vi": "Tag / surrogate key; TTL HTML ngắn"
               }
             ],
             [
               {
-                "en": "App / Nitro / Redis",
-                "vi": "App / Nitro / Redis"
+                "en": "Origin / BFF",
+                "vi": "Origin / BFF"
               },
               {
-                "en": "SSR payload, BFF aggregates, joins",
-                "vi": "Payload SSR, aggregate BFF, join"
+                "en": "SSR payload, aggregates",
+                "vi": "Payload SSR, bản gộp"
               },
               {
-                "en": "Tag per entity; don’t double-cache blindly",
-                "vi": "Tag theo entity; đừng double-cache mù"
-              }
-            ],
-            [
-              {
-                "en": "Service worker",
-                "vi": "Service worker"
-              },
-              {
-                "en": "Precache hashed assets; network-first HTML",
-                "vi": "Precache asset hashed; HTML network-first"
-              },
-              {
-                "en": "Kill switch; never cache HTML forever",
-                "vi": "Kill switch; không cache HTML mãi"
+                "en": "Tag per entity; no blind double-cache",
+                "vi": "Tag theo entity; không cache kép mù"
               }
             ]
           ]
         },
         {
-          "type": "heading",
-          "level": 4,
-          "text": {
-            "en": "Invalidation patterns you should name",
-            "vi": "Pattern invalidation bạn nên nêu tên"
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
           },
-          "id": {
-            "en": "invalidation-patterns-you-should-name",
-            "vi": "pattern-invalidation-ban-nen-neu-ten"
+          "text": {
+            "en": "- Invalidation is the interview. Avatar change: query + CDN tag `user:9`. Never `localStorage` as the avatar source of truth.\n- Personalized HTML is never `public`. Missing `locale` or auth on the cache key is a security bug.\n- Service worker: kill switch; never cache HTML forever on a daily SaaS.\n- TTL is fine for marketing ISR and wrong for inventory. Tags for entities you can name.\n- Hard refresh is not a strategy. CDN ignoring `Set-Cookie` pages that were accidentally cached is the incident.",
+            "vi": "- Invalidation là câu phỏng vấn. Avatar đổi: query + tag CDN `user:9`. Không bao giờ `localStorage` làm nguồn sự thật avatar.\n- HTML cá nhân hóa không bao giờ `public`. Thiếu `locale` hoặc auth trên cache key là bug bảo mật.\n- Service worker: kill switch; đừng cache HTML mãi trên SaaS hằng ngày.\n- TTL ổn cho ISR marketing và sai cho tồn kho. Tag cho entity bạn gọi tên được.\n- Hard refresh không phải strategy. CDN bỏ qua trang `Set-Cookie` bị cache nhầm là incident."
           }
         },
         {
-          "type": "list",
-          "style": "ul",
-          "items": [
-            {
-              "en": "Hash the filename — best cache. HTML must not live as long as the JS.",
-              "vi": "Hash filename — cache tốt nhất. HTML không được sống lâu bằng JS."
-            },
-            {
-              "en": "TTL for “good enough”; ETag / `If-None-Match` for cheap polling.",
-              "vi": "TTL cho “đủ tốt”; ETag / `If-None-Match` cho polling rẻ."
-            },
-            {
-              "en": "Surrogate-Key / cache tags: purge everything tagged `product:9`.",
-              "vi": "Surrogate-Key / cache tag: purge mọi thứ tagged `product:9`."
-            },
-            {
-              "en": "Event-driven purge on publish. Key the cache or it is a security bug.",
-              "vi": "Event-driven purge lúc publish. Key cache nếu không là bug security."
-            }
-          ]
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: `/api/me` served to the wrong user. Cause: `public` without an auth key. Fix: `private` / `no-store`.\n- Symptom: old avatar after save. Cause: only mutated memory. Fix: query + CDN tag.\n- Symptom: year-old `index.html` from a SW. Cause: precache HTML. Fix: network-first HTML + kill switch.\n- Symptom: “just hard refresh.” Cause: no invalidation story. Fix: hash, TTL, tags, events.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `/api/me` phục vụ nhầm user. Nguyên nhân: `public` không key auth. Cách xử lý: `private` / `no-store`.\n- Triệu chứng: avatar cũ sau save. Nguyên nhân: chỉ mutate memory. Cách xử lý: query + tag CDN.\n- Triệu chứng: `index.html` một năm tuổi từ SW. Nguyên nhân: precache HTML. Cách xử lý: HTML network-first + kill switch.\n- Triệu chứng: “cứ hard refresh.” Nguyên nhân: không câu chuyện invalidation. Cách xử lý: hash, TTL, tag, event."
+          }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Interview phrasing",
-            "vi": "Nói khi phỏng vấn"
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
           },
           "text": {
-            "en": "I cache hashed assets forever and HTML short, tagged. Invalidation is the interview: avatar change purges `user:9` at the CDN, invalidates the query, and never sat in `localStorage` as an auth token. I do not put a service worker on a SaaS that ships daily unless I have a kill switch. Personalized HTML is never public.",
-            "vi": "Tôi cache asset hashed mãi và HTML ngắn, có tag. Invalidation là phần phỏng vấn: đổi avatar purge `user:9` ở CDN, invalidate query, và không bao giờ nằm `localStorage` như auth token. Tôi không gắn service worker lên SaaS ship mỗi ngày trừ khi có kill switch. HTML cá nhân hóa không bao giờ public."
+            "en": "How do you cache — and user changed their avatar, which layers still show the old one? `localStorage` as the whole answer is junior.",
+            "vi": "Bạn cache thế nào — và user đổi avatar, tầng nào còn hiện cái cũ? `localStorage` làm cả câu trả lời là junior."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "I cache hashed assets forever and HTML short, tagged. Invalidation is the interview: an avatar change purges user-9 at the CDN, invalidates the query, and never sat in localStorage as an auth token. Personalized HTML is never public. I do not put a service worker on a SaaS that ships daily unless I have a kill switch. Missing locale on the HTML cache key is a security bug. Next 15 fetch is uncached by default; I revalidate tags after the mutation. Hard refresh is not a strategy. On the admin product the profile photo lived in the query cache and a CDN tag, not in localStorage.",
+            "vi": "Tôi cache asset đã hash mãi và HTML ngắn, có tag. Invalidation là câu phỏng vấn: đổi avatar thì purge user-9 ở CDN, invalidate query, và không bao giờ nằm trong localStorage như token auth. HTML cá nhân hóa không bao giờ public. Tôi không đặt service worker trên SaaS đưa lên hằng ngày trừ khi có kill switch. Thiếu locale trên cache key HTML là bug bảo mật. Fetch Next 15 mặc định không cache; tôi revalidate tag sau mutation. Hard refresh không phải strategy. Ở sản phẩm admin ảnh hồ sơ sống trong query cache và tag CDN, không phải localStorage."
           }
         },
         {
           "type": "key-takeaways",
           "items": [
             {
-              "en": "CDN ignoring `Set-Cookie` pages that were accidentally cached.",
-              "vi": "CDN bỏ qua page `Set-Cookie` bị cache nhầm."
+              "en": "Outermost safe layer. Invalidation is the interview, not `max-age`.",
+              "vi": "Tầng ngoài cùng còn an toàn. Invalidation là câu phỏng vấn, không phải `max-age`."
             },
             {
-              "en": "`localStorage` / IDB: preferences and drafts, versioned, wiped on logout.",
-              "vi": "`localStorage` / IDB: preference và draft, có version, xóa lúc logout."
+              "en": "Hashed statics forever. HTML/JSON: TTL plus tags. Never public personalized HTML.",
+              "vi": "Static đã hash mãi. HTML/JSON: TTL kèm tag. Không bao giờ HTML cá nhân hóa public."
             },
             {
-              "en": "Hard refresh is not an invalidation strategy.",
-              "vi": "Hard refresh không phải strategy invalidation."
+              "en": "Avatar change: query + CDN tag. Tokens never in `localStorage`.",
+              "vi": "Avatar đổi: query + tag CDN. Token không bao giờ trong `localStorage`."
+            },
+            {
+              "en": "Service worker needs a kill switch. Hard refresh is not a strategy.",
+              "vi": "Service worker cần kill switch. Hard refresh không phải strategy."
             }
           ]
         },
         {
-          "type": "list",
-          "style": "ol",
-          "items": [
-            {
-              "en": "How do you cache GraphQL?",
-              "vi": "Cache GraphQL thế nào?"
-            },
-            {
-              "en": "What do you cache in the service worker vs HTTP cache?",
-              "vi": "Cache gì trong service worker vs HTTP cache?"
-            },
-            {
-              "en": "User changed their avatar — which layers do you touch?",
-              "vi": "User đổi avatar — bạn đụng tầng nào?"
-            },
-            {
-              "en": "Why is a missing `locale` key on HTML a security bug?",
-              "vi": "Vì sao thiếu key `locale` trên HTML là bug security?"
-            }
-          ]
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **How do you cache GraphQL?** Per-query hashes or short TTL. POST is hard; prefer tagged GET at a BFF.\n- **Service worker vs HTTP cache?** SW precaches hashed assets. HTML is network-first with a kill switch.\n- **User changed their avatar — which layers?** Query, CDN tag `user:9`, not hashed JS, never localStorage tokens.\n- **Why is a missing locale key on HTML a security bug?** You can serve the wrong language — or the wrong user’s HTML.",
+            "vi": "- **Cache GraphQL thế nào?** Hash theo query hoặc TTL ngắn. POST khó; ưu tiên GET có tag ở BFF.\n- **Service worker khác HTTP cache?** SW precache asset đã hash. HTML là network-first kèm kill switch.\n- **User đổi avatar — tầng nào?** Query, tag CDN `user:9`, không phải JS đã hash, không bao giờ token localStorage.\n- **Vì sao thiếu key locale trên HTML là bug bảo mật?** Bạn có thể phục vụ nhầm ngôn ngữ — hoặc HTML nhầm user."
+          }
         },
         {
           "type": "thematic-break"
@@ -644,7 +502,7 @@
           "level": 3,
           "text": {
             "en": "16.3. Component Library Design",
-            "vi": "16.3. Thiết kế Component Library"
+            "vi": "16.3. Thiết kế component library"
           },
           "id": {
             "en": "163-component-library-design",
@@ -652,98 +510,179 @@
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "What they actually ask",
-            "vi": "Họ thực sự hỏi gì"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "“Design a component library for 4 product teams.” They want tokens, accessible primitives, a versioned package with peer `vue`, and ownership — not a pretty Storybook.",
-            "vi": "“Design component library cho 4 product team.” Họ muốn token, primitive accessible, package có version với peer `vue`, và ownership — không phải Storybook đẹp."
+            "en": "**In short:** A component library is a **product**: tokens, accessible primitives, a versioned package with peer `vue`, and ownership. Domain widgets stay in apps (15.6). Four teams do not need four Buttons. Padding that shifts layout is a **major**.",
+            "vi": "**Tóm tắt:** Component library là một **product**: token, primitive accessible, package có version với peer `vue`, và ownership. Widget domain ở lại trong app (15.6). Bốn team không cần bốn Button. Padding đẩy layout là **major**."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Takeaway",
-            "vi": "Ý chính"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "Ship tokens plus accessible primitives plus documented composition as a versioned package; domain widgets stay in apps.",
-            "vi": "Ship token cộng primitive accessible cộng composition được document như một package có version; domain widget ở lại app."
+            "en": "**Why it matters:** “Design a component library for four product teams.” They want tokens, APG primitives, semver, and a guild — not a pretty Storybook. Hex in every SFC, an icon “button” that is not a `<button>`, and a major bump every month are the failure modes.",
+            "vi": "**Vì sao quan trọng:** “Thiết kế component library cho bốn product team.” Họ muốn token, primitive APG, semver, và một guild — không phải Storybook đẹp. Hex trong mọi SFC, “button” icon không phải `<button>`, và major bump mỗi tháng là các kịch bản lỗi."
           }
-        },
-        {
-          "type": "list",
-          "style": "ul",
-          "items": [
-            {
-              "en": "**Decision.** CSS variables with semantic names (`--color-danger`). Dark mode swaps tokens, class on `<html>` from a cookie to avoid flash. Keyboard, focus trap, listbox pattern, contrast on tokens — do not ship `div` click-widgets. Semver: visual breaking change is major. `exports` map, per-component entrypoints, `sideEffects` for CSS. RFC for new primitives; app-specific requests get a no plus an alternative composition. Dark-launch `ButtonNext` or a flag inside the package.",
-              "vi": "**Quyết định.** CSS variable với tên semantic (`--color-danger`). Dark mode swap token, class trên `<html>` từ cookie để tránh flash. Keyboard, focus trap, pattern listbox, contrast trên token — đừng ship widget `div` click. Semver: breaking visual là major. Map `exports`, entrypoint per-component, `sideEffects` cho CSS. RFC cho primitive mới; request app-specific nhận không kèm composition thay. Dark-launch `ButtonNext` hoặc flag trong package."
-            },
-            {
-              "en": "**Why.** The DS is a product. Library that bundles Vue, hex in every SFC, Icon button that is not a `<button>`, major bump every month, three `Button.vue` with no owner, visual tests only on Chrome desktop. Storybook-only components that fail Nuxt SSR. CSS order: app utilities fighting the DS. Duplicate icons three ways.",
-              "vi": "**Vì sao.** DS là một product. Library bundle Vue, hex trong mọi SFC, Icon button không phải `<button>`, major bump mỗi tháng, ba `Button.vue` không owner, visual test chỉ Chrome desktop. Component chỉ sống trên Storybook, fail Nuxt SSR. CSS order: utility app đánh nhau với DS. Icon duplicate ba cách."
-            },
-            {
-              "en": "**Trade-off.** Styled + tokens is faster for one brand; headless if brands diverge hard. Start mono, split `@acme/ui-button` if builds hurt. Pin in apps; Renovate; don’t `workspace:*` forever with separate deploy clocks. Consuming apps do not fork buttons.",
-              "vi": "**Đánh đổi / rủi ro.** Styled + token nhanh hơn cho một brand; headless nếu brand lệch mạnh. Bắt đầu mono, tách `@acme/ui-button` nếu build đau. Pin trong app; Renovate; đừng `workspace:*` mãi khi lịch deploy tách. App consume không fork button."
-            },
-            {
-              "en": "**How to verify.** Adoption, a11y violations on primitives, time to add a variant, breakages per release, bundle bytes per imported component. Axe on stories plus keyboard e2e for overlays. React + Vue DS: share tokens, native primitives per framework — do not wrap Vue in React.",
-              "vi": "**Cách kiểm chứng.** Adoption, vi phạm a11y trên primitive, thời gian thêm variant, breakage mỗi release, byte bundle mỗi component import. Axe trên story cộng keyboard e2e cho overlay. DS React + Vue: share token, primitive native mỗi framework — đừng wrap Vue trong React."
-            }
-          ]
-        },
-        {
-          "type": "senior-answer",
-          "label": {
-            "en": "Interview phrasing",
-            "vi": "Nói khi phỏng vấn"
-          },
-          "text": {
-            "en": "I ship tokens and primitives as a versioned package with peer Vue. Apps pin semver and compose; they do not fork Button. A11y is non-negotiable — a dialog without a focus trap is not a primitive. Padding that shifts layout is a major. Domain checkout widgets stay in the app. Ownership is a guild with a public roadmap.",
-            "vi": "Tôi ship token và primitive như package có version với peer Vue. App pin semver và compose; họ không fork Button. A11y không thương lượng — dialog không focus trap không phải primitive. Padding làm lệch layout là major. Widget checkout domain ở lại app. Ownership là một guild với roadmap public."
-          }
-        },
-        {
-          "type": "key-takeaways",
-          "items": [
-            {
-              "en": "Wrong thing should be hard in the primitive API.",
-              "vi": "Việc sai phải trở nên khó trong primitive API."
-            },
-            {
-              "en": "Changelog + codemods for majors.",
-              "vi": "Changelog + codemod cho major."
-            },
-            {
-              "en": "Visual regression: Playwright/Chromatic, tokens as fixtures.",
-              "vi": "Visual regression: Playwright/Chromatic, token như fixture."
-            }
-          ]
         },
         {
           "type": "list",
           "style": "ol",
           "items": [
             {
-              "en": "How do you visual-regression test?",
-              "vi": "Visual-regression test thế nào?"
+              "en": "**How it works:** CSS variables with semantic names (`--color-danger`). Dark mode swaps tokens; the class on `<html>` comes from a cookie to avoid a flash. Keyboard, focus trap, listbox pattern, contrast on tokens. `exports` map, per-component entrypoints, `sideEffects` for CSS. RFC for new primitives; app-specific requests get a no plus a composition.",
+              "vi": "**Cách hoạt động:** Biến CSS với tên ngữ nghĩa (`--color-danger`). Dark mode đổi token; class trên `<html>` đến từ cookie để tránh nháy. Bàn phím, focus trap, pattern listbox, contrast trên token. `exports` map, entrypoint theo component, `sideEffects` cho CSS. RFC cho primitive mới; request riêng app nhận lời không kèm cách compose."
             },
             {
-              "en": "React + Vue DS?",
-              "vi": "DS React + Vue?"
+              "en": "Styled + tokens is faster for one brand; headless if brands diverge hard. Start mono, split `@acme/ui-button` if builds hurt. Apps pin semver; Renovate; do not `workspace:*` forever with separate deploy clocks. Dark-launch `ButtonNext` or a flag inside the package. Visual regression: Playwright/Chromatic, tokens as fixtures.",
+              "vi": "Styled + token nhanh hơn cho một brand; headless nếu brand lệch mạnh. Bắt đầu mono, tách `@acme/ui-button` nếu build đau. App ghim semver; Renovate; đừng `workspace:*` mãi khi đồng hồ deploy tách. Dark-launch `ButtonNext` hoặc flag trong package. Visual regression: Playwright/Chromatic, token làm fixture."
             },
             {
-              "en": "When is a visual change a major?",
-              "vi": "Khi nào đổi visual là major?"
-            },
-            {
-              "en": "What do you say no to from a product team?",
-              "vi": "Bạn nói không với request nào từ product team?"
+              "en": "React + Vue DS: share tokens, native primitives per framework — do not wrap Vue in React. Storybook must not be the only runtime; Nuxt SSR has to pass. This topic is the 45-minute *design*; 15.6 is the ownership cut versus app components.",
+              "vi": "DS React + Vue: chia token, primitive native mỗi framework — đừng bọc Vue trong React. Storybook không được là runtime duy nhất; Nuxt SSR phải qua. Topic này là *thiết kế* 45 phút; 15.6 là đường cắt ownership khác component app."
             }
           ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "// packages/ui/src/button/index.ts — per-component entry, peer vue\nexport { default as UiButton } from \"./UiButton.vue\"\nexport type { UiButtonProps } from \"./UiButton.vue\"\n// package.json: \"exports\": { \"./button\": \"./src/button/index.ts\" }\n// \"peerDependencies\": { \"vue\": \"^3.5\" }, \"sideEffects\": [\"**/*.css\"]\nexport const tokens = {\n  \"--color-danger\": \"oklch(0.6 0.2 25)\", // semantic; dark mode swaps the value\n}\n// Visual change that shifts padding → major. Domain orderId → refuse, see 15.6.",
+            "vi": "// packages/ui/src/button/index.ts — entry theo component, peer vue\nexport { default as UiButton } from \"./UiButton.vue\"\nexport type { UiButtonProps } from \"./UiButton.vue\"\n// package.json: \"exports\": { \"./button\": \"./src/button/index.ts\" }\n// \"peerDependencies\": { \"vue\": \"^3.5\" }, \"sideEffects\": [\"**/*.css\"]\nexport const tokens = {\n  \"--color-danger\": \"oklch(0.6 0.2 25)\", // ngữ nghĩa; dark mode đổi value\n}\n// Đổi visual đẩy padding → major. orderId domain → từ chối, xem 15.6."
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** Apps import `@acme/ui/button`, not a barrel of everything. Vue stays a peer. Tokens are semantic. A padding shift is a major you changelog.",
+            "vi": "**Điều gì xảy ra:** App import `@acme/ui/button`, không phải barrel của tất cả. Vue ở lại peer. Token mang ngữ nghĩa. Đẩy padding là major bạn ghi changelog."
+          }
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Ship",
+              "vi": "Đưa lên"
+            },
+            {
+              "en": "Refuse",
+              "vi": "Từ chối"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Tokens + APG primitives + docs",
+                "vi": "Token + primitive APG + docs"
+              },
+              {
+                "en": "Hex in every SFC; `div` click-widgets",
+                "vi": "Hex trong mọi SFC; widget click `div`"
+              }
+            ],
+            [
+              {
+                "en": "Peer `vue`; per-component `exports`",
+                "vi": "Peer `vue`; `exports` theo component"
+              },
+              {
+                "en": "Bundling Vue; one 3 MB barrel",
+                "vi": "Bundle Vue; một barrel 3 MB"
+              }
+            ],
+            [
+              {
+                "en": "Semver: visual break = major",
+                "vi": "Semver: gãy visual = major"
+              },
+              {
+                "en": "Major every month; silent padding shifts",
+                "vi": "Major mỗi tháng; đẩy padding im lặng"
+              }
+            ],
+            [
+              {
+                "en": "Guild + public roadmap",
+                "vi": "Guild + roadmap công"
+              },
+              {
+                "en": "Three unowned `Button.vue`",
+                "vi": "Ba `Button.vue` vô chủ"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- The DS is a product. Wrong thing should be hard in the primitive API (15.6 leak: `orderId` on Button).\n- A11y is non-negotiable. A dialog without a focus trap is not a primitive.\n- Changelog + codemods for majors. Apps pin; Renovate.\n- Storybook-only components that fail Nuxt SSR are not shipped.\n- Distinct from 15.6: here you design the library. There you draw the cut versus app widgets.",
+            "vi": "- DS là một product. Việc sai phải khó trong API primitive (chỗ rò 15.6: `orderId` trên Button).\n- A11y không thương lượng. Dialog không có focus trap không phải primitive.\n- Changelog + codemod cho major. App ghim; Renovate.\n- Component chỉ Storybook mà gãy Nuxt SSR thì không đưa lên.\n- Khác 15.6: ở đây bạn thiết kế library. Ở đó bạn vẽ đường cắt khác widget app."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: hex in every SFC. Cause: no tokens. Fix: semantic CSS variables, dark mode as a swap.\n- Symptom: major every month. Cause: no semver discipline. Fix: visual break = major; extras behind flags.\n- Symptom: fails Nuxt SSR. Cause: Storybook-only `window`. Fix: SSR stories.\n- Symptom: four teams, four Buttons. Cause: no owner. Fix: one package, a guild, a roadmap.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: hex trong mọi SFC. Nguyên nhân: không token. Cách xử lý: biến CSS ngữ nghĩa, dark mode là một lần đổi.\n- Triệu chứng: major mỗi tháng. Nguyên nhân: không kỷ luật semver. Cách xử lý: gãy visual = major; phần thêm sau flag.\n- Triệu chứng: gãy Nuxt SSR. Nguyên nhân: chỉ Storybook `window`. Cách xử lý: story SSR.\n- Triệu chứng: bốn team, bốn Button. Nguyên nhân: không chủ. Cách xử lý: một package, một guild, một roadmap."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+          },
+          "text": {
+            "en": "Design a component library for four product teams. Tokens, a11y, versioning, ownership — not a pretty Storybook.",
+            "vi": "Thiết kế component library cho bốn product team. Token, a11y, versioning, ownership — không phải Storybook đẹp."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "I ship tokens and primitives as a versioned package with peer Vue. Apps pin semver and compose; they do not fork Button. A11y is non-negotiable — a dialog without a focus trap is not a primitive. Padding that shifts layout is a major. Domain checkout widgets stay in the app. Ownership is a guild with a public roadmap. I start mono and split packages if builds hurt. Visual regression uses tokens as fixtures. React plus Vue shares tokens and keeps native primitives per framework. On the admin product we imported `@acme/ui/button`; PayButton stayed in checkout.",
+            "vi": "Tôi đưa token và primitive như package có version với peer Vue. App ghim semver và compose; chúng không fork Button. A11y không thương lượng — dialog không có focus trap không phải primitive. Padding đẩy layout là major. Widget checkout domain ở lại trong app. Ownership là guild với roadmap công. Tôi bắt đầu mono và tách package nếu build đau. Visual regression dùng token làm fixture. React kèm Vue chia token và giữ primitive native mỗi framework. Ở sản phẩm admin chúng tôi import `@acme/ui/button`; PayButton ở lại checkout."
+          }
+        },
+        {
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "Library = tokens + APG primitives + versioned package + a guild.",
+              "vi": "Library = token + primitive APG + package có version + một guild."
+            },
+            {
+              "en": "Visual break = major. Domain widgets stay in the app (15.6).",
+              "vi": "Gãy visual = major. Widget domain ở lại trong app (15.6)."
+            },
+            {
+              "en": "Peer `vue`. Per-component exports. No 3 MB barrel.",
+              "vi": "Peer `vue`. Export theo component. Không barrel 3 MB."
+            },
+            {
+              "en": "Storybook is not the only runtime. Nuxt SSR must pass.",
+              "vi": "Storybook không phải runtime duy nhất. Nuxt SSR phải qua."
+            }
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **How do you visual-regression test?** Chromatic/Playwright on primitives; tokens as fixtures.\n- **React + Vue DS?** Share tokens. Native primitives per framework. Do not wrap Vue in React.\n- **When is a visual change a major?** It shifts layout or breaks a documented contract.\n- **What do you say no to?** Domain props on primitives. Offer composition in the app.",
+            "vi": "- **Visual-regression test thế nào?** Chromatic/Playwright trên primitive; token làm fixture.\n- **DS React + Vue?** Chia token. Primitive native mỗi framework. Đừng bọc Vue trong React.\n- **Khi nào thay đổi visual là major?** Nó đẩy layout hoặc gãy hợp đồng đã ghi.\n- **Bạn nói không với gì?** Prop domain trên primitive. Hãy đưa cách compose trong app."
+          }
         },
         {
           "type": "thematic-break"
@@ -761,98 +700,199 @@
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "What they actually ask",
-            "vi": "Họ thực sự hỏi gì"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "“Design an analytics / ops dashboard.” Use this as a worked 45-minute outline: SPA, BFF, filters in the URL, virtualization, server permissions, widget-level failure.",
-            "vi": "“Design analytics / ops dashboard.” Dùng đây như dàn bài 45 phút đã làm: SPA, BFF, filter trong URL, virtualization, permission server, failure cấp widget."
+            "en": "**In short:** An analytics / ops dashboard is **CSR-heavy**, one **BFF dashboard DTO** (or budgeted widget calls), **filters in the URL**, virtualized rows, **permissions on the server**, and an **error boundary per widget**. Use the 16.1 six-step framework out loud.",
+            "vi": "**Tóm tắt:** Dashboard analytics / ops là **nặng CSR**, một **DTO dashboard BFF** (hoặc gọi widget có ngân sách), **filter trên URL**, hàng được ảo hóa, **permission trên server**, và **error boundary mỗi widget**. Dùng khung sáu bước 16.1 nói to."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Takeaway",
-            "vi": "Ý chính"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "CSR-heavy shell, one BFF dashboard DTO or budgeted widget calls, filters in the URL, virtualize rows, permissions on the server, error boundary per widget.",
-            "vi": "Shell nặng CSR, một DTO dashboard BFF hoặc gọi widget có budget, filter trong URL, virtualize hàng, permission trên server, error boundary mỗi widget."
+            "en": "**Why it matters:** This is the worked 45-minute outline. Traps: twelve waterfalls from the browser, filters only in Pinia (unshareable, broken back button), 50k DOM rows, hiding a button but leaving the endpoint, one thrown chart whitescreening the app.",
+            "vi": "**Vì sao quan trọng:** Đây là dàn bài 45 phút làm sẵn. Bẫy: mười hai waterfall từ browser, filter chỉ trong Pinia (không chia sẻ được, gãy nút back), 50k hàng DOM, giấu nút mà để lại endpoint, một chart throw làm trắng cả app."
           }
-        },
-        {
-          "type": "list",
-          "style": "ul",
-          "items": [
-            {
-              "en": "**Decision.** Clarify: internal users, how live, row count, export, multi-region, saved views. Widgets client (`<ClientOnly>` for charts). `?from=&to=&status=&q=` is source of truth. Virtualize tables; downsample charts in the BFF. BFF strips PII fields; FE hides columns for UX only. Default 30s poll + ETag or SSE for badges; WS only if people edit queues. Timeouts per widget; last-good + stale marker.",
-              "vi": "**Quyết định.** Làm rõ: user nội bộ, live mức nào, số hàng, export, multi-region, saved view. Widget client (`<ClientOnly>` cho chart). `?from=&to=&status=&q=` là source of truth. Virtualize table; downsample chart trong BFF. BFF lột field PII; FE ẩn cột chỉ vì UX. Default poll 30s + ETag hoặc SSE cho badge; WS chỉ khi người edit queue. Timeout mỗi widget; last-good + marker stale."
-            },
-            {
-              "en": "**Why.** 12 waterfalls from the browser. Filters only in Pinia — unshareable, broken back button. Rendering 50k DOM rows. Hiding a button but leaving the endpoint. One thrown chart whitescreens the app. WS pushing full table replacements. Secrets in the URL. “Select all 40k rows” in the client.",
-              "vi": "**Vì sao.** 12 waterfall từ browser. Filter chỉ trong Pinia — không share, back button gãy. Render 50k DOM row. Giấu nút nhưng để endpoint. Một chart throw whitescreen cả app. WS push thay cả table. Secret trong URL. “Select all 40k hàng” phía client."
-            },
-            {
-              "en": "**Trade-off.** One fat BFF DTO vs parallel widget calls with a gateway timeout. URL for all filters vs saved views as server resources (`?view=id`). Cursor usually not in the URL for infinite grids; page index is for paginated tables. Mobile is usually a reduced surface. Export CSV server-side on the same query, not the DOM.",
-              "vi": "**Đánh đổi / rủi ro.** Một DTO BFF béo vs gọi widget song song với budget timeout gateway. URL cho mọi filter vs saved view như server resource (`?view=id`). Cursor thường không trong URL cho infinite grid; page index có cho table phân trang. Mobile thường là surface giảm. Export CSV server-side trên cùng query, không phải DOM."
-            },
-            {
-              "en": "**How to verify.** Time-to-first-widget, p95 of the BFF DTO, INP while scrolling, query-param correctness, unauthorized 403 rate, memory on a long-lived tab. Split chart vendor. Flags for new widgets. Watch timezone (`Z` vs local) and chart-lib leaks on unmount.",
-              "vi": "**Cách kiểm chứng.** Time-to-first-widget, p95 DTO BFF, INP khi scroll, query param đúng, tỷ lệ 403 unauthorized, memory trên tab sống lâu. Split chart vendor. Flag cho widget mới. Để ý timezone (`Z` vs local) và leak chart-lib lúc unmount."
-            }
-          ]
-        },
-        {
-          "type": "senior-answer",
-          "label": {
-            "en": "Interview phrasing",
-            "vi": "Nói khi phỏng vấn"
-          },
-          "text": {
-            "en": "Internal ops, weak SEO, so CSR-heavy Nuxt with a BFF `GET /bff/dashboard`. Filters live in the URL so support can share a view. I virtualize the table and downsample the chart. Permissions are stripped on the server; hiding a column is UX. Each widget has its own boundary and timeout. I do not open a socket for the whole JSON blob.",
-            "vi": "Ops nội bộ, SEO yếu, nên Nuxt nặng CSR với BFF `GET /bff/dashboard`. Filter sống trong URL để support share view. Tôi virtualize table và downsample chart. Permission bị lột trên server; ẩn cột là UX. Mỗi widget có boundary và timeout riêng. Tôi không mở socket cho cả JSON blob."
-          }
-        },
-        {
-          "type": "key-takeaways",
-          "items": [
-            {
-              "en": "N widgets × N APIs is the classic trap.",
-              "vi": "N widget × N API là bẫy kinh điển."
-            },
-            {
-              "en": "Widget catalog: if they cannot see billing, the route is not registered.",
-              "vi": "Catalog widget: không xem billing thì route không được register."
-            },
-            {
-              "en": "Exports go through an endpoint that logs.",
-              "vi": "Export đi qua endpoint có log."
-            }
-          ]
         },
         {
           "type": "list",
           "style": "ol",
           "items": [
             {
-              "en": "How do you export CSV of the filtered set?",
-              "vi": "Export CSV tập đã filter thế nào?"
+              "en": "**How it works:** **Requirements.** Internal users, how live, row count, export, multi-region, saved views. Weak SEO → CSR-heavy Nuxt, charts behind `<ClientOnly>`. **Boxes.** BFF `GET /bff/dashboard` (or parallel widgets with a gateway timeout). Permissions stripped on the server; hiding a column is UX only.",
+              "vi": "**Cách hoạt động:** **Yêu cầu.** User nội bộ, live thế nào, số hàng, export, đa region, view đã lưu. SEO yếu → Nuxt nặng CSR, chart sau `<ClientOnly>`. **Hộp.** BFF `GET /bff/dashboard` (hoặc widget song song với timeout gateway). Permission bị strip trên server; giấu cột chỉ là UX."
             },
             {
-              "en": "Mobile?",
-              "vi": "Mobile?"
+              "en": "**Data/state.** `?from=&to=&status=&q=` is the source of truth. Saved views are server resources (`?view=id`). Cursor usually not in the URL for infinite grids; page index is for paginated tables. **Perf.** Virtualize tables; downsample charts in the BFF. Default 30s poll + ETag; SSE for badges; WS only if people edit queues.",
+              "vi": "**Data/state.** `?from=&to=&status=&q=` là nguồn sự thật. View đã lưu là resource server (`?view=id`). Cursor thường không trên URL cho lưới vô hạn; chỉ số trang cho table phân trang. **Hiệu năng.** Ảo hóa table; downsample chart trong BFF. Mặc định poll 30s + ETag; SSE cho badge; WS chỉ khi người ta sửa queue."
             },
             {
-              "en": "When does the cursor belong in the URL?",
-              "vi": "Khi nào cursor thuộc URL?"
-            },
-            {
-              "en": "One BFF DTO vs parallel widgets — how do you pick?",
-              "vi": "Một DTO BFF vs widget song song — chọn thế nào?"
+              "en": "**A11y/security.** Server authz; export CSV through an endpoint that logs, not the DOM. Secrets not in the URL. **Rollout.** Flags for new widgets; timeout per widget; last-good + stale marker. Split the chart vendor. Watch timezone (`Z` vs local) and chart-lib leaks on unmount.",
+              "vi": "**A11y/bảo mật.** Authz server; export CSV qua endpoint có log, không phải DOM. Secret không trên URL. **Rollout.** Flag cho widget mới; timeout mỗi widget; last-good + marker cũ. Tách vendor chart. Để ý timezone (`Z` khác local) và chart-lib rò lúc unmount."
             }
           ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "// Filters in the URL so support can share a view. Not Pinia-only.\nconst from = useRouteQuery(\"from\", \"7d\")\nconst status = useRouteQuery(\"status\", \"open\")\nconst { data, pending, error, refresh } = await useAsyncData(\n  () => `dash:${from.value}:${status.value}`,\n  () => $fetch(\"/bff/dashboard\", { query: { from: from.value, status: status.value } }),\n)\n// Each widget: own boundary + timeout. Table is virtualized in the client.\n// Hidden column ≠ missing field: BFF already stripped billing for this role.",
+            "vi": "// Filter trên URL để support chia sẻ view. Không chỉ Pinia.\nconst from = useRouteQuery(\"from\", \"7d\")\nconst status = useRouteQuery(\"status\", \"open\")\nconst { data, pending, error, refresh } = await useAsyncData(\n  () => `dash:${from.value}:${status.value}`,\n  () => $fetch(\"/bff/dashboard\", { query: { from: from.value, status: status.value } }),\n)\n// Mỗi widget: boundary riêng + timeout. Table được ảo hóa ở client.\n// Cột ẩn ≠ thiếu field: BFF đã strip billing cho role này."
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** Support pastes a URL and sees the same slice. The BFF owns authz. Widgets fail independently. Pinia does not hold the filters.",
+            "vi": "**Điều gì xảy ra:** Support dán URL và thấy cùng một lát. BFF sở hữu authz. Widget fail độc lập. Pinia không giữ filter."
+          }
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Choice",
+              "vi": "Lựa chọn"
+            },
+            {
+              "en": "Pick when",
+              "vi": "Chọn khi"
+            },
+            {
+              "en": "Trap",
+              "vi": "Bẫy"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "One BFF DTO",
+                "vi": "Một DTO BFF"
+              },
+              {
+                "en": "Widgets share a time range",
+                "vi": "Widget chung một khoảng thời gian"
+              },
+              {
+                "en": "One slow join blocks first widget",
+                "vi": "Một join chậm chặn widget đầu"
+              }
+            ],
+            [
+              {
+                "en": "Parallel widgets",
+                "vi": "Widget song song"
+              },
+              {
+                "en": "Independent sources",
+                "vi": "Nguồn độc lập"
+              },
+              {
+                "en": "N×N browser waterfalls without a gateway",
+                "vi": "Waterfall N×N từ browser không gateway"
+              }
+            ],
+            [
+              {
+                "en": "URL filters",
+                "vi": "Filter URL"
+              },
+              {
+                "en": "Shareable support views",
+                "vi": "View support chia sẻ được"
+              },
+              {
+                "en": "Secrets or a 4 kB query string",
+                "vi": "Secret hoặc query string 4 kB"
+              }
+            ],
+            [
+              {
+                "en": "30s poll + ETag",
+                "vi": "Poll 30s + ETag"
+              },
+              {
+                "en": "Most ops dashboards",
+                "vi": "Hầu hết dashboard ops"
+              },
+              {
+                "en": "WS pushing full table replacements",
+                "vi": "WS đẩy thay cả table"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- N widgets × N APIs from the browser is the classic trap. Put a BFF in front or budget the parallel calls.\n- Hiding a button is UX. Authz is the server. The catalog does not register a route the role cannot see.\n- “Select all 40k rows” in the client is a bug. Export is a server job on the same query.\n- Mobile is usually a reduced surface, not the same 12 widgets.\n- Verify: time-to-first-widget, p95 of the DTO, INP while scrolling, 403 rate, memory on a long-lived tab.",
+            "vi": "- N widget × N API từ browser là bẫy kinh điển. Để BFF phía trước hoặc budget các lệnh song song.\n- Giấu nút là UX. Authz là server. Catalog không đăng route mà role không thấy được.\n- “Chọn tất cả 40k hàng” ở client là bug. Export là việc server trên cùng query.\n- Mobile thường là bề mặt rút gọn, không phải cùng 12 widget.\n- Kiểm chứng: time-to-first-widget, p95 của DTO, INP lúc cuộn, tỉ lệ 403, bộ nhớ trên tab sống lâu."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: unshareable view, broken back. Cause: filters in Pinia only. Fix: URL as source of truth.\n- Symptom: whitescreen. Cause: one chart threw. Fix: boundary per widget.\n- Symptom: 50k DOM rows, INP dies. Cause: no virtualize. Fix: virtualize + BFF downsample.\n- Symptom: hidden button, open endpoint. Cause: UI-only authz. Fix: strip on the server.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: view không chia sẻ được, gãy back. Nguyên nhân: filter chỉ trong Pinia. Cách xử lý: URL là nguồn sự thật.\n- Triệu chứng: màn trắng. Nguyên nhân: một chart throw. Cách xử lý: boundary mỗi widget.\n- Triệu chứng: 50k hàng DOM, INP chết. Nguyên nhân: không ảo hóa. Cách xử lý: ảo hóa + downsample BFF.\n- Triệu chứng: nút ẩn, endpoint mở. Nguyên nhân: authz chỉ UI. Cách xử lý: strip trên server."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+          },
+          "text": {
+            "en": "Design an analytics / ops dashboard. They want the 16.1 framework applied: CSR, BFF, URL filters, virtualize, server permissions, widget failures.",
+            "vi": "Thiết kế dashboard analytics / ops. Họ muốn khung 16.1 được áp: CSR, BFF, filter URL, ảo hóa, permission server, widget fail."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "Internal ops, weak SEO, so CSR-heavy Nuxt with a BFF GET /bff/dashboard. Filters live in the URL so support can share a view. I virtualize the table and downsample the chart in the BFF. Permissions are stripped on the server; hiding a column is UX. Each widget has its own boundary and timeout. I do not open a socket for the whole table — 30s poll plus ETag, SSE for badges. Export is a logged endpoint on the same query, not the DOM. N widgets times N browser APIs is the trap I refuse. On the admin product the unauthorized empty state was a route the role never registered, not a hidden button.",
+            "vi": "Ops nội bộ, SEO yếu, nên Nuxt nặng CSR với BFF GET /bff/dashboard. Filter sống trên URL để support chia sẻ view. Tôi ảo hóa table và downsample chart trong BFF. Permission bị strip trên server; giấu cột là UX. Mỗi widget có boundary và timeout riêng. Tôi không mở socket cho cả table — poll 30s kèm ETag, SSE cho badge. Export là endpoint có log trên cùng query, không phải DOM. N widget nhân N API browser là bẫy tôi từ chối. Ở sản phẩm admin empty state không đủ quyền là route mà role không bao giờ đăng, không phải nút ẩn."
+          }
+        },
+        {
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "CSR-heavy shell, BFF DTO, filters in the URL, virtualize, server authz.",
+              "vi": "Shell nặng CSR, DTO BFF, filter trên URL, ảo hóa, authz server."
+            },
+            {
+              "en": "Error boundary per widget. Hidden column ≠ missing field.",
+              "vi": "Error boundary mỗi widget. Cột ẩn ≠ thiếu field."
+            },
+            {
+              "en": "N×N browser APIs is the trap. Export is a server job.",
+              "vi": "N×N API browser là bẫy. Export là việc server."
+            },
+            {
+              "en": "Poll + ETag by default. WS only if people edit queues.",
+              "vi": "Poll + ETag mặc định. WS chỉ khi người ta sửa queue."
+            }
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **How do you export CSV of the filtered set?** Server endpoint, same query, logged. Not the DOM.\n- **Mobile?** Reduced surface, not 12 widgets stacked. Same URL filters where they still fit.\n- **When does the cursor belong in the URL?** Paginated tables, not an infinite grid’s opaque cursor.\n- **One BFF DTO vs parallel widgets?** Shared time range → one DTO. Independent sources → parallel behind a gateway.",
+            "vi": "- **Export CSV của tập đã lọc thế nào?** Endpoint server, cùng query, có log. Không phải DOM.\n- **Mobile?** Bề mặt rút gọn, không phải 12 widget xếp chồng. Cùng filter URL chỗ còn vừa.\n- **Khi nào cursor thuộc URL?** Table phân trang, không phải cursor mờ của lưới vô hạn.\n- **Một DTO BFF khác widget song song?** Chung khoảng thời gian → một DTO. Nguồn độc lập → song song sau gateway."
+          }
         },
         {
           "type": "thematic-break"
@@ -870,46 +910,34 @@
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "What they actually ask",
-            "vi": "Họ thực sự hỏi gì"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "“We have a marketing site and a logged-in product. One codebase or two? Nuxt or Next?” They want hybrid route rules, two runtime profiles, and cache that does not leak a first name.",
-            "vi": "“Có marketing site và product đã login. Một codebase hay hai? Nuxt hay Next?” Họ muốn hybrid route rules, hai runtime profile, và cache không leak tên."
+            "en": "**In short:** One Nuxt or Next app, one design system, **two runtime profiles**: public content at the CDN (SSG/ISR, purge on publish), `/app/**` behind auth as **no-store**. Split deploys only if org clocks demand it. The homepage request has **no user cookie**.",
+            "vi": "**Tóm tắt:** Một app Nuxt hoặc Next, một design system, **hai profile runtime**: content public ở CDN (SSG/ISR, purge lúc publish), `/app/**` sau auth là **no-store**. Tách deploy chỉ khi đồng hồ tổ chức đòi. Request homepage **không có cookie user**."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Takeaway",
-            "vi": "Ý chính"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "One Nuxt or Next app, one design system, two runtime profiles: public content at the CDN, app behind auth as no-store — split deploys only if org clocks demand it.",
-            "vi": "Một app Nuxt hoặc Next, một design system, hai runtime profile: content public ở CDN, app sau auth là no-store — tách deploy chỉ khi lịch org đòi."
+            "en": "**Why it matters:** “Marketing site and a logged-in product. One codebase or two? Nuxt or Next?” A single global `Cache-Control` either leaks a first name or kills SEO. SSR’ing the entire logged-in app during a Super Bowl ad is the other tell. `Vary: Cookie` on `/` drives hit ratio to ~0.",
+            "vi": "**Vì sao quan trọng:** “Site marketing và product đã login. Một codebase hay hai? Nuxt hay Next?” Một `Cache-Control` global hoặc rò tên hoặc giết SEO. SSR cả app đã login trong Super Bowl ad là tín hiệu kia. `Vary: Cookie` trên `/` đưa hit ratio về ~0."
           }
         },
         {
           "type": "list",
-          "style": "ul",
+          "style": "ol",
           "items": [
             {
-              "en": "**Decision.** Marketing: SSG/ISR/SSR with high cache, purge on publish. `/app/**`: no-store HTML, shell + client, BFF `/api`. Auth cookies host-only or path-scoped — never on cacheable pages. Anonymous homepage: no user cookie on the request if you want CDN hits; personalize after paint. Nuxt `routeRules` or Next RSC + `revalidateTag`. Tiny marketing JS; do not download the dashboard on `/`. Campaign kill switch at the edge.",
-              "vi": "**Quyết định.** Marketing: SSG/ISR/SSR cache cao, purge lúc publish. `/app/**`: HTML no-store, shell + client, BFF `/api`. Auth cookie host-only hoặc path-scoped — không bao giờ trên page cache được. Homepage ẩn danh: không user cookie trên request nếu muốn CDN hit; personalize sau paint. Nuxt `routeRules` hoặc Next RSC + `revalidateTag`. JS marketing nhỏ; đừng tải dashboard trên `/`. Campaign kill switch ở edge."
-            },
-            {
-              "en": "**Why.** A single global `Cache-Control` either leaks personalization or kills SEO. SSR’ing the entire logged-in app during a Super Bowl ad. Caching HTML with a logged-in name. SPA for the blog. Loading `echarts` on `/`. CMS draft preview public. Cookie on `.com` breaking cache. `Vary: Cookie` on `/` → hit ratio ~0.",
-              "vi": "**Vì sao.** Một `Cache-Control` global hoặc leak personalization hoặc giết SEO. SSR cả app đã login lúc Super Bowl ad. Cache HTML có tên user. SPA cho blog. Load `echarts` trên `/`. Preview CMS draft công khai. Cookie trên `.com` phá cache. `Vary: Cookie` trên `/` → hit ratio ~0."
+              "en": "**How it works:** **Marketing:** SSG/ISR/SSR with high cache, purge on publish. **`/app/**`:** no-store HTML, shell + client, BFF `/api`. Auth cookies host-only or path-scoped — never on cacheable pages. Anonymous homepage: personalize **after paint**. Tiny marketing JS; do not download the dashboard on `/`. Campaign kill switch at the edge.",
+              "vi": "**Cách hoạt động:** **Marketing:** SSG/ISR/SSR cache cao, purge lúc publish. **`/app/**`:** HTML no-store, shell + client, BFF `/api`. Cookie auth host-only hoặc theo path — không bao giờ trên trang cache được. Homepage ẩn danh: cá nhân hóa **sau paint**. JS marketing nhỏ; đừng tải dashboard trên `/`. Kill switch chiến dịch ở edge."
             },
             {
               "en": "**Trade-off.** Subdomain `app.` isolates cookie/cache; path `/app` simplifies links and one CSP origin — pick isolation when cache incidents scare you. ISR 30s vs on-demand purge: purge on publish, TTL as safety net. Two frameworks only if two orgs already exist. A/B the hero with an edge bucket or a single bucketing cookie — not `Vary: Cookie` on everything.",
-              "vi": "**Đánh đổi / rủi ro.** Subdomain `app.` cách ly cookie/cache; path `/app` đơn giản hóa link và một CSP origin — chọn isolation khi incident cache làm bạn sợ. ISR 30s vs purge on-demand: purge lúc publish, TTL là lưới an toàn. Hai framework chỉ khi hai org đã tồn tại. A/B hero bằng edge bucket hoặc một cookie bucketing — không `Vary: Cookie` trên mọi thứ."
+              "vi": "**Đánh đổi.** Subdomain `app.` cô lập cookie/cache; path `/app` đơn giản hóa link và một origin CSP — chọn cô lập khi incident cache làm bạn sợ. ISR 30s khác purge on-demand: purge lúc publish, TTL làm lưới an toàn. Hai framework chỉ khi đã có hai org. A/B hero bằng edge bucket hoặc một cookie bucketing — không phải `Vary: Cookie` trên mọi thứ."
             },
             {
-              "en": "**How to verify.** LCP/INP on `/` from RUM, TTFB cache hit ratio, origin CPU during a campaign, auth error rate, crawl success, bundle of `/` vs `/app`. Rollback a bad CMS publish with the previous revision + purge tags. OG images must not generate per request on origin.",
-              "vi": "**Cách kiểm chứng.** LCP/INP trên `/` từ RUM, TTFB cache hit ratio, CPU origin lúc campaign, auth error rate, crawl success, bundle `/` vs `/app`. Rollback CMS publish xấu bằng revision trước + purge tag. OG image không được generate mỗi request trên origin."
+              "en": "Nuxt `routeRules` or Next RSC + `revalidateTag`. i18n duplicate URLs need canonicals. App navigation must not inherit the marketing layout’s heavy analytics. Legal copy wrong: CMS + purge, not a full rebuild. OG images must not generate per request on origin.",
+              "vi": "Nuxt `routeRules` hoặc Next RSC + `revalidateTag`. URL i18n trùng cần canonical. Navigation app không được thừa layout marketing nặng analytics. Copy pháp lý sai: CMS + purge, không phải rebuild cả. Ảnh OG không được generate mỗi request trên origin."
             }
           ]
         },
@@ -917,59 +945,164 @@
           "type": "code",
           "lang": "text",
           "code": {
-            "en": "CDN (HTML cache keyed by path + locale, NOT cookie)\n  ├─ /          ISR/SSG  (CMS)     — long cache, purge on publish\n  ├─ /pricing   SSR/ISR            — A/B via edge bucket carefully\n  ├─ /blog/:id  ISR + OG\n  └─ /app/**    no-store HTML      — shell + client app, BFF /api\nAuth cookies: host-only on app host — never cacheable pages",
-            "vi": "CDN (HTML cache keyed by path + locale, NOT cookie)\n  ├─ /          ISR/SSG  (CMS)     — long cache, purge on publish\n  ├─ /pricing   SSR/ISR            — A/B via edge bucket carefully\n  ├─ /blog/:id  ISR + OG\n  └─ /app/**    no-store HTML      — shell + client app, BFF /api\nAuth cookies: host-only on app host — never cacheable pages"
+            "en": "CDN (HTML cache keyed by path + locale, NOT cookie)\n  ├─ /          ISR/SSG  (CMS)     — long cache, purge on publish\n  ├─ /pricing   SSR/ISR            — A/B via edge bucket, not Vary: Cookie\n  ├─ /blog/:id  ISR + OG\n  └─ /app/**    no-store HTML      — shell + client app, BFF /api\nAuth cookies: host-only on app host — never cacheable pages\nHomepage request: anonymous. Personalize after paint.\nKill switch at the edge for a bad campaign / CMS publish.",
+            "vi": "CDN (cache HTML theo path + locale, KHÔNG cookie)\n  ├─ /          ISR/SSG  (CMS)     — cache dài, purge lúc publish\n  ├─ /pricing   SSR/ISR            — A/B qua edge bucket, không Vary: Cookie\n  ├─ /blog/:id  ISR + OG\n  └─ /app/**    HTML no-store      — shell + app client, BFF /api\nCookie auth: host-only trên host app — không bao giờ trang cache được\nRequest homepage: ẩn danh. Cá nhân hóa sau paint.\nKill switch ở edge cho chiến dịch / CMS publish xấu."
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** `/` is cacheable and anonymous. `/app` is no-store. The dashboard chunk never loads on `/`. A bad CMS publish rolls back by restoring the previous revision and purging tags — not by a full rebuild.",
+            "vi": "**Điều gì xảy ra:** `/` cache được và ẩn danh. `/app` là no-store. Chunk dashboard không bao giờ load trên `/`. CMS publish xấu rollback bằng cách khôi phục revision trước và purge tag — không phải rebuild cả."
+          }
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Surface",
+              "vi": "Bề mặt"
+            },
+            {
+              "en": "Render / cache",
+              "vi": "Render / cache"
+            },
+            {
+              "en": "Refuse",
+              "vi": "Từ chối"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "`/` marketing",
+                "vi": "`/` marketing"
+              },
+              {
+                "en": "ISR/SSG, purge on publish",
+                "vi": "ISR/SSG, purge lúc publish"
+              },
+              {
+                "en": "User cookie on the request",
+                "vi": "Cookie user trên request"
+              }
+            ],
+            [
+              {
+                "en": "`/pricing`",
+                "vi": "`/pricing`"
+              },
+              {
+                "en": "SSR/ISR, edge A/B bucket",
+                "vi": "SSR/ISR, bucket A/B edge"
+              },
+              {
+                "en": "`Vary: Cookie` on everything",
+                "vi": "`Vary: Cookie` trên mọi thứ"
+              }
+            ],
+            [
+              {
+                "en": "`/app/**`",
+                "vi": "`/app/**`"
+              },
+              {
+                "en": "no-store HTML + BFF",
+                "vi": "HTML no-store + BFF"
+              },
+              {
+                "en": "SSR the whole logged-in app at ad-scale",
+                "vi": "SSR cả app đã login ở scale quảng cáo"
+              }
+            ],
+            [
+              {
+                "en": "Deploy",
+                "vi": "Deploy"
+              },
+              {
+                "en": "One repo, two `routeRules`",
+                "vi": "Một repo, hai `routeRules`"
+              },
+              {
+                "en": "Two frameworks unless two orgs exist",
+                "vi": "Hai framework trừ khi đã có hai org"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- One repo, two profiles. Pick Nuxt if the product is Vue, Next if the team is React — not two frameworks.\n- Homepage request has no user cookie. Personalize after paint. `Vary: Cookie` on `/` kills the CDN.\n- Subdomain vs `/app`: isolation versus one origin. Pick isolation after a cache-leak incident.\n- Campaign kill switch at the edge. Rollback CMS with the previous revision + purge tags.\n- The dashboard chunk does not load on `/`. Marketing JS stays tiny.",
+            "vi": "- Một repo, hai profile. Chọn Nuxt nếu product là Vue, Next nếu team là React — không phải hai framework.\n- Request homepage không có cookie user. Cá nhân hóa sau paint. `Vary: Cookie` trên `/` giết CDN.\n- Subdomain khác `/app`: cô lập khác một origin. Chọn cô lập sau incident rò cache.\n- Kill switch chiến dịch ở edge. Rollback CMS bằng revision trước + purge tag.\n- Chunk dashboard không load trên `/`. JS marketing ở lại nhỏ."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: first name on a cached homepage. Cause: cookie on `/`. Fix: anonymous HTML, personalize after paint.\n- Symptom: origin melts during an ad. Cause: SSR of `/app` at marketing scale. Fix: no-store shell, CDN the public routes.\n- Symptom: hit ratio ~0. Cause: `Vary: Cookie`. Fix: edge bucket or a single A/B cookie on `/pricing` only.\n- Symptom: `echarts` on `/`. Cause: shared layout. Fix: split the dashboard chunk; marketing layout stays thin.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: tên trên homepage bị cache. Nguyên nhân: cookie trên `/`. Cách xử lý: HTML ẩn danh, cá nhân hóa sau paint.\n- Triệu chứng: origin chảy trong quảng cáo. Nguyên nhân: SSR `/app` ở scale marketing. Cách xử lý: shell no-store, CDN các route public.\n- Triệu chứng: hit ratio ~0. Nguyên nhân: `Vary: Cookie`. Cách xử lý: edge bucket hoặc một cookie A/B chỉ trên `/pricing`.\n- Triệu chứng: `echarts` trên `/`. Nguyên nhân: layout chung. Cách xử lý: tách chunk dashboard; layout marketing ở lại mỏng."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Interview phrasing",
-            "vi": "Nói khi phỏng vấn"
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
           },
           "text": {
-            "en": "One repo, two profiles. Marketing is ISR at the CDN with purge-on-publish; `/app` is no-store and a BFF. I pick Nuxt if the product is Vue, Next if the team is React — not two frameworks. The homepage request has no user cookie. I will not `Vary: Cookie` on `/`. The dashboard chunk does not load on `/`.",
-            "vi": "Một repo, hai profile. Marketing là ISR ở CDN với purge-on-publish; `/app` là no-store và một BFF. Tôi chọn Nuxt nếu product là Vue, Next nếu team là React — không phải hai framework. Request homepage không có user cookie. Tôi không `Vary: Cookie` trên `/`. Chunk dashboard không load trên `/`."
+            "en": "Marketing site plus a logged-in product. One codebase or two? They want hybrid route rules, two runtime profiles, and cache that does not leak a first name.",
+            "vi": "Site marketing cộng product đã login. Một codebase hay hai? Họ muốn hybrid route rules, hai profile runtime, và cache không rò tên."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "One repo, two profiles. Marketing is ISR at the CDN with purge-on-publish; /app is no-store and a BFF. I pick Nuxt if the product is Vue, Next if the team is React — not two frameworks. The homepage request has no user cookie. I will not Vary Cookie on slash. The dashboard chunk does not load on slash. A/B the hero with an edge bucket. Rollback a bad CMS publish with the previous revision and purge tags. Split deploys only if two org clocks already exist. On the admin-plus-marketing shape we path-scoped cookies on /app and kept slash anonymous.",
+            "vi": "Một repo, hai profile. Marketing là ISR ở CDN với purge lúc publish; /app là no-store và một BFF. Tôi chọn Nuxt nếu product là Vue, Next nếu team là React — không phải hai framework. Request homepage không có cookie user. Tôi sẽ không Vary Cookie trên slash. Chunk dashboard không load trên slash. A/B hero bằng edge bucket. Rollback CMS publish xấu bằng revision trước và purge tag. Tách deploy chỉ khi đã có hai đồng hồ org. Ở shape admin-cộng-marketing chúng tôi path-scope cookie trên /app và giữ slash ẩn danh."
           }
         },
         {
           "type": "key-takeaways",
           "items": [
             {
-              "en": "i18n duplicate URLs need canonicals.",
-              "vi": "URL i18n duplicate cần canonical."
+              "en": "One app, two profiles: CDN public content, no-store `/app`.",
+              "vi": "Một app, hai profile: content public CDN, `/app` no-store."
             },
             {
-              "en": "App navigation must not inherit the marketing layout’s heavy analytics.",
-              "vi": "App navigation không được thừa layout marketing đầy analytics nặng."
+              "en": "Homepage request has no user cookie. Personalize after paint.",
+              "vi": "Request homepage không có cookie user. Cá nhân hóa sau paint."
             },
             {
-              "en": "Legal copy wrong: CMS + purge, not a full rebuild.",
-              "vi": "Copy legal sai: CMS + purge, không phải full rebuild."
+              "en": "Do not `Vary: Cookie` on `/`. Do not load the dashboard on `/`.",
+              "vi": "Đừng `Vary: Cookie` trên `/`. Đừng load dashboard trên `/`."
+            },
+            {
+              "en": "Split deploys only if org clocks demand it. Kill switch at the edge.",
+              "vi": "Tách deploy chỉ khi đồng hồ org đòi. Kill switch ở edge."
             }
           ]
         },
         {
-          "type": "list",
-          "style": "ol",
-          "items": [
-            {
-              "en": "How do you A/B the hero without blowing cache?",
-              "vi": "A/B hero mà không nổ cache thế nào?"
-            },
-            {
-              "en": "How do you roll back a bad CMS publish?",
-              "vi": "Rollback CMS publish xấu thế nào?"
-            },
-            {
-              "en": "Subdomain vs `/app` — which isolation do you pick?",
-              "vi": "Subdomain vs `/app` — isolation nào bạn chọn?"
-            },
-            {
-              "en": "When do you actually split into two deploys?",
-              "vi": "Khi nào thực sự tách hai deploy?"
-            }
-          ]
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **How do you A/B the hero without blowing cache?** Edge bucket or one bucketing cookie on `/pricing`, not `Vary: Cookie` on `/`.\n- **How do you roll back a bad CMS publish?** Previous revision + purge tags. Not a full rebuild.\n- **Subdomain vs `/app`?** Isolation versus one CSP origin. Pick isolation after a cache leak.\n- **When do you actually split into two deploys?** Two org clocks already exist, not because the routes differ.",
+            "vi": "- **A/B hero mà không phá cache thế nào?** Edge bucket hoặc một cookie bucketing trên `/pricing`, không phải `Vary: Cookie` trên `/`.\n- **Rollback CMS publish xấu thế nào?** Revision trước + purge tag. Không phải rebuild cả.\n- **Subdomain khác `/app`?** Cô lập khác một origin CSP. Chọn cô lập sau khi rò cache.\n- **Khi nào thực sự tách hai deploy?** Đã có hai đồng hồ org, không phải vì route khác nhau."
+          }
         },
         {
           "type": "thematic-break"
