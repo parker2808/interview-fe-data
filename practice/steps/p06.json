@@ -1,0 +1,141 @@
+{
+  "kind": "practice-step",
+  "id": "p06",
+  "milestone": "m1",
+  "order": 6,
+  "title": {
+    "en": "Prisma schema, migrate, seed",
+    "vi": "Prisma schema, migrate, seed"
+  },
+  "summary": {
+    "en": "The schema file is the single source of truth for tables, and migrations are its history.",
+    "vi": "File schema là nguồn sự thật duy nhất cho các bảng, và migration là lịch sử của nó."
+  },
+  "estimateMin": 180,
+  "prereqs": ["p03", "p05"],
+  "tags": ["prisma", "mysql", "migrations"],
+  "concepts": [
+    {
+      "term": {
+        "en": "schema.prisma",
+        "vi": "schema.prisma"
+      },
+      "explain": {
+        "en": "One file that lists every model and field. Prisma uses it to generate the client and the SQL. You do not invent tables in the SQL shell after this step.",
+        "vi": "Một file liệt kê mọi model và field. Prisma dùng nó để generate client và SQL. Sau bước này bạn không tự tạo bảng trong SQL shell nữa."
+      }
+    },
+    {
+      "term": {
+        "en": "Migration",
+        "vi": "Migration"
+      },
+      "explain": {
+        "en": "A versioned SQL file in prisma/migrations/. `migrate dev` writes it, you commit it, `migrate deploy` runs it in production. Never `db push` after this step.",
+        "vi": "File SQL có version trong prisma/migrations/. `migrate dev` ghi ra, bạn commit, `migrate deploy` chạy trên production. Không dùng `db push` sau bước này."
+      }
+    },
+    {
+      "term": {
+        "en": "Seed",
+        "vi": "Seed"
+      },
+      "explain": {
+        "en": "A script that fills starting rows (CV placeholders). Safe to re-run after `migrate reset`. No phone numbers or personal emails.",
+        "vi": "Script đổ hàng dữ liệu ban đầu (placeholder từ CV). Chạy lại an toàn sau `migrate reset`. Không số điện thoại hay email cá nhân."
+      }
+    },
+    {
+      "term": {
+        "en": "PrismaService",
+        "vi": "PrismaService"
+      },
+      "explain": {
+        "en": "A Nest provider that wraps `PrismaClient` and connects on module init. Other services inject it instead of creating their own client.",
+        "vi": "Provider Nest bọc `PrismaClient` và connect khi module init. Service khác inject nó, không tự new client."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "system-design",
+      "label": {
+        "en": "System Design",
+        "vi": "Thiết kế hệ thống"
+      }
+    }
+  ],
+  "questionLinks": [],
+  "specRefs": ["§1.5", "§1.6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "prisma init for MySQL",
+        "vi": "prisma init cho MySQL"
+      },
+      "detail": {
+        "en": "Inside apps/api, run prisma init with the mysql provider. Point datasource url at env DATABASE_URL from p02. Confirm the generated schema uses `provider = \"mysql\"`.",
+        "vi": "Trong apps/api, chạy prisma init với provider mysql. datasource url trỏ env DATABASE_URL từ p02. Kiểm tra schema generate có `provider = \"mysql\"`."
+      },
+      "code": {
+        "lang": "bash",
+        "text": "pnpm prisma init --datasource-provider mysql"
+      }
+    },
+    {
+      "title": {
+        "en": "Add SiteSettings, Profile, Experience",
+        "vi": "Thêm SiteSettings, Profile, Experience"
+      },
+      "detail": {
+        "en": "Follow spec §1.5 conventions: `id` autoincrement, `createdAt`/`updatedAt`, `titleEn`/`titleVi` pairs, `sortOrder`. SiteSettings and Profile are singletons (seed `id = 1`). Experience has `company`, `roleEn`/`roleVi`, dates. Skip phone and contact-address fields.",
+        "vi": "Theo convention spec §1.5: `id` autoincrement, `createdAt`/`updatedAt`, cặp `titleEn`/`titleVi`, `sortOrder`. SiteSettings và Profile là singleton (seed `id = 1`). Experience có `company`, `roleEn`/`roleVi`, ngày tháng. Bỏ field điện thoại và địa chỉ liên hệ."
+      }
+    },
+    {
+      "title": {
+        "en": "First migration",
+        "vi": "Migration đầu tiên"
+      },
+      "detail": {
+        "en": "Run migrate dev with name init. Open the generated SQL and match it to the CREATE TABLE notes from p03 (utf8mb4, PK, FK). Commit the migration folder; never edit an applied file.",
+        "vi": "Chạy migrate dev với name init. Mở SQL được generate và đối chiếu với ghi chú CREATE TABLE ở p03 (utf8mb4, PK, FK). Commit thư mục migration; không sửa file đã apply."
+      },
+      "code": {
+        "lang": "bash",
+        "text": "pnpm prisma migrate dev --name init"
+      }
+    },
+    {
+      "title": {
+        "en": "Seed CV placeholders and PrismaService",
+        "vi": "Seed placeholder CV và PrismaService"
+      },
+      "detail": {
+        "en": "Add prisma/seed.ts with site name, profile (display name, headline en/vi, city), and 4 experience rows from spec §1.3. No phone, no personal inbox address. Wire PrismaService so Nest can query the same DB.",
+        "vi": "Thêm prisma/seed.ts với tên site, profile (display name, headline en/vi, city), và 4 hàng experience từ spec §1.3. Không điện thoại, không địa chỉ hộp thư cá nhân. Gắn PrismaService để Nest query cùng DB."
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "`pnpm prisma migrate reset` recreates the tables and seeds them.",
+      "vi": "`pnpm prisma migrate reset` tạo lại bảng và seed dữ liệu."
+    },
+    {
+      "en": "Prisma Studio shows the SiteSettings, Profile, and Experience rows.",
+      "vi": "Prisma Studio hiện các hàng SiteSettings, Profile và Experience."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Editing an applied migration. Always create a new one with `migrate dev --name …`.",
+      "vi": "Sửa migration đã apply. Luôn tạo migration mới bằng `migrate dev --name …`."
+    },
+    {
+      "en": "`prisma db push` after this step. Push skips migration history; production needs `migrate deploy`.",
+      "vi": "`prisma db push` sau bước này. Push bỏ qua lịch sử migration; production cần `migrate deploy`."
+    }
+  ],
+  "commit": "feat(api): prisma schema + seed"
+}

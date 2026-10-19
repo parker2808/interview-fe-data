@@ -1,0 +1,135 @@
+{
+  "kind": "practice-step",
+  "id": "p08",
+  "milestone": "m1",
+  "order": 8,
+  "title": {
+    "en": "Validation + error shape",
+    "vi": "Validation + error shape"
+  },
+  "summary": {
+    "en": "Never trust input. One error format makes the frontend simple.",
+    "vi": "Đừng tin input. Một format lỗi giúp frontend đơn giản."
+  },
+  "estimateMin": 90,
+  "prereqs": ["p07"],
+  "tags": ["zod", "validation", "shared"],
+  "concepts": [
+    {
+      "term": {
+        "en": "zod schema",
+        "vi": "zod schema"
+      },
+      "explain": {
+        "en": "A runtime description of the data. The same schema can type-check in TypeScript and reject bad JSON on the server.",
+        "vi": "Mô tả data lúc runtime. Cùng một schema vừa type-check TypeScript vừa chặn JSON xấu trên server."
+      }
+    },
+    {
+      "term": {
+        "en": "packages/shared",
+        "vi": "packages/shared"
+      },
+      "explain": {
+        "en": "A workspace package both apps import. One source for request/response types. Two copies will drift.",
+        "vi": "Package trong workspace để cả hai app import. Một nguồn cho type request/response. Hai bản copy sẽ lệch."
+      }
+    },
+    {
+      "term": {
+        "en": "Exception filter",
+        "vi": "Exception filter"
+      },
+      "explain": {
+        "en": "Nest hook that turns every thrown error into `{ error: { code, message, fields? } }`. The web app only has to read that one shape.",
+        "vi": "Hook Nest biến mọi lỗi ném ra thành `{ error: { code, message, fields? } }`. Web app chỉ cần đọc đúng một shape."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "security",
+      "label": {
+        "en": "Security",
+        "vi": "Bảo mật"
+      }
+    },
+    {
+      "slug": "typescript",
+      "label": {
+        "en": "TypeScript",
+        "vi": "TypeScript"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "ts-designing-api-props",
+      "label": {
+        "en": "Designing TypeScript types for APIs",
+        "vi": "Thiết kế type TypeScript cho API"
+      }
+    },
+    {
+      "id": "ts-narrowing-typeguards",
+      "label": {
+        "en": "Narrowing and custom type guards",
+        "vi": "Narrowing và custom type guard"
+      }
+    }
+  ],
+  "specRefs": ["§1.6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "Create packages/shared with zod schemas",
+        "vi": "Tạo packages/shared với schema zod"
+      },
+      "detail": {
+        "en": "Add a small package exported as `@portfolio/shared`. Put locale query (`en` | `vi`) and the error envelope there. Web and api both depend on it in package.json.",
+        "vi": "Thêm package nhỏ export `@portfolio/shared`. Đặt query locale (`en` | `vi`) và error envelope ở đó. Cả web và api đều depend trong package.json."
+      }
+    },
+    {
+      "title": {
+        "en": "ZodValidationPipe",
+        "vi": "ZodValidationPipe"
+      },
+      "detail": {
+        "en": "A Nest pipe that parses query/body with a zod schema. On failure, throw 400 and include `fields` (path → message) from zod's issues.",
+        "vi": "Pipe Nest parse query/body bằng schema zod. Khi fail, ném 400 và gắn `fields` (path → message) từ issue của zod."
+      }
+    },
+    {
+      "title": {
+        "en": "Global exception filter",
+        "vi": "Exception filter global"
+      },
+      "detail": {
+        "en": "Catch HttpException and unknown errors. Always respond `{ error: { code, message, fields? } }`. Map 404/400 from previous endpoints onto this shape.",
+        "vi": "Bắt HttpException và lỗi lạ. Luôn trả `{ error: { code, message, fields? } }`. Map 404/400 từ endpoint trước sang shape này."
+      },
+      "code": {
+        "lang": "json",
+        "text": "{ \"error\": { \"code\": \"BAD_QUERY\", \"message\": \"Invalid locale\", \"fields\": { \"locale\": \"Expected en or vi\" } } }"
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "Bad query params (`?locale=fr`) return 400 with field errors in the shared shape.",
+      "vi": "Query param sai (`?locale=fr`) trả 400 với field error theo shape chung."
+    },
+    {
+      "en": "`packages/shared` types are imported by both apps/web and apps/api.",
+      "vi": "Type từ `packages/shared` được cả apps/web và apps/api import."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Two schema copies drifting apart. Import from `shared` only.",
+      "vi": "Hai bản schema lệch nhau. Chỉ import từ `shared`."
+    }
+  ],
+  "commit": "feat(shared): zod contracts + error filter"
+}

@@ -1,0 +1,121 @@
+{
+  "kind": "practice-step",
+  "id": "p12",
+  "milestone": "m2",
+  "order": 12,
+  "title": {
+    "en": "Posts + rich content blocks",
+    "vi": "Post + content block"
+  },
+  "summary": {
+    "en": "Blog and case studies share one block format, so one renderer serves both.",
+    "vi": "Blog và case study dùng chung một format block, nên một renderer phục vụ cả hai."
+  },
+  "estimateMin": 180,
+  "prereqs": ["p11"],
+  "tags": ["posts", "blocks", "zod"],
+  "concepts": [
+    {
+      "term": {
+        "en": "Content blocks",
+        "vi": "Content blocks"
+      },
+      "explain": {
+        "en": "A JSON array of typed chunks (heading, paragraph, list, code, callout) instead of one HTML string. The renderer switches on `type`. Never `dangerouslySetInnerHTML`.",
+        "vi": "Mảng JSON các đoạn có type (heading, paragraph, list, code, callout) thay vì một chuỗi HTML. Renderer switch theo `type`. Không dùng `dangerouslySetInnerHTML`."
+      }
+    },
+    {
+      "term": {
+        "en": "status + publishedAt",
+        "vi": "status + publishedAt"
+      },
+      "explain": {
+        "en": "`DRAFT | PUBLISHED | ARCHIVED`. Public GET returns PUBLISHED only. `publishedAt` is set on publish, not on create.",
+        "vi": "`DRAFT | PUBLISHED | ARCHIVED`. GET public chỉ trả PUBLISHED. `publishedAt` set lúc publish, không phải lúc create."
+      }
+    },
+    {
+      "term": {
+        "en": "zod for JSON columns",
+        "vi": "zod cho cột JSON"
+      },
+      "explain": {
+        "en": "Prisma type `Json` is `any`. Parse it with a zod discriminated union on `type` at seed and at write time so invalid blocks never land.",
+        "vi": "Type Prisma `Json` là `any`. Parse bằng discriminated union zod theo `type` lúc seed và lúc ghi, để block sai không vào DB."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "security",
+      "label": {
+        "en": "Security",
+        "vi": "Bảo mật"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "security-xss-csrf-csp",
+      "label": {
+        "en": "XSS, CSRF, and CSP in frontend terms",
+        "vi": "XSS, CSRF và CSP theo góc nhìn frontend"
+      }
+    }
+  ],
+  "specRefs": ["§1.5"],
+  "tasks": [
+    {
+      "title": {
+        "en": "Add the Post model",
+        "vi": "Thêm model Post"
+      },
+      "detail": {
+        "en": "`slug` unique, `titleEn`/`titleVi`, `excerptEn`/`excerptVi`, `status`, `publishedAt`, `blocks` Json, tags m2m. Migrate. Public list hides drafts.",
+        "vi": "`slug` unique, `titleEn`/`titleVi`, `excerptEn`/`excerptVi`, `status`, `publishedAt`, `blocks` Json, tags m2m. Migrate. List public ẩn draft."
+      }
+    },
+    {
+      "title": {
+        "en": "Validate blocks with zod in shared",
+        "vi": "Validate block bằng zod trong shared"
+      },
+      "detail": {
+        "en": "Allow a small set: heading, paragraph, list, code, callout. Reject unknown `type` and missing localized text. Use the same schema in the seed.",
+        "vi": "Cho phép tập nhỏ: heading, paragraph, list, code, callout. Từ chối `type` lạ và thiếu text locale. Seed dùng cùng schema."
+      }
+    },
+    {
+      "title": {
+        "en": "GET /posts and GET /posts/:slug",
+        "vi": "GET /posts và GET /posts/:slug"
+      },
+      "detail": {
+        "en": "Published only. Detail 404s for drafts and unknown slugs. Seed one published post and one draft so you can prove the filter.",
+        "vi": "Chỉ PUBLISHED. Detail trả 404 với draft và slug lạ. Seed một post published và một draft để chứng minh filter."
+      },
+      "code": {
+        "lang": "bash",
+        "text": "curl 'localhost:4000/api/posts'\ncurl 'localhost:4000/api/posts/a-draft-slug'"
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "A draft post is invisible on `GET /posts` and `GET /posts/:slug` returns 404.",
+      "vi": "Post draft không xuất hiện trên `GET /posts` và `GET /posts/:slug` trả 404."
+    },
+    {
+      "en": "Invalid block JSON is rejected at seed or write time (zod error, not a 500 HTML dump).",
+      "vi": "JSON block sai bị từ chối lúc seed hoặc ghi (lỗi zod, không phải dump HTML 500)."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Rendering raw HTML from content. Allow block types only and never `dangerouslySetInnerHTML`.",
+      "vi": "Render HTML thô từ content. Chỉ cho phép block type và không bao giờ `dangerouslySetInnerHTML`."
+    }
+  ],
+  "commit": "feat(api): posts with blocks"
+}
