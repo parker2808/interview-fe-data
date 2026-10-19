@@ -1595,14 +1595,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Next `middleware.ts` runs on the **Edge** before the request hits Node. It can redirect, rewrite, set headers. It is **not authorization** — a crafted fetch still reaches a Route Handler if you only hid the page. Nuxt `middleware/` is Node, per-route, and a different runtime.",
-            "vi": "**Tóm tắt:** `middleware.ts` của Next chạy trên **Edge** trước khi request đụng Node. Nó redirect, rewrite, gán header được. Nó **không phải authorization** — fetch tự chế vẫn tới Route Handler nếu bạn chỉ giấu trang. `middleware/` Nuxt là Node, theo route, và runtime khác."
+            "vi": "**Tóm tắt:** `middleware.ts` của Next chạy trên **Edge**, trước khi request vào Node. Nó redirect, rewrite, set header được. Nó **không phải authorization**: fetch tự chế vẫn tới Route Handler nếu bạn chỉ giấu trang. Nuxt `middleware/` là Node, theo route, runtime khác hẳn."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “How do you auth-gate App Router?” answered with only middleware is a fail. Edge cannot use the full Node API. A matcher that also hits `/_next` or `/login` is a redirect loop. Nuxt route middleware that imported a Pinia store will not port.",
-            "vi": "**Vì sao quan trọng:** “Auth-gate App Router thế nào?” mà chỉ trả middleware là fail. Edge không dùng full API Node được. Matcher cũng dính `/_next` hoặc `/login` là vòng redirect. Middleware route Nuxt import Pinia store sẽ không port."
+            "vi": "**Vì sao quan trọng:** “Auth-gate App Router thế nào?” mà chỉ trả lời bằng middleware là fail. Edge không dùng hết API Node. Matcher mà cũng dính `/_next` hoặc `/login` là vòng redirect. Route middleware Nuxt import Pinia store thì không port được."
           }
         },
         {
@@ -1615,11 +1615,11 @@
             },
             {
               "en": "Authz still lives in the Server Component, Route Handler, or Server Action: read the session, `redirect` / 403. Middleware is a cheap cookie-presence gate and geolocation / A/B headers. Edge limits: no full Node, careful with JWT verify libraries.",
-              "vi": "Authz vẫn sống trong Server Component, Route Handler, hoặc Server Action: đọc session, `redirect` / 403. Middleware là cổng cookie-có-mặt rẻ và header geolocation / A/B. Giới hạn Edge: không full Node, cẩn thận thư viện verify JWT."
+              "vi": "Authz vẫn nằm ở Server Component, Route Handler, hoặc Server Action: đọc session, `redirect` / 403. Middleware là cổng rẻ: chỉ xem cookie có mặt, kèm header geolocation / A/B. Giới hạn Edge: không full Node, cẩn thận thư viện verify JWT."
             },
             {
               "en": "Nuxt equivalent: `middleware/auth.ts` is Node and can `navigateTo`. Next Edge cannot `useAsyncData` or touch the DB. React SPA guards are UX only — the same warning. See security 10.3 for where the session lives, in words.",
-              "vi": "Tương đương Nuxt: `middleware/auth.ts` là Node và `navigateTo` được. Next Edge không `useAsyncData` hay đụng DB. Guard SPA React chỉ là UX — cùng cảnh báo. Xem security 10.3 cho session sống ở đâu, bằng lời."
+              "vi": "Tương đương Nuxt: `middleware/auth.ts` là Node và `navigateTo` được. Next Edge không `useAsyncData` hay đụng DB. Guard SPA React chỉ là UX, cùng một cảnh báo. Xem security 10.3 để biết session nằm ở đâu, bằng lời."
             }
           ]
         },
@@ -1628,14 +1628,14 @@
           "lang": "ts",
           "code": {
             "en": "import { NextResponse } from 'next/server'\nimport type { NextRequest } from 'next/server'\nexport function middleware(req: NextRequest) {\n  const session = req.cookies.get('session')\n  if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {\n    const login = new URL('/login', req.url)\n    login.searchParams.set('from', req.nextUrl.pathname)\n    return NextResponse.redirect(login)\n  }\n  return NextResponse.next()\n}\nexport const config = { matcher: ['/dashboard/:path*'] }\n// Still check the session in the Server Component. This is not authz.",
-            "vi": "import { NextResponse } from 'next/server'\nimport type { NextRequest } from 'next/server'\nexport function middleware(req: NextRequest) {\n  const session = req.cookies.get('session')\n  if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {\n    const login = new URL('/login', req.url)\n    login.searchParams.gán('from', req.nextUrl.pathname)\n    return NextResponse.redirect(login)\n  }\n  return NextResponse.next()\n}\nexport const config = { matcher: ['/dashboard/:path*'] }\n// Vẫn check session trong Server Component. Đây không phải authz."
+            "vi": "import { NextResponse } from 'next/server'\nimport type { NextRequest } from 'next/server'\nexport function middleware(req: NextRequest) {\n  const session = req.cookies.get('session')\n  if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {\n    const login = new URL('/login', req.url)\n    login.searchParams.set('from', req.nextUrl.pathname)\n    return NextResponse.redirect(login)\n  }\n  return NextResponse.next()\n}\nexport const config = { matcher: ['/dashboard/:path*'] }\n// Vẫn check session trong Server Component. Đây không phải authz."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** Missing cookie on `/dashboard` redirects to `/login`. The matcher skips `/login` so you do not loop. A caller that hits `/api/secret` without a cookie still needs the Route Handler to 401. Nuxt middleware could have queried the DB; this Edge file must not.",
-            "vi": "**Điều gì xảy ra:** Thiếu cookie trên `/dashboard` thì redirect `/login`. Matcher bỏ `/login` để không lặp. Caller đụng `/api/secret` không cookie vẫn cần Route Handler 401. Middleware Nuxt có thể query DB; file Edge này thì không."
+            "vi": "**Điều gì xảy ra:** Thiếu cookie trên `/dashboard` thì redirect sang `/login`. Matcher bỏ `/login` nên bạn không loop. Caller gọi `/api/secret` mà không có cookie vẫn cần Route Handler trả 401. Middleware Nuxt có thể query DB; file Edge này thì không được."
           }
         },
         {
@@ -1680,7 +1680,7 @@
               },
               {
                 "en": "Usually no — keep it in a Route Handler",
-                "vi": "Thường không — để trong Route Handler"
+                "vi": "Thường không: để trong Route Handler"
               }
             ],
             [
@@ -1704,11 +1704,11 @@
               },
               {
                 "en": "Router guard — UX only",
-                "vi": "Guard router — chỉ UX"
+                "vi": "Guard router: chỉ UX"
               },
               {
                 "en": "Same: not a wall",
-                "vi": "Cùng: không phải tường"
+                "vi": "Cùng ý: không phải tường"
               }
             ]
           ]
@@ -1721,7 +1721,7 @@
           },
           "text": {
             "en": "- Matcher that includes `/_next` or `/login` is the usual redirect loop.\n- JWT verify on Edge: use a library that runs on Edge. `jsonwebtoken` (Node crypto) is a trap.\n- Geolocation, A/B cookies, and locale rewrites are the sweet spot. Authz is not.\n- CSP and security headers can be set here, but a host/CDN layer is more reliable.\n- Nuxt transfer: say “Edge, not Node, not Pinia, not authz” in the first follow-up.",
-            "vi": "- Matcher gồm `/_next` hoặc `/login` là vòng redirect thường gặp.\n- Verify JWT trên Edge: dùng thư viện chạy Edge. `jsonwebtoken` (crypto Node) là bẫy.\n- Geolocation, cookie A/B, và rewrite locale là điểm ngọt. Authz thì không.\n- CSP và header bảo mật gán ở đây được, nhưng lớp host/CDN đáng tin hơn.\n- Chuyển Nuxt: hãy nói “Edge, không phải Node, không Pinia, không authz” ở câu nối đầu."
+            "vi": "- Matcher gồm `/_next` hoặc `/login` là vòng redirect hay gặp.\n- Verify JWT trên Edge: dùng thư viện chạy được trên Edge. `jsonwebtoken` (crypto Node) là bẫy.\n- Geolocation, cookie A/B, và rewrite locale mới là chỗ dùng đúng. Authz thì không.\n- CSP và header bảo mật set ở đây được, nhưng layer host/CDN đáng tin hơn.\n- Map sang Nuxt: nói “Edge, không phải Node, không Pinia, không authz” ngay câu nối đầu."
           }
         },
         {
@@ -1729,18 +1729,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: redirect loop. Cause: matcher hits `/login` or `/_next`. Fix: tighten `config.matcher`.\n- Symptom: “we auth in middleware.” Cause: hiding the page only. Fix: session check in the Server Component / Route Handler.\n- Symptom: Edge runtime error on `fs` / Prisma. Cause: Node APIs. Fix: move to a Route Handler.\n- Symptom: Nuxt store imported into Next middleware. Cause: analogy. Fix: cookie bit only.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: vòng redirect. Nguyên nhân: matcher dính `/login` hoặc `/_next`. Cách xử lý: siết `config.matcher`.\n- Triệu chứng: “ta auth trong middleware.” Nguyên nhân: chỉ giấu trang. Cách xử lý: check session trong Server Component / Route Handler.\n- Triệu chứng: lỗi runtime Edge trên `fs` / Prisma. Nguyên nhân: API Node. Cách xử lý: chuyển sang Route Handler.\n- Triệu chứng: store Nuxt import vào middleware Next. Nguyên nhân: analogy. Cách xử lý: chỉ bit cookie."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: vòng redirect. Nguyên nhân: matcher dính `/login` hoặc `/_next`. Cách xử lý: siết `config.matcher`.\n- Triệu chứng: “bọn mình auth trong middleware”. Nguyên nhân: chỉ giấu trang. Cách xử lý: check session trong Server Component / Route Handler.\n- Triệu chứng: lỗi runtime Edge trên `fs` / Prisma. Nguyên nhân: API Node. Cách xử lý: chuyển sang Route Handler.\n- Triệu chứng: store Nuxt import vào middleware Next. Nguyên nhân: suy tương đương. Cách xử lý: chỉ dùng bit cookie."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "How do you auth-gate App Router, is Next middleware like Nuxt middleware, and why did we get a redirect loop? They want Edge limits, matcher hygiene, and “this is not authz.”",
-            "vi": "Auth-gate App Router thế nào, middleware Next có giống Nuxt không, và vì sao bị vòng redirect? Họ muốn giới hạn Edge, vệ sinh matcher, và “đây không phải authz.”"
+            "vi": "Auth-gate App Router thế nào, middleware Next có giống Nuxt không, và vì sao bị vòng redirect? Họ muốn giới hạn Edge, matcher sạch, và “đây không phải authz”."
           }
         },
         {
@@ -1751,7 +1751,7 @@
           },
           "text": {
             "en": "Next middleware runs on the Edge before Node. It can redirect, rewrite, and set headers. It is not authorization — I still check the session in the Server Component or Route Handler. I match only the dashboard paths so login and next static files do not loop. Edge cannot use Prisma or the full Node API; JWT verify needs an Edge-safe library. Nuxt middleware is Node per route and can navigateTo — that does not port. A React SPA guard is UX only, same warning. Cookie presence here, authz on the server.",
-            "vi": "Middleware Next chạy trên Edge trước Node. Nó redirect, rewrite, và gán header được. Nó không phải authorization — tôi vẫn check session trong Server Component hoặc Route Handler. Tôi match chỉ path dashboard để login và file tĩnh next không lặp. Edge không dùng Prisma hoặc full API Node; verify JWT cần thư viện an toàn trên Edge. Middleware Nuxt là Node theo route và navigateTo được — cái đó không port. Guard SPA React chỉ là UX, cùng cảnh báo. Cookie có mặt ở đây, authz trên server."
+            "vi": "Middleware Next chạy trên Edge, trước Node. Nó redirect, rewrite, và set header được. Nó không phải authorization: mình vẫn check session trong Server Component hoặc Route Handler. Mình match đúng path dashboard để login và file tĩnh của Next không loop. Edge không dùng Prisma hay full API Node; verify JWT cần thư viện chạy được trên Edge. Middleware Nuxt là Node theo route và navigateTo được, cái đó không port. Guard SPA React chỉ là UX, cùng cảnh báo. Cookie có hay không thì check ở đây, authz nằm trên server."
           }
         },
         {
@@ -1767,7 +1767,7 @@
             },
             {
               "en": "Authz lives in the Server Component / Route Handler / Action.",
-              "vi": "Authz sống trong Server Component / Route Handler / Action."
+              "vi": "Authz nằm ở Server Component / Route Handler / Action."
             },
             {
               "en": "Nuxt middleware is Node per-route. Next is one Edge file. Not a port.",
@@ -1783,7 +1783,7 @@
           },
           "text": {
             "en": "- **Can middleware query the database?** Not on Edge. Use a Route Handler or the Server Component.\n- **Why did login loop?** Matcher included `/login` or a cookie you also set on login.\n- **Nuxt `definePageMeta({ middleware })`?** Next uses `config.matcher`, not per-page meta.\n- **Is a SPA router guard enough?** No. Same as middleware: UX, not a wall.",
-            "vi": "- **Middleware có query database?** Không trên Edge. Dùng Route Handler hoặc Server Component.\n- **Vì sao login lặp?** Matcher gồm `/login` hoặc cookie bạn cũng gán lúc login.\n- **`definePageMeta({ middleware })` Nuxt?** Next dùng `config.matcher`, không phải meta theo trang.\n- **Guard router SPA có đủ?** Không. Giống middleware: UX, không phải tường."
+            "vi": "- **Middleware có query database?** Không trên Edge. Dùng Route Handler hoặc Server Component.\n- **Vì sao login loop?** Matcher gồm `/login` hoặc cookie bạn cũng set lúc login.\n- **`definePageMeta({ middleware })` Nuxt?** Next dùng `config.matcher`, không phải meta theo trang.\n- **Guard router SPA có đủ?** Không. Giống middleware: UX, không phải tường."
           }
         },
         {
@@ -1805,14 +1805,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** A Server Action is a **public POST** Next wires from a form or a button. `use server` marks the function. You still authenticate, authorize, validate, mutate, then `revalidateTag`. Nuxt equivalent: `server/api` POST plus `refreshNuxtData`.",
-            "vi": "**Tóm tắt:** Server Action là **POST công khai** mà Next nối từ form hoặc button. `use server` đánh dấu hàm. Bạn vẫn authenticate, authorize, validate, mutate, rồi `revalidateTag`. Tương đương Nuxt: POST `server/api` cộng `refreshNuxtData`."
+            "vi": "**Tóm tắt:** Server Action là **POST công khai** mà Next nối từ form hoặc button. `use server` đánh dấu hàm. Bạn vẫn authenticate, authorize, validate, mutate, rồi `revalidateTag`. Tương đương Nuxt: POST `server/api` kèm `refreshNuxtData`."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “Are Actions safe?” is the interview. They look like RPC. They are endpoints. Origin checks exist; they do not replace authz inside the action. Exporting a helper from a `use server` file publishes it.",
-            "vi": "**Vì sao quan trọng:** “Action có an toàn?” là câu phỏng vấn. Chúng trông như RPC. Chúng là endpoint. Check Origin có; chúng không thay authz trong action. Export helper từ file `use server` là công khai nó."
+            "vi": "**Vì sao quan trọng:** “Action có an toàn?” là câu phỏng vấn. Chúng trông như RPC. Chúng là endpoint. Check Origin có, nhưng không thay authz trong action. Export helper từ file `use server` là công khai nó."
           }
         },
         {
@@ -1821,15 +1821,15 @@
           "items": [
             {
               "en": "**How it works:** A file or a function marked `use server` is reachable as a POST. A `<form action={createItem}>` submits `FormData`. A client button can call the same function. Next checks the Origin header. That is CSRF mitigation, not authorization.",
-              "vi": "**Cách hoạt động:** File hoặc hàm đánh dấu `use server` gọi được như POST. `<form action={createItem}>` gửi `FormData`. Button client gọi cùng hàm được. Next check header Origin. Đó là giảm CSRF, không phải authorization."
+              "vi": "**Cách hoạt động:** File hoặc hàm đánh dấu `use server` gọi được như một POST. `<form action={createItem}>` gửi `FormData`. Button phía client gọi cùng hàm được. Next check header Origin. Đó là giảm CSRF, không phải authorization."
             },
             {
               "en": "Inside the action: session (cookies), permission, schema (`zod`), write, then `revalidateTag` / `revalidatePath`. Return a serialisable result. Do not return `process.env`. `useActionState` / `useFormStatus` are the pending and error UI. `useOptimistic` is a paint — the server stays the source of truth.",
-              "vi": "Trong action: session (cookie), quyền, schema (`zod`), ghi, rồi `revalidateTag` / `revalidatePath`. Return kết quả serialise được. Đừng return `process.env`. `useActionState` / `useFormStatus` là UI pending và lỗi. `useOptimistic` là một lần vẽ — server vẫn là nguồn sự thật."
+              "vi": "Trong action: session (cookies), quyền, schema (`zod`), ghi, rồi `revalidateTag` / `revalidatePath`. Return kết quả serialise được. Đừng return `process.env`. `useActionState` / `useFormStatus` là UI pending và lỗi. `useOptimistic` chỉ là một lần vẽ: server vẫn là nguồn sự thật."
             },
             {
               "en": "Keep `route.ts` for webhooks, third-party POST, and streaming uploads. Nuxt equivalent is a Nitro handler plus `refreshNuxtData` / `refreshCookie`. Do not treat Actions as a replacement for a public API other clients need.",
-              "vi": "Giữ `route.ts` cho webhook, POST bên thứ ba, và upload streaming. Tương đương Nuxt là handler Nitro cộng `refreshNuxtData` / `refreshCookie`. Đừng coi Action thay API công khai mà client khác cần."
+              "vi": "Giữ `route.ts` cho webhook, POST bên thứ ba, và upload streaming. Tương đương Nuxt là handler Nitro kèm `refreshNuxtData` / `refreshCookie`. Đừng coi Action thay cho API công khai mà client khác cần."
             }
           ]
         },
@@ -1838,14 +1838,14 @@
           "lang": "tsx",
           "code": {
             "en": "// app/actions.ts — file directive: use server\n'use server'\nimport { revalidateTag } from 'next/cache'\nimport { z } from 'zod'\nconst Input = z.object({ title: z.string().min(1).max(200) })\nexport async function createItem(formData: FormData) {\n  const session = await getSession() // cookies()\n  if (!session) redirect('/login')\n  if (!can(session, 'item:create')) throw new Error('Forbidden')\n  const parsed = Input.safeParse({ title: formData.get('title') })\n  if (!parsed.success) return { ok: false as const, error: 'Invalid title' }\n  await db.item.create({ data: { title: parsed.data.title, userId: session.id } })\n  revalidateTag('items') // not revalidatePath('/blog/[slug]')\n  return { ok: true as const }\n}\n// <form action={createItem}><input name=\"title\" /><button>Save</button></form>",
-            "vi": "// app/actions.ts — directive file: use server\n'use server'\nimport { revalidateTag } from 'next/cache'\nimport { z } from 'zod'\nconst Input = z.object({ title: z.string().min(1).max(200) })\nexport async function createItem(formData: FormData) {\n  const session = await getSession() // cookies()\n  if (!session) redirect('/login')\n  if (!can(session, 'item:create')) throw new Error('Forbidden')\n  const parsed = Input.safeParse({ title: formData.get('title') })\n  if (!parsed.success) return { ok: false as const, error: 'Invalid title' }\n  await db.item.create({ data: { title: parsed.data.title, userId: session.id } })\n  revalidateTag('items') // không phải revalidatePath('/blog/[slug]')\n  return { ok: true as const }\n}\n// <form action={createItem}><input name=\"title\" /><button>Save</button></form>"
+            "vi": "// app/actions.ts: directive của file là use server\n'use server'\nimport { revalidateTag } from 'next/cache'\nimport { z } from 'zod'\nconst Input = z.object({ title: z.string().min(1).max(200) })\nexport async function createItem(formData: FormData) {\n  const session = await getSession() // cookies()\n  if (!session) redirect('/login')\n  if (!can(session, 'item:create')) throw new Error('Forbidden')\n  const parsed = Input.safeParse({ title: formData.get('title') })\n  if (!parsed.success) return { ok: false as const, error: 'Invalid title' }\n  await db.item.create({ data: { title: parsed.data.title, userId: session.id } })\n  revalidateTag('items') // không phải revalidatePath('/blog/[slug]')\n  return { ok: true as const }\n}\n// <form action={createItem}><input name=\"title\" /><button>Save</button></form>"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** Submit posts to `createItem`. Unauthenticated users redirect. Forbidden throws. Bad titles return a serialisable error for the form. A good write tags `items` so list pages refresh. The function is public — anyone who can POST can hit it if authz is missing.",
-            "vi": "**Điều gì xảy ra:** Submit POST tới `createItem`. User chưa đăng nhập thì redirect. Forbidden thì throw. Title xấu return lỗi serialise được cho form. Ghi tốt gắn tag `items` để trang list làm mới. Hàm là công khai — ai POST được thì đụng được nếu thiếu authz."
+            "vi": "**Điều gì xảy ra:** Submit POST tới `createItem`. User chưa đăng nhập thì redirect. Forbidden thì throw. Title sai thì return lỗi serialise được cho form. Ghi thành công thì tag `items` để trang list làm mới. Hàm là public: ai POST được thì gọi được nếu thiếu authz."
           }
         },
         {
@@ -1853,15 +1853,15 @@
           "headers": [
             {
               "en": "Surface",
-              "vi": "Bề mặt"
+              "vi": "Phần"
             },
             {
               "en": "Use for",
-              "vi": "Dùng khi"
+              "vi": "Dùng cho"
             },
             {
               "en": "Not for",
-              "vi": "Không dùng khi"
+              "vi": "Không dùng cho"
             }
           ],
           "rows": [
@@ -1890,7 +1890,7 @@
               },
               {
                 "en": "Colocated UI mutations",
-                "vi": "Mutation UI đặt cạnh"
+                "vi": "Mutation nằm cạnh UI"
               }
             ],
             [
@@ -1900,11 +1900,11 @@
               },
               {
                 "en": "On-demand after a write",
-                "vi": "Theo sự kiện sau khi ghi"
+                "vi": "Ngay sau khi ghi"
               },
               {
                 "en": "Path wildcards as tags",
-                "vi": "Wildcard path như tag"
+                "vi": "Wildcard path làm tag"
               }
             ]
           ]
@@ -1917,7 +1917,7 @@
           },
           "text": {
             "en": "- Treat every exported `use server` function as a public endpoint. Authz lives inside it.\n- Origin checks mitigate classic CSRF. They do not replace same-site cookies or a permission check.\n- `revalidatePath('/blog/[slug]')` is not a tag. Tag the data (`items`, `product:id`) and revalidate that.\n- `useOptimistic` without a server round-trip is a lie the next refresh will undo.\n- Nuxt: Nitro `server/api` plus `refreshNuxtData`. Same four steps: authn, authz, validate, invalidate.",
-            "vi": "- Coi mọi hàm export `use server` là endpoint công khai. Authz sống bên trong nó.\n- Check Origin giảm CSRF cổ điển. Chúng không thay cookie same-site hay check quyền.\n- `revalidatePath('/blog/[slug]')` không phải tag. Hãy gắn tag data (`items`, `product:id`) rồi revalidate cái đó.\n- `useOptimistic` không có round-trip server là lời nói dối lần làm mới sau sẽ hủy.\n- Nuxt: Nitro `server/api` cộng `refreshNuxtData`. Cùng bốn bước: authn, authz, validate, invalidate."
+            "vi": "- Coi mọi hàm export `use server` là endpoint công khai. Authz nằm bên trong nó.\n- Check Origin giảm CSRF cổ điển. Chúng không thay cookie same-site hay check quyền.\n- `revalidatePath('/blog/[slug]')` không phải tag. Tag data (`items`, `product:id`) rồi revalidate cái đó.\n- `useOptimistic` không có round-trip server là lời nói dối, lần refresh sau sẽ hủy.\n- Nuxt: Nitro `server/api` kèm `refreshNuxtData`. Cùng bốn bước: authn, authz, validate, invalidate."
           }
         },
         {
@@ -1925,18 +1925,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: anyone can create. Cause: Action trusted because it is “internal.” Fix: session + `can()` inside.\n- Symptom: list stays stale. Cause: `revalidatePath` with a token pattern. Fix: `revalidateTag('items')`.\n- Symptom: helper in the same file is callable from the browser. Cause: every export is an endpoint. Fix: split the file.\n- Symptom: Stripe secret in the Action return. Cause: returning the row. Fix: `{ ok: true }` / a DTO.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: ai cũng tạo được. Nguyên nhân: tin Action vì “nội bộ.” Cách xử lý: session + `can()` bên trong.\n- Triệu chứng: list vẫn cũ. Nguyên nhân: `revalidatePath` với pattern token. Cách xử lý: `revalidateTag('items')`.\n- Triệu chứng: helper cùng file gọi được từ trình duyệt. Nguyên nhân: mọi export là endpoint. Cách xử lý: tách file.\n- Triệu chứng: secret Stripe trong return Action. Nguyên nhân: return cả row. Cách xử lý: `{ ok: true }` / một DTO."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: ai cũng tạo được. Nguyên nhân: tin Action vì “nội bộ”. Cách xử lý: session + `can()` bên trong.\n- Triệu chứng: list vẫn cũ. Nguyên nhân: `revalidatePath` với pattern token. Cách xử lý: `revalidateTag('items')`.\n- Triệu chứng: helper cùng file gọi được từ trình duyệt. Nguyên nhân: mọi export là endpoint. Cách xử lý: tách file.\n- Triệu chứng: secret Stripe trong return Action. Nguyên nhân: return cả row. Cách xử lý: `{ ok: true }` / một DTO."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "What is `use server`, are Server Actions safe, and how do you refresh after a POST? They want a public POST, authz inside, tag invalidation, and when you still write `route.ts`.",
-            "vi": "`use server` là gì, Server Action có an toàn, và làm mới sau POST thế nào? Họ muốn một POST công khai, authz bên trong, invalidation bằng tag, và khi nào vẫn viết `route.ts`."
+            "vi": "`use server` là gì, Server Action có an toàn không, và làm mới sau POST thế nào? Họ muốn POST công khai, authz bên trong, invalidation bằng tag, và khi nào vẫn viết `route.ts`."
           }
         },
         {
@@ -1947,7 +1947,7 @@
           },
           "text": {
             "en": "A Server Action is a public POST that Next wires from a form or a button. I treat it like a Route Handler I did not write by hand: authenticate, authorize, validate with Zod, mutate, then revalidateTag. Origin checks exist; they do not replace same-site cookies or authz inside the action. I do not export helpers from a use server file because every export becomes an endpoint. I still write route.ts for webhooks, third-party POST, and streaming uploads. Nuxt equivalent is a server/api POST plus refreshNuxtData. useOptimistic is a paint; the server remains the source of truth.",
-            "vi": "Server Action là POST công khai mà Next nối từ form hoặc button. Tôi coi nó như Route Handler tôi không viết tay: authenticate, authorize, validate bằng Zod, mutate, rồi revalidateTag. Check Origin có; chúng không thay cookie same-site hay authz trong action. Tôi không export helper từ file use server vì mọi export thành endpoint. Tôi vẫn viết route.ts cho webhook, POST bên thứ ba, và upload streaming. Tương đương Nuxt là POST server/api cộng refreshNuxtData. useOptimistic là một lần vẽ; server vẫn là nguồn sự thật."
+            "vi": "Server Action là POST công khai mà Next nối từ form hoặc button. Mình coi nó như Route Handler mình không viết tay: authenticate, authorize, validate bằng Zod, mutate, rồi revalidateTag. Check Origin có, nhưng không thay cookie same-site hay authz trong action. Mình không export helper từ file use server vì mọi export thành endpoint. Mình vẫn viết route.ts cho webhook, POST bên thứ ba, và upload streaming. Tương đương Nuxt là POST server/api kèm refreshNuxtData. useOptimistic chỉ là một lần vẽ; server vẫn là nguồn sự thật."
           }
         },
         {
@@ -1955,7 +1955,7 @@
           "items": [
             {
               "en": "Actions are public POST endpoints. Authz lives inside the action.",
-              "vi": "Action là endpoint POST công khai. Authz sống trong action."
+              "vi": "Action là endpoint POST công khai. Authz nằm trong action."
             },
             {
               "en": "Validate, mutate, then `revalidateTag`. Path wildcards are not tags.",
@@ -1979,7 +1979,7 @@
           },
           "text": {
             "en": "- **useActionState / useFormStatus?** Pending and field errors on the client. The Action still returns serialisable results.\n- **When still route.ts?** Webhooks, third-party POST, streaming uploads, non-Next clients.\n- **Why is revalidatePath with a wildcard wrong?** It is not a tag. Tag the data, then revalidateTag.\n- **useOptimistic with no server truth?** The next refresh undoes the paint. Keep the Action as source of truth.",
-            "vi": "- **useActionState / useFormStatus?** Pending và lỗi field trên client. Action vẫn return kết quả serialise được.\n- **Khi nào vẫn route.ts?** Webhook, POST bên thứ ba, upload streaming, client không phải Next.\n- **Vì sao revalidatePath với wildcard sai?** Nó không phải tag. Hãy gắn tag data, rồi revalidateTag.\n- **useOptimistic không có sự thật server?** Lần làm mới sau hủy lần vẽ. Giữ Action làm nguồn sự thật."
+            "vi": "- **useActionState / useFormStatus?** Pending và lỗi field trên client. Action vẫn return kết quả serialise được.\n- **Khi nào vẫn route.ts?** Webhook, POST bên thứ ba, upload streaming, client không phải Next.\n- **Vì sao revalidatePath với wildcard sai?** Nó không phải tag. Gắn tag cho data, rồi revalidateTag.\n- **useOptimistic không có sự thật server?** Lần refresh sau hủy lần vẽ. Giữ Action làm nguồn sự thật."
           }
         },
         {
@@ -2001,14 +2001,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Speak in **four cache layers**, then name the **major**. Next 15 `fetch` is **not cached** unless you opt in. `cookies()` / `headers()` make the route dynamic. This sheet is the map; verify knobs on your version.",
-            "vi": "**Tóm tắt:** Nói bằng **bốn lớp cache**, rồi gọi tên **major**. Next 15 `fetch` **không cache** trừ khi bạn opt-in. `cookies()` / `headers()` làm route dynamic. Sheet này là bản map; hãy đối chiếu núm trên version của bạn."
+            "vi": "**Tóm tắt:** Nói theo **bốn lớp cache**, rồi nêu rõ **major**. Next 15 `fetch` **không cache** trừ khi bạn opt-in. `cookies()` / `headers()` làm route thành dynamic. Sheet này là bản đồ; kiểm cơ chế trên version bạn đang dùng."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “Why is this page stale / always dynamic?” is an on-call question. Next 14 cached `fetch` by default; Next 15 flipped that. Copying a 14 blog onto 15 surprises prod. Money and inventory want tags, not time.",
-            "vi": "**Vì sao quan trọng:** “Trang này sao cũ / sao luôn dynamic?” là câu on-call. Next 14 cache `fetch` mặc định; Next 15 đảo. Copy blog 14 sang 15 bất ngờ trên prod. Tiền và tồn kho muốn tag, không muốn theo thời gian."
+            "vi": "**Vì sao quan trọng:** “Sao trang này cũ / sao luôn dynamic?” là câu on-call. Next 14 cache `fetch` mặc định; Next 15 đảo ngược. Copy blog viết cho 14 sang 15 thì prod bất ngờ. Tiền và tồn kho cần tag, không phải theo thời gian."
           }
         },
         {
@@ -2017,11 +2017,11 @@
           "items": [
             {
               "en": "**How it works:** Four layers: **request memoization** (dedupe identical `fetch` inside one server render), **data cache** (persist `fetch` across requests — Next 15 off unless you opt in), **full route cache** (cached RSC/HTML for a static or ISR route), **client router cache** (prefetch, back/forward).",
-              "vi": "**Cách hoạt động:** Bốn lớp: **request memoization** (gom `fetch` giống nhau trong một lần render server), **data cache** (giữ `fetch` xuyên request — Next 15 tắt trừ khi opt-in), **full route cache** (RSC/HTML cache cho route tĩnh hoặc ISR), **client router cache** (prefetch, tiến/lùi)."
+              "vi": "**Cách hoạt động:** Bốn lớp: **request memoization** (dedupe `fetch` giống nhau trong một lần render phía server), **data cache** (giữ `fetch` xuyên request; Next 15 tắt trừ khi opt-in), **full route cache** (RSC/HTML đã cache cho route tĩnh hoặc ISR), **client router cache** (prefetch, tiến/lùi)."
             },
             {
               "en": "Do not recite the whole table. Pick the layer that explains the bug, then name the knob (`no-store`, `force-cache`, `revalidate`, `tags`, `cookies()`). `use cache` is a newer explicit function cache — verify it on your major before you claim it.",
-              "vi": "Đừng đọc cả bảng. Chọn lớp giải thích bug, rồi gọi tên núm (`no-store`, `force-cache`, `revalidate`, `tags`, `cookies()`). `use cache` là cache hàm tường minh mới hơn — hãy đối chiếu trên major của bạn trước khi khẳng định."
+              "vi": "Đừng đọc cả bảng. Chọn lớp giải thích được bug, rồi nêu rõ cơ chế (`no-store`, `force-cache`, `revalidate`, `tags`, `cookies()`). `use cache` là cache hàm tường minh mới hơn; kiểm trên major của bạn trước khi khẳng định."
             }
           ]
         },
@@ -2030,14 +2030,14 @@
           "lang": "tsx",
           "code": {
             "en": "// app/catalog/page.tsx — Next 15: this fetch is uncached unless you opt in\nexport default async function CatalogPage() {\n  const res = await fetch('https://api.example.com/items', {\n    next: { revalidate: 60, tags: ['items'] }, // data cache + tag\n  })\n  const items: Item[] = await res.json()\n  return <ul>{items.map((it) => <li key={it.id}>{it.title}</li>)}</ul>\n}\n// After a write: revalidateTag('items') from the Server Action / webhook.\n// Do not: cookies() in the root layout just to read a theme.\n// Money / inventory: skip time revalidate; tag + on-demand only.",
-            "vi": "// app/catalog/trang.tsx — Next 15: fetch này không cache trừ khi opt-in\nexport default async function CatalogPage() {\n  const res = await fetch('https://api.example.com/items', {\n    next: { revalidate: 60, tags: ['items'] }, // data cache + tag\n  })\n  const items: Item[] = await res.json()\n  return <ul>{items.map((it) => <li key={it.id}>{it.title}</li>)}</ul>\n}\n// Sau khi ghi: revalidateTag('items') từ Server Action / webhook.\n// Đừng: cookies() trong layout gốc chỉ để đọc theme.\n// Tiền / tồn kho: bỏ revalidate theo thời gian; chỉ tag + theo sự kiện."
+            "vi": "// app/catalog/page.tsx: Next 15, fetch này không cache trừ khi opt-in\nexport default async function CatalogPage() {\n  const res = await fetch('https://api.example.com/items', {\n    next: { revalidate: 60, tags: ['items'] }, // data cache + tag\n  })\n  const items: Item[] = await res.json()\n  return <ul>{items.map((it) => <li key={it.id}>{it.title}</li>)}</ul>\n}\n// Sau khi ghi: revalidateTag('items') từ Server Action / webhook.\n// Đừng: cookies() trong layout gốc chỉ để đọc theme.\n// Tiền / tồn kho: bỏ revalidate theo thời gian; chỉ tag + on-demand."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** Next 15 would hit the API every request without the `next` option. The tag lets a write refresh catalog HTML. Request memoization still dedupes the same URL inside one render. A `cookies()` in the root layout would have dynamized the whole tree.",
-            "vi": "**Điều gì xảy ra:** Next 15 sẽ đụng API mỗi request nếu không có option `next`. Tag cho phép một lần ghi làm mới HTML catalog. Request memoization vẫn gom cùng URL trong một lần render. `cookies()` trong layout gốc sẽ biến cả cây thành dynamic."
+            "vi": "**Điều gì xảy ra:** Không có option `next` thì Next 15 gọi API mỗi request. Tag để một lần ghi làm mới HTML catalog. Request memoization vẫn dedupe cùng URL trong một lần render. `cookies()` trong layout gốc sẽ biến cả cây thành dynamic."
           }
         },
         {
@@ -2110,7 +2110,7 @@
               },
               {
                 "en": "Soft navigation",
-                "vi": "Navigate mềm"
+                "vi": "Soft navigation"
               }
             ],
             [
@@ -2120,7 +2120,7 @@
               },
               {
                 "en": "Opts the route into dynamic",
-                "vi": "Đưa route vào dynamic"
+                "vi": "Đưa route sang dynamic"
               },
               {
                 "en": "Whole subtree",
@@ -2148,11 +2148,11 @@
               },
               {
                 "en": "Static chrome, dynamic hole; explicit fn cache",
-                "vi": "Chrome tĩnh, lỗ dynamic; cache hàm tường minh"
+                "vi": "Khung tĩnh, lỗ dynamic; cache hàm tường minh"
               },
               {
                 "en": "Verify your major",
-                "vi": "Đối chiếu major của bạn"
+                "vi": "Kiểm major của bạn"
               }
             ]
           ]
@@ -2165,7 +2165,7 @@
           },
           "text": {
             "en": "- Name the layer before the knob. “Stale after a correct server invalidation” is often the client router cache.\n- `cookies()` in the root layout for theme dynamizes marketing pages. Cookie on `<html>` or a scoped layout.\n- Time-based revalidate is wrong for money and inventory. Tags plus a webhook / Action.\n- Next 14 muscle memory is a prod incident on 15. Say the major out loud.\n- Nuxt equivalent: `routeRules` `swr` / `isr` / `prerender`. Same idea, different knobs. Verify the major there too.",
-            "vi": "- Gọi tên lớp trước núm. “Vẫn cũ sau invalidation server đúng” thường là client router cache.\n- `cookies()` trong layout gốc cho theme làm trang marketing thành dynamic. Cookie trên `<html>` hoặc layout hẹp.\n- Revalidate theo thời gian sai cho tiền và tồn kho. Tag cộng webhook / Action.\n- Trí nhớ cơ Next 14 là incident prod trên 15. Hãy nói major ra miệng.\n- Tương đương Nuxt: `routeRules` `swr` / `isr` / `prerender`. Cùng ý, núm khác. Đối chiếu major ở đó nữa."
+            "vi": "- Nêu lớp trước, rồi mới tới cơ chế. “Vẫn cũ sau invalidation phía server đã đúng” thường là client router cache.\n- `cookies()` trong layout gốc cho theme biến trang marketing thành dynamic. Cookie trên `<html>` hoặc layout hẹp hơn.\n- Revalidate theo thời gian sai với tiền và tồn kho. Tag kèm webhook / Action.\n- Thói quen Next 14 là incident prod trên 15. Nói major ra miệng.\n- Tương đương Nuxt: `routeRules` `swr` / `isr` / `prerender`. Cùng ý, cơ chế khác. Kiểm major bên đó nữa."
           }
         },
         {
@@ -2173,18 +2173,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: fetch always hits in 15. Cause: assuming Next 14 default cache. Fix: opt in, or accept dynamic.\n- Symptom: whole app dynamic. Cause: `cookies()` in the root layout. Fix: move the read down.\n- Symptom: product still stale after `revalidateTag`. Cause: fetch had no matching tag. Fix: tag at read and write.\n- Symptom: HTML correct, UI stale on back. Cause: client router cache. Fix: router refresh after the write.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: fetch luôn đụng trên 15. Nguyên nhân: giả định cache mặc định Next 14. Cách xử lý: opt-in, hoặc chấp nhận dynamic.\n- Triệu chứng: cả app dynamic. Nguyên nhân: `cookies()` trong layout gốc. Cách xử lý: đưa lần đọc xuống.\n- Triệu chứng: product vẫn cũ sau `revalidateTag`. Nguyên nhân: fetch không có tag khớp. Cách xử lý: gắn tag lúc đọc và lúc ghi.\n- Triệu chứng: HTML đúng, UI cũ khi lùi. Nguyên nhân: client router cache. Cách xử lý: router refresh sau khi ghi."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: fetch luôn hit trên 15. Nguyên nhân: giả định cache mặc định Next 14. Cách xử lý: opt-in, hoặc chấp nhận dynamic.\n- Triệu chứng: cả app dynamic. Nguyên nhân: `cookies()` trong layout gốc. Cách xử lý: đưa lần đọc xuống.\n- Triệu chứng: product vẫn cũ sau `revalidateTag`. Nguyên nhân: fetch không có tag khớp. Cách xử lý: gắn tag lúc đọc và lúc ghi.\n- Triệu chứng: HTML đúng, UI cũ khi Back. Nguyên nhân: client router cache. Cách xử lý: router refresh sau khi ghi."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "Explain Next’s caches, `revalidate` versus `no-store` versus cookies, and why this page is stale or always dynamic. They want layers, the major, and an explicit policy on every fetch.",
-            "vi": "Giải thích các cache của Next, `revalidate` khác `no-store` khác cookie, và vì sao trang này cũ hoặc luôn dynamic. Họ muốn các lớp, major, và policy tường minh trên mọi fetch."
+            "vi": "Giải thích các cache của Next, `revalidate` khác `no-store` khác cookies, và vì sao trang này cũ hoặc luôn dynamic. Họ muốn các lớp, major, và policy tường minh trên mọi fetch."
           }
         },
         {
@@ -2195,7 +2195,7 @@
           },
           "text": {
             "en": "I talk in four layers: request memoization, data cache, full route cache, and client router cache. Then I name the major. Next 15 fetch is uncached unless I opt in with force-cache, revalidate, or tags. Reading cookies is a dynamic opt-in; I do not put cookies in the root layout for theme. Time-based revalidate is wrong for money; I tag the fetch and revalidateTag from the Action or webhook. Stale after a correct server invalidation is often the client router cache. Nuxt equivalent is routeRules swr, isr, prerender. I verify knobs on the version in front of me. use cache and PPR exist; I do not bluff the API.",
-            "vi": "Tôi nói bằng bốn lớp: request memoization, data cache, full route cache, và client router cache. Rồi tôi gọi tên major. Fetch Next 15 không cache trừ khi tôi opt-in bằng force-cache, revalidate, hoặc tag. Đọc cookie là opt-in dynamic; tôi không để cookies trong layout gốc cho theme. Revalidate theo thời gian sai cho tiền; tôi gắn tag fetch và revalidateTag từ Action hoặc webhook. Cũ sau invalidation server đúng thường là client router cache. Tương đương Nuxt là routeRules swr, isr, prerender. Tôi đối chiếu núm trên version trước mặt. use cache và PPR có; tôi không bluff API."
+            "vi": "Mình nói theo bốn lớp: request memoization, data cache, full route cache, và client router cache. Rồi mình nêu rõ major. Fetch Next 15 không cache trừ khi mình opt-in bằng force-cache, revalidate, hoặc tags. Đọc cookies là opt-in dynamic; mình không để cookies trong layout gốc chỉ vì theme. Revalidate theo thời gian sai với tiền; mình gắn tag lúc fetch rồi revalidateTag từ Action hoặc webhook. Cũ sau khi invalidation phía server đã đúng thường là client router cache. Tương đương Nuxt là routeRules swr, isr, prerender. Mình kiểm cơ chế trên version đang để trước mặt. use cache và PPR thì có; mình không bluff API."
           }
         },
         {
@@ -2203,11 +2203,11 @@
           "items": [
             {
               "en": "Four layers. Name the major. Prefer an explicit policy on every fetch.",
-              "vi": "Bốn lớp. Gọi tên major. Ưu tiên policy tường minh trên mọi fetch."
+              "vi": "Bốn lớp. Nêu rõ major. Ưu tiên policy tường minh trên mọi fetch."
             },
             {
               "en": "Next 15 `fetch` is uncached until you opt in. Next 14 was the opposite.",
-              "vi": "Next 15 `fetch` không cache đến khi opt-in. Next 14 ngược lại."
+              "vi": "Next 15 `fetch` không cache đến khi bạn opt-in. Next 14 thì ngược lại."
             },
             {
               "en": "`cookies()` in the root layout can dynamize the whole app.",
@@ -2215,7 +2215,7 @@
             },
             {
               "en": "Money and inventory use on-demand tags, not time-based revalidate.",
-              "vi": "Tiền và tồn kho dùng tag theo sự kiện, không revalidate theo thời gian."
+              "vi": "Tiền và tồn kho: tag on-demand, không revalidate theo thời gian."
             }
           ]
         },
@@ -2227,7 +2227,7 @@
           },
           "text": {
             "en": "- **Walk a product page?** SSG or tagged fetch + CMS webhook revalidateTag. No cookies in that layout.\n- **Walk an account page?** cookies() + no-store. Never CDN-cache that HTML.\n- **Missing tag on fetch?** Later revalidateTag is a no-op for that read.\n- **Which layer after a correct server invalidation?** Often the client router cache.",
-            "vi": "- **Đi một trang product?** SSG hoặc fetch gắn tag + webhook CMS revalidateTag. Không cookie trong layout đó.\n- **Đi một trang account?** cookies() + no-store. Đừng bao giờ CDN-cache HTML đó.\n- **Thiếu tag trên fetch?** revalidateTag sau đó là no-op với lần đọc đó.\n- **Lớp nào sau invalidation server đúng?** Thường là client router cache."
+            "vi": "- **Đi qua một trang product?** SSG hoặc fetch gắn tag + webhook CMS revalidateTag. Không cookies trong layout đó.\n- **Đi qua một trang account?** cookies() + no-store. Đừng bao giờ CDN-cache HTML đó.\n- **Thiếu tag trên fetch?** revalidateTag sau đó là no-op với lần đọc đó.\n- **Lớp nào sau invalidation phía server đã đúng?** Thường là client router cache."
           }
         },
         {
@@ -2249,14 +2249,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Pick **Next** when SEO, social previews, or server data next to UI matter. Pick a **Vite React SPA** for a logged-in dashboard with a mature API. Next as a hosted SPA with `use client` everywhere is the worst of both worlds. Nuxt versus Vite Vue is the same fork.",
-            "vi": "**Tóm tắt:** Chọn **Next** khi SEO, preview mạng xã hội, hoặc data server cạnh UI quan trọng. Chọn **SPA Vite React** cho dashboard đã login với API chín. Next như SPA host với `use client` khắp nơi là tệ nhất cả hai. Nuxt khác Vite Vue là cùng ngã rẽ."
+            "vi": "**Tóm tắt:** Chọn **Next** khi SEO, preview mạng xã hội, hoặc data server cạnh UI là quan trọng. Chọn **Vite React SPA** cho dashboard đã login với API chín. Next dùng như SPA host với `use client` khắp nơi là chịu dở cả hai bên. Nuxt khác Vite Vue là cùng một ngã rẽ."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “We have an authenticated dashboard — Next or Vite?” is a product constraint, not a résumé. Interviewers score whether you would pay RSC cache cost when SEO does not exist. See also 21.2.",
-            "vi": "**Vì sao quan trọng:** “Ta có dashboard đã auth — Next hay Vite?” là ràng buộc product, không phải résumé. Người phỏng vấn chấm việc bạn có trả chi phí cache RSC khi SEO không tồn tại. Xem thêm 21.2."
+            "vi": "**Vì sao quan trọng:** “Có dashboard đã auth: Next hay Vite?” là ràng buộc product, không phải chuyện résumé. Người phỏng vấn chấm bạn có chịu trả chi phí cache RSC khi chẳng có SEO. Xem thêm 21.2."
           }
         },
         {
@@ -2265,15 +2265,15 @@
           "items": [
             {
               "en": "**How it works (checklist):** 1. Does the URL need HTML for crawlers or unfurl? Next (or Nuxt). 2. Is there already a BFF and a closed login? Vite SPA. 3. Do you want cookies/session next to the tree? Next. 4. Will the team live with `use client` discipline? If no, SPA.",
-              "vi": "**Cách hoạt động (checklist):** 1. URL có cần HTML cho crawler hoặc unfurl? Next (hoặc Nuxt). 2. Đã có BFF và login kín? SPA Vite. 3. Muốn cookie/session cạnh cây? Next. 4. Team sống được với kỷ luật `use client`? Nếu không, SPA."
+              "vi": "**Cách hoạt động (checklist):** 1. URL có cần HTML cho crawler hoặc unfurl? Next (hoặc Nuxt). 2. Đã có BFF và login kín? SPA Vite. 3. Muốn cookies/session nằm cạnh cây? Next. 4. Team sống được với kỷ luật `use client`? Không thì SPA."
             },
             {
               "en": "5. Mutations: Server Actions colocate on Next; an existing REST/GraphQL API is a SPA win. 6. Hiring: RSC skill is narrower than React SPA skill. 7. Hosting: static bucket versus Node/Edge. 8. Mixing: public marketing on Next and the app as a SPA is valid — two cookie jars must not leak.",
-              "vi": "5. Mutation: Server Action colocate trên Next; API REST/GraphQL sẵn là SPA thắng. 6. Hiring: skill RSC hẹp hơn skill React SPA. 7. Hosting: bucket tĩnh khác Node/Edge. 8. Trộn: marketing public trên Next và app là SPA thì hợp lệ — hai hũ cookie không được rò."
+              "vi": "5. Mutation: Server Action colocate trên Next; API REST/GraphQL sẵn thì SPA thắng. 6. Hiring: skill RSC hẹp hơn skill React SPA. 7. Hosting: bucket tĩnh khác Node/Edge. 8. Trộn: marketing public trên Next, app là SPA thì được, miễn hai hũ cookie không rò sang nhau."
             },
             {
               "en": "Nuxt equivalent: Nuxt versus `vite create vue` — same eight questions. Resume pressure is not a reason to pick a meta-framework. See [21.2 Next vs React](#212-nextjs-vs-react).",
-              "vi": "Tương đương Nuxt: Nuxt khác `vite create vue` — cùng tám câu. Áp lực résumé không phải lý do chọn meta-framework. Xem [21.2 Next khác React](#212-nextjs-vs-react)."
+              "vi": "Tương đương Nuxt: Nuxt khác `vite create vue`: cùng tám câu. Áp lực résumé không phải lý do chọn meta-framework. Xem [21.2 Next khác React](#212-nextjs-vs-react)."
             }
           ]
         },
@@ -2282,14 +2282,14 @@
           "lang": "ts",
           "code": {
             "en": "// Decision sketch — say this out loud, then pick\ntype Pick = 'next' | 'vite-spa'\nexport function pickFramework(p: {\n  seo: boolean\n  existingBff: boolean\n  closedLogin: boolean\n  teamWantsRsc: boolean\n}): Pick {\n  if (p.seo) return 'next'\n  if (p.closedLogin && p.existingBff && !p.teamWantsRsc) return 'vite-spa'\n  if (!p.teamWantsRsc && p.existingBff) return 'vite-spa'\n  return 'next'\n}\n// Logged-in admin, mature API → vite-spa. Docs + app, cookies → next.",
-            "vi": "// Phác quyết định — nói to, rồi chọn\ntype Pick = 'next' | 'vite-spa'\nexport function pickFramework(p: {\n  seo: boolean\n  existingBff: boolean\n  closedLogin: boolean\n  teamWantsRsc: boolean\n}): Pick {\n  if (p.seo) return 'next'\n  if (p.closedLogin && p.existingBff && !p.teamWantsRsc) return 'vite-spa'\n  if (!p.teamWantsRsc && p.existingBff) return 'vite-spa'\n  return 'next'\n}\n// Admin đã login, API chín → vite-spa. Docs + app, cookie → next."
+            "vi": "// Phác quyết định: nói to ra, rồi chọn\ntype Pick = 'next' | 'vite-spa'\nexport function pickFramework(p: {\n  seo: boolean\n  existingBff: boolean\n  closedLogin: boolean\n  teamWantsRsc: boolean\n}): Pick {\n  if (p.seo) return 'next'\n  if (p.closedLogin && p.existingBff && !p.teamWantsRsc) return 'vite-spa'\n  if (!p.teamWantsRsc && p.existingBff) return 'vite-spa'\n  return 'next'\n}\n// Admin đã login, API chín → vite-spa. Docs + app, cookies → next."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** SEO forces Next. A closed login plus a BFF plus a team that does not want RSC returns Vite. The function is a sketch, not a scorecard — say the constraint first. Nuxt versus Vite Vue answers with the same branches.",
-            "vi": "**Điều gì xảy ra:** SEO buộc Next. Login kín cộng BFF cộng team không muốn RSC thì trả Vite. Hàm là phác, không phải bảng điểm — hãy nói ràng buộc trước. Nuxt khác Vite Vue trả lời bằng cùng các nhánh."
+            "vi": "**Điều gì xảy ra:** SEO thì chọn Next. Login kín kèm BFF kèm team không muốn RSC thì trả Vite. Hàm chỉ là phác thảo, không phải bảng điểm: nói ràng buộc trước. Nuxt khác Vite Vue trả lời bằng cùng các nhánh."
           }
         },
         {
@@ -2375,7 +2375,7 @@
           },
           "text": {
             "en": "- Next as a hosted SPA (`use client` on every page) pays the framework and keeps none of the server. Do not migrate that way.\n- Marketing + app in one repo with server session cookies is a good Next fit. Two products with two auth cookies is a trap.\n- “Just add middleware” to a Vite app is the moment Next starts to earn its keep — or the moment to keep the SPA and a BFF.\n- Same test as Nuxt versus a Vue SPA. Résumé pressure is not a constraint.\n- After you pick Next, state layers live in the React state-management doc — do not dump Query into Zustand.",
-            "vi": "- Next như SPA host (`use client` mọi trang) trả framework và không giữ server. Đừng migrate kiểu đó.\n- Marketing + app trong một repo với cookie session server là Next hợp. Hai product với hai cookie auth là bẫy.\n- “Chỉ thêm middleware” vào app Vite là lúc Next bắt đầu đáng tiền — hoặc lúc giữ SPA và một BFF.\n- Cùng bài test Nuxt khác SPA Vue. Áp lực résumé không phải ràng buộc.\n- Sau khi chọn Next, các lớp state nằm ở doc state-management React — đừng đổ Query vào Zustand."
+            "vi": "- Next dùng như SPA host (`use client` mọi trang) thì trả giá framework mà chẳng giữ được server. Đừng migrate kiểu đó.\n- Marketing + app trong một repo với cookie session phía server là Next hợp. Hai product với hai cookie auth là bẫy.\n- “Chỉ thêm middleware” vào app Vite là lúc Next bắt đầu đáng tiền, hoặc lúc nên giữ SPA và một BFF.\n- Cùng bài test Nuxt khác SPA Vue. Áp lực résumé không phải ràng buộc.\n- Sau khi chọn Next, các lớp state nằm ở doc state-management React. Đừng nhét Query vào Zustand."
           }
         },
         {
@@ -2383,18 +2383,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: Vite SPA rewritten to Next “for SEO” with `use client` on every page. Cause: résumé. Fix: keep Vite, or actually use the server.\n- Symptom: internal Chrome-only tool on Next. Cause: fashion. Fix: Vite React plus the existing BFF.\n- Symptom: two apps, one leaked session cookie. Cause: mixed marketing + app without cookie isolation. Fix: separate hosts / names.\n- Symptom: “we had to learn RSC for a CRUD admin.” Cause: no SEO, mature API. Fix: SPA was the senior pick.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: SPA Vite viết lại Next “cho SEO” với `use client` mọi trang. Nguyên nhân: résumé. Cách xử lý: giữ Vite, hoặc thật sự dùng server.\n- Triệu chứng: tool nội bộ chỉ Chrome trên Next. Nguyên nhân: mốt. Cách xử lý: Vite React cộng BFF sẵn.\n- Triệu chứng: hai app, một cookie session bị rò. Nguyên nhân: trộn marketing + app không tách cookie. Cách xử lý: host / tên tách.\n- Triệu chứng: “phải học RSC cho admin CRUD.” Nguyên nhân: không SEO, API chín. Cách xử lý: SPA mới là lựa chọn senior."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: SPA Vite viết lại sang Next “cho SEO” với `use client` mọi trang. Nguyên nhân: résumé. Cách xử lý: giữ Vite, hoặc dùng server cho đúng.\n- Triệu chứng: tool nội bộ chỉ Chrome mà dựng trên Next. Nguyên nhân: theo mốt. Cách xử lý: Vite React kèm BFF sẵn có.\n- Triệu chứng: hai app, một cookie session bị rò. Nguyên nhân: trộn marketing + app không tách cookie. Cách xử lý: tách host / tên.\n- Triệu chứng: “phải học RSC cho admin CRUD”. Nguyên nhân: không SEO, API chín. Cách xử lý: SPA mới là lựa chọn senior."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "We have an authenticated dashboard — Next or Vite? And would you migrate from Nuxt/Vue the same way? They want a product constraint, not a framework on the CV.",
-            "vi": "Ta có dashboard đã auth — Next hay Vite? Và bạn migrate từ Nuxt/Vue cùng cách? Họ muốn ràng buộc product, không phải framework trên CV."
+            "vi": "Có một dashboard đã auth: chọn Next hay Vite? Và migrate từ Nuxt/Vue thì có cùng cách không? Họ muốn ràng buộc product, không phải framework trên CV."
           }
         },
         {
@@ -2405,7 +2405,7 @@
           },
           "text": {
             "en": "If SEO and server data next to UI matter, I pick Next. If this is an auth dashboard behind a login with a mature API, Vite plus React is the senior choice, not a cop-out. Next as a hosted SPA with use client on every page is the worst of both worlds. I run the same eight-question checklist I would run for Nuxt versus a Vue SPA: crawlers, existing BFF, cookies next to the tree, team RSC appetite, mutations, hiring, hosting, cookie isolation. Resume pressure is not a constraint. After Next, I still keep Query for server lists. The library-versus-framework split is 21.2; this topic is the go or no-go.",
-            "vi": "Nếu SEO và data server cạnh UI quan trọng, tôi chọn Next. Nếu đây là dashboard auth sau login với API chín, Vite cộng React là lựa chọn senior, không phải trốn. Next như SPA host với use client mọi trang là tệ nhất cả hai. Tôi chạy cùng checklist tám câu tôi sẽ chạy cho Nuxt khác SPA Vue: crawler, BFF sẵn, cookie cạnh cây, team có muốn RSC, mutation, hiring, hosting, tách cookie. Áp lực résumé không phải ràng buộc. Sau Next, tôi vẫn giữ Query cho list server. Đường chia thư viện khác framework là 21.2; topic này là làm hoặc không."
+            "vi": "Nếu SEO và data server cạnh UI quan trọng, mình chọn Next. Nếu đây là dashboard auth sau login với API đã chín, Vite kèm React mới là lựa chọn senior, không phải đang né. Next dùng như SPA host với use client mọi trang là tệ nhất cả hai. Mình chạy cùng checklist tám câu như khi so Nuxt với SPA Vue: crawler, BFF sẵn, cookie cạnh cây, team có muốn RSC không, mutation, hiring, hosting, tách cookie. Áp lực résumé không phải ràng buộc. Sau Next, mình vẫn giữ Query cho list server. Đường chia library khác framework là 21.2; topic này là làm hay không làm."
           }
         },
         {
@@ -2413,15 +2413,15 @@
           "items": [
             {
               "en": "Next for SEO, hybrid HTML, and colocated server data.",
-              "vi": "Next cho SEO, HTML lai, và data server đặt cạnh."
+              "vi": "Next cho SEO, HTML lai, và data server nằm cạnh UI."
             },
             {
               "en": "Vite SPA for a closed auth dashboard with an existing API.",
-              "vi": "SPA Vite cho dashboard auth kín với API sẵn."
+              "vi": "SPA Vite cho dashboard auth kín với API đã có."
             },
             {
               "en": "`use client` on every page is not a migration strategy.",
-              "vi": "`use client` mọi trang không phải chiến lược migrate."
+              "vi": "`use client` trên mọi trang không phải chiến lược migrate."
             },
             {
               "en": "Nuxt versus Vite Vue is the same fork. Résumé is not a constraint.",
@@ -2437,7 +2437,7 @@
           },
           "text": {
             "en": "- **State after you chose Next?** Local / URL / Query / a small client store. See the React state-management doc.\n- **When does Vite middleware mean Next?** When you want server HTML or session cookies next to the tree.\n- **Marketing Next + app SPA?** Valid. Isolate cookies and OAuth clients. Do not share one session jar.\n- **Would you have used Nuxt for this product?** If not, do not pick Next for the React port either.",
-            "vi": "- **State sau khi chọn Next?** Local / URL / Query / store client nhỏ. Xem doc state-management React.\n- **Khi nào middleware Vite nghĩa là Next?** Khi bạn muốn HTML server hoặc cookie session cạnh cây.\n- **Marketing Next + app SPA?** Hợp lệ. Tách cookie và OAuth client. Đừng share một hũ session.\n- **Bạn đã dùng Nuxt cho product này?** Nếu không, đừng chọn Next cho bản port React."
+            "vi": "- **State sau khi chọn Next?** Local / URL / Query / một store client nhỏ. Xem doc state-management React.\n- **Khi nào middleware Vite nghĩa là Next?** Khi bạn muốn HTML server hoặc cookie session cạnh cây.\n- **Marketing Next + app SPA?** Được. Tách cookie và OAuth client. Đừng share một hũ session.\n- **Bạn có dùng Nuxt cho product này không?** Nếu không, đừng chọn Next cho bản port React."
           }
         },
         {
@@ -2459,14 +2459,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Next on-call clusters into three families: **hydration mismatch**, **server data in the Flight payload**, and **await waterfalls**. Do not call everything “SSR.” Each family has its own H4 below.",
-            "vi": "**Tóm tắt:** On-call Next gom thành ba họ: **lệch hydration**, **data server trong payload Flight**, và **waterfall await**. Đừng gọi mọi thứ là “SSR.” Mỗi họ có H4 riêng bên dưới."
+            "vi": "**Tóm tắt:** On-call Next gom thành ba nhóm: **lệch hydration**, **data server trong payload Flight**, và **waterfall await**. Đừng gọi mọi thứ là “SSR”. Mỗi nhóm có H4 riêng bên dưới."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** Interviewers ask “have you shipped a hydration bug?”, “how do secrets leak in RSC?”, and “why is TTFB 2s with three fetches?” A senior has a default fix per family, then proves it.",
-            "vi": "**Vì sao quan trọng:** Người phỏng vấn hỏi “bạn đã đưa bug hydration lên production?”, “secret lộ trong RSC thế nào?”, và “sao TTFB 2s với ba fetch?” Senior có fix mặc định theo họ, rồi chứng minh."
+            "vi": "**Vì sao quan trọng:** Người phỏng vấn hỏi “bạn đã đưa bug hydration lên production chưa?”, “secret lộ trong RSC thế nào?”, và “sao TTFB 2s với ba fetch?” Senior có fix mặc định cho từng nhóm, rồi chứng minh."
           }
         },
         {
@@ -2475,11 +2475,11 @@
           "items": [
             {
               "en": "**How it works:** Open the H4 that matches the incident. [Hydration mismatch](#hydration-mismatch) is first-paint HTML versus the first client render. [Leaking secrets](#leaking-server-secrets-to-the-client) is anything you pass across the RSC boundary. [Waterfalls](#waterfalls-of-awaits) are serial awaits in nested layouts.",
-              "vi": "**Cách hoạt động:** Mở H4 khớp incident. [Lệch hydration](#hydration-mismatch) là HTML first-paint khác first render phía client. [Lộ secret](#leak-secret-server-xuong-client) là mọi thứ bạn đưa xuyên ranh giới RSC. [Waterfall](#waterfall-cac-await) là await nối trong layout lồng."
+              "vi": "**Cách hoạt động:** Mở H4 khớp incident. [Lệch hydration](#hydration-mismatch) là HTML first-paint khác first render phía client. [Lộ secret](#leak-secret-server-xuong-client) là mọi thứ bạn đưa xuyên ranh giới RSC. [Waterfall](#waterfall-cac-await) là await nối tiếp trong layout lồng."
             },
             {
               "en": "Shared rule: name the process boundary. Nuxt has the same three families (`ClientOnly` / payload / sequential `useAsyncData`). React-specific causes sit in the H4s. Vue 5.2.11 is the sibling hydration topic.",
-              "vi": "Rule chung: gọi tên ranh giới process. Nuxt có cùng ba họ (`ClientOnly` / payload / `useAsyncData` nối). Nguyên nhân riêng React nằm ở các H4. Vue 5.2.11 là topic hydration anh em."
+              "vi": "Rule chung: nêu rõ ranh giới process. Nuxt có cùng ba nhóm (`ClientOnly` / payload / `useAsyncData` nối tiếp). Nguyên nhân riêng React nằm ở các H4. Vue 5.2.11 là topic hydration anh em."
             }
           ]
         },
@@ -2488,14 +2488,14 @@
           "lang": "tsx",
           "code": {
             "en": "// Three families — open the matching H4, do not debug “SSR”\n// 1. Hydration: server HTML must text-match the first client render\n//    <span>{createdAt.toLocaleDateString()}</span>  // locale can differ\n// 2. Secrets: props to a Client Component are in the Flight payload\n//    <Panel user={user} />  // user.emailHash might be a leak\n// 3. Waterfalls: nested layouts that await in series pad TTFB\n//    await user; await dash; await items  // start independent work together\n// Prove: prod build for (1), search the RSC response for (2), server flame for (3).",
-            "vi": "// Ba họ — mở H4 khớp, đừng debug “SSR”\n// 1. Hydration: HTML server phải khớp chữ với first render client\n//    <span>{createdAt.toLocaleDateString()}</span>  // locale có thể khác\n// 2. Secret: prop tới Client Component nằm trong payload Flight\n//    <Panel user={user} />  // user.emailHash có thể là lỗ\n// 3. Waterfall: layout lồng await nối làm TTFB phình\n//    await user; await dash; await items  // bắt đầu việc độc lập cùng lúc\n// Chứng minh: build prod cho (1), tìm trong response RSC cho (2), flame server cho (3)."
+            "vi": "// Ba nhóm: mở H4 khớp, đừng debug “SSR”\n// 1. Hydration: HTML server phải khớp chữ với first render phía client\n//    <span>{createdAt.toLocaleDateString()}</span>  // locale có thể khác\n// 2. Secret: props tới Client Component nằm trong payload Flight\n//    <Panel user={user} />  // user.emailHash có thể là leak\n// 3. Waterfall: layout lồng await nối tiếp làm TTFB phình\n//    await user; await dash; await items  // bắt đầu việc độc lập cùng lúc\n// Chứng minh: build prod cho (1), tìm trong response RSC cho (2), flame server cho (3)."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** The comments are a triage map, not a fix. Family 1 is a text mismatch. Family 2 is a payload you can Ctrl-F. Family 3 is a server timeline. Each H4 has the runnable example.",
-            "vi": "**Điều gì xảy ra:** Các comment là bản triage, không phải fix. Họ 1 là lệch chữ. Họ 2 là payload bạn Ctrl-F được. Họ 3 là timeline server. Mỗi H4 có example chạy được."
+            "vi": "**Điều gì xảy ra:** Comment là bản đồ triage, không phải fix. Nhóm 1 là lệch chữ. Nhóm 2 là payload bạn Ctrl-F được. Nhóm 3 là timeline server. Mỗi H4 có example chạy được."
           }
         },
         {
@@ -2503,7 +2503,7 @@
           "headers": [
             {
               "en": "Family",
-              "vi": "Họ"
+              "vi": "Nhóm"
             },
             {
               "en": "Default fix",
@@ -2522,7 +2522,7 @@
               },
               {
                 "en": "Pure render / client clock",
-                "vi": "Render thuần / đồng hồ client"
+                "vi": "Render thuần / clock client"
               },
               {
                 "en": "Production build overlay",
@@ -2567,7 +2567,7 @@
           },
           "text": {
             "en": "- “SSR bug” is not a diagnosis. Pick the family, then the H4.\n- What crosses the RSC boundary is public. That includes Action return values.\n- Independent work starts in parallel or you paid TTFB for nothing.\n- Nuxt: same three families. `ClientOnly`, `runtimeConfig.public`, sequential `useAsyncData`.\n- This parent topic is triage. Depth lives in the three H4s.",
-            "vi": "- “Bug SSR” không phải chẩn đoán. Hãy chọn họ, rồi H4.\n- Cái xuyên ranh giới RSC là công khai. Kể cả giá trị return của Action.\n- Việc độc lập bắt đầu song song, không thì bạn trả TTFB cho không.\n- Nuxt: cùng ba họ. `ClientOnly`, `runtimeConfig.public`, `useAsyncData` nối.\n- Topic cha này là triage. Độ sâu nằm ở ba H4."
+            "vi": "- “Bug SSR” không phải chẩn đoán. Chọn nhóm, rồi mở H4.\n- Thứ xuyên ranh giới RSC là public. Kể cả giá trị return của Action.\n- Việc độc lập phải chạy song song, không thì bạn trả TTFB cho không.\n- Nuxt: cùng ba nhóm. `ClientOnly`, `runtimeConfig.public`, `useAsyncData` nối tiếp.\n- Topic cha này là triage. Độ sâu nằm ở ba H4."
           }
         },
         {
@@ -2575,18 +2575,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: calling every Next bug “SSR.” Cause: no family. Fix: hydration / payload / waterfall.\n- Symptom: `suppressHydrationWarning` on a layout. Cause: hiding a clock. Fix: the hydration H4.\n- Symptom: Prisma row as a Client prop. Cause: convenience. Fix: the secrets H4.\n- Symptom: nested layouts each `await`. Cause: “one fetch per file.” Fix: the waterfall H4.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: gọi mọi bug Next là “SSR.” Nguyên nhân: không có họ. Cách xử lý: hydration / payload / waterfall.\n- Triệu chứng: `suppressHydrationWarning` trên layout. Nguyên nhân: giấu đồng hồ. Cách xử lý: H4 hydration.\n- Triệu chứng: row Prisma như prop Client. Nguyên nhân: tiện. Cách xử lý: H4 secret.\n- Triệu chứng: mỗi layout lồng một `await`. Nguyên nhân: “một fetch một file.” Cách xử lý: H4 waterfall."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: gọi mọi bug Next là “SSR”. Nguyên nhân: không phân nhóm. Cách xử lý: hydration / payload / waterfall.\n- Triệu chứng: `suppressHydrationWarning` trên layout. Nguyên nhân: giấu clock. Cách xử lý: H4 hydration.\n- Triệu chứng: row Prisma làm prop Client. Nguyên nhân: cho tiện. Cách xử lý: H4 secret.\n- Triệu chứng: mỗi layout lồng một `await`. Nguyên nhân: “một fetch một file”. Cách xử lý: H4 waterfall."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "Have you shipped a hydration bug, how do secrets leak in RSC, and why is TTFB 2s on a page with three fetches? They want three families and a default fix each, not a feature tour.",
-            "vi": "Bạn đã đưa bug hydration lên production chưa, secret lộ trong RSC thế nào, và sao TTFB 2s trên trang với ba fetch? Họ muốn ba họ và một fix mặc định mỗi họ, không phải tour tính năng."
+            "vi": "Bạn đã đưa bug hydration lên production chưa, secret lộ trong RSC thế nào, và sao TTFB 2s trên trang có ba fetch? Họ muốn ba nhóm và mỗi nhóm một fix mặc định, không phải tour tính năng."
           }
         },
         {
@@ -2597,7 +2597,7 @@
           },
           "text": {
             "en": "The three families I have shipped are hydration mismatch, secrets in the RSC payload, and serial awaits. Server HTML must match the first client render. Anything I pass to a Client Component is visible in the Flight payload. Independent fetches start together, or I stream a hole with Suspense. I would prove each with a production build overlay, a search of the RSC body, and a server timing track. Nuxt has the same three families under ClientOnly, the payload, and sequential useAsyncData. I do not call everything SSR. The H4s below are the depth.",
-            "vi": "Ba họ tôi đã đưa lên production là lệch hydration, secret trong payload RSC, và await nối. HTML server phải khớp first render phía client. Mọi thứ tôi đưa vào Client Component đều thấy được trong payload Flight. Fetch độc lập bắt đầu cùng lúc, hoặc tôi stream một lỗ bằng Suspense. Tôi chứng minh mỗi họ bằng overlay bản production, tìm trong body RSC, và track server timing. Nuxt có cùng ba họ dưới ClientOnly, payload, và useAsyncData nối. Tôi không gọi mọi thứ là SSR. Các H4 bên dưới là độ sâu."
+            "vi": "Ba nhóm mình đã đưa lên production là lệch hydration, secret trong payload RSC, và await nối tiếp. HTML server phải khớp first render phía client. Mọi thứ mình đưa vào Client Component đều thấy được trong payload Flight. Fetch độc lập phải start cùng lúc, hoặc mình stream một lỗ bằng Suspense. Mình chứng minh từng nhóm bằng overlay bản production, tìm trong body RSC, và track server timing. Nuxt có cùng ba nhóm dưới ClientOnly, payload, và useAsyncData nối tiếp. Mình không gọi mọi thứ là SSR. Các H4 bên dưới là độ sâu."
           }
         },
         {
@@ -2605,19 +2605,19 @@
           "items": [
             {
               "en": "Three families: hydration, leaked payload, await waterfall.",
-              "vi": "Ba họ: hydration, payload lộ, waterfall await."
+              "vi": "Ba nhóm: hydration, payload lộ, waterfall await."
             },
             {
               "en": "What crosses the RSC boundary is public.",
-              "vi": "Cái xuyên ranh giới RSC là công khai."
+              "vi": "Thứ xuyên ranh giới RSC là public."
             },
             {
               "en": "Independent work starts in parallel or you paid TTFB for nothing.",
-              "vi": "Việc độc lập bắt đầu song song, không thì bạn trả TTFB cho không."
+              "vi": "Việc độc lập phải chạy song song, không thì bạn trả TTFB cho không."
             },
             {
               "en": "This topic is triage. Open the matching H4.",
-              "vi": "Topic này là triage. Hãy mở H4 khớp."
+              "vi": "Topic này là triage. Mở H4 khớp."
             }
           ]
         },
@@ -2629,7 +2629,7 @@
           },
           "text": {
             "en": "- **Server vs Client: where does a modal with useState live?** A Client child. The page can stay a Server Component.\n- **Product cache + webhook tags?** That is 21.10, not a fourth family.\n- **Nuxt useAsyncData vs async Server Component?** Same idea; Query still wins for live client data.\n- **Middleware vs layout redirect vs SPA guard?** Middleware is not authz. See 21.8.",
-            "vi": "- **Server khác Client: modal có useState sống ở đâu?** Child Client. Trang có thể ở lại Server Component.\n- **Cache product + tag webhook?** Đó là 21.10, không phải họ thứ tư.\n- **useAsyncData Nuxt khác Server Component async?** Cùng ý; Query vẫn thắng cho data live trên client.\n- **Middleware khác redirect layout khác guard SPA?** Middleware không phải authz. Xem 21.8."
+            "vi": "- **Server khác Client: modal có useState sống ở đâu?** Child Client. Trang vẫn có thể là Server Component.\n- **Cache product + tag webhook?** Đó là 21.10, không phải nhóm thứ tư.\n- **useAsyncData Nuxt khác Server Component async?** Cùng ý; Query vẫn thắng cho data live trên client.\n- **Middleware khác redirect layout khác guard SPA?** Middleware không phải authz. Xem 21.8."
           }
         },
         {
@@ -2658,7 +2658,7 @@
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** A “did not match” overlay on a layout that formats `new Date()`, or a theme that reads `localStorage` during render, is a production incident. `suppressHydrationWarning` on the tree hides the bug. Nuxt `ClientOnly` is the sibling escape hatch — for a map, not a clock.",
-            "vi": "**Vì sao quan trọng:** Overlay “did not match” trên layout format `new Date()`, hoặc theme đọc `localStorage` lúc render, là incident production. `suppressHydrationWarning` trên cả cây giấu bug. `ClientOnly` Nuxt là cửa thoát anh em — cho map, không cho đồng hồ."
+            "vi": "**Vì sao quan trọng:** Overlay “did not match” trên layout format `new Date()`, hoặc theme đọc `localStorage` lúc render, là incident production. `suppressHydrationWarning` trên cả cây thì giấu bug. `ClientOnly` của Nuxt là lối thoát anh em: dùng cho map, không dùng cho clock."
           }
         },
         {
@@ -2667,15 +2667,15 @@
           "items": [
             {
               "en": "**How it works:** The server emits HTML. React walks that HTML and the first client render. A text mismatch throws away the node and re-renders. Format dates with an explicit locale (or a serialized ISO string). Theme: cookie on `<html>` (server-visible) or an inline script **before** paint — not `localStorage` in render.",
-              "vi": "**Cách hoạt động:** Server phát HTML. React đi HTML đó và first render phía client. Lệch chữ thì vứt node và render lại. Format ngày với locale tường minh (hoặc chuỗi ISO đã serialize). Theme: cookie trên `<html>` (server thấy được) hoặc script inline **trước** paint — không `localStorage` trong render."
+              "vi": "**Cách hoạt động:** Server phát HTML. React đi HTML đó và first render phía client. Lệch chữ thì vứt node và render lại. Format ngày với locale tường minh (hoặc chuỗi ISO đã serialize). Theme: cookie trên `<html>` (server thấy được) hoặc script inline **trước** paint, không `localStorage` trong render."
             },
             {
               "en": "`suppressHydrationWarning` is for one clock text node, not a layout. Invalid HTML (`<p><div>`) is rewritten by the browser; React’s tree is not — that looks like your bug. Browser extensions that inject DOM are the same class. Prove with a **production** build; HMR lies.",
-              "vi": "`suppressHydrationWarning` cho một text node đồng hồ, không phải layout. HTML không hợp lệ (`<p><div>`) bị trình duyệt viết lại; cây React thì không — trông như bug của bạn. Extension trình duyệt inject DOM cùng một class. Chứng minh bằng bản **production**; HMR nói dối."
+              "vi": "`suppressHydrationWarning` cho một text node clock, không phải layout. HTML không hợp lệ (`<p><div>`) bị browser viết lại; cây React thì không. Trông như bug của bạn. Extension browser inject DOM cùng một class. Chứng minh bằng bản **production**; HMR nói dối."
             },
             {
               "en": "Nuxt equivalent: payload plus `ClientOnly` / `<client-only>`. Vue 3.4+ `data-allow-mismatch` is surgical. See [Vue 5.2.11 hydration](./vue3.md#5211-hydration-mismatch).",
-              "vi": "Tương đương Nuxt: payload cộng `ClientOnly` / `<client-only>`. Vue 3.4+ `data-allow-mismatch` là phẫu thuật. Xem [hydration Vue 5.2.11](./vue3.md#5211-hydration-mismatch)."
+              "vi": "Tương đương Nuxt: payload kèm `ClientOnly` / `<client-only>`. Vue 3.4+ `data-allow-mismatch` là phẫu thuật. Xem [hydration Vue 5.2.11](./vue3.md#5211-hydration-mismatch)."
             }
           ]
         },
@@ -2684,14 +2684,14 @@
           "lang": "tsx",
           "code": {
             "en": "// Pitfall: server HTML \"en-US 10/08\" vs client \"vi-VN 08/10\"\nexport function CreatedAt({ iso }: { iso: string }) {\n  // ❌ locale and timezone follow the machine, not the request\n  // return <time>{new Date(iso).toLocaleDateString()}</time>\n  // ✅ serialize on the server with an explicit locale\n  const text = new Intl.DateTimeFormat('en-GB', {\n    timeZone: 'UTC', dateStyle: 'medium',\n  }).format(new Date(iso))\n  return <time dateTime={iso}>{text}</time>\n}\n// Theme: set class on <html> from a cookie, not localStorage during render.\n// suppressHydrationWarning: one text node (a live clock), never the layout.",
-            "vi": "// Bẫy: HTML server \"en-US 10/08\" khác client \"vi-VN 08/10\"\nexport function CreatedAt({ iso }: { iso: string }) {\n  // ❌ locale và timezone theo máy, không theo request\n  // return <time>{new Date(iso).toLocaleDateString()}</time>\n  // ✅ serialize trên server với locale tường minh\n  const text = new Intl.DateTimeFormat('en-GB', {\n    timeZone: 'UTC', dateStyle: 'medium',\n  }).format(new Date(iso))\n  return <time dateTime={iso}>{text}</time>\n}\n// Theme: gán class trên <html> từ cookie, không localStorage lúc render.\n// suppressHydrationWarning: một text node (đồng hồ sống), không bao giờ layout."
+            "vi": "// Bẫy: HTML server \"en-US 10/08\" khác client \"vi-VN 08/10\"\nexport function CreatedAt({ iso }: { iso: string }) {\n  // ❌ locale và timezone theo máy, không theo request\n  // return <time>{new Date(iso).toLocaleDateString()}</time>\n  // ✅ serialize trên server với locale tường minh\n  const text = new Intl.DateTimeFormat('en-GB', {\n    timeZone: 'UTC', dateStyle: 'medium',\n  }).format(new Date(iso))\n  return <time dateTime={iso}>{text}</time>\n}\n// Theme: gán class trên <html> từ cookie, không localStorage lúc render.\n// suppressHydrationWarning: một text node (clock live), không bao giờ layout."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** Both machines format `iso` with `en-GB` and UTC, so the text matches. The old `toLocaleDateString()` used the server’s locale versus the laptop’s. A cookie theme class is in the server HTML; `localStorage` is not.",
-            "vi": "**Điều gì xảy ra:** Cả hai máy format `iso` bằng `en-GB` và UTC, nên chữ khớp. `toLocaleDateString()` cũ dùng locale server khác laptop. Class theme từ cookie nằm trong HTML server; `localStorage` thì không."
+            "vi": "**Điều gì xảy ra:** Cả hai máy format `iso` bằng `en-GB` và UTC, nên chữ khớp. `toLocaleDateString()` cũ dùng locale của server khác laptop. Class theme từ cookie nằm trong HTML server; `localStorage` thì không."
           }
         },
         {
@@ -2746,7 +2746,7 @@
               },
               {
                 "en": "Browser rewrote the tree",
-                "vi": "Trình duyệt viết lại cây"
+                "vi": "Browser viết lại cây"
               },
               {
                 "en": "Valid nesting",
@@ -2777,7 +2777,7 @@
           },
           "text": {
             "en": "- Fix the source. `ClientOnly` / a client clock is for a map or a live ticker, not to hide a bug.\n- Invalid HTML is the most common “framework is broken” ticket on both Vue and React.\n- `useId()` is stable across the server and the client. A module-scope counter is not.\n- Prove with a production build on the same locale you ship. Dev overlay plus HMR is not evidence.\n- Shared with Vue 5.2.11. Say the React-specific bit: `suppressHydrationWarning` is surgical.",
-            "vi": "- Sửa nguồn. `ClientOnly` / đồng hồ client cho map hoặc ticker sống, không để giấu bug.\n- HTML không hợp lệ là ticket “framework hỏng” phổ biến nhất ở cả Vue và React.\n- `useId()` ổn định xuyên server và client. Counter module-scope thì không.\n- Chứng minh bằng bản production trên cùng locale bạn đưa lên. Overlay dev cộng HMR không phải bằng chứng.\n- Chung với Vue 5.2.11. Hãy nói phần riêng React: `suppressHydrationWarning` là phẫu thuật."
+            "vi": "- Sửa từ nguồn. `ClientOnly` / clock client cho map hoặc ticker live, không phải để giấu bug.\n- HTML không hợp lệ là ticket “framework hỏng” phổ biến nhất ở cả Vue và React.\n- `useId()` ổn định xuyên server và client. Counter module-scope thì không.\n- Chứng minh bằng bản production trên cùng locale bạn ship. Overlay dev kèm HMR không phải bằng chứng.\n- Chung với Vue 5.2.11. Nói phần riêng React: `suppressHydrationWarning` là phẫu thuật."
           }
         },
         {
@@ -2785,14 +2785,14 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: overlay on the header clock. Cause: `toLocaleDateString()` in a shared layout. Fix: explicit locale.\n- Symptom: theme flashes then mismatches. Cause: `localStorage` in render. Fix: cookie on `<html>`.\n- Symptom: warning only in prod. Cause: trusting HMR. Fix: `next build && next start`.\n- Symptom: `suppressHydrationWarning` on `<body>`. Cause: hiding a tree. Fix: one text node, or fix the source.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: overlay trên đồng hồ header. Nguyên nhân: `toLocaleDateString()` trong layout chung. Cách xử lý: locale tường minh.\n- Triệu chứng: theme nháy rồi lệch. Nguyên nhân: `localStorage` lúc render. Cách xử lý: cookie trên `<html>`.\n- Triệu chứng: cảnh báo chỉ trên prod. Nguyên nhân: tin HMR. Cách xử lý: `next build && next start`.\n- Triệu chứng: `suppressHydrationWarning` trên `<body>`. Nguyên nhân: giấu cả cây. Cách xử lý: một text node, hoặc sửa nguồn."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: overlay trên clock ở header. Nguyên nhân: `toLocaleDateString()` trong layout chung. Cách xử lý: locale tường minh.\n- Triệu chứng: theme nháy rồi lệch. Nguyên nhân: `localStorage` lúc render. Cách xử lý: cookie trên `<html>`.\n- Triệu chứng: warning chỉ trên prod. Nguyên nhân: tin HMR. Cách xử lý: `next build && next start`.\n- Triệu chứng: `suppressHydrationWarning` trên `<body>`. Nguyên nhân: giấu cả cây. Cách xử lý: một text node, hoặc sửa từ nguồn."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "A “did not match” overlay on a layout that formats `new Date()`, or a theme that reads `localStorage` during render. They want pure render, an explicit locale, and when `suppressHydrationWarning` is acceptable.",
@@ -2807,7 +2807,7 @@
           },
           "text": {
             "en": "Server HTML must match the first client render. I do not format toLocaleDateString in a shared layout without an explicit locale, and I do not read localStorage during render. Theme goes in a cookie or an inline script before paint. suppressHydrationWarning is for one clock text node, not the layout. Invalid HTML is rewritten by the browser and not by React — that is a common false framework bug. Browser extensions look the same. I prove it with a production build. Nuxt ClientOnly is the sibling hatch for a map. Vue 5.2.11 is the same family.",
-            "vi": "HTML server phải khớp first render phía client. Tôi không format toLocaleDateString trong layout chung nếu không có locale tường minh, và tôi không đọc localStorage lúc render. Theme nằm ở cookie hoặc script inline trước paint. suppressHydrationWarning cho một text node đồng hồ, không phải layout. HTML không hợp lệ bị trình duyệt viết lại chứ không phải React — đó là bug framework giả phổ biến. Extension trình duyệt trông giống. Tôi chứng minh bằng bản production. ClientOnly Nuxt là cửa anh em cho map. Vue 5.2.11 là cùng họ."
+            "vi": "HTML server phải khớp first render phía client. Mình không format toLocaleDateString trong layout chung nếu không có locale tường minh, và không đọc localStorage lúc render. Theme nằm ở cookie hoặc script inline trước paint. suppressHydrationWarning chỉ cho một text node đồng hồ, không phải layout. HTML không hợp lệ thì browser viết lại, React thì không. Đó là bug framework giả hay gặp. Extension trình duyệt trông y như vậy. Mình chứng minh bằng production build. ClientOnly của Nuxt là lối thoát cùng kiểu cho map. Vue 5.2.11 cùng họ."
           }
         },
         {
@@ -2827,7 +2827,7 @@
             },
             {
               "en": "Verify with a production build, not only HMR.",
-              "vi": "Kiểm chứng bằng bản production, không chỉ HMR."
+              "vi": "Chứng minh bằng production build, không chỉ HMR."
             }
           ]
         },
@@ -2839,7 +2839,7 @@
           },
           "text": {
             "en": "- **SSR a theme toggle without a mismatch?** Class on html from a cookie. Inline script before paint if you must.\n- **When is suppressHydrationWarning acceptable?** One live clock text node. Not a layout. Not a theme.\n- **Browser extension looks like your bug?** Extra nodes before hydrate. Reproduce in a clean profile.\n- **Invalid HTML?** The browser “fixes” p>div; React does not. Validate the SSR HTML.",
-            "vi": "- **SSR theme toggle mà không lệch?** Class trên html từ cookie. Script inline trước paint nếu bắt buộc.\n- **Khi nào suppressHydrationWarning chấp nhận được?** Một text node đồng hồ sống. Không phải layout. Không phải theme.\n- **Extension trình duyệt trông như bug của bạn?** Thêm node trước hydrate. Reproduce trên profile sạch.\n- **HTML không hợp lệ?** Trình duyệt “sửa” p>div; React thì không. Hãy validate HTML SSR."
+            "vi": "- **SSR theme toggle mà không lệch?** Class trên html lấy từ cookie. Script inline trước paint nếu bắt buộc.\n- **Khi nào suppressHydrationWarning chấp nhận được?** Một text node đồng hồ đang chạy. Không phải layout. Không phải theme.\n- **Extension trình duyệt trông như bug của bạn?** Node thừa trước hydrate. Reproduce trên profile sạch.\n- **HTML không hợp lệ?** Browser “sửa” p>div; React thì không. Validate HTML SSR."
           }
         },
         {
@@ -2850,7 +2850,7 @@
           "level": 4,
           "text": {
             "en": "Leaking server secrets to the client",
-            "vi": "Lộ secret server xuống client"
+            "vi": "Rò secret server sang client"
           },
           "id": {
             "en": "leaking-server-secrets-to-the-client",
@@ -2861,14 +2861,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Anything you **pass to a Client Component** or **return from a Server Action** is in a payload the user can read. `NEXT_PUBLIC_` is public. `import 'server-only'` fails the build if a client file imports the module. Nuxt equivalent: `runtimeConfig.public` versus private.",
-            "vi": "**Tóm tắt:** Mọi thứ bạn **đưa vào Client Component** hoặc **return từ Server Action** nằm trong payload user đọc được. `NEXT_PUBLIC_` là công khai. `import 'server-only'` làm fail build nếu file client import module. Tương đương Nuxt: `runtimeConfig.public` khác private."
+            "vi": "**Tóm tắt:** Mọi thứ bạn **đưa vào Client Component** hoặc **return từ Server Action** nằm trong payload user đọc được. `NEXT_PUBLIC_` là công khai. `import 'server-only'` làm fail build nếu file client import module đó. Tương đương Nuxt: `runtimeConfig.public` khác private."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “How do secrets leak in RSC?” wants the **Flight payload**, not “don’t use env vars.” Passing a Prisma row into `<Panel user={user} />` serialises every column. See also [secrets in Vite and Nuxt](./security.md#107-secrets-in-vite-and-nuxt).",
-            "vi": "**Vì sao quan trọng:** “Secret lộ trong RSC thế nào?” muốn **payload Flight**, không phải “đừng dùng env.” Đưa row Prisma vào `<Panel user={user} />` serialise mọi cột. Xem thêm [secret trong Vite và Nuxt](./security.md#107-secrets-trong-vite-va-nuxt)."
+            "vi": "**Vì sao quan trọng:** “Secret lộ trong RSC thế nào?” muốn **payload Flight**, không phải “đừng dùng env vars”. Đưa row Prisma vào `<Panel user={user} />` thì serialise mọi cột. Xem thêm [secret trong Vite và Nuxt](./security.md#107-secrets-trong-vite-va-nuxt)."
           }
         },
         {
@@ -2877,15 +2877,15 @@
           "items": [
             {
               "en": "**How it works:** Server Components can read `process.env.DATABASE_URL`. The moment that value is a prop, a return, or a `NEXT_PUBLIC_` inlined string, it is public. Mark secret modules `import 'server-only'`. Pass `{ id, name }`, not the ORM row. Session stays in **httpOnly cookies**, not a client store dump.",
-              "vi": "**Cách hoạt động:** Server Component đọc `process.env.DATABASE_URL` được. Lúc giá trị đó là prop, return, hoặc chuỗi inline `NEXT_PUBLIC_`, nó là công khai. Đánh dấu module secret `import 'server-only'`. Đưa `{ id, name }`, không phải row ORM. Session ở lại **cookie httpOnly**, không phải dump store client."
+              "vi": "**Cách hoạt động:** Server Component đọc được `process.env.DATABASE_URL`. Một khi giá trị đó thành prop, return, hoặc chuỗi `NEXT_PUBLIC_` bị inline, nó là công khai. Đánh dấu module secret bằng `import 'server-only'`. Chỉ truyền `{ id, name }`, không phải cả row ORM. Session nằm trong **cookie httpOnly**, không dump vào store phía client."
             },
             {
               "en": "Causes: `NEXT_PUBLIC_STRIPE_SECRET`; returning `process.env` from an Action; logging the row into a Client error boundary; putting PII on a Client prop “for convenience.” Search the RSC response (the Flight payload) for the key before you call the page safe.",
-              "vi": "Nguyên nhân: `NEXT_PUBLIC_STRIPE_SECRET`; return `process.env` từ Action; log row vào error boundary Client; để PII trên prop Client “cho tiện.” Tìm key trong response RSC (payload Flight) trước khi gọi trang là an toàn."
+              "vi": "Nguyên nhân: `NEXT_PUBLIC_STRIPE_SECRET`; return `process.env` từ Action; log row vào error boundary phía Client; nhét PII lên prop Client “cho tiện”. Tìm key trong response RSC (payload Flight) trước khi gọi trang là an toàn."
             },
             {
               "en": "Nuxt equivalent: private `runtimeConfig` versus `runtimeConfig.public` / `NUXT_PUBLIC_`. A composable that returns the whole config dumps it into `window.__NUXT__`. Same grep-the-payload habit.",
-              "vi": "Tương đương Nuxt: `runtimeConfig` private khác `runtimeConfig.public` / `NUXT_PUBLIC_`. Composable return cả config đổ nó vào `window.__NUXT__`. Cùng thói quen grep payload."
+              "vi": "Tương đương Nuxt: `runtimeConfig` private khác `runtimeConfig.public` / `NUXT_PUBLIC_`. Composable return cả config thì đổ hết vào `window.__NUXT__`. Cùng thói quen: grep payload."
             }
           ]
         },
@@ -2894,14 +2894,14 @@
           "lang": "ts",
           "code": {
             "en": "import 'server-only'\nexport const dbUrl = process.env.DATABASE_URL! // must never enter a client module\n\nexport type UserDto = { id: string; name: string }\nexport function toUserDto(row: { id: string; name: string; emailHash: string }): UserDto {\n  return { id: row.id, name: row.name } // not emailHash, not the Prisma row\n}\n// Client: <Panel user={toUserDto(row)} />\n// Never: <Panel user={row} /> or return process.env from an Action.\n// NEXT_PUBLIC_* is inlined into the browser bundle — publishable keys only.\n// Prove: search the RSC / Flight body for DATABASE_URL and emailHash.",
-            "vi": "import 'server-only'\nexport const dbUrl = process.env.DATABASE_URL! // không được vào module client\n\nexport type UserDto = { id: string; name: string }\nexport function toUserDto(row: { id: string; name: string; emailHash: string }): UserDto {\n  return { id: row.id, name: row.name } // không emailHash, không row Prisma\n}\n// Client: <Panel user={toUserDto(row)} />\n// Đừng: <Panel user={row} /> hoặc return process.env từ Action.\n// NEXT_PUBLIC_* bị inline vào bundle trình duyệt — chỉ key publishable.\n// Chứng minh: tìm DATABASE_URL và emailHash trong body RSC / Flight."
+            "vi": "import 'server-only'\nexport const dbUrl = process.env.DATABASE_URL! // không được vào module client\n\nexport type UserDto = { id: string; name: string }\nexport function toUserDto(row: { id: string; name: string; emailHash: string }): UserDto {\n  return { id: row.id, name: row.name } // không emailHash, không row Prisma\n}\n// Client: <Panel user={toUserDto(row)} />\n// Đừng: <Panel user={row} /> hoặc return process.env từ Action.\n// NEXT_PUBLIC_* bị inline vào bundle trình duyệt: chỉ key publishable.\n// Chứng minh: tìm DATABASE_URL và emailHash trong body RSC / Flight."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `server-only` fails the build if a `use client` file imports `dbUrl`. `toUserDto` drops `emailHash` before the Flight payload. Searching the RSC body is the verification, not a code review hope.",
-            "vi": "**Điều gì xảy ra:** `server-only` làm fail build nếu file `use client` import `dbUrl`. `toUserDto` bỏ `emailHash` trước payload Flight. Tìm trong body RSC là bước kiểm chứng, không phải hy vọng review code."
+            "vi": "**Điều gì xảy ra:** `server-only` làm fail build nếu file `use client` import `dbUrl`. `toUserDto` bỏ `emailHash` trước khi vào payload Flight. Tìm trong body RSC mới là kiểm chứng, không phải hy vọng lúc review."
           }
         },
         {
@@ -2928,7 +2928,7 @@
               },
               {
                 "en": "Yes — inlined",
-                "vi": "Có — bị inline"
+                "vi": "Có, bị inline"
               },
               {
                 "en": "Publishable keys only",
@@ -2942,7 +2942,7 @@
               },
               {
                 "en": "Yes — Flight payload",
-                "vi": "Có — payload Flight"
+                "vi": "Có, payload Flight"
               },
               {
                 "en": "Minimal DTO",
@@ -2956,7 +2956,7 @@
               },
               {
                 "en": "Yes — POST body",
-                "vi": "Có — body POST"
+                "vi": "Có, body POST"
               },
               {
                 "en": "`{ ok: true }` / DTO",
@@ -2970,7 +2970,7 @@
               },
               {
                 "en": "No, if the build holds",
-                "vi": "Không, nếu build giữ"
+                "vi": "Không, nếu build còn đứng"
               },
               {
                 "en": "Secrets, ORM, env",
@@ -2987,7 +2987,7 @@
           },
           "text": {
             "en": "- If I pass it to a Client Component, it is in the Flight payload. The user already can read it.\n- `NEXT_PUBLIC_` is not a safe prefix for a real secret. Same rule as `VITE_` and `NUXT_PUBLIC_`.\n- Session in Zustand after hydrate is a copy. httpOnly cookie is the source of truth.\n- Error boundaries on the client must not dump the server row. Scrub PII at the DTO.\n- After a leak: rotate first, then grep artifacts, then add a CI grep for `sk_` / `SECRET`.",
-            "vi": "- Nếu tôi đưa nó vào Client Component, nó nằm trong payload Flight. User đã đọc được.\n- `NEXT_PUBLIC_` không phải prefix an toàn cho secret thật. Cùng rule với `VITE_` và `NUXT_PUBLIC_`.\n- Session trong Zustand sau hydrate là bản sao. Cookie httpOnly là nguồn sự thật.\n- Error boundary phía client không được đổ row server. Hãy scrub PII ở DTO.\n- Sau khi lộ: rotate trước, rồi grep artifact, rồi thêm grep CI cho `sk_` / `SECRET`."
+            "vi": "- Nếu mình đưa nó vào Client Component, nó nằm trong payload Flight. User đã đọc được rồi.\n- `NEXT_PUBLIC_` không phải prefix an toàn cho secret thật. Cùng rule với `VITE_` và `NUXT_PUBLIC_`.\n- Session trong Zustand sau hydrate chỉ là bản sao. Cookie httpOnly mới là nguồn sự thật.\n- Error boundary phía client không được đổ row server. Scrub PII ngay ở DTO.\n- Sau khi lộ: rotate trước, rồi grep artifact, rồi thêm grep CI cho `sk_` / `SECRET`."
           }
         },
         {
@@ -3002,11 +3002,11 @@
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "How do secrets leak in RSC? They want the Flight payload, `server-only`, a minimal DTO, and `NEXT_PUBLIC_` as a public prefix — not “don’t use env vars.”",
-            "vi": "Secret lộ trong RSC thế nào? Họ muốn payload Flight, `server-only`, DTO tối thiểu, và `NEXT_PUBLIC_` như prefix công khai — không phải “đừng dùng env.”"
+            "vi": "Secret lộ trong RSC thế nào? Họ muốn payload Flight, `server-only`, DTO tối thiểu, và `NEXT_PUBLIC_` như prefix công khai, không phải “đừng dùng env vars”."
           }
         },
         {
@@ -3017,7 +3017,7 @@
           },
           "text": {
             "en": "If I pass it to a Client Component, it is in the Flight payload. I mark secret modules server-only, pass { id, name }, and keep the session in an httpOnly cookie. NEXT_PUBLIC is not a safe prefix for a real secret — same as VITE_ and NUXT_PUBLIC_. Returning process.env from an Action is a leak even with origin checks. I would search the key in the RSC response before I call the page safe. After a leak I rotate first. Nuxt equivalent is private runtimeConfig versus public. The Vue/Vite sibling is security 10.7.",
-            "vi": "Nếu tôi đưa nó vào Client Component, nó nằm trong payload Flight. Tôi đánh dấu module secret server-only, đưa { id, name }, và giữ session trong cookie httpOnly. NEXT_PUBLIC không phải prefix an toàn cho secret thật — giống VITE_ và NUXT_PUBLIC_. Return process.env từ Action là lỗ dù có check Origin. Tôi sẽ tìm key trong response RSC trước khi gọi trang an toàn. Sau khi lộ tôi rotate trước. Tương đương Nuxt là runtimeConfig private khác public. Anh em Vue/Vite là security 10.7."
+            "vi": "Nếu mình đưa nó vào Client Component, nó nằm trong payload Flight. Mình đánh dấu module secret là server-only, truyền { id, name }, và giữ session trong cookie httpOnly. NEXT_PUBLIC không phải prefix an toàn cho secret thật, cùng rule với VITE_ và NUXT_PUBLIC_. Return process.env từ Action vẫn là lộ dù có check Origin. Mình tìm key trong response RSC trước khi gọi trang an toàn. Sau khi lộ, mình rotate trước. Tương đương Nuxt là runtimeConfig private khác public. Anh em Vue/Vite là security 10.7."
           }
         },
         {
@@ -3025,7 +3025,7 @@
           "items": [
             {
               "en": "`server-only` on secret modules. Minimal DTOs across the boundary.",
-              "vi": "`server-only` trên module secret. DTO tối thiểu xuyên ranh giới."
+              "vi": "`server-only` trên module secret. DTO tối thiểu khi qua ranh giới."
             },
             {
               "en": "`NEXT_PUBLIC_*` is not a safe prefix for a real secret.",
@@ -3037,7 +3037,7 @@
             },
             {
               "en": "Search the Flight payload. The user already can.",
-              "vi": "Hãy tìm trong payload Flight. User đã làm được."
+              "vi": "Tìm trong payload Flight. User đã đọc được rồi."
             }
           ]
         },
@@ -3049,7 +3049,7 @@
           },
           "text": {
             "en": "- **server-only later behind use client?** The build must fail. That is the point of the package.\n- **Returning process.env from an Action?** Still a leak. Origin checks are CSRF, not secrecy.\n- **Session in Zustand vs httpOnly cookie?** Cookie is source of truth. The store is a copy.\n- **PII in a client error boundary?** Scrub at the DTO. Do not pass the ORM row “for the overlay.”",
-            "vi": "- **server-only sau đó nằm sau use client?** Build phải fail. Đó là lý do của package.\n- **Return process.env từ Action?** Vẫn là lỗ. Check Origin là CSRF, không phải bí mật.\n- **Session trong Zustand khác cookie httpOnly?** Cookie là nguồn sự thật. Store là bản sao.\n- **PII trong error boundary client?** Scrub ở DTO. Đừng đưa row ORM “cho overlay.”"
+            "vi": "- **server-only sau đó nằm sau use client?** Build phải fail. Đó là lý do có package này.\n- **Return process.env từ Action?** Vẫn là lộ. Check Origin là CSRF, không phải bí mật.\n- **Session trong Zustand khác cookie httpOnly?** Cookie là nguồn sự thật. Store chỉ là bản sao.\n- **PII trong error boundary phía client?** Scrub ở DTO. Đừng đưa row ORM “cho overlay”."
           }
         },
         {
@@ -3071,14 +3071,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** A waterfall is **serial work that did not need to wait**. Nested layouts that each `await` pad TTFB. Waterfall only on a true data dependence; start independent work with `Promise.all` or stream a hole with Suspense. Nuxt equivalent: sequential `useAsyncData` in nested layouts.",
-            "vi": "**Tóm tắt:** Waterfall là **việc nối tiếp không cần phải chờ**. Layout lồng mỗi cái một `await` làm TTFB phình. Chỉ waterfall khi data thật sự phụ thuộc; bắt đầu việc độc lập bằng `Promise.all` hoặc stream một lỗ bằng Suspense. Tương đương Nuxt: `useAsyncData` nối trong layout lồng."
+            "vi": "**Tóm tắt:** Waterfall là **việc nối tiếp không cần phải chờ**. Layout lồng, mỗi cái một `await`, làm TTFB phình. Chỉ waterfall khi data phụ thuộc thật; việc độc lập thì `Promise.all` hoặc stream một lỗ bằng Suspense. Tương đương Nuxt: `useAsyncData` nối trong layout lồng."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “Why is TTFB 2s on a page with three fetches?” wants the **dependency graph**, not “use `Promise.all` everywhere.” Next 15 `fetch` is uncached, so a serial layout does not get a free cache hit. An empty RSC shell plus five `useEffect` fetches is Next used as a SPA.",
-            "vi": "**Vì sao quan trọng:** “Sao TTFB 2s trên trang với ba fetch?” muốn **đồ thị phụ thuộc**, không phải “dùng `Promise.all` khắp nơi.” Next 15 `fetch` không cache, nên layout nối không được cache hit miễn phí. Shell RSC rỗng cộng năm `useEffect` fetch là Next dùng như SPA."
+            "vi": "**Vì sao quan trọng:** “Sao TTFB 2s trên trang với ba fetch?” muốn **đồ thị phụ thuộc**, không phải “dùng `Promise.all` khắp nơi”. Next 15 `fetch` không cache, nên layout nối không được cache hit miễn phí. Shell RSC rỗng kèm năm `useEffect` fetch là Next dùng như SPA."
           }
         },
         {
@@ -3087,15 +3087,15 @@
           "items": [
             {
               "en": "**How it works:** `await getUser()` first if orders and notifs need `user.id`, then `Promise.all` the rest. Start child work in the parent (`Promise.all` / preload) or rely on **request memoization** so a child `fetch` of the same URL in this render is free. Stream non-critical holes with `<Suspense>` instead of blocking the page.",
-              "vi": "**Cách hoạt động:** `await getUser()` trước nếu orders và notifs cần `user.id`, rồi `Promise.all` phần còn. Bắt đầu việc con ở parent (`Promise.all` / preload) hoặc dựa vào **request memoization** để `fetch` cùng URL của child trong lần render này là miễn phí. Stream lỗ không tối quan trọng bằng `<Suspense>` thay vì chặn trang."
+              "vi": "**Cách hoạt động:** `await getUser()` trước nếu orders và notifs cần `user.id`, rồi `Promise.all` phần còn lại. Bắt đầu việc con ở parent (`Promise.all` / preload) hoặc dựa vào **request memoization** để `fetch` cùng URL của child trong lần render này là miễn phí. Stream lỗ không critical bằng `<Suspense>` thay vì chặn cả trang."
             },
             {
               "en": "Nested `layout.tsx` that each await their own dashboard widget is the classic TTFB pad. Bound concurrency: do not `Promise.all` 10k ids. Next 15 uncached `fetch` makes this visible; Next 14’s default cache hid it.",
-              "vi": "`layout.tsx` lồng mỗi cái await widget dashboard riêng là chỗ TTFB phình cổ điển. Giới hạn concurrency: đừng `Promise.all` 10k id. `fetch` không cache của Next 15 làm điều này lộ; cache mặc định Next 14 giấu nó."
+              "vi": "`layout.tsx` lồng, mỗi cái await widget dashboard riêng, là chỗ TTFB phình kinh điển. Giới hạn concurrency: đừng `Promise.all` 10k id. `fetch` không cache của Next 15 làm chuyện này lộ; cache mặc định Next 14 thì giấu."
             },
             {
               "en": "Nuxt equivalent: sequential `useAsyncData` / `useFetch` in nested layouts versus `Promise.all` plus lazy islands. Same graph. See 21.6 for the fetch patterns this H4 does not repeat.",
-              "vi": "Tương đương Nuxt: `useAsyncData` / `useFetch` nối trong layout lồng khác `Promise.all` cộng đảo lazy. Cùng đồ thị. Xem 21.6 cho các pattern fetch mà H4 này không lặp."
+              "vi": "Tương đương Nuxt: `useAsyncData` / `useFetch` nối trong layout lồng, khác `Promise.all` kèm đảo lazy. Cùng đồ thị. Xem 21.6 cho các pattern fetch mà H4 này không lặp."
             }
           ]
         },
@@ -3104,14 +3104,14 @@
           "lang": "tsx",
           "code": {
             "en": "export default async function DashboardPage({ id }: { id: string }) {\n  // Pitfall: serial — getOrders did not need getNotifs to finish\n  // const user = await getUser(id)\n  // const orders = await getOrders(user.id)\n  // const notifs = await getNotifs(user.id)\n  const user = await getUser(id) // necessary if others need user.id\n  const [orders, notifs] = await Promise.all([\n    getOrders(user.id),\n    getNotifs(user.id),\n  ])\n  return <Dash user={user} orders={orders} notifs={notifs} />\n}\n// Non-critical widgets: <Suspense fallback={<Skel />}><Widget /></Suspense>\n// Child fetch of the same URL in this render is memoized — start it in the parent anyway.",
-            "vi": "export default async function DashboardPage({ id }: { id: string }) {\n  // Bẫy: nối — getOrders không cần getNotifs xong\n  // const user = await getUser(id)\n  // const orders = await getOrders(user.id)\n  // const notifs = await getNotifs(user.id)\n  const user = await getUser(id) // cần nếu cái khác cần user.id\n  const [orders, notifs] = await Promise.all([\n    getOrders(user.id),\n    getNotifs(user.id),\n  ])\n  return <Dash user={user} orders={orders} notifs={notifs} />\n}\n// Widget không tối quan trọng: <Suspense fallback={<Skel />}><Widget /></Suspense>\n// Fetch con cùng URL trong lần render này được memoize — vẫn bắt đầu ở parent."
+            "vi": "export default async function DashboardPage({ id }: { id: string }) {\n  // Lỗi hay gặp: nối tiếp, getOrders không cần getNotifs xong\n  // const user = await getUser(id)\n  // const orders = await getOrders(user.id)\n  // const notifs = await getNotifs(user.id)\n  const user = await getUser(id) // cần nếu cái khác cần user.id\n  const [orders, notifs] = await Promise.all([\n    getOrders(user.id),\n    getNotifs(user.id),\n  ])\n  return <Dash user={user} orders={orders} notifs={notifs} />\n}\n// Widget không critical: <Suspense fallback={<Skel />}><Widget /></Suspense>\n// Fetch con cùng URL trong lần render này được memoize: vẫn bắt đầu ở parent."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** User is a true dependence. Orders and notifications start together after `user.id` exists. The commented serial version paid TTFB for `getNotifs` waiting on `getOrders`. A Suspense hole around a widget would have let the shell paint first.",
-            "vi": "**Điều gì xảy ra:** User là phụ thuộc thật. Orders và notification bắt đầu cùng lúc sau khi có `user.id`. Bản nối trong comment đã trả TTFB vì `getNotifs` chờ `getOrders`. Lỗ Suspense quanh widget đã để shell vẽ trước."
+            "vi": "**Điều gì xảy ra:** User là phụ thuộc thật. Orders và notification bắt đầu cùng lúc sau khi có `user.id`. Bản nối trong comment trả TTFB vì `getNotifs` phải chờ `getOrders`. Lỗ Suspense quanh widget thì shell vẽ trước."
           }
         },
         {
@@ -3166,7 +3166,7 @@
               },
               {
                 "en": "Non-critical widget",
-                "vi": "Widget không tối quan trọng"
+                "vi": "Widget không critical"
               },
               {
                 "en": "Shell first",
@@ -3197,7 +3197,7 @@
           },
           "text": {
             "en": "- Waterfall only when B needs A’s id. “One await per file” is not a dependence.\n- Start child fetches in the parent, or share the `fetch` dedupe. Do not hope the child is free.\n- Empty RSC plus client `useEffect` fetches is a SPA in Next clothing. First HTML should already have the shell data.\n- Bound concurrency: `Promise.all` 10k ids will melt the API. Batch or a queue.\n- Nuxt: sequential `useAsyncData` in nested layouts is the same TTFB pad.",
-            "vi": "- Chỉ waterfall khi B cần id của A. “Một await một file” không phải phụ thuộc.\n- Bắt đầu fetch con ở parent, hoặc share dedupe `fetch`. Đừng hy vọng child miễn phí.\n- RSC rỗng cộng `useEffect` fetch phía client là SPA mặc áo Next. HTML đầu đã nên có data shell.\n- Giới hạn concurrency: `Promise.all` 10k id sẽ làm API chảy. Hãy batch hoặc hàng đợi.\n- Nuxt: `useAsyncData` nối trong layout lồng là cùng chỗ TTFB phình."
+            "vi": "- Chỉ waterfall khi B cần id của A. “Một await một file” không phải phụ thuộc.\n- Bắt đầu fetch con ở parent, hoặc share dedupe `fetch`. Đừng hy vọng child miễn phí.\n- RSC rỗng kèm `useEffect` fetch phía client là SPA mặc áo Next. HTML đầu đã nên có data shell.\n- Giới hạn concurrency: `Promise.all` 10k id sẽ làm API sập. Hãy batch hoặc hàng đợi.\n- Nuxt: `useAsyncData` nối trong layout lồng là cùng chỗ TTFB phình."
           }
         },
         {
@@ -3205,18 +3205,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: TTFB is the sum of three fetches. Cause: nested layouts each await. Fix: `Promise.all` in the parent.\n- Symptom: “but fetch is cached.” Cause: Next 14 memory on Next 15. Fix: uncached by default; look at the graph.\n- Symptom: 10k `Promise.all`. Cause: unbounded. Fix: batch.\n- Symptom: empty RSC, five client fetches. Cause: Vite habit. Fix: `await` the shell on the server.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: TTFB là tổng ba fetch. Nguyên nhân: layout lồng mỗi cái await. Cách xử lý: `Promise.all` ở parent.\n- Triệu chứng: “nhưng fetch được cache.” Nguyên nhân: trí nhớ Next 14 trên Next 15. Cách xử lý: mặc định không cache; hãy nhìn đồ thị.\n- Triệu chứng: `Promise.all` 10k. Nguyên nhân: không giới hạn. Cách xử lý: batch.\n- Triệu chứng: RSC rỗng, năm fetch client. Nguyên nhân: thói quen Vite. Cách xử lý: `await` shell trên server."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: TTFB là tổng ba fetch. Nguyên nhân: layout lồng mỗi cái await. Cách xử lý: `Promise.all` ở parent.\n- Triệu chứng: “nhưng fetch được cache”. Nguyên nhân: thói quen Next 14 trên Next 15. Cách xử lý: mặc định không cache; hãy nhìn đồ thị.\n- Triệu chứng: `Promise.all` 10k. Nguyên nhân: không giới hạn. Cách xử lý: batch.\n- Triệu chứng: RSC rỗng, năm fetch client. Nguyên nhân: thói quen Vite. Cách xử lý: `await` shell trên server."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "Why is TTFB 2s on a page with three fetches? They want the dependency graph, when `Promise.all` is wrong, and when to Suspense a hole instead of awaiting the page.",
-            "vi": "Sao TTFB 2s trên trang với ba fetch? Họ muốn đồ thị phụ thuộc, khi nào `Promise.all` sai, và khi nào Suspense một lỗ thay vì await trang."
+            "vi": "Vì sao TTFB 2s trên trang có ba fetch? Họ muốn dependency graph, khi nào `Promise.all` không đúng chỗ, và khi nào Suspense một lỗ thay vì await cả trang."
           }
         },
         {
@@ -3227,7 +3227,7 @@
           },
           "text": {
             "en": "I waterfall only when B needs A’s id. Orders and notifications start together after user. If a child Server Component fetches, I start that promise in the parent or share the fetch dedupe so the child hit is free in this render. An empty RSC shell plus five useEffect fetches is Next used as a SPA. Next 15 fetch is uncached, so a serial layout does not get a free cache hit. I stream non-critical widgets with Suspense. I would read the server timeline, not the puzzle output. Nuxt sequential useAsyncData in nested layouts is the same pad.",
-            "vi": "Tôi chỉ waterfall khi B cần id của A. Orders và notification bắt đầu cùng lúc sau user. Nếu Server Component con fetch, tôi bắt đầu promise đó ở parent hoặc share dedupe fetch để lần đụng của child miễn phí trong lần render này. Shell RSC rỗng cộng năm useEffect fetch là Next dùng như SPA. Fetch Next 15 không cache, nên layout nối không được cache hit miễn phí. Tôi stream widget không tối quan trọng bằng Suspense. Tôi đọc timeline server, không phải output câu đố. useAsyncData nối trong layout lồng của Nuxt là cùng chỗ phình."
+            "vi": "Mình chỉ waterfall khi B cần id của A. Orders và notification bắn cùng lúc sau user. Nếu Server Component con fetch, mình start promise đó ở parent hoặc share fetch dedupe. Hit của child trong lần render này sẽ miễn phí. Shell RSC rỗng kèm năm fetch useEffect là Next dùng như SPA. Fetch Next 15 không cache, nên layout nối không được cache hit miễn phí. Mình stream widget không tối quan trọng bằng Suspense. Mình đọc timeline server, không phải output câu đố. useAsyncData nối trong layout lồng của Nuxt cũng phình TTFB y vậy."
           }
         },
         {
@@ -3235,19 +3235,19 @@
           "items": [
             {
               "en": "True dependence waterfalls. Independent work is `Promise.all`.",
-              "vi": "Phụ thuộc thật mới waterfall. Việc độc lập là `Promise.all`."
+              "vi": "Phụ thuộc thật mới waterfall. Việc độc lập thì `Promise.all`."
             },
             {
               "en": "Start child fetches in the parent, or share `fetch` dedupe.",
-              "vi": "Bắt đầu fetch con ở parent, hoặc share dedupe `fetch`."
+              "vi": "Bắt đầu fetch của child ở parent, hoặc share dedupe `fetch`."
             },
             {
               "en": "Empty RSC + client `useEffect` fetches is a SPA in Next clothing.",
-              "vi": "RSC rỗng + `useEffect` fetch phía client là SPA mặc áo Next."
+              "vi": "RSC rỗng + fetch `useEffect` phía client là SPA mặc áo Next."
             },
             {
               "en": "Suspense a hole when the widget is not on the critical path.",
-              "vi": "Suspense một lỗ khi widget không nằm trên đường tối quan trọng."
+              "vi": "Suspense một lỗ khi widget không nằm trên critical path."
             }
           ]
         },
@@ -3259,7 +3259,7 @@
           },
           "text": {
             "en": "- **Suspense a hole instead of await on the page?** When the widget is not required for first meaningful paint.\n- **Request memoization hides a child fetch?** Same URL in this render is free. Still start it in the parent.\n- **Why not Promise.all 10k ids?** You will melt the API. Bound the batch.\n- **Draw the server timeline?** getUser, then Promise.all(orders, notifs). The serial version stacks.",
-            "vi": "- **Suspense một lỗ thay vì await trên trang?** Khi widget không bắt buộc cho first meaningful paint.\n- **Request memoization giấu fetch con?** Cùng URL trong lần render này là miễn phí. Vẫn bắt đầu ở parent.\n- **Vì sao không Promise.all 10k id?** Bạn sẽ làm API chảy. Hãy giới hạn batch.\n- **Vẽ timeline server?** getUser, rồi Promise.all(orders, notifs). Bản nối thì chồng."
+            "vi": "- **Suspense một lỗ thay vì await trên trang?** Khi widget không bắt buộc cho first meaningful paint.\n- **Request memoization giấu fetch của child?** Cùng URL trong lần render này thì miễn phí. Vẫn start ở parent.\n- **Vì sao không Promise.all 10k id?** Bạn sẽ làm API quá tải. Giới hạn batch.\n- **Vẽ timeline server?** getUser, rồi Promise.all(orders, notifs). Bản nối thì các thanh chồng."
           }
         },
         {
