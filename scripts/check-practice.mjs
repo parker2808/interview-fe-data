@@ -3,6 +3,7 @@
  * Structural checks for the practice module.
  * Zero dependencies. Node 22. Exits 1 on errors.
  * Format/budget rules are warnings unless --strict is passed.
+ * Also validates practice/design/index.json (files, unique ids, § refs).
  *
  *   node scripts/check-practice.mjs [root]
  *   node scripts/check-practice.mjs . --strict
@@ -29,7 +30,41 @@ const COMMIT_RE = /^(feat|fix|chore|docs|test|perf|refactor)(\(.+\))?: .+/
 const EMAIL_RE = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/
 const PHONE_RE =
   /(?:\+|tel:)\s*\d{1,3}[\s.-]?\d|\b0\d{8,10}\b|\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b/
+const SPEC_REF_RE = /^§\d+(?:\.\d+[a-z]?)*$/
+const SPEC_HEADING_RE = /^(#{2,3}) (\d+(?:\.\d+[a-z]?)*)\b/
 const EXPECTED_STEP_COUNT = 33
+const EXPECTED_SPEC_PATH = 'plans/portfolio-design-system.md'
+const FIGMA_URL_RE = /^https:\/\/www\.figma\.com\//
+const DESIGN_INDEX_KEYS = new Set(['version', 'specPath', 'title', 'intro', 'figma', 'screens'])
+const DESIGN_FIGMA_KEYS = new Set(['url', 'label', 'note'])
+const DESIGN_SCREEN_KEYS = new Set([
+  'id',
+  'file',
+  'title',
+  'caption',
+  'group',
+  'theme',
+  'viewport',
+  'specRefs',
+  'width',
+  'height',
+])
+const EXPECTED_DESIGN_IDS = [
+  '01-home-light',
+  '02-home-dark',
+  '05-home-mobile-light',
+  '09-home-skeletons',
+  '10-about-light',
+  '11-projects-light',
+  '03-case-study-light',
+  '03b-case-study-dark',
+  '04b-blog-list-light',
+  '04-blog-post-light',
+  '12-contact-light',
+  '06-admin-dashboard',
+  '07-admin-projects-table',
+  '08-admin-project-editor',
+]
 
 const errors = []
 const warnings = []
@@ -98,6 +133,76 @@ function padStep(n) {
   return `p${String(n).padStart(2, '0')}`
 }
 
+function specRefToAnchorId(ref) {
+  return `s-${String(ref).replace(/^§/, '').replaceAll('.', '-')}`
+}
+
+function webpSize(buf) {
+  if (buf.toString('ascii', 0, 4) !== 'RIFF' || buf.toString('ascii', 8, 12) !== 'WEBP') {
+    return null
+  }
+  const chunk = buf.toString('ascii', 12, 16)
+  if (chunk === 'VP8X') {
+    return {
+      width: (buf[24] | (buf[25] << 8) | (buf[26] << 16)) + 1,
+      height: (buf[27] | (buf[28] << 8) | (buf[29] << 16)) + 1,
+    }
+  }
+  if (chunk === 'VP8 ') {
+    return {
+      width: buf.readUInt16LE(26) & 0x3fff,
+      height: buf.readUInt16LE(28) & 0x3fff,
+    }
+  }
+  if (chunk === 'VP8L') {
+    const bits = buf.readUInt32LE(21)
+    return {
+      width: (bits & 0x3fff) + 1,
+      height: ((bits >> 14) & 0x3fff) + 1,
+    }
+  }
+  return null
+}
+
+function loadSpecSectionIds() {
+  const specRel = EXPECTED_SPEC_PATH
+  const specPath = path.join(root, specRel)
+  const ids = new Set()
+  if (!existsSync(specPath)) {
+    fail(specRel, 'missing design spec')
+    return ids
+  }
+  const text = readFileSync(specPath, 'utf8')
+  for (const line of text.split('\n')) {
+    const match = line.match(SPEC_HEADING_RE)
+    if (match) ids.add(`§${match[2]}`)
+  }
+  if (!ids.size) fail(specRel, 'no numbered headings found')
+  for (const id of ids) {
+    const anchor = specRefToAnchorId(id)
+    if (!text.includes(`<a id="${anchor}"></a>`)) {
+      fail(specRel, `missing HTML anchor ${anchor} for ${id}`)
+    }
+  }
+  return ids
+}
+
+const specSectionIds = loadSpecSectionIds()
+
+function checkSpecRef(ref, hint) {
+  if (typeof ref !== 'string' || !ref.trim()) {
+    fail(hint, 'expected a non-empty string')
+    return
+  }
+  if (!SPEC_REF_RE.test(ref)) {
+    fail(hint, `expected §N or §N.M (optional letter suffix), got "${ref}"`)
+    return
+  }
+  if (specSectionIds.size && !specSectionIds.has(ref)) {
+    fail(hint, `no heading in ${EXPECTED_SPEC_PATH} for "${ref}"`)
+  }
+}
+
 function loadKbSlugs() {
   const indexPath = path.join(root, 'knowledge-base/index.json')
   const slugs = new Set()
@@ -151,8 +256,8 @@ if (meta) {
   if (meta.version !== 1) fail('practice/meta.json', `version must be 1, got ${meta.version}`)
   assertLocalized(meta.title, 'practice/meta.json.title')
   assertLocalized(meta.intro, 'practice/meta.json.intro')
-  if (meta.specPath !== 'plans/portfolio-design-system.md') {
-    fail('practice/meta.json.specPath', `expected plans/portfolio-design-system.md, got "${meta.specPath}"`)
+  if (meta.specPath !== EXPECTED_SPEC_PATH) {
+    fail('practice/meta.json.specPath', `expected ${EXPECTED_SPEC_PATH}, got "${meta.specPath}"`)
   }
   if (!Array.isArray(meta.milestones) || meta.milestones.length === 0) {
     fail('practice/meta.json.milestones', 'expected a non-empty array')
@@ -360,9 +465,7 @@ function checkStep(step, id) {
   if (!Array.isArray(step.specRefs)) fail(`${hint}.specRefs`, 'expected an array')
   else {
     for (const [i, ref] of step.specRefs.entries()) {
-      if (typeof ref !== 'string' || !ref.trim()) {
-        fail(`${hint}.specRefs[${i}]`, 'expected a non-empty string')
-      }
+      checkSpecRef(ref, `${hint}.specRefs[${i}]`)
     }
   }
 
@@ -458,6 +561,144 @@ walkStrings(meta, (text, pathHint) => {
   if (EMAIL_RE.test(text)) fail(`practice/meta.json.${pathHint}`, 'email-shaped string (PII)')
   if (PHONE_RE.test(text)) fail(`practice/meta.json.${pathHint}`, 'phone-shaped string (PII)')
 }, 'meta')
+
+function checkDesignFigma(figma, hint) {
+  if (figma == null) return
+  if (!figma || typeof figma !== 'object' || Array.isArray(figma)) {
+    fail(hint, 'expected an object')
+    return
+  }
+  const extra = Object.keys(figma).filter((key) => !DESIGN_FIGMA_KEYS.has(key))
+  if (extra.length) fail(hint, `unexpected keys: ${extra.join(', ')}`)
+  if (typeof figma.url !== 'string' || !FIGMA_URL_RE.test(figma.url)) {
+    fail(`${hint}.url`, `expected an https://www.figma.com/… URL, got "${figma.url}"`)
+  }
+  assertLocalized(figma.label, `${hint}.label`)
+  assertLocalized(figma.note, `${hint}.note`)
+}
+
+function checkDesignGallery() {
+  const rel = 'practice/design/index.json'
+  const file = path.join(root, rel)
+  if (!existsSync(file)) {
+    fail(rel, 'missing design gallery index')
+    return
+  }
+  const gallery = readJson(file)
+  if (!gallery) return
+
+  if (gallery.version !== 1) fail(`${rel}.version`, `version must be 1, got ${gallery.version}`)
+  if (gallery.specPath !== EXPECTED_SPEC_PATH) {
+    fail(`${rel}.specPath`, `expected ${EXPECTED_SPEC_PATH}, got "${gallery.specPath}"`)
+  }
+  const extraIndex = Object.keys(gallery).filter((key) => !DESIGN_INDEX_KEYS.has(key))
+  if (extraIndex.length) fail(rel, `unexpected keys: ${extraIndex.join(', ')}`)
+  assertLocalized(gallery.title, `${rel}.title`)
+  assertLocalized(gallery.intro, `${rel}.intro`)
+  checkDesignFigma(gallery.figma, `${rel}.figma`)
+
+  walkStrings(gallery, (text, pathHint) => {
+    if (EMAIL_RE.test(text)) fail(`${rel}.${pathHint}`, 'email-shaped string (PII)')
+    if (PHONE_RE.test(text)) fail(`${rel}.${pathHint}`, 'phone-shaped string (PII)')
+  }, '')
+
+  if (!Array.isArray(gallery.screens) || gallery.screens.length === 0) {
+    fail(`${rel}.screens`, 'expected a non-empty array')
+    return
+  }
+
+  const seen = new Set()
+  let seenAdmin = false
+  const gotIds = []
+
+  for (const [i, screen] of gallery.screens.entries()) {
+    const hint = `${rel}.screens[${i}]`
+    if (!screen || typeof screen !== 'object' || Array.isArray(screen)) {
+      fail(hint, 'expected an object')
+      continue
+    }
+    const extra = Object.keys(screen).filter((key) => !DESIGN_SCREEN_KEYS.has(key))
+    if (extra.length) fail(hint, `unexpected keys: ${extra.join(', ')}`)
+
+    const id = screen.id
+    if (typeof id !== 'string' || !/^[0-9]{2}[a-z]?-[a-z0-9-]+$/.test(id)) {
+      fail(`${hint}.id`, `expected id like 01-home-light, got "${id}"`)
+    } else if (seen.has(id)) {
+      fail(`${hint}.id`, `duplicate id "${id}"`)
+    } else {
+      seen.add(id)
+      gotIds.push(id)
+    }
+
+    const expectedFile = `practice/design/screens/${id}.webp`
+    if (screen.file !== expectedFile) {
+      fail(`${hint}.file`, `expected "${expectedFile}", got "${screen.file}"`)
+    }
+    const abs = path.join(root, expectedFile)
+    if (!existsSync(abs)) {
+      fail(`${hint}.file`, `missing file ${expectedFile}`)
+    } else {
+      const buf = readFileSync(abs)
+      const size = webpSize(buf)
+      if (!size) fail(`${hint}.file`, `${expectedFile} is not a WebP image`)
+      else {
+        if (screen.width !== size.width) {
+          fail(`${hint}.width`, `does not match file (${screen.width} vs ${size.width})`)
+        }
+        if (screen.height !== size.height) {
+          fail(`${hint}.height`, `does not match file (${screen.height} vs ${size.height})`)
+        }
+      }
+    }
+
+    assertLocalized(screen.title, `${hint}.title`)
+    assertLocalized(screen.caption, `${hint}.caption`)
+
+    if (screen.group !== 'public' && screen.group !== 'admin') {
+      fail(`${hint}.group`, `expected public|admin, got "${screen.group}"`)
+    } else if (screen.group === 'admin') {
+      seenAdmin = true
+    } else if (seenAdmin) {
+      fail(`${hint}.group`, 'public screens must come before admin screens')
+    }
+
+    if (screen.theme !== 'light' && screen.theme !== 'dark') {
+      fail(`${hint}.theme`, `expected light|dark, got "${screen.theme}"`)
+    }
+    if (screen.viewport !== 'desktop' && screen.viewport !== 'mobile') {
+      fail(`${hint}.viewport`, `expected desktop|mobile, got "${screen.viewport}"`)
+    }
+    if (!Number.isInteger(screen.width) || screen.width < 1) {
+      fail(`${hint}.width`, `expected a positive integer, got ${screen.width}`)
+    }
+    if (!Number.isInteger(screen.height) || screen.height < 1) {
+      fail(`${hint}.height`, `expected a positive integer, got ${screen.height}`)
+    }
+
+    if (!Array.isArray(screen.specRefs) || screen.specRefs.length === 0) {
+      fail(`${hint}.specRefs`, 'expected a non-empty array')
+    } else {
+      const refSeen = new Set()
+      for (const [r, ref] of screen.specRefs.entries()) {
+        const where = `${hint}.specRefs[${r}]`
+        checkSpecRef(ref, where)
+        if (typeof ref === 'string') {
+          if (refSeen.has(ref)) fail(where, `duplicate "${ref}"`)
+          else refSeen.add(ref)
+        }
+      }
+    }
+  }
+
+  if (gotIds.join(',') !== EXPECTED_DESIGN_IDS.join(',')) {
+    fail(
+      `${rel}.screens`,
+      `expected ids in order ${EXPECTED_DESIGN_IDS.join(', ')} (got ${gotIds.join(', ') || '∅'})`,
+    )
+  }
+}
+
+checkDesignGallery()
 
 function printStats() {
   const byMilestone = new Map()

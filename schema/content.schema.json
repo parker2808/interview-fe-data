@@ -343,6 +343,68 @@
           "items": { "$ref": "#/$defs/practiceIndexStep" }
         }
       }
+    },
+    "practiceDesignScreen": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "file",
+        "title",
+        "caption",
+        "group",
+        "theme",
+        "viewport",
+        "specRefs",
+        "width",
+        "height"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[0-9]{2}[a-z]?-[a-z0-9-]+$" },
+        "file": { "type": "string", "pattern": "^practice/design/screens/.+\\.webp$" },
+        "title": { "$ref": "#/$defs/localized" },
+        "caption": { "$ref": "#/$defs/localized" },
+        "group": { "enum": ["public", "admin"] },
+        "theme": { "enum": ["light", "dark"] },
+        "viewport": { "enum": ["desktop", "mobile"] },
+        "specRefs": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "pattern": "^§\\d+(?:\\.\\d+[a-z]?)*$" }
+        },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "practiceDesignFigma": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url", "label", "note"],
+      "properties": {
+        "url": {
+          "type": "string",
+          "pattern": "^https://www\\.figma\\.com/"
+        },
+        "label": { "$ref": "#/$defs/localized" },
+        "note": { "$ref": "#/$defs/localized" }
+      }
+    },
+    "practiceDesignIndex": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "specPath", "title", "intro", "screens"],
+      "properties": {
+        "version": { "const": 1 },
+        "specPath": { "const": "plans/portfolio-design-system.md" },
+        "title": { "$ref": "#/$defs/localized" },
+        "intro": { "$ref": "#/$defs/localized" },
+        "figma": { "$ref": "#/$defs/practiceDesignFigma" },
+        "screens": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/practiceDesignScreen" }
+        }
+      }
     }
   }
 }

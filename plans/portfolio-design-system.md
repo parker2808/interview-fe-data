@@ -7,10 +7,15 @@ Design and planning only. This doc feeds the LAB tab of the 30-day plan (`plans/
 - v2 revision: after reviewing the v1 mockups ("too bare"), the visual layer was enriched using [longpham.tech](https://www.longpham.tech/) as a reference: analysis in 2.1–2.2, new tokens in 3.1–3.1b, motion in 3.4, components in 4.7, wireframes in 5.1–5.6, admin additions in 5.11, rebuild brief in 7.
 - Source: Parker's CV (dated, says "4+ years"; he now has ~5 years with Vue/Nuxt/TypeScript).
 - Privacy: contact details are `<email>` / `<phone>` everywhere, including seeds and fixtures. The CV file itself is not committed.
+- **§ refs:** Headings are `## N. Title` (chapter) and `### N.M Title` (section; a letter suffix is allowed, e.g. `3.1b`). `§1.5` maps to the heading whose text starts with `1.5 `, and to the explicit HTML id `s-1-5` (`s-` + digits/letters with `.` → `-`). Prefer `#s-1-5` over GitHub auto-slugs, which drop the dots (`15-content-model-dbcms`).
 
 ---
 
+<a id="s-1"></a>
+
 ## 1. CV analysis
+
+<a id="s-1-1"></a>
 
 ### 1.1 Positioning
 
@@ -20,6 +25,8 @@ Design and planning only. This doc feeds the LAB tab of the 30-day plan (`plans/
 **Sub-line:** Fintech (Web3/ReFi) · enterprise (Samsung SDS) · e-commerce tooling. Hanoi, works with Korean, US and UK teams.
 
 Display name: **Parker Vu** with the legal name *Vu Van Hung* (`Vũ Văn H…ng`: confirm the diacritics with Parker before seeding) on About and in JSON-LD. GitHub: `parker2808`.
+
+<a id="s-1-2"></a>
 
 ### 1.2 The story the portfolio tells
 
@@ -34,6 +41,8 @@ Three acts:
 
 The portfolio itself is act 4 and the answer to the CV's weakest line ("React/Next JS (a bit)", "Backend (basic)"): a production Next.js + NestJS app with a CMS, built in public.
 
+<a id="s-1-3"></a>
+
 ### 1.3 Case studies to feature (in order)
 
 | # | Case study | Why it leads | Angle |
@@ -42,6 +51,8 @@ The portfolio itself is act 4 and the answer to the CV's weakest line ("React/Ne
 | 2 | **Cart migration tool** (LitGroup, 2021–2022) | Full-stack range: Flask/Laravel APIs, then the Vue 2 + TS + Pinia frontend for the same product | Large-dataset state, progress/error UX for long jobs, customer-facing error resolution |
 | 3 | **Samsung SDS MSP Advanced + App Expansion** (CMC Global, 2022–2024) | Enterprise scale and cross-cultural delivery (Korean team, 15-person team) | Re-platforming logic into a new design, Jira-driven issue management UI, unit tests. **NDA-safe:** no screenshots, use redrawn diagrams |
 | 4 | **This portfolio** (2026) | Proof of React/Next.js, NestJS, MySQL, auth, realtime | Architecture, rendering choices per route, CMS design, a11y/perf budgets met |
+
+<a id="s-1-4"></a>
 
 ### 1.4 Gaps to fill (ask Parker, or mark as TODO in the CMS)
 
@@ -53,6 +64,8 @@ The portfolio itself is act 4 and the answer to the CV's weakest line ("React/Ne
 6. **Missing evidence of seniority:** mentoring, code review, design decisions, RFCs. Ask for 2 concrete stories (these also feed lab Days 25–27).
 7. **No links.** Live product URLs (Particula public site), GitHub repos, and later the blog. Add `<email>` and LinkedIn as placeholders.
 8. **Responsibilities, not outcomes.** Rewrite bullets as *verb + what + result* ("Led the Vue 2 → Nuxt 3 rewrite of Particula's investor app; shipped N core components; replaced Axios with TanStack Query, cutting duplicate requests by X%").
+
+<a id="s-1-5"></a>
 
 ### 1.5 Content model (DB/CMS)
 
@@ -160,6 +173,8 @@ model Project {
 
 Seed (`prisma/seed.ts`) loads the CV content: site settings, profile (placeholders for `<email>` / `<phone>`), nav, social links, page sections, 4 experience rows, education, ~25 skills in 5 categories, 4 projects in `DRAFT`, 3 principles, contact topics, the owner user. 0 posts. v2 adds 4 domains (each project linked), 4 profile stats, 5 process steps, `showInMarquee` on ~10 skills, `keyFacts`/`factChips` drafted for Particula, and the new `PageSection` keys.
 
+<a id="s-1-6"></a>
+
 ### 1.6 Backend path for a backend beginner (one way to do each thing)
 
 How the pieces talk:
@@ -214,6 +229,8 @@ The backend ladder (each rung needs only the ones below it; day numbers in secti
 
 ---
 
+<a id="s-2"></a>
+
 ## 2. Design direction
 
 **Concept (v2): "Readable release notes, with atmosphere."** A typography-first, Linear-calm interface where each project reads like a well-edited changelog entry: version tags, before → after diffs and mono metadata. v2 adds a quiet *atmosphere layer* (jade-tinted surfaces, a masked grid, soft glow, scroll reveals) and richer section types (stats, tech marquee, domain cards, a migration-flow diagram) so the page feels alive without hurting reading.
@@ -223,6 +240,8 @@ The backend ladder (each rung needs only the ones below it; day numbers in secti
 - **Accent:** jade/teal. A nod to Vue green (his roots) and to Particula's ReFi/carbon domain. v2 uses it more boldly in three places only: the hero accent phrase, stat numbers and the primary CTA (with glow in dark mode). Everywhere else it stays sparing: links, focus, one highlight per card.
 - **References:** [longpham.tech](https://www.longpham.tech/) (atmosphere, section rhythm, stats + marquee, domain cards, case-study card and page structure; see 2.1), Linear (admin density, command palette, status pills), Vercel Geist and Stripe docs (type hierarchy, prose, code blocks), Practical Typography (measure, line-height), Raycast and Linear changelogs (versioned entries), GitHub diff view.
 - **Tone:** confident, specific, quiet. Short sentences, real numbers, no "passionate developer". Motion is functional or ambient-and-slow, never attention-grabbing, and always off under `prefers-reduced-motion`. Light and dark are both first-class; the atmosphere layer has a light variant (2.2).
+
+<a id="s-2-1"></a>
 
 ### 2.1 Reference analysis: longpham.tech (captured 1440 and 390, Oct 2026)
 
@@ -246,6 +265,8 @@ The backend ladder (each rung needs only the ones below it; day numbers in secti
 
 **Weak spots to avoid:** dark-only (no light mode); a lot of muted green-gray text at 12–14px; visible `{{TODO: …}}` placeholders on a live case study (needs a publish check); decorative animations (icon bob, ring pulse) that run forever; email shown as plain text; very long pages without in-page navigation; certification images are screenshots of PDFs.
 
+<a id="s-2-2"></a>
+
 ### 2.2 What we adopt, adapt or skip for Parker
 
 | Idea | Decision | How it maps to Parker and our constraints |
@@ -268,11 +289,15 @@ The backend ladder (each rung needs only the ones below it; day numbers in secti
 
 ---
 
+<a id="s-3"></a>
+
 ## 3. Design tokens
 
 Tokens use **shadcn/ui's variable names** (`--background`, `--primary`, `--muted-foreground`, …) as the semantic layer, plus a few extensions (`--subtle-foreground`, `--success`, `--warning`, `--info`, `--primary-subtle`). One naming scheme means shadcn components work unmodified and our custom components use the same utilities (`bg-primary`, `text-muted-foreground`).
 
 All color pairs below were measured with the WCAG 2.x relative luminance formula. Text needs ≥ 4.5:1 (normal) and ≥ 3:1 (≥ 24px, or ≥ 18.66px bold). Input borders and focus rings need ≥ 3:1 (SC 1.4.11). Decorative dividers (`--border`) are exempt and are never the only boundary of a control.
+
+<a id="s-3-1"></a>
 
 ### 3.1 Color (semantic, shadcn names)
 
@@ -305,6 +330,8 @@ v2 change: dark neutrals are **tinted toward jade** (hue ≈ 165°) instead of p
 
 Theme switching: `next-themes` with `attribute="class"` (shadcn default, `.dark` on `<html>`), default `system`, `disableTransitionOnChange`. Theme choice is a UI preference, not content.
 
+<a id="s-3-1b"></a>
+
 ### 3.1b Atmosphere and domain hues (v2)
 
 **Atmosphere tokens** (decorative; never carry text, never behind body copy):
@@ -325,6 +352,8 @@ Theme switching: `next-themes` with `attribute="class"` (shadcn default, `.dark`
 | `blue` | `#1D4ED8` / `#E8EDFB` | `#7AA2F7` / `#202B36` | 5.72 / 5.71 ✅ | Enterprise platforms |
 | `violet` | `#6D28D9` / `#F0EAFB` | `#C4B5FD` / `#2A2E37` | 6.04 / 7.37 ✅ | E-commerce tooling |
 | `rose` | `#B4235A` / `#F8E9EF` | `#FDA4C4` / `#322C2F` | 5.38 / 7.34 ✅ | Spare (e.g. "This portfolio") |
+
+<a id="s-3-2"></a>
 
 ### 3.2 Typography (the core of the design)
 
@@ -380,6 +409,8 @@ Markdown `####` and deeper render as `text-prose` 600 (no new size). Posts and c
 - vi strings run ~10–15% longer: buttons, nav and table headers must fit vi at 360px without truncation.
 - QA string used in every type story: `Hưởng ứng — Ở Đồng Tháp, những người thợ xây đã hoàn thành ngôi nhà mới. 0O 1lI {}`.
 
+<a id="s-3-3"></a>
+
 ### 3.3 Spacing, radius, elevation
 
 | Spacing | `0` 0 · `0.5` 2px · `1` 4px · `1.5` 6px · `2` 8px · `3` 12px · `4` 16px · `5` 20px · `6` 24px · `8` 32px · `10` 40px · `12` 48px · `16` 64px · `24` 96px · `32` 128px (4px base) |
@@ -395,6 +426,8 @@ Markdown `####` and deeper render as `text-prose` 600 (no new size). Posts and c
 | `--shadow-3` | `0 16px 40px -8px rgb(16 24 40 / .18)` | `0 0 0 1px rgb(255 255 255 / .10), 0 24px 48px rgb(0 0 0 / .6)` | Dialogs, command palette |
 
 Dark mode expresses elevation with a lighter surface plus a 1px inner hairline, not with shadow alone.
+
+<a id="s-3-4"></a>
 
 ### 3.4 Motion
 
@@ -430,6 +463,8 @@ Rules (v2):
 - `@media (prefers-reduced-motion: reduce)`: all of the above fall back as listed; durations → `0.01ms` except opacity fades at `--dur-fast`; the timeline renders fully expanded.
 - `@media (prefers-reduced-transparency: reduce)`: `--card-glass` → solid `--card`, orbs hidden.
 
+<a id="s-3-5"></a>
+
 ### 3.5 Breakpoints and z-index
 
 | Breakpoint | Min width | Layout |
@@ -452,6 +487,8 @@ Rules (v2):
 | `--z-modal` | 500 | Dialog, sheet, command palette |
 | `--z-toast` | 600 | Toasts, realtime notifications |
 | `--z-skip` | 700 | Skip link (focused) |
+
+<a id="s-3-6"></a>
 
 ### 3.6 shadcn theme: CSS variables (`packages/ui/src/styles/globals.css`)
 
@@ -564,6 +601,8 @@ shadcn/ui (Tailwind v4, `new-york` style, `baseColor: neutral`, `cssVariables: t
 }
 ```
 
+<a id="s-3-7"></a>
+
 ### 3.7 Tailwind v4 mapping (same file, `@theme inline`)
 
 `@theme inline` turns every variable into utilities that follow the active theme: `bg-background`, `text-muted-foreground`, `text-subtle-foreground`, `bg-primary-subtle`, `border-input`, `ring-ring`, `rounded-lg`, `shadow-2`, `font-heading`, `text-prose`, `bg-band`, `border-border-strong`, `bg-hue-amber-subtle text-hue-amber`, `text-display`, `text-eyebrow`, `z-modal`, `duration-base`, `ease-out`.
@@ -647,9 +686,13 @@ Tailwind's default sizes stay available because shadcn components use `text-sm` 
 
 ---
 
+<a id="s-4"></a>
+
 ## 4. Components and layout
 
 Primitives are shadcn/ui (Radix behavior, our tokens) as listed in 4.0; product components compose them. Every interactive component has `default / hover / focus-visible / active / disabled` plus the listed extra states, and a Storybook-or-Ladle story per state (light + dark).
+
+<a id="s-4-0"></a>
 
 ### 4.0 Base layer: shadcn/ui + TanStack
 
@@ -685,6 +728,8 @@ Primitives are **shadcn/ui** components (Radix UI + Tailwind), copied into `pack
 
 Not from shadcn (custom, built on the above): `Prose`, `CodeBlock` (Shiki), `MarkdownEditor` (CodeMirror 6), `Timeline`, `DiffStat`, `VersionTag`, `StatusPill`, `SaveStatus`, `SectionBoundary`, `DataTable` (TanStack Table + shadcn `table`), `MediaLibrary`.
 
+<a id="s-4-1"></a>
+
 ### 4.1 Primitive contract: variants, states, a11y (`packages/ui`)
 
 | Component | Variants | Extra states | A11y |
@@ -706,6 +751,8 @@ Not from shadcn (custom, built on the above): `Prose`, `CodeBlock` (Shiki), `Mar
 | `Avatar` | 24/32/40/96 | fallback initials | `alt` = name or empty when decorative |
 | `Prose` | `prose` (long-form), `compact` (excerpts) | n/a | Applies the long-form rules in 3.2 to markdown output: headings with anchor links, tables scroll in a focusable region |
 | `CodeBlock` | with filename, line highlight, diff (`+`/`-`) | copied | Copy button with `aria-live` confirmation; Shiki at build time, both themes |
+
+<a id="s-4-2"></a>
 
 ### 4.2 Public site
 
@@ -729,6 +776,8 @@ Not from shadcn (custom, built on the above): `Prose`, `CodeBlock` (Shiki), `Mar
 | `SiteFooter` | Social links, RSS, "Built with Next.js + NestJS, source on GitHub", last deploy hash in mono |
 | `OgImage` | Route handler template: 1200×630, dark `--background`, title in Be Vietnam Pro, `VersionTag`, name + domain |
 
+<a id="s-4-3"></a>
+
 ### 4.3 Admin (Linear-style)
 
 | Component | Notes |
@@ -750,6 +799,8 @@ Not from shadcn (custom, built on the above): `Prose`, `CodeBlock` (Shiki), `Mar
 | `RoleGate` | Hides or disables actions by role; server still enforces |
 | `EmptyState` (admin) | Illustration-free: icon, one line, primary action, keyboard hint |
 
+<a id="s-4-4"></a>
+
 ### 4.4 Layout and grid rules
 
 - **Public container:** `max-width: var(--container)` (1120px), page padding 20px → 32px (`md`) → 40px (`lg`). Prose max `var(--measure)` (66ch). Grid: 4 / 8 / 12 columns, gutters 16 / 24 / 32px.
@@ -760,6 +811,8 @@ Not from shadcn (custom, built on the above): `Prose`, `CodeBlock` (Shiki), `Mar
 - **Admin:** fluid; sidebar 240 + content. Lists are full-width tables. Editor: `lg` = editor + properties pane (320px); `2xl` = editor + live preview + properties. Never horizontally scroll the page, only the table region (focusable, `aria-label`).
 - **Touch:** every target ≥ 44×44px on coarse pointers (`@media (pointer: coarse)` enlarges admin controls to 40px and hit areas to 44px).
 - **Content width per locale:** vi text runs ~10–15% longer; buttons and nav must fit the vi labels without truncation at 360px.
+
+<a id="s-4-5"></a>
 
 ### 4.5 Data-driven UI: no hard-coded content
 
@@ -777,6 +830,8 @@ Not from shadcn (custom, built on the above): `Prose`, `CodeBlock` (Shiki), `Mar
 
 - **Critical data.** `GET /public/site` (settings, profile, nav, social links, sections) feeds the layout. If it fails, `app/[locale]/error.tsx` renders a minimal chrome-only page ("Something went wrong", Retry); there is no hard-coded name or headline fallback.
 - **SEO.** `generateMetadata` reads the entity's `seoTitle`/`seoDescription`, falling back to `title`/`excerpt`, then `SiteSettings`. OG images render from the same data.
+
+<a id="s-4-6"></a>
 
 ### 4.6 Data fetching: Next App Router + TanStack Query
 
@@ -828,6 +883,8 @@ Patterns:
 
 TanStack Form usage: contact form, login, every admin editor (profile, settings, project, post, experience, skill), and inline-editable cells (nav label, sort). Field arrays for `ProjectMetric` rows and nav items. Validators are the zod schemas from `packages/contracts` (`validators: { onChange: schema, onSubmit: schema }`), the same ones the Nest `ZodValidationPipe` runs.
 
+<a id="s-4-7"></a>
+
 ### 4.7 Rich-layer components (v2)
 
 All are product components in `packages/ui`, fed by props (section 4.5), each with skeleton / empty / error handled by `SectionBoundary`.
@@ -857,11 +914,15 @@ All are product components in `packages/ui`, fed by props (section 4.5), each wi
 
 ---
 
+<a id="s-5"></a>
+
 ## 5. Page-by-page UI spec
 
 Routes: public under `app/[locale]/(site)/…` with `locale ∈ {en, vi}` (default `en`, `vi` auto-suggested from `Accept-Language`, never forced); admin under `app/admin/(cms)/…` (not localized, UI in en; content fields edited per locale).
 
 Every public page: `<title>` pattern `{page seoTitle} · {SiteSettings.siteName}`, description from CMS, canonical, `hreflang` alternates, OG image from the template, JSON-LD (`Person` on home/about, `CreativeWork` on case studies, `BlogPosting` on posts, `BreadcrumbList` on detail pages). Sitemap and RSS per locale.
+
+<a id="s-5-0"></a>
 
 ### 5.0 Data, states and components per screen
 
@@ -896,6 +957,8 @@ All text in the wireframes below is **seed data** from the CV or chrome strings;
 | Admin lists | `GET /admin/{entity}?…` | Prefetch + TanStack Table | 10 skeleton rows | `empty` + create action | `alert` + Retry | `table`, `checkbox`, `dropdown-menu`, `popover` + `command` (filters), `pagination`, `alert-dialog`, `badge` |
 | Admin editors | `GET /admin/{entity}/:id` + Media, Tags, Skills | Prefetch + TanStack Form | Form skeleton | n/a (404 → "Not found" + back) | `alert` + Retry; save errors in `SaveStatus` | `tabs`, `field`, `input`, `textarea`, `select`, `switch`, `calendar`, `popover` + `command`, `resizable`, `sheet`/`drawer` (mobile properties), `progress` |
 | Admin site & sections | `GET /admin/site`, `/admin/nav`, `/admin/sections`, `/admin/social`, `/admin/contact-topics` | Prefetch + TanStack Form/Table | Form + rows | `empty` per list | `alert` + Retry | `tabs`, `table`, `switch`, `field`, `button` (move up/down) |
+
+<a id="s-5-1"></a>
 
 ### 5.1 Home `/[locale]` (v2)
 
@@ -1024,6 +1087,8 @@ Mobile (390):
 ```
 Metric values are placeholders until Parker supplies real ones (1.4 item 1). Stats with no real number stay hidden (`isVisible=false`), never invented.
 
+<a id="s-5-2"></a>
+
 ### 5.2 About + experience timeline `/[locale]/about` (v2)
 
 Sections: intro split (avatar card + bio) → stats strip (reuses `StatBand`, compact) → **timeline** with year rail → principles (`01 —` list) → skills by depth → education → CV download card.
@@ -1085,6 +1150,8 @@ Mobile:
 └──────────────────────────────┘
 ```
 
+<a id="s-5-3"></a>
+
 ### 5.3 Projects list `/[locale]/projects` (v2)
 
 Header with eyebrow + H1 + intro, a **domain filter row** (domain pills with counts, URL `?domain=`) and a tech combobox; then a featured wide `CaseCard`, then a 2-col (desktop) grid. Each card shows a domain pill, `↗`, top `DiffStat`, chips.
@@ -1117,6 +1184,8 @@ Desktop:
 ```
 
 Mobile: filter pills scroll horizontally (with edge fade), tech combobox below, cards stacked, featured card = normal card with the cover on top.
+
+<a id="s-5-4"></a>
 
 ### 5.4 Project case study `/[locale]/projects/[slug]` (v2)
 
@@ -1167,6 +1236,8 @@ Desktop:
 ```
 
 Mobile: meta grid becomes 2 columns; key facts 1 column; TOC becomes a sticky "On this page ▾" `collapsible` under the header; requirement cards stack.
+
+<a id="s-5-5"></a>
 
 ### 5.5 Blog list `/[locale]/notes` and post `/[locale]/notes/[slug]` (v2)
 
@@ -1220,6 +1291,8 @@ Post desktop:
 
 Mobile (list and post): cards full width; search above tags; tags scroll horizontally; TOC collapsible; code blocks scroll horizontally inside a focusable region.
 
+<a id="s-5-6"></a>
+
 ### 5.6 Contact `/[locale]/contact` (v2)
 
 Split layout on a faint grid: left = eyebrow, H1, intro (`SiteSettings.contactIntro`), reply-time note, channel cards (Copy email, LinkedIn, GitHub, each with icon tile), availability badge; right = form card on `--card-glass`. Success replaces the form with a status card (check icon tile, message, "Back to case studies").
@@ -1243,6 +1316,8 @@ Desktop:
 ```
 
 Mobile: channel cards first (stacked), form below, full-width submit. Validation: inline errors under fields + summary `alert` on submit; inputs keep their values on error.
+
+<a id="s-5-7"></a>
 
 ### 5.7 Admin dashboard `/admin`
 
@@ -1296,6 +1371,8 @@ Desktop:
 Realtime: new message → toast bottom-right "New message from Ana [Open]", Inbox badge 3→4.
 ```
 
+<a id="s-5-8"></a>
+
 ### 5.8 Admin list/table `/admin/posts` (same pattern for projects, skills, experience, media, inbox, audit)
 
 Mobile (table becomes a list of rows, filters in a sheet):
@@ -1332,6 +1409,8 @@ Desktop:
 └────────────┴─────────────────────────────────────────────────────────┘
 Keys: j/k move · x select · Enter open · C new · / search · ⌫ delete (confirm)
 ```
+
+<a id="s-5-9"></a>
 
 ### 5.9 Admin editor `/admin/posts/[id]` (projects use the same shell with case-study section fields)
 
@@ -1377,6 +1456,8 @@ Publish is blocked with an inline list when required fields are missing (per loc
 
 ---
 
+<a id="s-5-10"></a>
+
 ### 5.10 Admin site & sections `/admin/site` (settings, navigation, sections, social links, contact topics)
 
 Where everything that is not a project/post/experience/skill gets edited, so no visible text needs a code change. Tabs: General · Navigation · Sections · Social · Contact. Reordering is drag-and-drop **and** "Move up / Move down" buttons (keyboard and screen-reader friendly); each move is an optimistic `sortOrder` update.
@@ -1419,6 +1500,8 @@ Desktop:
 Sidebar gains a **Site** group: Site settings, Profile, Media. The admin UI itself is English-only chrome; every content field shows EN and VI side by side via locale tabs.
 
 
+<a id="s-5-11"></a>
+
 ### 5.11 Admin changes for v2 (small; the admin layout stays as is)
 
 The admin keeps its Linear-style calm: **no atmosphere, bands, orbs, reveals or marquee in `/admin`**. It only gains the editors and checks the richer public site needs.
@@ -1441,6 +1524,8 @@ The admin keeps its Linear-style calm: **no atmosphere, bands, orbs, reveals or 
 | Live preview (`2xl`) | Renders the real public components (`CaseCard`, `KeyFacts`, `StatBand`) with the draft props, in light and dark (toggle in the preview header) | `toggle-group` |
 
 ---
+
+<a id="s-6"></a>
 
 ## 6. Lab-day mapping (high level)
 
@@ -1508,9 +1593,13 @@ Notes for the executing agent:
 
 ---
 
+<a id="s-7"></a>
+
 ## 7. Mockup rebuild brief (v2)
 
 For the model rebuilding `mockups/portfolio/`. Parker's verdict on v1 was "too bare/plain". The v1 screens (`01`–`09`) were one neutral surface, small headings, flat cards and no imagery. **The new screens must look richer on a quick glance** while keeping every type rule in 3.2 and every contrast pair in 3.1. Follow sections 2, 3, 4.7 and 5.1–5.6 of this spec. Do not copy the reference site's layout, copy or green palette.
+
+<a id="s-7-1"></a>
 
 ### 7.1 Global rules (apply to every public screen)
 
@@ -1528,6 +1617,8 @@ For the model rebuilding `mockups/portfolio/`. Parker's verdict on v1 was "too b
 | G10 | Each screen exists in light; home, case study and post also in dark (`?dark=1`) | 3.6 |
 
 **Screenshot spec:** Playwright + system Chrome, DPR 2, full page, widths 1440 (desktop) and 390 (mobile). Capture with `reducedMotion: 'no-preference'` but freeze animations in their final state (add a `.capture` class on `<html>` that sets `animation: none !important; transition: none !important` and shows revealed content and final count-up values), so orbs, glows and hover states are visible but the image is deterministic. File names below; save to artifacts and keep `screenshot.mjs` as the single entry point.
+
+<a id="s-7-2"></a>
 
 ### 7.2 Screens
 
