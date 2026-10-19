@@ -526,19 +526,27 @@
         "vi": "Bạn thuyết phục team trả nợ kỹ thuật frontend như thế nào?"
       },
       "answer": {
-        "en": "Do not sell refactor as “clean code because I like it.”\n\nConnect the debt to concrete costs:\n\n- slow feature delivery,\n- recurring regressions,\n- onboarding pain,\n- production incidents,\n- inability to support new product requirements.\n\nThen propose a realistic path:\n\n1. small scoped refactor,\n2. success criteria,\n3. migration plan,\n4. risk control,\n5. opportunity to couple it with upcoming feature work.\n\nDebt work gets approved more often when framed as **risk reduction or speed enablement**.",
-        "vi": "Đừng bán refactor kiểu “vì em thích code sạch”.\n\nHãy nối món nợ đó với cost cụ thể:\n\n- feature đi chậm,\n- regressions lặp lại,\n- onboard khó,\n- incident production,\n- không hỗ trợ được requirement product mới.\n\nSau đó đưa ra một con đường thực tế:\n\n1. refactor scope nhỏ,\n2. tiêu chí thành công,\n3. kế hoạch migration,\n4. kiểm soát risk,\n5. gắn nó với feature sắp làm nếu phù hợp.\n\nDebt work dễ được duyệt hơn khi được frame là **giảm risk hoặc mở đường cho delivery nhanh hơn**."
+        "en": "**What they are checking:** You sell debt as **risk reduction or speed**, not as “clean code because I like it.”\n\n**How to structure it:**\n1. Name the cost in the current system (regressions, onboarding, incidents, blocked features).\n2. Scope a slice, not a rewrite of the admin product.\n3. Define success criteria the team can measure.\n4. Pair it with upcoming feature work so it rides a real ticket.\n5. Name the risk of the refactor itself and how you would roll back.\n\n**Senior signals to include:**\n- On the admin product the cost was three copies of one table and filters in a store, which slowed every permission change.\n- A migration plan: one domain, URL filters, guards, tests, then the next table.\n- You will not freeze feature work for a year of cleanup.\n- Opportunity cost is part of the pitch.\n\n**Avoid:**\n- Aesthetic arguments with no user or delivery cost.\n- A big-bang rewrite with no rollback.\n- Doing the refactor in secret and presenting it at review.\n\nThis is a pitch. The trade-off question is a single decision you already made.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Bạn bán nợ kỹ thuật như **giảm rủi ro hoặc tốc độ**, không phải “clean code vì tôi thích.”\n\n**Cách trình bày:**\n1. Gọi chi phí trong hệ thống hiện tại (regression, onboarding, incident, feature bị chặn).\n2. Khoanh một lát, không viết lại cả sản phẩm admin.\n3. Định success criteria team đo được.\n4. Ghép với feature sắp làm để nó đi cùng ticket thật.\n5. Gọi rủi ro của chính lần refactor và cách rollback.\n\n**Tín hiệu senior nên có:**\n- Trên sản phẩm admin, chi phí là ba bản copy một table và filter trong store, làm chậm mọi lần đổi quyền.\n- Kế hoạch migration: một domain, filter URL, guard, test, rồi table sau.\n- Bạn sẽ không đóng băng feature một năm để dọn.\n- Chi phí cơ hội là một phần của pitch.\n\n**Nên tránh:**\n- Lập luận thẩm mỹ không có giá user hoặc delivery.\n- Viết lại big-bang không rollback.\n- Refactor bí mật rồi trình lúc review.\n\nĐây là một pitch. Câu đánh đổi (trade-off) là một quyết định bạn đã làm."
       },
       "followUps": [
         {
-          "en": "What number or incident made a refactor get scheduled?",
-          "vi": "Con số hoặc incident nào khiến một refactor được lên lịch?"
+          "en": "How do you pick which debt slice to pitch first?",
+          "vi": "Bạn chọn lát nợ nào để pitch trước thế nào?"
         },
         {
-          "en": "How do you keep debt work from becoming a rewrite?",
-          "vi": "Bạn giữ debt work khỏi thành rewrite thế nào?"
+          "en": "What do you do if PM still says the refactor is not a priority?",
+          "vi": "Bạn làm gì nếu PM vẫn nói refactor không phải ưu tiên?"
+        },
+        {
+          "en": "How do you keep a scoped refactor from becoming a rewrite?",
+          "vi": "Bạn giữ một lần refactor có phạm vi khỏi biến thành viết lại thế nào?"
         }
-      ]
+      ],
+      "example": {
+        "en": "Situation: every permission change on the internal admin product touched three copied tables and a store dump of filters, so a one-line product request became a week and a regression. Task: I had to pitch paying that down without asking for a rewrite quarter. Action: I wrote the cost in delivery time and support tickets, then proposed one domain — URL filters, reusable guards, tests on the failure-prone paths — coupled to the next permission feature so we were not “cleaning for fun.” Success was: a new role does not require a tour, and the copied tables are gone in that domain. Risk control was a flag and a rollback to the old table. Result: PM bought the slice because it unblocked the feature, not because I like tidy folders. The rest of the product stayed ugly on purpose until the next ride-along ticket.",
+        "vi": "Situation: mọi lần đổi quyền trên sản phẩm admin nội bộ đụng ba table copy và một đống filter trong store, nên request một dòng thành một tuần và một regression. Task: tôi phải pitch trả nợ đó mà không xin một quý viết lại. Action: tôi viết chi phí bằng thời gian delivery và ticket support, rồi đề một domain — filter URL, guard dùng lại, test trên đường hay fail — ghép vào feature quyền kế để không “dọn cho vui.” Thành công là: role mới không cần tour, và table copy biến mất trong domain đó. Kiểm soát rủi ro là flag và rollback về table cũ. Result: PM mua lát đó vì nó gỡ feature, không vì tôi thích thư mục gọn. Phần còn lại của product cố ý vẫn xấu đến ticket đi kèm lần sau."
+      }
     },
     {
       "id": "giving-feedback",
@@ -552,19 +560,27 @@
         "vi": "Bạn đưa feedback khó nghe như thế nào?"
       },
       "answer": {
-        "en": "Keep it specific, respectful, and behavior-focused.\n\nGood pattern:\n\n1. describe observable behavior,\n2. explain impact,\n3. ask for their perspective,\n4. align on a better behavior,\n5. follow up later.\n\nAvoid vague labels like “you are careless.” Say “the PR skipped error-state handling twice, which created rework in review.” The point is to help the person improve, not to vent frustration.",
-        "vi": "Hãy giữ feedback cụ thể, tôn trọng và tập trung vào hành vi.\n\nPattern tốt:\n\n1. mô tả hành vi quan sát được,\n2. giải thích impact,\n3. hỏi perspective của họ,\n4. thống nhất hành vi tốt hơn,\n5. follow up lại sau đó.\n\nTránh gắn nhãn kiểu “em cẩu thả”. Nên nói “PR này đã bỏ sót error-state handling hai lần, làm team phải rework nhiều khi review”. Mục tiêu là giúp người đó cải thiện, không phải xả bực."
+        "en": "**What they are checking:** Difficult feedback that is **specific, behavior-focused, and aimed at improvement** — not a label, and not a pile-on in public.\n\n**How to structure it:**\n1. Describe observable behavior, with an example.\n2. Explain the impact on users, review, or the team.\n3. Ask for their perspective before you prescribe.\n4. Align on a better behavior and a check-in.\n5. Follow up later; feedback without a loop is a performance.\n\n**Senior signals to include:**\n- “The PR skipped error-state handling twice, which created rework” beats “you are careless.”\n- Private first, especially with a junior. Public only for a pattern the team needs.\n- You own your part if the convention was not written down.\n- Distinct from code-review-approach: here the person and the pattern are the unit.\n\n**Avoid:**\n- Vague character labels.\n- Feedback only when you are angry, or only in a 360 form.\n- Surprising someone in a group with something you never said one-on-one.\n\nI use the skipped empty/error states on the admin table as the example, not a personality story.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Feedback khó mà **cụ thể, xoay quanh hành vi, và nhằm cải thiện** — không phải nhãn, và không phải chồng lên trước đám đông.\n\n**Cách trình bày:**\n1. Mô tả hành vi quan sát được, kèm ví dụ.\n2. Giải thích tác động tới user, review, hoặc team.\n3. Hỏi góc nhìn của họ trước khi kê đơn.\n4. Chốt hành vi tốt hơn và một lần check-in.\n5. Follow up sau; feedback không có vòng lặp là một màn trình diễn.\n\n**Tín hiệu senior nên có:**\n- “PR bỏ qua trạng thái lỗi hai lần, tạo rework” thắng “bạn cẩu thả.”\n- Riêng trước, đặc biệt với junior. Công khai chỉ khi team cần một pattern.\n- Bạn nhận phần mình nếu convention chưa được viết.\n- Khác code-review-approach: ở đây đơn vị là người và pattern.\n\n**Nên tránh:**\n- Nhãn tính cách mơ hồ.\n- Chỉ feedback lúc giận, hoặc chỉ trong form 360.\n- Bất ngờ ai đó trong nhóm với thứ bạn chưa nói một-một.\n\nTôi dùng việc bỏ trạng thái rỗng/lỗi trên table admin làm ví dụ, không phải story tính cách."
       },
       "followUps": [
         {
-          "en": "How do you give the same feedback a second time if nothing changed?",
-          "vi": "Bạn đưa cùng feedback lần hai nếu không gì đổi thế nào?"
+          "en": "How do you give this feedback if the person is more senior than you?",
+          "vi": "Bạn đưa feedback này thế nào nếu người đó senior hơn bạn?"
         },
         {
-          "en": "When do you take feedback to a manager versus keep it 1:1?",
-          "vi": "Khi nào đưa feedback lên manager, khi nào giữ 1:1?"
+          "en": "When would you escalate from private feedback to a manager?",
+          "vi": "Khi nào bạn nâng từ feedback riêng lên manager?"
+        },
+        {
+          "en": "How is this different from a blocking comment on the pull request?",
+          "vi": "Chuyện này khác một comment chặn trên pull request thế nào?"
         }
-      ]
+      ],
+      "example": {
+        "en": "Situation: a teammate on the admin product shipped a table PR that skipped empty and error states twice, and review kept bouncing. Task: give the feedback without calling them careless, and without doing it in the PR theatre. Action: I asked for a short call. I described the two diffs, the impact — support could not tell a load failure from an empty role — and asked how they had been deciding what “done” meant. They thought visual parity with the mock was enough. We aligned on a checklist: empty, error, unauthorized, then happy path. I wrote that into the team’s PR template so it was not a personal rule. Result: the next table PR had the states, and I followed up a week later to say so. The person kept face; the bar moved.",
+        "vi": "Situation: một teammate trên sản phẩm admin ship PR table bỏ trạng thái rỗng và lỗi hai lần, và review cứ bật lại. Task: đưa feedback mà không gọi họ cẩu thả, và không làm trên sân khấu PR. Action: tôi xin một cuộc gọi ngắn. Tôi mô tả hai diff, tác động — support không tách load fail khỏi role rỗng — và hỏi họ quyết “xong” thế nào. Họ nghĩ khớp mock là đủ. Chúng tôi chốt checklist: rỗng, lỗi, unauthorized, rồi happy path. Tôi ghi vào template PR của team để không thành rule cá nhân. Result: PR table sau có đủ trạng thái, và tôi follow up một tuần sau để nói vậy. Người giữ thể diện; thanh chất lượng dịch."
+      }
     },
     {
       "id": "cross-team-collaboration",
@@ -578,19 +594,27 @@
         "vi": "Kể về một lần bạn phối hợp cross-team."
       },
       "answer": {
-        "en": "Choose a story where the difficulty was not just technical but also coordination-related.\n\nGood ingredients:\n\n- dependency on another team,\n- mismatched priorities,\n- unclear contracts,\n- rollout risk across systems.\n\nExplain how you created alignment: shared requirements, demo checkpoints, contract docs, phased rollout, or fallback plan. Senior collaboration often means **reducing coordination failure**, not just writing code faster.",
-        "vi": "Hãy chọn một story mà khó khăn không chỉ là technical mà còn là phối hợp.\n\nThành phần tốt thường có:\n\n- phụ thuộc vào team khác,\n- ưu tiên lệch nhau,\n- contract chưa rõ,\n- rollout risk qua nhiều hệ thống.\n\nNói rõ bạn đã tạo alignment bằng cách nào: shared requirement, checkpoint demo, doc contract, rollout theo phase hay fallback plan. Phối hợp kiểu senior thường là **giảm failure do coordination**, không chỉ code nhanh hơn."
+        "en": "**What they are checking:** You reduce **coordination failure** — contracts, checkpoints, rollout — not that you “work well with others.”\n\n**How to structure it:**\n1. Name the other team and the dependency.\n2. Name the mismatch (priority, contract, date).\n3. What artefact you created (contract doc, demo, phased rollout).\n4. How you handled risk if they slipped.\n5. What you would still change.\n\n**Senior signals to include:**\n- The BE error-envelope work is the influence story. Here I use the permission-field launch: three teams, one date, a missing field.\n- Shared requirements and a states table beat another meeting.\n- A fallback: ship behind a flag if the field is late.\n- You do not take credit for their code.\n\n**Avoid:**\n- A story with no friction. Collaboration that was easy teaches nothing.\n- Blaming the other team as the punchline.\n- Skipping the artefact: “we talked a lot” is not a system.\n\nDistinct from stakeholder-communication (how you change the message) and from influence (how you move a team you do not manage).",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Bạn giảm **thất bại phối hợp** — contract, checkpoint, rollout — không phải “làm việc nhóm tốt.”\n\n**Cách trình bày:**\n1. Gọi team kia và dependency.\n2. Gọi chỗ lệch (ưu tiên, contract, ngày).\n3. Artefact bạn tạo (doc contract, demo, rollout theo pha).\n4. Bạn xử lý rủi ro nếu họ trễ thế nào.\n5. Bạn vẫn muốn đổi gì.\n\n**Tín hiệu senior nên có:**\n- Việc envelope lỗi với BE là câu influence. Ở đây tôi dùng launch field quyền: ba team, một ngày, một field thiếu.\n- Requirement dùng chung và bảng trạng thái thắng thêm một cuộc họp.\n- Fallback: ship sau flag nếu field trễ.\n- Bạn không nhận công code của họ.\n\n**Nên tránh:**\n- Story không ma sát. Cộng tác dễ thì không dạy gì.\n- Đổ team kia như punchline.\n- Bỏ artefact: “chúng tôi nói nhiều” không phải hệ thống.\n\nKhác stakeholder-communication (cách đổi message) và khác influence (cách dịch team bạn không quản)."
       },
       "followUps": [
         {
-          "en": "What did you do when the other team’s priority never moved?",
-          "vi": "Bạn làm gì khi ưu tiên của team kia không bao giờ dịch?"
+          "en": "What artefact do you create first when two teams do not share a date?",
+          "vi": "Artefact nào bạn tạo trước khi hai team không chung một ngày?"
         },
         {
-          "en": "How do you keep a shared contract from rotting after the first demo?",
-          "vi": "Bạn giữ shared contract khỏi thối sau demo đầu thế nào?"
+          "en": "How do you keep a fallback from becoming the accidental product?",
+          "vi": "Bạn giữ fallback khỏi biến thành product tình cờ thế nào?"
+        },
+        {
+          "en": "What do you do if the other team will not come to the demo?",
+          "vi": "Bạn làm gì nếu team kia không tới demo?"
         }
-      ]
+      ],
+      "example": {
+        "en": "Situation: the admin permission launch depended on BE adding a field, design finishing empty states, and us wiring guards, all on one date. The field was late and priorities did not match. Task: I owned the coordination, not their backlog. Action: I put a states table in a shared doc — who sees which row, empty, error, unauthorized — and a weekly demo checkpoint. If the field slipped, we would ship the three known roles behind a flag. I asked BE for a contract example, not a promise. Result: the field landed two days later than the original date; the flag kept us from a wrong-row launch. Coordination failed less because the artefact was shared, not because I sat in more meetings. I would still have scheduled the first demo a week earlier.",
+        "vi": "Situation: launch quyền admin phụ thuộc BE thêm field, design xong trạng thái rỗng, và chúng tôi gắn guard, tất cả một ngày. Field trễ và ưu tiên không khớp. Task: tôi sở hữu phần phối hợp, không phải backlog của họ. Action: tôi để bảng trạng thái trong doc dùng chung — ai thấy hàng nào, rỗng, lỗi, unauthorized — và checkpoint demo mỗi tuần. Nếu field trượt, chúng tôi ship ba role đã biết sau flag. Tôi xin BE một ví dụ contract, không phải lời hứa. Result: field vào muộn hai ngày so với ngày gốc; flag giữ chúng tôi khỏi launch sai hàng. Phối hợp fail ít hơn vì artefact dùng chung, không vì tôi ngồi thêm họp. Tôi vẫn sẽ hẹn demo đầu sớm hơn một tuần."
+      }
     },
     {
       "id": "onboarding-new-member",
@@ -604,19 +628,27 @@
         "vi": "Bạn onboard một frontend engineer mới thế nào?"
       },
       "answer": {
-        "en": "A good onboarding plan gives context, safe contribution, and fast feedback.\n\n1. Explain product, architecture, and development workflow.\n2. Show the state/data flow of one representative feature.\n3. Give a starter task with bounded scope.\n4. Pair on the first PR or two.\n5. Provide written references: conventions, folder structure, debugging tips.\n\nThe goal is not just to help them ship one ticket. It is to help them form the right mental model quickly.",
-        "vi": "Onboarding tốt phải cho người mới đủ context, có nơi contribute an toàn và nhận feedback nhanh.\n\n1. Giải thích product, architecture và development workflow.\n2. Chỉ ra state/data flow của một feature đại diện.\n3. Giao một task mở đầu có scope rõ.\n4. Pair ở 1-2 PR đầu.\n5. Có tài liệu viết sẵn: convention, folder structure, mẹo debug.\n\nMục tiêu không chỉ là để họ ship 1 ticket. Mà là giúp họ hình thành mental model đúng càng sớm càng tốt."
+        "en": "**What they are checking:** You help someone form the **right mental model**, not just close their first ticket.\n\n**How to structure it:**\n1. Product, architecture, and how we ship (workflow, environments).\n2. Walk one representative feature’s state and data flow.\n3. A starter task with a bounded blast radius.\n4. Pair on the first PR or two; review for reasoning, not commas.\n5. Written rails: folder map, conventions, how we debug production.\n\n**Senior signals to include:**\n- On the admin product the first walk is filters in the URL, session in the store, permissions in guards.\n- The starter task is a small empty/error state, not “rewrite the table.”\n- You adapt: more pairing for some people, a written checklist for others.\n- Success is they change a filter without a tour — same bar as the seniority definition.\n\n**Avoid:**\n- Dumping them in the backlog with a wiki link.\n- Only pairing on trivia so they never see production.\n- Making them copy your personal style instead of the team’s.\n\nThis is ramp. Mentoring-junior is ongoing development.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Bạn giúp ai đó lập **mental model đúng**, không chỉ đóng ticket đầu.\n\n**Cách trình bày:**\n1. Product, architecture, và cách chúng tôi ship (workflow, môi trường).\n2. Đi một feature đại diện: state và luồng data.\n3. Task mở đầu với bán kính nổ bị khoanh.\n4. Pair PR đầu hoặc hai; review lập luận, không phải dấu phẩy.\n5. Ray viết sẵn: bản đồ thư mục, convention, cách debug production.\n\n**Tín hiệu senior nên có:**\n- Trên sản phẩm admin, lần đi đầu là filter trên URL, session trong store, quyền trong guard.\n- Task mở đầu là trạng thái rỗng/lỗi nhỏ, không phải “viết lại table.”\n- Bạn adapt: pair nhiều hơn với người này, checklist viết với người kia.\n- Thành công là họ đổi filter không cần tour — cùng thanh với định nghĩa seniority.\n\n**Nên tránh:**\n- Thả họ vào backlog với một link wiki.\n- Chỉ pair trivia nên họ không bao giờ thấy production.\n- Bắt họ copy style cá nhân thay vì của team.\n\nĐây là ramp. Mentoring-junior là phát triển kéo dài."
       },
       "followUps": [
         {
-          "en": "What is a good first ticket on a Vue/Nuxt codebase?",
-          "vi": "Ticket đầu tốt trên codebase Vue/Nuxt là gì?"
+          "en": "How do you pick a first ticket that is real but not dangerous?",
+          "vi": "Bạn chọn ticket đầu vừa thật vừa không nguy hiểm thế nào?"
         },
         {
-          "en": "How do you know onboarding failed after two weeks?",
-          "vi": "Bạn biết onboarding thất bại sau hai tuần bằng dấu hiệu nào?"
+          "en": "What written artefact actually gets used after week one?",
+          "vi": "Artefact viết nào thực sự được dùng sau tuần một?"
+        },
+        {
+          "en": "How is onboarding different from mentoring someone already on the team?",
+          "vi": "Onboarding khác mentoring người đã ở team thế nào?"
         }
-      ]
+      ],
+      "example": {
+        "en": "Situation: a new frontend engineer joined the internal admin product and needed to be useful without breaking permissions. Task: I owned their first two weeks, not their career. Action: day one was product plus the state map — URL filters, store for session UX, guards for roles. The starter ticket was adding an unauthorized empty state to one table, with a known test. We paired on the first PR; the second they drove. I left a one-page folder map and the “who owns this state?” review question. Result: in week two they changed a filter without asking me who owned it. That is the onboarding bar. I would still add a recorded walk through a production debug, because the first incident is a poor time to learn our logs.",
+        "vi": "Situation: một frontend engineer mới vào sản phẩm admin nội bộ và cần hữu ích mà không gãy quyền. Task: tôi sở hữu hai tuần đầu của họ, không phải cả sự nghiệp. Action: ngày một là product cộng bản đồ state — filter URL, store cho UX session, guard cho role. Ticket mở đầu là thêm trạng thái rỗng unauthorized cho một table, kèm test đã biết. Chúng tôi pair PR đầu; PR hai họ cầm lái. Tôi để lại bản đồ thư mục một trang và câu review “ai sở hữu state này?” Result: tuần hai họ đổi filter mà không hỏi tôi ai sở hữu. Đó là thanh onboarding. Tôi vẫn sẽ thêm một lần đi debug production đã ghi hình, vì incident đầu là lúc tệ để học log của chúng tôi."
+      }
     },
     {
       "id": "estimating-frontend-work",
@@ -630,19 +662,27 @@
         "vi": "Bạn estimate công việc frontend như thế nào?"
       },
       "answer": {
-        "en": "Estimate by decomposing uncertainty, not by guessing total hours.\n\nUseful dimensions:\n\n- new UI vs repeated pattern,\n- API certainty,\n- edge cases and validation,\n- accessibility needs,\n- testing scope,\n- rollout and migration cost.\n\nWhen a task is uncertain, call that out explicitly and propose a spike or range. Good senior estimates include **what could make the number wrong**.",
-        "vi": "Hãy estimate bằng cách tách uncertainty ra, không phải đoán đại một con số tổng.\n\nCác chiều nên nhìn:\n\n- UI mới hoàn toàn hay pattern lặp lại,\n- API đã chắc chưa,\n- số lượng edge case và validation,\n- nhu cầu accessibility,\n- phạm vi testing,\n- chi phí rollout hoặc migration.\n\nNếu task còn mơ hồ, hãy nói rõ điều đó và đề xuất spike hoặc estimate theo range. Estimate kiểu senior luôn có phần **vì sao con số này có thể sai**."
+        "en": "**What they are checking:** You decompose **uncertainty**, and you say what would make the number wrong — not a false-precision hour count.\n\n**How to structure it:**\n1. Split new UI versus a repeated pattern.\n2. Name API certainty, edge cases, accessibility, tests, rollout.\n3. Give a range, not a fake point, when the contract is missing.\n4. Offer a spike when one unknown dominates.\n5. Re-estimate in public when an assumption dies.\n\n**Senior signals to include:**\n- Admin permission work looked like a table and was actually a contract plus four states.\n- I pad for unknown roles, not for “meetings.”\n- A spike on the permission field was cheaper than a three-week guess.\n- You will miss. The skill is naming the miss early.\n\n**Avoid:**\n- A single number with no range and no assumptions.\n- Padding silently so you always look right.\n- Estimating implementation only and forgetting rollout, a11y, and empty states.\n\nI also count empty, error, and unauthorized states as real work when I estimate a table, because those were the hours we used to forget. This is not the deadline-scope question. Here they asked how you count.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Bạn tách **độ bất định**, và nói gì sẽ làm số sai — không phải đếm giờ giả chính xác.\n\n**Cách trình bày:**\n1. Tách UI mới khác pattern lặp.\n2. Gọi độ chắc API, trường hợp biên, khả năng truy cập (a11y), test, rollout.\n3. Cho khoảng, không phải điểm giả, khi contract còn thiếu.\n4. Đề spike khi một ẩn số át hết.\n5. Ước lại công khai khi một assumption chết.\n\n**Tín hiệu senior nên có:**\n- Việc quyền admin trông như một table và thực ra là contract cộng bốn trạng thái.\n- Tôi chèn cho role chưa biết, không phải cho “họp.”\n- Spike field quyền rẻ hơn đoán ba tuần.\n- Bạn sẽ miss. Kỹ năng là gọi miss sớm.\n\n**Nên tránh:**\n- Một số không khoảng và không assumption.\n- Im lặng chèn để luôn trông đúng.\n- Chỉ ước phần implement rồi quên rollout, a11y, và trạng thái rỗng.\n\nTôi cũng đếm trạng thái rỗng, lỗi, và unauthorized như việc thật khi ước một table, vì đó là số giờ chúng tôi từng quên. Đây không phải câu deadline-scope. Ở đây họ hỏi bạn đếm thế nào."
       },
       "followUps": [
         {
-          "en": "What usually makes a frontend estimate wrong after kickoff?",
-          "vi": "Điều gì thường làm estimate frontend sai sau kickoff?"
+          "en": "When is a spike the honest estimate instead of a week range?",
+          "vi": "Khi nào spike là ước lượng trung thực thay vì một khoảng tuần?"
         },
         {
-          "en": "How do you estimate a task that depends on an unwritten API?",
-          "vi": "Bạn estimate task phụ thuộc API chưa viết thế nào?"
+          "en": "How do you talk about a range without sounding like you will not commit?",
+          "vi": "Bạn nói về một khoảng mà không nghe như sẽ không cam kết thế nào?"
+        },
+        {
+          "en": "What do you still forget to count, and how do you catch it?",
+          "vi": "Bạn vẫn hay quên đếm gì, và bắt nó thế nào?"
         }
-      ]
+      ],
+      "example": {
+        "en": "Situation: PM asked “how long is the role table?” as if it were a list UI. Task: I owned an estimate the date could survive. Action: I split pattern reuse (we had one table) from new work (four states, a missing permission field, tests, a flag). I gave a range: three days if the field exists and we copy the table, two weeks if BE still owes the field and we need a spike. I wrote the assumptions in the ticket. When the field slipped, I re-estimated in the same thread instead of going quiet. Result: we planned the flag path and still hit a date. The number that would have been wrong was a confident five-day point estimate that ignored the contract. I still estimate empty, error, and unauthorized as real work, not polish.",
+        "vi": "Situation: PM hỏi “table role mất bao lâu?” như thể đó là UI list. Task: tôi sở hữu một ước lượng mà ngày sống được. Action: tôi tách tái sử dụng pattern (đã có một table) khỏi việc mới (bốn trạng thái, field quyền thiếu, test, một flag). Tôi cho khoảng: ba ngày nếu field có và chúng tôi copy table, hai tuần nếu BE còn nợ field và cần spike. Tôi viết assumption trong ticket. Khi field trượt, tôi ước lại trên cùng thread thay vì im. Result: chúng tôi lên đường flag và vẫn kịp một ngày. Số sẽ sai là ước năm ngày chắc nịch bỏ qua contract. Tôi vẫn ước trạng thái rỗng, lỗi, và unauthorized như việc thật, không phải nước sơn."
+      }
     },
     {
       "id": "learning-react-as-vue-dev",
@@ -656,21 +696,25 @@
         "vi": "Bạn sẽ giải thích hành trình học React của mình khi đi từ Vue như thế nào?"
       },
       "answer": {
-        "en": "**Short answer:** Be honest that Vue is your production strength, then explain that you are learning React by transferring **principles**, not memorizing APIs.\n\n**The strongest comparison points are:**\n\n- Vue reactivity vs React re-render model,\n- composables vs custom hooks,\n- watcher/lifecycle patterns vs effects,\n- Pinia mindset vs React state/server-state tools,\n- Nuxt SSR mental model vs Next App Router and RSC.\n\n**Why this answer is strong:**\n\n- it avoids bluffing,\n- it shows depth in fundamentals,\n- it proves you can learn ecosystems by reasoning, not cargo-culting.\n\n**Trade-offs / things to avoid:**\n\n- Do not say React and Vue are “basically the same”.\n- Do not apologize too much for the gap.\n- Do not make the answer only about syntax differences.\n\nThis framing makes you sound like an engineer with transferable frontend depth.",
-        "vi": "**Trả lời ngắn:** Hãy nói thẳng Vue là production strength của mình, rồi giải thích rằng bạn đang học React bằng cách chuyển **nguyên lý**, không phải học thuộc API.\n\n**Các điểm so sánh mạnh nhất là:**\n\n- Vue reactivity vs React re-render model,\n- composable vs custom hook,\n- watcher/lifecycle pattern vs effect,\n- tư duy Pinia vs bộ công cụ state/server-state ở React,\n- mental model SSR của Nuxt vs Next App Router và RSC.\n\n**Vì sao câu trả lời này mạnh:**\n\n- không bluff,\n- cho thấy nền tảng rất chắc,\n- chứng minh bạn học ecosystem bằng reasoning chứ không cargo-cult.\n\n**Trade-off / điều nên tránh:**\n\n- Đừng nói React và Vue “gần như giống nhau”.\n- Đừng xin lỗi quá nhiều về khoảng trống này.\n- Đừng biến câu trả lời thành chuyện khác biệt cú pháp.\n\nCách frame này khiến bạn trông như một engineer có độ sâu frontend chuyển đổi được giữa các hệ."
+        "en": "**What they are checking:** Vue is your production strength, and you learn React by transferring **principles**, not by memorising APIs or bluffing years.\n\n**How to structure it:**\n1. State the honest split: Vue 3 / Nuxt / TypeScript in production, React / Next in active transfer.\n2. Map the models: reactivity versus re-render, composable versus hook, Pinia versus server cache, Nuxt versus App Router.\n3. Give one place the mapping fails (watch is not default `useEffect`).\n4. Say how you practise: small builds, reading the React 20.1 topics, not a syntax cheat sheet.\n5. Invite a drill on a mapping they care about.\n\n**Senior signals to include:**\n- Same framing as self-intro and strengths-weaknesses. Do not invent React production years.\n- You know the dangerous rows: Vue `ref()` is not `useRef`; Context is not `provide`.\n- React Compiler and RSC are things you can name, not things you pretend to have shipped at scale.\n- Depth in fundamentals is the hire reason.\n\n**Avoid:**\n- “React and Vue are basically the same.”\n- Apologising so hard you sound unsafe.\n- A syntax-only tour (`v-if` versus `&&`).\n\nThis is the transfer story. The rerender Q&A is the technical sibling.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Vue là sức production của bạn, và bạn học React bằng cách chuyển **nguyên lý**, không học thuộc API hay bluff số năm.\n\n**Cách trình bày:**\n1. Nói tách trung thực: Vue 3 / Nuxt / TypeScript trên production, React / Next đang chuyển chủ động.\n2. Map mô hình: reactivity khác re-render, composable khác hook, Pinia khác cache server, Nuxt khác App Router.\n3. Cho một chỗ mapping fail (watch không phải `useEffect` mặc định).\n4. Nói cách luyện: build nhỏ, đọc topic React 20.1, không phải cheat sheet cú pháp.\n5. Mời hỏi sâu một mapping họ quan tâm.\n\n**Tín hiệu senior nên có:**\n- Cùng framing với self-intro và strengths-weaknesses. Không bịa số năm React production.\n- Bạn biết hàng nguy hiểm: `ref()` Vue không phải `useRef`; Context không phải `provide`.\n- React Compiler và RSC là thứ bạn gọi tên được, không phải thứ bạn giả vờ đã ship ở scale.\n- Chiều sâu nguyên lý là lý do hire.\n\n**Nên tránh:**\n- “React và Vue về cơ bản giống nhau.”\n- Xin lỗi nặng đến mức nghe không an toàn.\n- Tour chỉ cú pháp (`v-if` khác `&&`).\n\nĐây là câu chuyện chuyển. Q&A re-render là anh em kỹ thuật."
       },
       "example": {
-        "en": "A concise version: “My production depth is in Vue/Nuxt, but I’m learning React by mapping concepts. For example, I compare Vue’s fine-grained reactivity with React’s re-render model, composables with custom hooks, and Nuxt SSR mental models with Next App Router. That approach helps me learn React in a way that will hold up in production.”",
-        "vi": "Một phiên bản ngắn gọn: “Production depth của em nằm ở Vue/Nuxt, nhưng em học React bằng cách map nguyên lý. Ví dụ em so Vue reactivity với React re-render model, composable với custom hook, và mental model SSR của Nuxt với Next App Router. Cách học đó giúp em tiếp cận React theo kiểu có thể đứng vững trong production sau này.”"
+        "en": "Situation: I am a Vue 3 / Nuxt / TypeScript engineer with about five years, and this room may need React. Task: explain the journey without bluffing production years I do not have. Action: I learn React by mapping principles. Vue patches a reactivity graph; React re-runs the function and reconciles. Composables become custom hooks, but watch is not default useEffect — effects are for the outside world after commit. Pinia is client-owned meaning; lists stay in Query or a Server Component, same as useAsyncData. Nuxt layouts and payload map onto App Router, with a sharper use-client boundary. Result: I can debug a re-render tax and a stale effect with the same judgment I use in Vue. I still will not claim I have run React at the same production depth. The cheat sheet is a door into a topic, not the answer.",
+        "vi": "Situation: tôi là kỹ sư Vue 3 / Nuxt / TypeScript khoảng năm năm, và phòng này có thể cần React. Task: giải thích hành trình mà không bluff số năm production tôi không có. Action: tôi học React bằng cách map nguyên lý. Vue patch đồ thị reactivity; React chạy lại hàm rồi reconcile. Composable thành custom hook, nhưng watch không phải useEffect mặc định — effect là cho thế giới ngoài sau commit. Pinia là ý nghĩa thuộc client; list ở lại Query hoặc Server Component, giống useAsyncData. Layout và payload Nuxt map sang App Router, với biên use-client sắc hơn. Result: tôi debug được thuế re-render và effect cũ với cùng phán đoán tôi dùng ở Vue. Tôi vẫn không nhận đã chạy React ở cùng chiều sâu production. Cheat sheet là cửa vào một topic, không phải đáp án."
       },
       "followUps": [
         {
-          "en": "What has been the hardest React mental shift for you?",
-          "vi": "Mental shift khó nhất của bạn khi học React là gì?"
+          "en": "Which Vue habit hurts most when you start writing useEffect?",
+          "vi": "Thói quen Vue nào hại nhất khi bắt đầu viết useEffect?"
         },
         {
-          "en": "How would you ramp up safely on a React codebase in the first month?",
-          "vi": "Nếu vào một codebase React, bạn sẽ ramp up an toàn trong tháng đầu thế nào?"
+          "en": "How do you practise React without pretending it is already production depth?",
+          "vi": "Bạn luyện React mà không giả đó đã là chiều sâu production thế nào?"
+        },
+        {
+          "en": "Where does the Pinia-to-React mapping go wrong for server lists?",
+          "vi": "Mapping Pinia sang React sai ở đâu với list phía server?"
         }
       ]
     },
@@ -686,19 +730,27 @@
         "vi": "Quality bar tốt với bạn là như thế nào?"
       },
       "answer": {
-        "en": "A good quality bar is not perfection. It is a consistent standard relative to risk.\n\nFor frontend, that usually includes:\n\n- correct behavior including error and empty states,\n- acceptable accessibility,\n- reasonable performance,\n- maintainable structure,\n- observability for critical failures,\n- enough test coverage for risky behavior.\n\nSenior engineers adjust the bar by context, but they do not let urgent delivery become an excuse for avoidable instability.",
-        "vi": "Quality bar tốt không phải là sự hoàn hảo. Nó là một chuẩn nhất quán tương xứng với mức độ rủi ro.\n\nVới frontend, thường gồm:\n\n- hành vi đúng kể cả error state và empty state,\n- accessibility ở mức chấp nhận được,\n- performance hợp lý,\n- cấu trúc maintainable,\n- observability cho failure quan trọng,\n- đủ test ở các hành vi nhiều risk.\n\nSenior engineer biết chỉnh quality bar theo context, nhưng không lấy lý do “gấp quá” để hợp thức hóa sự bất ổn có thể tránh được."
+        "en": "**What they are checking:** A quality bar that is **consistent relative to risk**, not perfection, and not “whatever the deadline allows.”\n\n**How to structure it:**\n1. Define the floor: correct behavior including empty, error, unauthorized.\n2. Add accessibility, reasonable performance, structure someone else can change.\n3. Observability for critical failures, tests on risky behavior.\n4. Say how the bar moves with blast radius (auth versus a CSS tweak).\n5. Name what you will not let urgency erase.\n\n**Senior signals to include:**\n- On the admin product the floor was guards plus empty/error, even when we cut CSV export.\n- You adjust the ceiling (animation, extra views) without dropping the floor.\n- A written checklist in the PR template beats a vibe.\n- Distinct from when-to-say-no: here you define the bar; there you refuse a request.\n\n**Avoid:**\n- Perfection as the bar. Nothing ships.\n- “It depends” with no floor.\n- Tests as a number of cases rather than risky behavior.\n\nQuality is a product decision you can defend in the same sentence as the date.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Thanh chất lượng **nhất quán theo rủi ro**, không phải hoàn hảo, và không phải “deadline cho phép gì.”\n\n**Cách trình bày:**\n1. Định sàn: hành vi đúng gồm rỗng, lỗi, unauthorized.\n2. Thêm khả năng truy cập (a11y), hiệu năng hợp lý, cấu trúc người khác đổi được.\n3. Observability cho fail tới hạn, test trên hành vi rủi ro.\n4. Nói thanh dịch theo bán kính nổ (auth khác một tweak CSS).\n5. Gọi thứ urgency không được xóa.\n\n**Tín hiệu senior nên có:**\n- Trên sản phẩm admin sàn là guard cộng rỗng/lỗi, kể cả khi chúng tôi cắt xuất CSV.\n- Bạn chỉnh trần (animation, view thêm) mà không hạ sàn.\n- Checklist viết trong template PR thắng một vibe.\n- Khác câu khi nào nói không: ở đây bạn định thanh; ở đó bạn từ chối request.\n\n**Nên tránh:**\n- Hoàn hảo làm thanh. Không gì ship.\n- “Tùy” mà không có sàn.\n- Test như số case chứ không phải hành vi rủi ro.\n\nChất lượng là quyết định product bạn bảo vệ được trong cùng câu với ngày."
       },
       "followUps": [
         {
-          "en": "What is good enough for an internal admin vs a checkout?",
-          "vi": "Thế nào là đủ tốt cho admin nội bộ so với checkout?"
+          "en": "What is on the floor even when the date is fixed?",
+          "vi": "Sàn gồm gì kể cả khi ngày đã cố định?"
         },
         {
-          "en": "Which quality item do you never skip on a Friday ship?",
-          "vi": "Mục quality nào bạn không bao giờ bỏ qua khi ship thứ Sáu?"
+          "en": "How do you keep the bar from becoming your personal taste?",
+          "vi": "Bạn giữ thanh khỏi biến thành khẩu vị cá nhân thế nào?"
+        },
+        {
+          "en": "Where is a thinner bar actually the senior call?",
+          "vi": "Chỗ nào thanh mỏng hơn thực sự là quyết định senior?"
         }
-      ]
+      ],
+      "example": {
+        "en": "Situation: launch week on the admin product, and someone asked to skip empty and error states “just for v1.” Task: I owned the bar, not the slogan. Action: I said the floor is correct behavior on the critical path — empty, error, unauthorized, keyboard access, permission guards — and that CSV export and extra views were ceiling. Urgency could move the ceiling. It could not erase the floor. I pointed at a past support ticket where a missing error state looked like an empty role. Result: we shipped without export and with the states. The PR template now lists those states so the bar is not my mood. A CSS-only PR can be thinner; an auth PR cannot. That is relative to risk, not perfection.",
+        "vi": "Situation: tuần launch sản phẩm admin, và ai đó xin bỏ trạng thái rỗng và lỗi “chỉ cho v1.” Task: tôi sở hữu thanh, không phải slogan. Action: tôi nói sàn là hành vi đúng trên đường tới hạn — rỗng, lỗi, unauthorized, truy cập bàn phím, permission guard — và xuất CSV cùng view thêm là trần. Urgency có thể dịch trần. Nó không xóa sàn. Tôi chỉ một ticket support cũ nơi thiếu trạng thái lỗi trông như role rỗng. Result: chúng tôi ship không có phần xuất và có đủ trạng thái. Template PR giờ liệt kê các trạng thái đó để thanh không phải tâm trạng tôi. PR chỉ CSS có thể mỏng hơn; PR auth thì không. Đó là theo rủi ro, không phải hoàn hảo."
+      }
     },
     {
       "id": "when-to-say-no",
@@ -712,19 +764,27 @@
         "vi": "Khi nào bạn nói không với một yêu cầu?"
       },
       "answer": {
-        "en": "You say no when the request creates disproportionate risk or undermines the team's goals.\n\nCommon cases:\n\n- impossible deadline with hidden quality cost,\n- shortcut that weakens security or data integrity,\n- technical direction that creates large long-term pain for small short-term gain,\n- scope that distracts from more important outcomes.\n\nGood senior “no” is usually paired with an alternative: “I would not do X, but I can support Y this sprint and Z next.”",
-        "vi": "Bạn nói không khi yêu cầu đó tạo ra risk quá lớn hoặc đi ngược mục tiêu của team.\n\nVí dụ thường gặp:\n\n- deadline bất khả thi nhưng giấu quality cost,\n- shortcut làm yếu security hoặc data integrity,\n- hướng technical gây đau lâu dài lớn để đổi lấy lợi ích ngắn hạn nhỏ,\n- scope làm lệch khỏi outcome quan trọng hơn.\n\nMột câu “không” kiểu senior thường đi kèm alternative: “Em không khuyến nghị làm X, nhưng em có thể hỗ trợ Y trong sprint này và Z ở bước tiếp theo.”"
+        "en": "**What they are checking:** A **no with an alternative**, aimed at risk or goals — not stubbornness, and not a silent yes.\n\n**How to structure it:**\n1. Restate the request and the goal you think they have.\n2. Name the disproportionate risk (security, integrity, a date that hides quality).\n3. Offer Y this sprint and Z next, or a thinner slice.\n4. Put the no in writing so it is a team decision.\n5. Escalate if the risk is authz or data and the room still wants the shortcut.\n\n**Senior signals to include:**\n- I said no to dropping permission guards to make the admin date; we cut CSV instead.\n- I said no to putting shareable filters in Pinia as the “fast” path.\n- A good no is specific: not this, this instead, by this date.\n- Distinct from prioritize-deadline-scope (there you cut with PM); here the request is the problem.\n\n**Avoid:**\n- No without a path. You become a blocker.\n- Yes in the meeting, no in Slack.\n- Saying no to stretch work that was merely uncomfortable.\n\nThe user outcome stays the shared goal.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Một **câu không kèm phương án**, nhắm rủi ro hoặc mục tiêu — không phải cứng đầu, và không phải xin vâng im lặng.\n\n**Cách trình bày:**\n1. Nói lại request và mục tiêu bạn nghĩ họ có.\n2. Gọi rủi ro lệch (bảo mật, toàn vẹn, một ngày che chất lượng).\n3. Đề Y sprint này và Z sprint sau, hoặc một lát mỏng hơn.\n4. Viết câu không ra chữ để đó là quyết định team.\n5. Escalate nếu rủi ro là authz hoặc data mà phòng vẫn muốn đường tắt.\n\n**Tín hiệu senior nên có:**\n- Tôi nói không với việc bỏ permission guard để kịp ngày admin; chúng tôi cắt CSV.\n- Tôi nói không với nhét filter share được vào Pinia như đường “nhanh.”\n- Câu không tốt thì cụ thể: không cái này, cái này thay, tới ngày này.\n- Khác prioritize-deadline-scope (ở đó bạn cắt với PM); ở đây request mới là vấn đề.\n\n**Nên tránh:**\n- Không mà không có đường. Bạn thành blocker.\n- Yes trong họp, no trên Slack.\n- Nói không với việc stretch chỉ vì khó chịu.\n\nOutcome user vẫn là mục tiêu chung."
       },
       "followUps": [
         {
-          "en": "Give an example of a no that later proved correct.",
-          "vi": "Cho ví dụ một lần nói không sau đó đúng."
+          "en": "How do you say no to someone more senior without escalating first?",
+          "vi": "Bạn nói không với người senior hơn mà chưa escalate thế nào?"
         },
         {
-          "en": "How do you say no to a founder without sounding blocked?",
-          "vi": "Bạn nói không với founder mà không nghe như blocked thế nào?"
+          "en": "What request would you refuse even if PM accepted the risk in the room?",
+          "vi": "Request nào bạn từ chối kể cả khi PM nhận rủi ro trong phòng?"
+        },
+        {
+          "en": "How is this different from cutting scope together on a fixed date?",
+          "vi": "Chuyện này khác việc cùng cắt scope khi ngày đã cố thế nào?"
         }
-      ]
+      ],
+      "example": {
+        "en": "Situation: two days before the admin launch, a request came in to skip permission guards “just this once” so the table could ship. Task: I had to say no without becoming the villain of the date. Action: I restated the goal — users with the right role see the right row — and named the risk: a wrong-row launch is not a quality miss, it is an integrity miss. I offered the alternative we had already written: keep the guards, cut CSV export, ship empty and error states. I put that in the ticket the same hour. Result: PM took the cut. The date held. The no was specific and paired with a path, so it did not sound like taste. I would still say no to that shortcut. I would not say no to a stretch empty-state polish that was merely extra work.",
+        "vi": "Situation: hai ngày trước launch admin, một request xin bỏ permission guard “chỉ lần này” để table kịp ship. Task: tôi phải nói không mà không thành nhân vật phản diện của ngày. Action: tôi nói lại mục tiêu — user đúng role thấy đúng hàng — và gọi rủi ro: launch sai hàng không phải miss chất lượng, đó là miss toàn vẹn. Tôi đề phương án đã viết: giữ guard, cắt xuất CSV, ship trạng thái rỗng và lỗi. Tôi ghi vào ticket cùng giờ. Result: PM nhận phần cắt. Ngày giữ được. Câu không cụ thể và có đường, nên không nghe như khẩu vị. Tôi vẫn nói không với đường tắt đó. Tôi sẽ không nói không với polish trạng thái rỗng mang tính stretch, chỉ vì thêm việc."
+      }
     },
     {
       "id": "tradeoff-example",
@@ -738,19 +798,27 @@
         "vi": "Cho ví dụ về một technical trade-off bạn đã đưa ra."
       },
       "answer": {
-        "en": "Pick an example where neither option was obviously perfect.\n\nGood trade-off stories:\n\n- SSR vs SPA for a specific flow,\n- server pagination vs client flexibility,\n- quick patch vs deeper refactor,\n- using a library vs building in-house,\n- co-locating state vs globalizing it.\n\nWhat matters is not the choice alone. It is whether you can explain **context, options, risks, and why the chosen downside was acceptable**.",
-        "vi": "Hãy chọn ví dụ mà không có option nào hoàn hảo tuyệt đối.\n\nStory trade-off tốt có thể là:\n\n- SSR vs SPA cho một flow cụ thể,\n- server pagination vs tính linh hoạt phía client,\n- patch nhanh vs refactor sâu,\n- dùng library vs tự build,\n- giữ state local hay đẩy lên global.\n\nĐiều interviewer quan tâm không chỉ là lựa chọn cuối cùng, mà là bạn có giải thích được **context, option, risk và vì sao downside đã chọn là chấp nhận được** hay không."
+        "en": "**What they are checking:** You can explain **context, options, risks, and why the downside was acceptable** — neither option was perfect.\n\n**How to structure it:**\n1. Context and the user outcome.\n2. Option A and its cost.\n3. Option B and its cost.\n4. What you picked and the downside you accepted.\n5. What would make you reverse it.\n\n**Senior signals to include:**\n- I use the shared permission-guard helper versus inline checks — not the Pinia-versus-URL fight (that is disagree-tech-decision).\n- Guards cost an extra abstraction; inline was faster and would drift in three tables.\n- The accepted downside: a new engineer must learn the helper. The rejected downside: three copies of authz.\n- You can name the metric you watched after: regressions on wrong-row.\n\n**Avoid:**\n- A trade-off where one side is a straw man.\n- Picking something with no leftover cost.\n- Reusing the designer conflict or the BE envelope as if they were the same story.\n\nA trade-off is a decision you can still see both sides of.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Bạn giải thích được **bối cảnh, lựa chọn, rủi ro, và vì sao mặt trái chấp nhận được** — không bên nào hoàn hảo.\n\n**Cách trình bày:**\n1. Bối cảnh và outcome user.\n2. Lựa chọn A và giá của nó.\n3. Lựa chọn B và giá của nó.\n4. Bạn chọn gì và mặt trái bạn nhận.\n5. Điều gì khiến bạn đảo ngược.\n\n**Tín hiệu senior nên có:**\n- Tôi dùng helper permission guard dùng chung khác check inline — không phải cãi Pinia khác URL (đó là câu bất đồng kỹ thuật).\n- Guard tốn thêm abstraction; inline nhanh hơn và sẽ lệch ở ba table.\n- Mặt trái nhận: engineer mới phải học helper. Mặt trái từ chối: ba bản copy authz.\n- Bạn gọi được thước nhìn sau đó: regression sai hàng.\n\n**Nên tránh:**\n- Đánh đổi (trade-off) mà một bên là bù nhìn.\n- Chọn thứ không còn giá nào.\n- Tái sử dụng xung đột designer hoặc envelope BE như cùng một story.\n\nĐánh đổi (trade-off) là quyết định bạn vẫn thấy cả hai phía."
       },
       "followUps": [
         {
-          "en": "What would make you reverse that trade-off today?",
-          "vi": "Điều gì khiến bạn đảo trade-off đó hôm nay?"
+          "en": "What would make you reverse that guard-versus-inline choice?",
+          "vi": "Điều gì khiến bạn đảo lựa chọn guard khác inline đó?"
         },
         {
-          "en": "How did you explain the losing option to the person who wanted it?",
-          "vi": "Bạn giải thích option thua cho người muốn nó thế nào?"
+          "en": "How do you keep a trade-off from sounding like taste?",
+          "vi": "Bạn giữ một đánh đổi (trade-off) khỏi nghe như khẩu vị thế nào?"
+        },
+        {
+          "en": "Why is this a different story from the URL-versus-Pinia disagreement?",
+          "vi": "Vì sao đây là story khác với bất đồng URL khác Pinia?"
         }
-      ]
+      ],
+      "example": {
+        "en": "Situation: three admin tables each needed role checks, and a teammate wanted inline if-role in the component so we would ship this week. Task: I owned the trade-off, not a purity argument. Action: option A was inline checks — fast, local, and guaranteed to drift the first time a fourth table copied the wrong clause. Option B was a reusable guard — an extra abstraction a new engineer must learn, and a bad guard would fail every table at once. We picked the guard, wrote tests on the helper, and accepted the onboarding cost. Result: a later role change touched one module instead of three files, and wrong-row regressions dropped. I would reverse it for a one-off prototype behind a flag. I would not reverse it for a third production table. This is not the URL-versus-Pinia story.",
+        "vi": "Situation: ba table admin đều cần check role, và một teammate muốn if-role inline trong component để kịp ship tuần này. Task: tôi sở hữu đánh đổi (trade-off), không phải cãi sự thuần khiết. Action: lựa chọn A là check inline — nhanh, local, và chắc chắn lệch lần đầu table thứ tư copy nhầm mệnh đề. Lựa chọn B là guard dùng lại — thêm abstraction engineer mới phải học, và một guard xấu sẽ fail mọi table một lúc. Chúng tôi chọn guard, viết test trên helper, và nhận chi phí onboarding. Result: lần đổi role sau đụng một module thay vì ba file, và regression sai hàng giảm. Tôi sẽ đảo với prototype một lần sau flag. Tôi sẽ không đảo với table production thứ ba. Đây không phải story URL khác Pinia."
+      }
     },
     {
       "id": "proud-project",
@@ -764,19 +832,27 @@
         "vi": "Bạn tự hào nhất về project nào và vì sao?"
       },
       "answer": {
-        "en": "Choose a project that shows both technical skill and maturity.\n\nGreat reasons include:\n\n- you solved an ambiguous, high-impact problem,\n- you improved a system rather than just built a screen,\n- you helped the team level up during delivery,\n- the solution aged well and stayed maintainable.\n\nAvoid choosing something only because it was large. Often the most senior story is one where you simplified complexity for others.",
-        "vi": "Hãy chọn project thể hiện cả kỹ năng technical lẫn sự trưởng thành trong cách làm việc.\n\nLý do tốt thường là:\n\n- bạn giải được một bài toán impact lớn nhưng còn mơ hồ,\n- bạn cải thiện được cả hệ thống chứ không chỉ làm một màn hình,\n- bạn giúp team level up trong quá trình delivery,\n- solution bền theo thời gian và vẫn maintainable.\n\nTránh chọn chỉ vì nó “to”. Nhiều khi story senior nhất lại là story bạn làm cho sự phức tạp trở nên đơn giản hơn với cả team."
+        "en": "**What they are checking:** Pride in **simplifying a system and leaving it usable**, not in the size of the diff.\n\n**How to structure it:**\n1. Why this surface, not because it was large.\n2. The ambiguity you reduced.\n3. The leftover (pattern, tests, names) others still use.\n4. Who else made it true.\n5. What still bothers you, so it does not sound finished-forever.\n\n**Senior signals to include:**\n- The internal admin product, specifically the state-ownership split and guards — same facts as biggest-impact, different angle: pride in clarity, not the metric.\n- You helped the team level up (review question, PR template).\n- You name BE and design, not a solo myth.\n- Distinct from recent-project (that is the rebuild tour).\n\n**Avoid:**\n- Choosing it only because it was big.\n- A story with no leftover system.\n- Hiding the parts that are still ugly.\n\nI still want a serializer for nested filters; pride is not the same as finished. Pride is that a new engineer can change a filter in week two without a tour.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Niềm tự hào vì **làm hệ thống đơn giản hơn và để lại thứ dùng được**, không vì độ lớn của diff.\n\n**Cách trình bày:**\n1. Vì sao bề mặt này, không phải vì nó lớn.\n2. Ambiguity bạn đã giảm.\n3. Phần để lại (pattern, test, tên) người khác vẫn dùng.\n4. Ai khác làm nó thành thật.\n5. Thứ vẫn làm bạn khó chịu, để không nghe như xong mãi mãi.\n\n**Tín hiệu senior nên có:**\n- Sản phẩm admin nội bộ, cụ thể tách ownership state và guard — cùng fact với biggest-impact, góc khác: tự hào vì sự rõ, không phải metric.\n- Bạn giúp team lên level (câu review, template PR).\n- Bạn gọi BE và design, không phải huyền thoại một mình.\n- Khác recent-project (đó là tour lần rebuild).\n\n**Nên tránh:**\n- Chọn nó chỉ vì nó lớn.\n- Story không để lại hệ thống.\n- Giấu phần vẫn xấu.\n\nTôi vẫn muốn serializer cho filter lồng; tự hào không phải là đã xong. Niềm tự hào là engineer mới đổi được filter ở tuần hai mà không cần tour."
       },
       "followUps": [
         {
-          "en": "What would you do differently if you started that project now?",
-          "vi": "Bạn sẽ làm khác gì nếu bắt đầu project đó hôm nay?"
+          "en": "What part of that project still bothers you?",
+          "vi": "Phần nào của project đó vẫn làm bạn khó chịu?"
         },
         {
-          "en": "Who else deserves credit in that story, and for what?",
-          "vi": "Ai khác đáng credit trong story đó, và vì phần nào?"
+          "en": "How is this different from the rebuild tour in the recent-project answer?",
+          "vi": "Chuyện này khác tour rebuild trong câu project gần đây thế nào?"
+        },
+        {
+          "en": "Who else has to be in that story for it to be true?",
+          "vi": "Ai khác phải có trong story đó thì nó mới đúng?"
         }
-      ]
+      ],
+      "example": {
+        "en": "Situation: I am most proud of the internal admin product, not because it was large, but because it used to need a tour. Task: say what I actually left behind. Action: I owned the frontend architecture and the contract conversation: filters in the URL, session UX in the store, permissions in guards, empty and error states on the critical path. I did not own identity. Design owned the empty state; BE owned the field. The leftover is the rule and the tests, plus a review question — after merge, who owns this state? Result: a new engineer changed a filter in week two without asking me. That ages better than a heroic screen. Nested filters are still verbose; I want a serializer. Pride, for me, is reduced ambiguity, not a bigger diff.",
+        "vi": "Situation: tôi tự hào nhất về sản phẩm admin nội bộ, không vì nó lớn, mà vì trước đó cần một tour. Task: nói tôi thực sự để lại gì. Action: tôi sở hữu kiến trúc frontend và cuộc thảo luận contract: filter trên URL, UX session trong store, quyền trong guard, trạng thái rỗng và lỗi trên đường tới hạn. Tôi không sở hữu identity. Design sở hữu trạng thái rỗng; BE sở hữu field. Phần để lại là rule và test, cộng một câu review — sau merge, ai sở hữu state này? Result: một engineer mới đổi filter ở tuần hai mà không hỏi tôi. Cái đó già hơn một màn hình anh hùng. Filter lồng vẫn dài; tôi muốn serializer. Niềm tự hào, với tôi, là ambiguity giảm, không phải diff to hơn."
+      }
     },
     {
       "id": "conflict-with-designer",
@@ -790,19 +866,27 @@
         "vi": "Bạn xử lý bất đồng với designer hoặc PM như thế nào?"
       },
       "answer": {
-        "en": "Keep the conversation anchored to the shared goal: user outcome.\n\nTypical pattern:\n\n1. confirm what problem the other person is trying to solve,\n2. explain your concern using concrete impact,\n3. propose alternative interactions or phased solutions,\n4. validate with examples if possible.\n\nAvoid turning it into “engineering vs product.” The best discussions become “how do we get the outcome with acceptable complexity and risk?”",
-        "vi": "Giữ cuộc trao đổi bám vào mục tiêu chung: user outcome.\n\nPattern thường là:\n\n1. xác nhận người kia đang cố giải bài toán gì,\n2. nêu concern của mình bằng impact cụ thể,\n3. đề xuất interaction khác hoặc cách làm theo phase,\n4. nếu được thì validate bằng ví dụ.\n\nTránh biến nó thành “engineering vs product”. Cuộc trao đổi tốt nhất sẽ trở thành “làm sao đạt outcome đó với độ phức tạp và risk chấp nhận được?”"
+        "en": "**What they are checking:** You stay on the **shared user outcome**, not “engineering versus design” — and this story is not the Pinia fight or the BE envelope.\n\n**How to structure it:**\n1. Confirm the problem they are solving.\n2. State your concern as user or operational impact.\n3. Offer an alternative interaction or a phase.\n4. Validate with an example (keyboard, empty state, a real role).\n5. Write the decision so it does not reopen as taste.\n\n**Senior signals to include:**\n- Story: the designer wanted permission errors as hover-only tooltips on the admin table; I needed a visible unauthorized state for keyboard and screen-reader users.\n- We kept their visual language in the empty state, not a grey dump.\n- Phased: tooltip as extra, never as the only signal.\n- Distinct from disagree-tech-decision (URL vs Pinia) and influence-without-authority (BE errors).\n\n**Avoid:**\n- Winning by citing “a11y law” without showing the user.\n- Implementing your version anyway.\n- Making it personal about the mock.\n\nThe outcome was a state everyone could reach, not a prettier hover.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Bạn đứng ở **outcome user chung**, không phải “engineering khác design” — và story này không phải cãi Pinia hay envelope BE.\n\n**Cách trình bày:**\n1. Xác nhận bài họ đang giải.\n2. Nêu lo ngại bằng tác động user hoặc vận hành.\n3. Đề tương tác khác hoặc một pha.\n4. Kiểm bằng ví dụ (bàn phím, trạng thái rỗng, một role thật).\n5. Viết quyết định để nó không mở lại như khẩu vị.\n\n**Tín hiệu senior nên có:**\n- Story: designer muốn lỗi quyền chỉ hiện tooltip hover trên table admin; tôi cần trạng thái unauthorized nhìn thấy được cho user bàn phím và trình đọc màn hình.\n- Chúng tôi giữ ngôn ngữ visual của họ trong trạng thái rỗng, không phải một đống xám.\n- Theo pha: tooltip là thêm, không bao giờ là tín hiệu duy nhất.\n- Khác câu bất đồng kỹ thuật (URL khác Pinia) và câu influence với BE về envelope lỗi.\n\n**Nên tránh:**\n- Thắng bằng cách viện “luật a11y” mà không chỉ user.\n- Cứ implement phiên bản của mình.\n- Biến thành chuyện cá nhân về mock.\n\nOutcome là một trạng thái ai cũng tới được, không phải hover đẹp hơn."
       },
       "followUps": [
         {
-          "en": "What if the designer is right and the complexity is justified?",
-          "vi": "Nếu designer đúng và độ phức tạp là đáng thì sao?"
+          "en": "What do you do if the designer still wants hover as the only signal?",
+          "vi": "Bạn làm gì nếu designer vẫn muốn hover là tín hiệu duy nhất?"
         },
         {
-          "en": "How do you keep the user outcome visible when the debate gets heated?",
-          "vi": "Bạn giữ user outcome lộ khi tranh cãi nóng thế nào?"
+          "en": "How do you keep this from turning into engineering versus design?",
+          "vi": "Bạn giữ chuyện này khỏi thành engineering khác design thế nào?"
+        },
+        {
+          "en": "Why is this a different story from the Pinia-versus-URL disagreement?",
+          "vi": "Vì sao đây là story khác với bất đồng Pinia khác URL?"
         }
-      ]
+      ],
+      "example": {
+        "en": "Situation: on the admin table, design had permission misses as hover-only tooltips. Keyboard and screen-reader users would never see why the row was dead. Task: I disagreed without starting an engineering-versus-design fight. Action: I restated their goal — do not scare people with a red banner — and named the impact: a keyboard user gets a silent dead control. I proposed a visible unauthorized empty state in their visual language, with the tooltip as an extra, not the only signal. We walked one role through it. Result: they kept the tone; we kept a state you can tab to. I wrote it in the ticket so it was not my taste versus the mock. That story is not URL-versus-Pinia, and it is not the BE envelope. It is a user who cannot hover.",
+        "vi": "Situation: trên table admin, design để miss quyền chỉ như tooltip hover. User bàn phím và trình đọc màn hình không bao giờ thấy vì sao hàng chết. Task: tôi bất đồng mà không mở trận engineering khác design. Action: tôi nói lại mục tiêu của họ — đừng dọa người bằng banner đỏ — và gọi tác động: user bàn phím gặp control chết im. Tôi đề trạng thái rỗng unauthorized nhìn thấy được trong ngôn ngữ visual của họ, tooltip là thêm, không phải tín hiệu duy nhất. Chúng tôi đi một role. Result: họ giữ tone; chúng tôi giữ trạng thái tab tới được. Tôi ghi vào ticket để không thành khẩu vị tôi khác mock. Story đó không phải URL khác Pinia, và không phải envelope BE. Đó là user không hover được."
+      }
     },
     {
       "id": "career-growth-plan",
@@ -816,19 +900,27 @@
         "vi": "Bạn muốn phát triển tiếp theo hướng nào?"
       },
       "answer": {
-        "en": "For a senior FE role, a strong answer balances depth and range.\n\nExample growth areas:\n\n- stronger cross-stack fluency, especially React/Next,\n- better system design for larger frontend surfaces,\n- deeper performance and observability practice,\n- more influence in mentoring and technical decision-making.\n\nThe answer should sound grounded in the next few years of work, not like a generic leadership script.",
-        "vi": "Với role senior FE, câu trả lời mạnh thường cân bằng giữa depth và breadth.\n\nVí dụ các hướng phát triển:\n\n- tăng fluency cross-stack, đặc biệt ở React/Next,\n- giỏi hơn về system design cho frontend surface lớn,\n- sâu hơn về performance và observability,\n- ảnh hưởng nhiều hơn ở mentoring và technical decision.\n\nCâu trả lời nên nghe gắn với vài năm làm việc tới, chứ không phải một leadership script chung chung."
+        "en": "**What they are checking:** A plan for the **next few years of work**, balanced between depth and range — not a generic leadership script.\n\n**How to structure it:**\n1. What is already production-grade (Vue 3 / Nuxt / TypeScript, owning a surface).\n2. The gap you are closing now (React / Next fluency by transferring principles).\n3. System design for larger frontend surfaces.\n4. Performance and observability as practised skills, not slogans.\n5. Mentoring and decision quality as leverage, not a title hunt.\n\n**Senior signals to include:**\n- Same React transfer as strengths-weaknesses. No invented years.\n- Growth is artefacts: a React build, a design you can defend, a person who ramps faster.\n- You are not fleeing Vue. You are widening the stack you can own.\n- A bad plan would be “become a manager” with no evidence you want that.\n\n**Avoid:**\n- A five-year title ladder with no work in it.\n- “I want to learn everything.”\n- Pretending you do not care about growth.\n\nThe next step is fluency across modern FE, then larger surfaces.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Một kế hoạch cho **vài năm làm việc tới**, cân giữa chiều sâu và bề rộng — không phải script leadership chung.\n\n**Cách trình bày:**\n1. Phần đã production-grade (Vue 3 / Nuxt / TypeScript, sở hữu một bề mặt).\n2. Khoảng trống bạn đang khép (độ trôi React / Next bằng chuyển nguyên lý).\n3. System design cho bề mặt frontend lớn hơn.\n4. Hiệu năng và observability như kỹ năng đang luyện, không phải slogan.\n5. Mentoring và chất lượng quyết định như đòn bẩy, không phải săn title.\n\n**Tín hiệu senior nên có:**\n- Cùng phép chuyển React với strengths-weaknesses. Không bịa số năm.\n- Growth là artefact: một build React, một thiết kế bạn bảo vệ được, một người ramp nhanh hơn.\n- Bạn không bỏ Vue. Bạn nới stack bạn sở hữu được.\n- Kế hoạch xấu là “làm manager” mà không evidence bạn muốn vậy.\n\n**Nên tránh:**\n- Thang title năm năm không có việc trong đó.\n- “Tôi muốn học mọi thứ.”\n- Giả không quan tâm growth.\n\nBước tới là độ trôi trên FE hiện đại, rồi bề mặt lớn hơn."
       },
       "followUps": [
         {
-          "en": "How does this role specifically help that growth plan?",
-          "vi": "Role này giúp growth plan đó cụ thể thế nào?"
+          "en": "What artefact would prove the React transfer is working in six months?",
+          "vi": "Artefact nào chứng minh phép chuyển React đang chạy sau sáu tháng?"
         },
         {
-          "en": "What are you not trying to become in the next two years?",
-          "vi": "Hai năm tới bạn không cố trở thành gì?"
+          "en": "Why is this not just a generic I-want-to-be-a-staff-engineer answer?",
+          "vi": "Vì sao đây không chỉ là câu generic tôi-muốn-làm-staff-engineer?"
+        },
+        {
+          "en": "What would make you choose an IC path over management on purpose?",
+          "vi": "Điều gì khiến bạn chủ đích chọn đường IC hơn management?"
         }
-      ]
+      ],
+      "example": {
+        "en": "Situation: I have about five years, production depth in Vue 3, Nuxt, and TypeScript, and I already own an internal admin surface. Task: say the next stretch without a leadership speech. Action: the immediate gap is React and Next fluency by transferring principles — re-render versus reactivity, Query versus Pinia, App Router versus Nuxt — which I am already practising on purpose. Next I want larger frontend surfaces: clearer system design, better performance and observability habits, and more leverage through review and mentoring. Result: in a few years I want to be the person who can own a Vue or React surface and leave it easier to change. I am not hunting a manager title. I would know the plan is working when a new engineer ramps without me, and when I can defend a React decision with the same depth I have in Vue.",
+        "vi": "Situation: tôi khoảng năm năm, chiều sâu production ở Vue 3, Nuxt, và TypeScript, và đã sở hữu một bề mặt admin nội bộ. Task: nói đoạn stretch tới mà không diễn thuyết leadership. Action: khoảng trống ngay là độ trôi React và Next bằng chuyển nguyên lý — re-render khác reactivity, Query khác Pinia, App Router khác Nuxt — thứ tôi đã đang luyện có chủ đích. Tiếp theo tôi muốn bề mặt frontend lớn hơn: system design rõ hơn, thói quen hiệu năng và observability tốt hơn, và thêm đòn bẩy qua review và mentoring. Result: vài năm nữa tôi muốn là người sở hữu được bề mặt Vue hoặc React và để lại nó dễ đổi hơn. Tôi không săn title manager. Tôi biết kế hoạch chạy khi engineer mới ramp không cần tôi, và khi tôi bảo vệ được quyết định React với cùng chiều sâu tôi có ở Vue."
+      }
     },
     {
       "id": "deal-with-production-pressure",
@@ -842,19 +934,27 @@
         "vi": "Bạn làm việc như thế nào khi có áp lực production?"
       },
       "answer": {
-        "en": "Senior behavior under pressure is calm triage, not panic heroics.\n\n1. stabilize the situation,\n2. gather facts before guessing,\n3. communicate clearly and often,\n4. separate immediate mitigation from root-cause work,\n5. follow up with prevention.\n\nInterviewers want to hear that you can stay structured when the system is not.",
-        "vi": "Hành vi senior khi có áp lực production là triage bình tĩnh, không phải hoảng rồi làm hero.\n\n1. ổn định tình hình trước,\n2. gom fact trước khi đoán,\n3. communicate rõ và đều,\n4. tách mitigation trước mắt với root-cause fix,\n5. sau đó follow-up bằng phòng ngừa.\n\nInterviewer muốn nghe rằng khi hệ thống rối, bạn vẫn giữ được cấu trúc suy nghĩ."
+        "en": "**What they are checking:** **Calm triage**, not panic heroics: stabilize, facts, communicate, mitigate, then prevent.\n\n**How to structure it:**\n1. Stabilize: stop the bleeding (feature flag, revert, disable the query).\n2. Gather facts before guessing (who, since when, which release).\n3. Communicate status on a short loop to PM and support.\n4. Separate the mitigation from the root-cause fix.\n5. Follow up with a test and a process change.\n\n**Senior signals to include:**\n- I use the stale-search incident as the pressure story: support saw flickering results, I owned the follow-up. The miss itself is the mistake question; here the behaviour is the triage.\n- I do not debug for two hours in silence.\n- Revert is a tool. Pride is not.\n- Distinct from quality-bar (the standard) and from mistake-hardship (the miss).\n\n**Avoid:**\n- Heroic nights as the identity.\n- Changing five things at once so you cannot tell what helped.\n- Skipping the write-up because the site is green again.\n\nPressure is a procedure.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** **Triage điềm tĩnh**, không phải anh hùng hoảng: ổn định, fact, giao tiếp, giảm hại, rồi phòng ngừa.\n\n**Cách trình bày:**\n1. Ổn định: cầm máu (feature flag, revert, tắt query).\n2. Lấy fact trước khi đoán (ai, từ khi nào, release nào).\n3. Thông tin trạng thái theo vòng ngắn cho PM và support.\n4. Tách mitigation khỏi fix gốc.\n5. Follow up bằng test và đổi process.\n\n**Tín hiệu senior nên có:**\n- Tôi dùng incident search cũ làm câu áp lực: support thấy kết quả nháy, tôi sở hữu phần theo sau. Chính miss nằm ở câu sai lầm; ở đây hành vi là triage.\n- Tôi không debug hai giờ im lặng.\n- Revert là công cụ. Sĩ diện thì không.\n- Khác quality-bar (tiêu chuẩn) và khác mistake-hardship (miss).\n\n**Nên tránh:**\n- Đêm anh hùng làm identity.\n- Đổi năm thứ một lúc nên không biết gì đã giúp.\n- Bỏ write-up vì site đã xanh lại.\n\nÁp lực là một procedure."
       },
       "followUps": [
         {
-          "en": "What do you communicate first in a production incident, and to whom?",
-          "vi": "Trong incident production bạn communicate gì trước, và với ai?"
+          "en": "When do you revert instead of hotfixing forward?",
+          "vi": "Khi nào bạn revert thay vì hotfix về phía trước?"
         },
         {
-          "en": "How do you stop yourself from shipping a speculative fix under pressure?",
-          "vi": "Bạn ngăn mình ship fix đoán mò dưới áp lực thế nào?"
+          "en": "How often do you update people who cannot see your debugger?",
+          "vi": "Bạn cập nhật người không thấy debugger của bạn thường đến mức nào?"
+        },
+        {
+          "en": "What belongs in the write-up that did not belong in the hotfix?",
+          "vi": "Write-up chứa gì mà hotfix không chứa?"
         }
-      ]
+      ],
+      "example": {
+        "en": "Situation: support pinged that admin search was showing the previous query while people typed. Users were already on the page. Task: I owned the incident, not a debate about whose bug it was. Action: I asked for a timestamp and a user step, reproduced overlapping fetches, and shipped a mitigation: abort in-flight requests so the late response could not win. I posted status every twenty minutes to PM and support: we see it, here is the workaround, here is the ETA for the helper. Root cause and the shared helper plus test came after the flicker stopped. Result: reports stopped the same day; the process change — concurrency in the ticket — came in the write-up, not at 1 a.m. I did not stay silent in the debugger. The mistake question is how I missed it. This question is how I behaved when it was live.",
+        "vi": "Situation: support ping rằng search admin đang hiện query trước trong lúc người ta gõ. User đã ở trên trang. Task: tôi sở hữu incident, không phải cãi bug của ai. Action: tôi xin timestamp và bước user, reproduce fetch chồng, và ship mitigation: abort request đang bay để response muộn không thắng. Tôi post trạng thái mỗi hai mươi phút cho PM và support: chúng tôi thấy, đây là workaround, đây là ETA của helper. Root cause và helper dùng chung cộng test đến sau khi hết nháy. Result: báo cáo dừng cùng ngày; đổi process — concurrency trong ticket — nằm trong write-up, không phải lúc 1 giờ sáng. Tôi không im trong debugger. Câu sai lầm là vì sao tôi miss. Câu này là tôi hành xử thế nào khi nó đang live."
+      }
     },
     {
       "id": "success-metrics-senior",
@@ -868,19 +968,27 @@
         "vi": "Bạn đo thành công của mình như một senior engineer bằng gì?"
       },
       "answer": {
-        "en": "Not only by lines of code or number of tickets.\n\nI would look at:\n\n- product outcomes and reliability,\n- quality of decisions over time,\n- reduced team friction,\n- how quickly others can contribute safely,\n- whether the codebase becomes easier or harder to evolve.\n\nThe more senior you become, the more your success is tied to **team leverage and system health**, not just personal throughput.",
-        "vi": "Không chỉ bằng số dòng code hay số ticket đóng.\n\nEm thường nhìn vào:\n\n- product outcome và reliability,\n- chất lượng quyết định theo thời gian,\n- mức độ friction của team có giảm không,\n- người khác có contribute an toàn nhanh hơn không,\n- codebase có dễ tiến hóa hơn hay khó hơn.\n\nCàng senior thì thành công của mình càng gắn với **team leverage và sức khỏe của hệ thống**, chứ không chỉ throughput cá nhân."
+        "en": "**What they are checking:** Success as **team leverage and system health**, not tickets or lines of code.\n\n**How to structure it:**\n1. Product outcomes and reliability on the surface you own.\n2. Quality of decisions over time (few reversals, clear trade-offs).\n3. Reduced friction: reviews that teach, contracts that match.\n4. How quickly others can contribute safely.\n5. Whether the codebase got easier to change.\n\n**Senior signals to include:**\n- On the admin product I would count: wrong-row regressions, time-to-first-useful-PR for a new engineer, support load on search flicker, whether the ownership rule is still used.\n- A metric I do not use: my ticket count.\n- Placeholders stay honest: [metric] when I do not have the number in the room.\n- Distinct from what-is-senior (the definition) and biggest-impact (one outcome).\n\n**Avoid:**\n- Vanity output (PRs merged, hours).\n- Only personal throughput.\n- Metrics you cannot influence.\n\nThe more senior, the more the measure lives in other people and in the system.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Thành công là **đòn bẩy team và sức khỏe hệ thống**, không phải ticket hay số dòng.\n\n**Cách trình bày:**\n1. Outcome product và độ tin cậy trên bề mặt bạn sở hữu.\n2. Chất lượng quyết định theo thời gian (ít đảo, đánh đổi (trade-off) rõ).\n3. Ma sát giảm: review dạy được, contract khớp.\n4. Người khác contribute an toàn nhanh đến mức nào.\n5. Codebase có dễ đổi hơn không.\n\n**Tín hiệu senior nên có:**\n- Trên sản phẩm admin tôi đếm: regression sai hàng, thời gian tới PR hữu ích đầu của engineer mới, tải support vì search nháy, rule ownership còn được dùng không.\n- Thước tôi không dùng: số ticket của tôi.\n- Placeholder trung thực: [metric] khi tôi không có số trong phòng.\n- Khác what-is-senior (định nghĩa) và biggest-impact (một outcome).\n\n**Nên tránh:**\n- Output hào nhoáng (PR merge, giờ).\n- Chỉ throughput cá nhân.\n- Metric bạn không ảnh hưởng được.\n\nCàng senior, thước càng nằm ở người khác và ở hệ thống."
       },
       "followUps": [
         {
-          "en": "Which metric would you pick for your first 90 days here?",
-          "vi": "Metric nào bạn chọn cho 90 ngày đầu ở đây?"
+          "en": "Which of those measures would you put on a scorecard, and which stay qualitative?",
+          "vi": "Thước nào bạn để lên scorecard, và thước nào giữ định tính?"
         },
         {
-          "en": "How do you notice the codebase is getting harder to evolve?",
-          "vi": "Bạn nhận ra codebase đang khó tiến hóa hơn thế nào?"
+          "en": "How do you avoid optimizing a metric that makes the system worse?",
+          "vi": "Bạn tránh tối ưu một metric làm hệ thống tệ hơn thế nào?"
+        },
+        {
+          "en": "What would convince you that you were failing as a senior this quarter?",
+          "vi": "Điều gì khiến bạn tin mình đang fail với tư cách senior quý này?"
         }
-      ]
+      ],
+      "example": {
+        "en": "Situation: if you ask how I know I am doing the senior job, I do not start with tickets. Task: name measures on the internal admin product I actually influence. Action: I look at whether wrong-row regressions stayed down after the guards, whether a new engineer changed a filter in week two without a tour, whether search-flicker support stayed quiet after the AbortController helper, and whether the “who owns this state?” review question is still in use. Decision quality is fewer silent reversals. Result: those are leverage and system health. My PR count is not. If a number is missing in the room I will say [metric] rather than invent one. I would know I was failing if people still needed me in the room to change a filter, even if I looked busy.",
+        "vi": "Situation: nếu bạn hỏi tôi biết mình đang làm việc senior thế nào, tôi không bắt đầu bằng ticket. Task: gọi thước trên sản phẩm admin nội bộ tôi thực sự ảnh hưởng. Action: tôi nhìn regression sai hàng còn thấp sau guard không, engineer mới tuần hai đổi filter không cần tour không, support search nháy còn im sau helper AbortController không, và câu review “ai sở hữu state này?” còn dùng không. Chất lượng quyết định là ít lần đảo im lặng. Result: đó là đòn bẩy và sức khỏe hệ thống. Số PR của tôi thì không. Nếu thiếu số trong phòng tôi sẽ nói [metric] chứ không bịa. Tôi biết mình đang fail nếu người ta vẫn cần tôi trong phòng để đổi filter, dù tôi trông bận."
+      }
     },
     {
       "id": "scale-codebase-100-features",
