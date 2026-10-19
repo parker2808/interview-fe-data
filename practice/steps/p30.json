@@ -1,0 +1,121 @@
+{
+  "kind": "practice-step",
+  "id": "p30",
+  "milestone": "m7",
+  "order": 30,
+  "title": {
+    "en": "Production Compose",
+    "vi": "Compose production"
+  },
+  "summary": {
+    "en": "The same containers locally and in production means no \"works on my machine\".",
+    "vi": "Cùng container trên máy và trên production nghĩa là không còn \"chạy được trên máy tôi\"."
+  },
+  "estimateMin": 180,
+  "prereqs": ["p28"],
+  "tags": ["docker", "compose", "production"],
+  "concepts": [
+    {
+      "term": {
+        "en": "Multi-stage Dockerfile",
+        "vi": "Dockerfile multi-stage"
+      },
+      "explain": {
+        "en": "Build in a fat image, copy only the output into a slim runtime image. Next `output: 'standalone'`. Keep images under 300 MB.",
+        "vi": "Build trong image nặng, chỉ copy output sang image runtime gọn. Next `output: 'standalone'`. Giữ image dưới 300 MB."
+      }
+    },
+    {
+      "term": {
+        "en": "migrate deploy",
+        "vi": "migrate deploy"
+      },
+      "explain": {
+        "en": "Production runs pending migrations only (`prisma migrate deploy`). `migrate dev` is for laptops — it can prompt and rewrite SQL.",
+        "vi": "Production chỉ chạy migration pending (`prisma migrate deploy`). `migrate dev` dành cho laptop — nó có thể hỏi và viết lại SQL."
+      }
+    },
+    {
+      "term": {
+        "en": "depends_on: service_healthy",
+        "vi": "depends_on: service_healthy"
+      },
+      "explain": {
+        "en": "API starts after db healthcheck is green. Web starts after API health. Avoid racing migrations against a closed port.",
+        "vi": "API start sau khi db healthcheck xanh. Web start sau API health. Tránh đua migration với cổng chưa mở."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "devops",
+      "label": {
+        "en": "DevOps",
+        "vi": "DevOps"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "fe-ci-preview-deploys",
+      "label": {
+        "en": "Preview deploys, env, and rollback",
+        "vi": "Preview deploy, env và rollback"
+      }
+    }
+  ],
+  "specRefs": ["§1.6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "Dockerfiles for web and api",
+        "vi": "Dockerfile cho web và api"
+      },
+      "detail": {
+        "en": "Multi-stage. Web: Next standalone. API: node + compiled Nest. Non-root user comes in p31; leave a TODO comment if you wait, or add it now.",
+        "vi": "Multi-stage. Web: Next standalone. API: node + Nest đã compile. User non-root ở p31; để TODO nếu chưa làm, hoặc thêm luôn."
+      }
+    },
+    {
+      "title": {
+        "en": "compose.prod.yml",
+        "vi": "compose.prod.yml"
+      },
+      "detail": {
+        "en": "Services: db, api, web, caddy. Healthchecks, `depends_on: condition: service_healthy`. API command runs `prisma migrate deploy` then the server.",
+        "vi": "Service: db, api, web, caddy. Healthcheck, `depends_on: condition: service_healthy`. Lệnh API chạy `prisma migrate deploy` rồi mới server."
+      }
+    },
+    {
+      "title": {
+        "en": "Build and serve locally",
+        "vi": "Build và serve trên máy"
+      },
+      "detail": {
+        "en": "Bring the stack up, hit home through Caddy, confirm health endpoints. Check image sizes (`docker images`).",
+        "vi": "Bật stack, mở home qua Caddy, xác nhận health endpoint. Kiểm size image (`docker images`)."
+      },
+      "code": {
+        "lang": "bash",
+        "text": "docker compose -f compose.prod.yml up --build"
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "`docker compose -f compose.prod.yml up --build` serves the full site on localhost.",
+      "vi": "`docker compose -f compose.prod.yml up --build` phục vụ full site trên localhost."
+    },
+    {
+      "en": "The web and api images are under 300 MB each (`docker images`).",
+      "vi": "Image web và api mỗi cái dưới 300 MB (`docker images`)."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Running `migrate dev` in production (prompts, can rewrite history).",
+      "vi": "Chạy `migrate dev` trên production (có prompt, có thể viết lại history)."
+    }
+  ],
+  "commit": "chore(infra): production compose"
+}

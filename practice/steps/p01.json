@@ -1,0 +1,146 @@
+{
+  "kind": "practice-step",
+  "id": "p01",
+  "milestone": "m0",
+  "order": 1,
+  "title": {
+    "en": "Toolchain + monorepo skeleton",
+    "vi": "Toolchain + khung monorepo"
+  },
+  "summary": {
+    "en": "A single repo with a fixed layout means every later step has a known place to go.",
+    "vi": "Một repo với layout cố định giúp mọi bước sau đều biết file nằm chỗ nào."
+  },
+  "estimateMin": 90,
+  "prereqs": [],
+  "tags": ["monorepo", "pnpm", "toolchain"],
+  "concepts": [
+    {
+      "term": {
+        "en": "Monorepo",
+        "vi": "Monorepo"
+      },
+      "explain": {
+        "en": "One git repo that holds several apps and packages. Here: apps/web, apps/api, and packages/shared.",
+        "vi": "Một git repo chứa nhiều app và package. Ở đây: apps/web, apps/api, và packages/shared."
+      }
+    },
+    {
+      "term": {
+        "en": "pnpm workspace",
+        "vi": "pnpm workspace"
+      },
+      "explain": {
+        "en": "pnpm reads pnpm-workspace.yaml and links local packages so web and api can import shared without publishing.",
+        "vi": "pnpm đọc pnpm-workspace.yaml và link package local để web và api import shared mà không cần publish."
+      }
+    },
+    {
+      "term": {
+        "en": "corepack",
+        "vi": "corepack"
+      },
+      "explain": {
+        "en": "Node's built-in tool that pins pnpm to the version in package.json. Avoid a global npm i -g pnpm that drifts.",
+        "vi": "Tool có sẵn trong Node, ghim pnpm đúng version trong package.json. Tránh npm i -g pnpm global làm lệch version."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "devops",
+      "label": {
+        "en": "DevOps",
+        "vi": "DevOps"
+      }
+    },
+    {
+      "slug": "build-tools",
+      "label": {
+        "en": "Build Tools",
+        "vi": "Công cụ build"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "monorepo-strategy",
+      "label": {
+        "en": "When does a monorepo help frontend teams?",
+        "vi": "Khi nào monorepo giúp ích cho frontend team?"
+      }
+    }
+  ],
+  "specRefs": ["§1.6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "Install Node 22, pnpm, Docker Desktop, and git",
+        "vi": "Cài Node 22, pnpm, Docker Desktop và git"
+      },
+      "detail": {
+        "en": "Use an official Node 22 installer or nvm. Then enable pnpm through corepack so it matches the repo. Confirm Docker Desktop starts, and git is on your PATH.",
+        "vi": "Dùng installer Node 22 chính thức hoặc nvm. Bật pnpm bằng corepack để khớp repo. Kiểm tra Docker Desktop chạy được, và git có trên PATH."
+      },
+      "code": {
+        "lang": "bash",
+        "text": "corepack enable\ncorepack prepare pnpm@latest --activate\nnode -v\npnpm -v\ndocker compose version\ngit --version"
+      }
+    },
+    {
+      "title": {
+        "en": "Create the portfolio/ workspace",
+        "vi": "Tạo workspace portfolio/"
+      },
+      "detail": {
+        "en": "Make a new folder portfolio/ with pnpm-workspace.yaml listing apps/* and packages/*, plus empty apps/ and packages/ directories. Add .nvmrc with 22 and an .editorconfig (utf-8, lf, 2-space indent).",
+        "vi": "Tạo thư mục mới portfolio/ với pnpm-workspace.yaml liệt kê apps/* và packages/*, cộng thư mục trống apps/ và packages/. Thêm .nvmrc ghi 22 và .editorconfig (utf-8, lf, indent 2 space)."
+      },
+      "code": {
+        "lang": "yaml",
+        "text": "packages:\n  - \"apps/*\"\n  - \"packages/*\""
+      }
+    },
+    {
+      "title": {
+        "en": "Add a root README of commands",
+        "vi": "Thêm README gốc liệt kê lệnh"
+      },
+      "detail": {
+        "en": "Write a short README that lists the commands you will grow later: pnpm install, pnpm dev, docker compose up. Keep it as a cheat sheet, not a novel.",
+        "vi": "Viết README ngắn liệt kê lệnh sẽ dùng sau: pnpm install, pnpm dev, docker compose up. Đây là cheat sheet, không phải bài viết dài."
+      }
+    },
+    {
+      "title": {
+        "en": "First commit",
+        "vi": "Commit đầu tiên"
+      },
+      "detail": {
+        "en": "git init, add the skeleton files, and commit. Later steps each add one more commit on this history.",
+        "vi": "git init, add các file khung, rồi commit. Mỗi bước sau thêm đúng một commit trên history này."
+      },
+      "code": {
+        "lang": "bash",
+        "text": "git init\ngit add .\ngit commit -m \"chore: init portfolio monorepo\""
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "`pnpm -v`, `docker compose version`, and `node -v` all work, and `node -v` prints 22.x.",
+      "vi": "`pnpm -v`, `docker compose version` và `node -v` đều chạy, và `node -v` in 22.x."
+    },
+    {
+      "en": "`git log` shows the first commit `chore: init portfolio monorepo`.",
+      "vi": "`git log` hiện commit đầu `chore: init portfolio monorepo`."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "A global `npm i -g pnpm` that then fights corepack. Use `corepack enable` and the version pinned in package.json.",
+      "vi": "`npm i -g pnpm` global rồi xung đột với corepack. Dùng `corepack enable` và version ghim trong package.json."
+    }
+  ],
+  "commit": "chore: init portfolio monorepo"
+}

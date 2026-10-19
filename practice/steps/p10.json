@@ -1,0 +1,121 @@
+{
+  "kind": "practice-step",
+  "id": "p10",
+  "milestone": "m2",
+  "order": 10,
+  "title": {
+    "en": "One-to-many relations",
+    "vi": "Quan hệ one-to-many"
+  },
+  "summary": {
+    "en": "Real data is connected, for example one experience has many projects.",
+    "vi": "Data thật luôn nối với nhau, ví dụ một experience có nhiều project."
+  },
+  "estimateMin": 120,
+  "prereqs": ["p06"],
+  "tags": ["prisma", "relations", "projects"],
+  "concepts": [
+    {
+      "term": {
+        "en": "One-to-many",
+        "vi": "One-to-many"
+      },
+      "explain": {
+        "en": "One parent row, many children. `Experience` 1──* `Project` via `experienceId`. The FK lives on the many side.",
+        "vi": "Một hàng cha, nhiều hàng con. `Experience` 1──* `Project` qua `experienceId`. FK nằm ở phía many."
+      }
+    },
+    {
+      "term": {
+        "en": "onDelete",
+        "vi": "onDelete"
+      },
+      "explain": {
+        "en": "What the database does if you delete the parent. `Restrict` (default) refuses; `Cascade` deletes children. Pick one and write the reason next to the field.",
+        "vi": "Database làm gì khi xóa hàng cha. `Restrict` (mặc định) từ chối; `Cascade` xóa con. Chọn một và ghi lý do cạnh field."
+      }
+    },
+    {
+      "term": {
+        "en": "include vs select",
+        "vi": "include vs select"
+      },
+      "explain": {
+        "en": "`include` loads a relation in the same query. `select` picks fields. Looping `findUnique` inside `map` is N+1 — use include instead.",
+        "vi": "`include` load quan hệ trong cùng query. `select` chọn field. Lặp `findUnique` trong `map` là N+1 — hãy dùng include."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "system-design",
+      "label": {
+        "en": "System Design",
+        "vi": "Thiết kế hệ thống"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "n-plus-one",
+      "label": {
+        "en": "N+1 query problem",
+        "vi": "Vấn đề N+1 query"
+      }
+    }
+  ],
+  "specRefs": ["§1.5"],
+  "tasks": [
+    {
+      "title": {
+        "en": "Add the Project model",
+        "vi": "Thêm model Project"
+      },
+      "detail": {
+        "en": "Fields from spec §1.5 that you need now: `slug` unique, `titleEn`/`titleVi`, `taglineEn`/`taglineVi`, `status`, `publishedAt`, `sortOrder`, optional `experienceId`. Set `onDelete` and comment why.",
+        "vi": "Field từ spec §1.5 cần lúc này: `slug` unique, `titleEn`/`titleVi`, `taglineEn`/`taglineVi`, `status`, `publishedAt`, `sortOrder`, `experienceId` tùy chọn. Set `onDelete` và ghi chú lý do."
+      }
+    },
+    {
+      "title": {
+        "en": "Migrate and read the SQL",
+        "vi": "Migrate và đọc SQL"
+      },
+      "detail": {
+        "en": "Create a new migration (do not edit init). Open the SQL: you should see the FK and an index on `experienceId` / `slug`.",
+        "vi": "Tạo migration mới (đừng sửa init). Mở SQL: phải thấy FK và index trên `experienceId` / `slug`."
+      },
+      "code": {
+        "lang": "bash",
+        "text": "pnpm prisma migrate dev --name add-project"
+      }
+    },
+    {
+      "title": {
+        "en": "GET /projects and GET /projects/:slug",
+        "vi": "GET /projects và GET /projects/:slug"
+      },
+      "detail": {
+        "en": "List published projects ordered by sortOrder. Detail uses `include: { experience: true }` so one query returns the parent. Seed at least one project linked to Particula / Kobizo.",
+        "vi": "List project PUBLISHED theo sortOrder. Trang chi tiết dùng `include: { experience: true }` để một query ra cả cha. Seed ít nhất một project gắn Particula / Kobizo."
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "`GET /projects/:slug` includes the parent experience in one response.",
+      "vi": "`GET /projects/:slug` trả kèm experience cha trong một response."
+    },
+    {
+      "en": "The new migration SQL shows the foreign key and an index.",
+      "vi": "SQL của migration mới hiện foreign key và một index."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "N+1 queries in loops. Use `include` / `select`, not a query per row.",
+      "vi": "N+1 query trong vòng lặp. Dùng `include` / `select`, không query từng hàng."
+    }
+  ],
+  "commit": "feat(api): projects relation"
+}

@@ -1,0 +1,128 @@
+{
+  "kind": "practice-step",
+  "id": "p17",
+  "milestone": "m3",
+  "order": 17,
+  "title": {
+    "en": "Indexes + EXPLAIN",
+    "vi": "Index + EXPLAIN"
+  },
+  "summary": {
+    "en": "Indexes make the queries you actually run fast, and EXPLAIN proves it.",
+    "vi": "Index làm nhanh đúng những query bạn thật sự chạy, và EXPLAIN chứng minh điều đó."
+  },
+  "estimateMin": 90,
+  "prereqs": ["p16"],
+  "tags": ["indexes", "explain", "mysql"],
+  "concepts": [
+    {
+      "term": {
+        "en": "Index",
+        "vi": "Index"
+      },
+      "explain": {
+        "en": "A lookup structure on a column (or pair of columns). `WHERE` and `ORDER BY` on indexed columns can skip a full table scan.",
+        "vi": "Cấu trúc tìm kiếm trên một (hoặc một cặp) cột. `WHERE` và `ORDER BY` trên cột có index có thể bỏ full table scan."
+      }
+    },
+    {
+      "term": {
+        "en": "EXPLAIN",
+        "vi": "EXPLAIN"
+      },
+      "explain": {
+        "en": "MySQL shows how it will run a query. You want `ref` / `range` on your index, not `ALL` (full scan) for the list query.",
+        "vi": "MySQL cho biết nó sẽ chạy query thế nào. Bạn muốn `ref` / `range` trên index, không phải `ALL` (full scan) cho câu list."
+      }
+    },
+    {
+      "term": {
+        "en": "Composite index",
+        "vi": "Index kép"
+      },
+      "explain": {
+        "en": "`@@index([status, publishedAt])` matches `WHERE status = PUBLISHED ORDER BY publishedAt`. Extra indexes slow writes — only add what EXPLAIN asked for.",
+        "vi": "`@@index([status, publishedAt])` khớp `WHERE status = PUBLISHED ORDER BY publishedAt`. Index thừa làm chậm ghi — chỉ thêm cái EXPLAIN cần."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "performance",
+      "label": {
+        "en": "Performance",
+        "vi": "Hiệu năng"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "n-plus-one",
+      "label": {
+        "en": "N+1 query problem",
+        "vi": "Vấn đề N+1 query"
+      }
+    },
+    {
+      "id": "debug-performance-fe-be",
+      "label": {
+        "en": "Debugging a performance issue",
+        "vi": "Debug performance issue"
+      }
+    }
+  ],
+  "specRefs": ["§1.5", "§1.6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "EXPLAIN the list and tag filter",
+        "vi": "EXPLAIN câu list và filter tag"
+      },
+      "detail": {
+        "en": "In the MySQL shell, EXPLAIN the post list (`status` + `publishedAt`) and the tag/skill filter. Save the before output in docs/sql-notes.sql.",
+        "vi": "Trong shell MySQL, EXPLAIN câu list post (`status` + `publishedAt`) và filter tag/skill. Lưu output trước khi sửa vào docs/sql-notes.sql."
+      },
+      "code": {
+        "lang": "sql",
+        "text": "EXPLAIN SELECT id, slug FROM post\nWHERE status = 'PUBLISHED'\nORDER BY publishedAt DESC\nLIMIT 20;"
+      }
+    },
+    {
+      "title": {
+        "en": "Add @@index and unique slugs",
+        "vi": "Thêm @@index và slug unique"
+      },
+      "detail": {
+        "en": "On Post: `@@index([status, publishedAt])`. Keep `slug` unique on Post and Project (already there). Migrate — new file, never edit old ones.",
+        "vi": "Trên Post: `@@index([status, publishedAt])`. Giữ `slug` unique trên Post và Project (đã có). Migrate — file mới, không sửa file cũ."
+      }
+    },
+    {
+      "title": {
+        "en": "EXPLAIN again and compare",
+        "vi": "EXPLAIN lại và so sánh"
+      },
+      "detail": {
+        "en": "Re-run the same EXPLAIN. Note `key` and `type` after vs before. Paste both into docs/sql-notes.sql with one sentence on why you did not index every column.",
+        "vi": "Chạy lại đúng câu EXPLAIN. Ghi `key` và `type` sau vs trước. Dán cả hai vào docs/sql-notes.sql kèm một câu vì sao không index mọi cột."
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "EXPLAIN shows index use (no full scan `ALL`) for the published post list query.",
+      "vi": "EXPLAIN cho thấy dùng index (không full scan `ALL`) trên câu list post PUBLISHED."
+    },
+    {
+      "en": "Before/after notes are saved in `docs/sql-notes.sql`.",
+      "vi": "Ghi chú trước/sau được lưu trong `docs/sql-notes.sql`."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Indexing every column, which slows writes and bloats the schema. Index the queries you run.",
+      "vi": "Index mọi cột, làm chậm ghi và phình schema. Chỉ index các query bạn chạy."
+    }
+  ],
+  "commit": "perf(db): indexes for list queries"
+}

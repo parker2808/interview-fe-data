@@ -1,0 +1,162 @@
+{
+  "kind": "practice-step",
+  "id": "p04",
+  "milestone": "m0",
+  "order": 4,
+  "title": {
+    "en": "Next.js shell + tokens + theme",
+    "vi": "Shell Next.js + token + theme"
+  },
+  "summary": {
+    "en": "Tokens first means every later screen inherits clear typography and light/dark for free.",
+    "vi": "Làm token trước thì mọi màn sau được typography rõ và light/dark miễn phí."
+  },
+  "estimateMin": 180,
+  "prereqs": ["p01"],
+  "tags": ["nextjs", "shadcn", "theme", "tokens"],
+  "concepts": [
+    {
+      "term": {
+        "en": "Design tokens",
+        "vi": "Design tokens"
+      },
+      "explain": {
+        "en": "Named CSS variables for color, type, space, and motion (spec §3). Components use `bg-background` and `text-primary`, never raw `#0F766E`.",
+        "vi": "Biến CSS có tên cho màu, chữ, khoảng cách và motion (spec §3). Component dùng `bg-background` và `text-primary`, không hard-code `#0F766E`."
+      }
+    },
+    {
+      "term": {
+        "en": "class strategy (next-themes)",
+        "vi": "class strategy (next-themes)"
+      },
+      "explain": {
+        "en": "Dark mode is a `.dark` class on `<html>`. shadcn reads that class. Set `attribute=\"class\"` and `suppressHydrationWarning` on `<html>` so the first paint matches the saved theme.",
+        "vi": "Dark mode là class `.dark` trên `<html>`. shadcn đọc class đó. Set `attribute=\"class\"` và `suppressHydrationWarning` trên `<html>` để lần render đầu khớp theme đã lưu."
+      }
+    },
+    {
+      "term": {
+        "en": "prefers-reduced-motion",
+        "vi": "prefers-reduced-motion"
+      },
+      "explain": {
+        "en": "An OS setting that means \"do not animate\". Spec §3.4: durations collapse, orbs stay still, content is visible immediately.",
+        "vi": "Setting hệ điều hành nghĩa là \"đừng animate\". Spec §3.4: duration về gần 0, orb đứng yên, nội dung hiện ngay."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "nextjs",
+      "label": {
+        "en": "Next.js",
+        "vi": "Next.js"
+      }
+    },
+    {
+      "slug": "css-layout",
+      "label": {
+        "en": "CSS Layout",
+        "vi": "Layout CSS"
+      }
+    },
+    {
+      "slug": "accessibility",
+      "label": {
+        "en": "Accessibility",
+        "vi": "Khả năng truy cập"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "design-system-strategy",
+      "label": {
+        "en": "How would you grow a frontend design system?",
+        "vi": "Bạn sẽ phát triển một frontend design system như thế nào?"
+      }
+    },
+    {
+      "id": "accessibility-forms-keyboard",
+      "label": {
+        "en": "Accessibility basics for forms and interactive UI",
+        "vi": "Accessibility cơ bản cho form và interactive UI"
+      }
+    }
+  ],
+  "specRefs": ["§3", "§3.1", "§3.2", "§3.4", "§3.6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "create-next-app into apps/web",
+        "vi": "create-next-app vào apps/web"
+      },
+      "detail": {
+        "en": "Scaffold Next.js (App Router, TypeScript, Tailwind) at apps/web inside the workspace. Do not put the app at the repo root.",
+        "vi": "Tạo Next.js (App Router, TypeScript, Tailwind) tại apps/web trong workspace. Không đặt app ở root repo."
+      },
+      "code": {
+        "lang": "bash",
+        "text": "pnpm dlx create-next-app@latest apps/web --typescript --tailwind --app --src-dir=false"
+      }
+    },
+    {
+      "title": {
+        "en": "shadcn init and map spec §3 tokens",
+        "vi": "shadcn init và map token spec §3"
+      },
+      "detail": {
+        "en": "Run shadcn init (class strategy, CSS variables). Replace the generated colors with the hex tokens from spec §3.6 so contrast matches the measured table. Add the extensions (`--subtle-foreground`, `--band`, domain hues).",
+        "vi": "Chạy shadcn init (class strategy, CSS variables). Thay màu generate bằng hex token ở spec §3.6 để contrast khớp bảng đã đo. Thêm extension (`--subtle-foreground`, `--band`, domain hue)."
+      }
+    },
+    {
+      "title": {
+        "en": "Load fonts with next/font",
+        "vi": "Load font bằng next/font"
+      },
+      "detail": {
+        "en": "Be Vietnam Pro (headings), Inter (body), JetBrains Mono (code). Subsets latin + latin-ext + vietnamese, `display: 'swap'`. Expose `--font-heading`, `--font-sans`, `--font-mono` as in spec §3.2.",
+        "vi": "Be Vietnam Pro (heading), Inter (body), JetBrains Mono (code). Subset latin + latin-ext + vietnamese, `display: 'swap'`. Gán `--font-heading`, `--font-sans`, `--font-mono` như spec §3.2."
+      }
+    },
+    {
+      "title": {
+        "en": "Theme toggle and reduced-motion guard",
+        "vi": "Nút theme và chặn reduced-motion"
+      },
+      "detail": {
+        "en": "Add next-themes (`attribute=\"class\"`, default `system`, `disableTransitionOnChange`). Put `suppressHydrationWarning` on `<html>`. In globals.css, collapse motion under `prefers-reduced-motion` as spec §3.4.",
+        "vi": "Thêm next-themes (`attribute=\"class\"`, default `system`, `disableTransitionOnChange`). Gắn `suppressHydrationWarning` trên `<html>`. Trong globals.css, tắt motion khi `prefers-reduced-motion` như spec §3.4."
+      }
+    },
+    {
+      "title": {
+        "en": "Placeholder at /",
+        "vi": "Trang placeholder tại /"
+      },
+      "detail": {
+        "en": "Render a short heading and body using the type scale (`text-title`, `text-prose`). Toggle light/dark. Check contrast in DevTools (AA). Use the Vietnamese QA string from spec §3.2 to confirm diacritics are not clipped.",
+        "vi": "Render một heading và đoạn body theo type scale (`text-title`, `text-prose`). Bật light/dark. Kiểm tra contrast trong DevTools (AA). Dùng chuỗi QA tiếng Việt ở spec §3.2 để chắc dấu không bị cắt."
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "The `/` placeholder renders in both themes with AA contrast checked in DevTools.",
+      "vi": "Trang `/` placeholder hiện được cả hai theme, contrast AA đã kiểm trong DevTools."
+    },
+    {
+      "en": "Font sizes match the spec type scale (`text-title` / `text-prose`), and Vietnamese marks on the QA string are not clipped.",
+      "vi": "Cỡ chữ khớp type scale trong spec (`text-title` / `text-prose`), và dấu tiếng Việt trên chuỗi QA không bị cắt."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "A flash of the wrong theme on load. Use `suppressHydrationWarning` on `<html>` and let next-themes set the class before paint.",
+      "vi": "Flash sai theme lúc load. Dùng `suppressHydrationWarning` trên `<html>` và để next-themes set class trước khi paint."
+    }
+  ],
+  "commit": "feat(web): next shell, tokens, theme"
+}

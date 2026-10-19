@@ -1,0 +1,120 @@
+{
+  "kind": "practice-step",
+  "id": "p32",
+  "milestone": "m7",
+  "order": 32,
+  "title": {
+    "en": "Real content via admin",
+    "vi": "Nội dung thật qua admin"
+  },
+  "summary": {
+    "en": "This proves the \"no hard-coded content\" rule, because all content goes in through the CMS.",
+    "vi": "Bước này chứng minh luật \"không hard-code nội dung\", vì mọi content đều đi qua CMS."
+  },
+  "estimateMin": 180,
+  "prereqs": ["p22", "p24"],
+  "tags": ["cms", "content", "i18n"],
+  "concepts": [
+    {
+      "term": {
+        "en": "CMS as source of truth",
+        "vi": "CMS là nguồn sự thật"
+      },
+      "explain": {
+        "en": "Profile, experience, projects, posts, and media exist only as rows. The web app has chrome strings, not CV copy.",
+        "vi": "Profile, experience, project, post và media chỉ tồn tại như hàng. Web app có chuỗi chrome, không có copy CV."
+      }
+    },
+    {
+      "term": {
+        "en": "Public vs private fields",
+        "vi": "Field public vs private"
+      },
+      "explain": {
+        "en": "Contact happens through the form. Public rows must not carry a personal inbox address or a phone number. GitHub `parker2808` is fine.",
+        "vi": "Liên hệ đi qua form. Hàng public không mang địa chỉ hộp thư cá nhân hay số điện thoại. GitHub `parker2808` thì được."
+      }
+    },
+    {
+      "term": {
+        "en": "Placeholder seed",
+        "vi": "Seed placeholder"
+      },
+      "explain": {
+        "en": "Dev seed can stay for local reset. Production seed must not re-insert fake rows after you have typed the real ones.",
+        "vi": "Seed dev có thể giữ để reset local. Seed production không được insert lại hàng giả sau khi bạn đã nhập hàng thật."
+      }
+    }
+  ],
+  "kbLinks": [],
+  "questionLinks": [
+    {
+      "id": "self-intro",
+      "label": {
+        "en": "Introduce yourself",
+        "vi": "Giới thiệu bản thân"
+      }
+    },
+    {
+      "id": "recent-project",
+      "label": {
+        "en": "Tell me about a recent project",
+        "vi": "Giới thiệu recent project"
+      }
+    }
+  ],
+  "specRefs": ["§1.1", "§1.2", "§1.3", "§1.5", "§2"],
+  "tasks": [
+    {
+      "title": {
+        "en": "Enter profile, experience, projects",
+        "vi": "Nhập profile, experience, project"
+      },
+      "detail": {
+        "en": "Through `/admin` only, in en and vi: profile (spec §1.1–1.2), 4 experience rows, 4 projects (spec §1.3 / §2). Media alt in both locales. No phone number, no personal inbox address.",
+        "vi": "Chỉ qua `/admin`, en và vi: profile (spec §1.1–1.2), 4 hàng experience, 4 project (spec §1.3 / §2). Alt media cả hai locale. Không số điện thoại, không địa chỉ hộp thư cá nhân."
+      }
+    },
+    {
+      "title": {
+        "en": "Two posts + publish",
+        "vi": "Hai post + publish"
+      },
+      "detail": {
+        "en": "Write 2 posts (one can be \"Vue → React: what transfers\"). Publish when EN is complete. vi can follow; missing vi is an EN badge, not fake copy.",
+        "vi": "Viết 2 post (một bài có thể là \"Vue → React: what transfers\"). Publish khi EN đủ. vi có thể theo sau; thiếu vi thì badge EN, không bịa copy."
+      }
+    },
+    {
+      "title": {
+        "en": "Strip production placeholders",
+        "vi": "Gỡ placeholder production"
+      },
+      "detail": {
+        "en": "Stop running the fake seed in production. Grep apps/web for CV strings — still 0 hits. Confirm production DB has no leftover \"Sample\" / \"Lorem\" rows.",
+        "vi": "Ngừng chạy seed giả trên production. Grep apps/web tìm chuỗi CV — vẫn 0 hits. Xác nhận DB production không còn hàng \"Sample\" / \"Lorem\"."
+      },
+      "code": {
+        "lang": "bash",
+        "text": "rg -n \"Particula|LitGroup|Samsung SDS|Parker Vu|Lorem\" apps/web --glob '!*.md'"
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "The production DB returns 0 placeholder rows (Studio / SQL count of Sample/Lorem is 0).",
+      "vi": "DB production trả 0 hàng placeholder (Studio / SQL đếm Sample/Lorem ra 0)."
+    },
+    {
+      "en": "The web app contains no CV strings (`rg` in apps/web returns 0 hits).",
+      "vi": "Web app không chứa chuỗi CV (`rg` trong apps/web ra 0 hits)."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Adding a personal phone or inbox address to public fields. Use the contact form only.",
+      "vi": "Thêm số điện thoại hay địa chỉ hộp thư cá nhân vào field public. Chỉ dùng form liên hệ."
+    }
+  ],
+  "commit": "chore: production seed cleanup"
+}

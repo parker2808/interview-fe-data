@@ -133,6 +133,216 @@
           "items": { "$ref": "#/$defs/block" }
         }
       }
+    },
+    "practiceMilestone": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "goal", "outcome", "steps"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^m[0-7]$" },
+        "title": { "$ref": "#/$defs/localized" },
+        "goal": { "$ref": "#/$defs/localized" },
+        "outcome": { "$ref": "#/$defs/localized" },
+        "steps": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^p\\d{2}$" },
+          "minItems": 1
+        }
+      }
+    },
+    "practiceCode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lang", "text"],
+      "properties": {
+        "lang": { "type": "string", "minLength": 1 },
+        "text": { "type": "string", "minLength": 1 }
+      }
+    },
+    "practiceTask": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "detail"],
+      "properties": {
+        "title": { "$ref": "#/$defs/localized" },
+        "detail": { "$ref": "#/$defs/localized" },
+        "code": { "$ref": "#/$defs/practiceCode" }
+      }
+    },
+    "practiceConcept": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["term", "explain"],
+      "properties": {
+        "term": { "$ref": "#/$defs/localized" },
+        "explain": { "$ref": "#/$defs/localized" }
+      }
+    },
+    "practiceKbLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slug", "label"],
+      "properties": {
+        "slug": { "type": "string", "minLength": 1 },
+        "label": { "$ref": "#/$defs/localized" }
+      }
+    },
+    "practiceQuestionLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "$ref": "#/$defs/localized" }
+      }
+    },
+    "practiceMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "title", "intro", "specPath", "milestones"],
+      "properties": {
+        "version": { "const": 1 },
+        "title": { "$ref": "#/$defs/localized" },
+        "intro": { "$ref": "#/$defs/localized" },
+        "specPath": { "type": "string", "minLength": 1 },
+        "draft": { "type": "boolean" },
+        "milestones": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/practiceMilestone" }
+        }
+      }
+    },
+    "practiceStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id",
+        "milestone",
+        "order",
+        "title",
+        "summary",
+        "estimateMin",
+        "prereqs",
+        "tags",
+        "concepts",
+        "kbLinks",
+        "questionLinks",
+        "specRefs",
+        "tasks",
+        "doneWhen",
+        "pitfalls",
+        "commit"
+      ],
+      "properties": {
+        "kind": { "const": "practice-step" },
+        "id": { "type": "string", "pattern": "^p\\d{2}$" },
+        "milestone": { "type": "string", "pattern": "^m[0-7]$" },
+        "order": { "type": "integer", "minimum": 1, "maximum": 33 },
+        "title": { "$ref": "#/$defs/localized" },
+        "summary": { "$ref": "#/$defs/localized" },
+        "estimateMin": { "type": "integer", "minimum": 30, "maximum": 300 },
+        "prereqs": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^p\\d{2}$" }
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z0-9-]+$" }
+        },
+        "concepts": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 5,
+          "items": { "$ref": "#/$defs/practiceConcept" }
+        },
+        "kbLinks": {
+          "type": "array",
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/practiceKbLink" }
+        },
+        "questionLinks": {
+          "type": "array",
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/practiceQuestionLink" }
+        },
+        "specRefs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "tasks": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 6,
+          "items": { "$ref": "#/$defs/practiceTask" }
+        },
+        "doneWhen": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": { "$ref": "#/$defs/localized" }
+        },
+        "pitfalls": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/localized" }
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^(feat|fix|chore|docs|test|perf|refactor)(\\(.+\\))?: .+"
+        }
+      }
+    },
+    "practiceIndexStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "milestone",
+        "order",
+        "title",
+        "summary",
+        "estimateMin",
+        "tags",
+        "prereqs"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^p\\d{2}$" },
+        "milestone": { "type": "string", "pattern": "^m[0-7]$" },
+        "order": { "type": "integer", "minimum": 1, "maximum": 33 },
+        "title": { "$ref": "#/$defs/localized" },
+        "summary": { "$ref": "#/$defs/localized" },
+        "estimateMin": { "type": "integer", "minimum": 30, "maximum": 300 },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z0-9-]+$" }
+        },
+        "prereqs": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^p\\d{2}$" }
+        }
+      }
+    },
+    "practiceIndex": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "title", "intro", "milestones", "steps"],
+      "properties": {
+        "version": { "const": 1 },
+        "title": { "$ref": "#/$defs/localized" },
+        "intro": { "$ref": "#/$defs/localized" },
+        "milestones": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/practiceMilestone" }
+        },
+        "steps": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/practiceIndexStep" }
+        }
+      }
     }
   }
 }

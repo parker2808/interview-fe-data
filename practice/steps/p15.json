@@ -1,0 +1,128 @@
+{
+  "kind": "practice-step",
+  "id": "p15",
+  "milestone": "m3",
+  "order": 15,
+  "title": {
+    "en": "Write API",
+    "vi": "API ghi"
+  },
+  "summary": {
+    "en": "The admin CMS needs POST, PATCH and DELETE with the same contracts.",
+    "vi": "CMS admin cần POST, PATCH và DELETE với cùng contract."
+  },
+  "estimateMin": 180,
+  "prereqs": ["p13"],
+  "tags": ["crud", "http", "zod"],
+  "concepts": [
+    {
+      "term": {
+        "en": "POST / PATCH / DELETE",
+        "vi": "POST / PATCH / DELETE"
+      },
+      "explain": {
+        "en": "POST creates (201 + body). PATCH updates some fields (200 + body). DELETE removes or archives (204 empty). PUT would replace the whole row — skip it.",
+        "vi": "POST tạo mới (201 + body). PATCH sửa một phần (200 + body). DELETE xóa hoặc archive (204 trống). PUT thay cả hàng — không dùng."
+      }
+    },
+    {
+      "term": {
+        "en": "P2002 → 409",
+        "vi": "P2002 → 409"
+      },
+      "explain": {
+        "en": "Prisma code P2002 is a unique constraint (duplicate slug). Map it to HTTP 409 and a field error on `slug`, not a 500.",
+        "vi": "Mã Prisma P2002 là unique constraint (slug trùng). Map sang HTTP 409 và field error trên `slug`, không phải 500."
+      }
+    },
+    {
+      "term": {
+        "en": "Partial schema",
+        "vi": "Schema partial"
+      },
+      "explain": {
+        "en": "Create uses the full zod input. PATCH uses `.partial()` so omitted fields stay unchanged.",
+        "vi": "Create dùng schema input đầy đủ. PATCH dùng `.partial()` để field bỏ trống giữ nguyên."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "networking",
+      "label": {
+        "en": "Networking",
+        "vi": "Mạng và giao thức"
+      }
+    },
+    {
+      "slug": "security",
+      "label": {
+        "en": "Security",
+        "vi": "Bảo mật"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "http-basics-status-codes",
+      "label": {
+        "en": "HTTP basics and status codes",
+        "vi": "HTTP basics và status code"
+      }
+    }
+  ],
+  "specRefs": ["§1.5", "§1.6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "Shared input DTOs",
+        "vi": "DTO input dùng chung"
+      },
+      "detail": {
+        "en": "In packages/shared, add create/patch schemas for projects, posts, skills, tags, and experience. Patch schemas are partial. Status and slug rules live here, not in the controller.",
+        "vi": "Trong packages/shared, thêm schema create/patch cho project, post, skill, tag và experience. Schema patch là partial. Rule status và slug nằm ở đây, không nằm trong controller."
+      }
+    },
+    {
+      "title": {
+        "en": "Create, update, delete routes",
+        "vi": "Route create, update, delete"
+      },
+      "detail": {
+        "en": "POST / PATCH / DELETE for projects, posts, skills, tags, experience. Return 201 / 200 / 204. Catch P2002 and respond 409 `{ error: { code, message, fields: { slug } } }`.",
+        "vi": "POST / PATCH / DELETE cho project, post, skill, tag, experience. Trả 201 / 200 / 204. Bắt P2002 và trả 409 `{ error: { code, message, fields: { slug } } }`."
+      }
+    },
+    {
+      "title": {
+        "en": "api.http rest file",
+        "vi": "File rest api.http"
+      },
+      "detail": {
+        "en": "Add apps/api/api.http with one request per route (happy path + duplicate slug). REST Client / curl against it so you do not click around in Studio for writes.",
+        "vi": "Thêm apps/api/api.http với một request mỗi route (happy path + slug trùng). Dùng REST Client / curl, đừng click lung tung trong Studio để ghi."
+      },
+      "code": {
+        "lang": "text",
+        "text": "### duplicate slug\nPOST http://localhost:4000/api/projects\nContent-Type: application/json\n\n{ \"slug\": \"particula-v2\", \"titleEn\": \"Again\" }"
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "The REST client file `api.http` exercises every create/update/delete route.",
+      "vi": "File REST client `api.http` chạy được mọi route create/update/delete."
+    },
+    {
+      "en": "A duplicate slug returns 409 with a field error on `slug`.",
+      "vi": "Slug trùng trả 409 với field error trên `slug`."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Using PUT semantics for partial updates. Use PATCH with partial schemas.",
+      "vi": "Dùng semantics PUT cho update một phần. Hãy dùng PATCH với schema partial."
+    }
+  ],
+  "commit": "feat(api): crud endpoints"
+}
