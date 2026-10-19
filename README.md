@@ -17,6 +17,8 @@ plan/resources/<id>.json       # plan overview, context, algo-day-XX, lab notice
 practice/meta.json             # practice intro + 8 milestones → step ids
 practice/index.json            # GENERATED: meta + step summaries
 practice/steps/pXX.json        # one bilingual build step (p01–p33)
+practice/design/index.json     # design gallery catalog (bilingual captions)
+practice/design/screens/*.webp # frozen mockup screenshots (1x WebP)
 qna/categories.json
 qna/questions.json             # single bank (142 questions). Do not split — the
                                # public app loader only reads this file.
@@ -77,7 +79,7 @@ A later PR can rewrite the prose for readability. This repo is the format + cont
 
 `scripts/check-plan.mjs` checks the 30 day files: week ranges, study/Q&A ids, empty `lab.sections` (the Lab tab is retired; keep a stub so the app still parses), no calendar dates, and Plan-tab length budgets (`--strict`). `scripts/sync-plan-index.mjs` rebuilds `plan/index.json` from `plan/meta.json` plus each day file without `lab`. `--check` exits non-zero if the file would change.
 
-`scripts/check-practice.mjs` checks `practice/meta.json` and `practice/steps/pXX.json`: ids `p01`–`p33` are unique and contiguous, `order` and `milestone` match meta, prereqs exist and come earlier, KB slugs and Q&A ids resolve, budgets (3–6 tasks, 1–4 done-when, 1–3 pitfalls) pass under `--strict`, commits match `feat|fix|chore|docs|test|perf|refactor`, and no email or phone strings appear. `draft: true` on meta allows a missing suffix of step files so later batches can land on top. `scripts/sync-practice-index.mjs` rebuilds `practice/index.json` from meta plus each step summary. `--check` exits non-zero if the file would change. `--stats` prints step counts per milestone.
+`scripts/check-practice.mjs` checks `practice/meta.json` and `practice/steps/pXX.json`: ids `p01`–`p33` are unique and contiguous, `order` and `milestone` match meta, prereqs exist and come earlier, KB slugs and Q&A ids resolve, budgets (3–6 tasks, 1–4 done-when, 1–3 pitfalls) pass under `--strict`, commits match `feat|fix|chore|docs|test|perf|refactor`, and no email or phone strings appear. `draft: true` on meta allows a missing suffix of step files so later batches can land on top. It also checks `practice/design/index.json`: screen files exist, ids are unique and in public-then-admin order, `specRefs` match `§N` / `§N.M` headings in `plans/portfolio-design-system.md`, and width/height match the WebP. `scripts/sync-practice-index.mjs` rebuilds `practice/index.json` from meta plus each step summary. `--check` exits non-zero if the file would change. `--stats` prints step counts per milestone.
 
 `scripts/sync-kb-index.mjs` rebuilds each `docs[]` and `groups[].topics[]` entry from the matching knowledge-base file: `slug`, `title`, `category`, `order`, `tags`, a clipped `summary` (219 chars + `…` when longer than 220), and level-2/3 `headings`. It keeps `groups` order and `defaultSlug`. `--check` exits non-zero if the file would change.
 
