@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vue → React: what transfers · Parker Vu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@600;700&family=Inter:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container inner">
+      <a class="logo" href="home.html"><span class="mark">p</span> parker</a>
+      <nav class="nav-links">
+        <a href="case-study.html">Work</a>
+        <a href="#">About</a>
+        <a class="active" href="post.html">Notes</a>
+        <a href="#">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <div class="search-chip">Search… <kbd class="k">⌘K</kbd></div>
+        <div class="locale"><span class="on">EN</span><span>VI</span></div>
+        <button class="icon-btn" aria-label="Theme"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 14.5A8.5 8.5 0 1 1 9.5 3 7 7 0 0 0 21 14.5z"/></svg></button>
+        <button class="icon-btn menu-btn" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container" style="padding-top:48px">
+      <p class="crumb"><a href="#">Notes</a> / Vue → React</p>
+    </div>
+    <div class="container layout-with-toc">
+      <article>
+        <h1>Vue → React: what transfers, what doesn't</h1>
+        <p style="margin:16px 0 8px;font-size:14px;color:var(--subtle-foreground)">
+          <span class="tabular">Oct 12, 2026</span> · Updated Oct 14 · 6 min
+          <span class="tags" style="display:inline-flex;margin-left:12px;vertical-align:middle">
+            <span class="badge">react</span>
+            <span class="badge">vue</span>
+          </span>
+        </p>
+        <p style="font-size:14px;margin:0 0 32px"><a href="#" style="color:var(--primary)">Đọc bằng Tiếng Việt ↗</a></p>
+
+        <div class="prose">
+          <p>I spent five years in Vue and Nuxt. This year I am building the same kind of product — a data-dense admin plus a public site — in React and Next.js. Most of the job transferred. A few reflexes did not, and those are the ones that cost me hours.</p>
+          <p>Hưởng ứng một điều hiển nhiên: the mental model is “who owns this state?”, not “which framework am I in?”. Ở Đồng Tháp hay Hanoi, a stale list is still a stale list.</p>
+
+          <h2 id="reactivity">Reactivity</h2>
+          <p>In Vue, <code>ref()</code> and <code>computed()</code> are the default. You mutate, the template updates. In React, state is a snapshot. If you write Vue into React you get stale closures and effects that run twice.</p>
+          <blockquote>Treat React state as a value you replace, not an object you poke. Pinia muscle memory is the bug.</blockquote>
+          <p>The transfer: <strong>derived data does not belong in the store</strong>. In Pinia I already pushed “server cache” into TanStack Query. In React I do the same. Local UI state stays in the component; URL state stays in the URL.</p>
+
+          <h2 id="effects">Effects</h2>
+          <p>Vue's <code>watch</code> feels like “do this when that changes”. React's <code>useEffect</code> is “synchronize with something outside React”. I was over-using it for derived state. The fix was the same as a good composable: compute, don't sync.</p>
+
+          <div class="codeblock">
+            <div class="bar"><span>components/Counter.tsx</span><span>copy</span></div>
+            <pre><code><span class="tok-k">import</span> { useState } <span class="tok-k">from</span> <span class="tok-s">'react'</span>
+
+<span class="tok-c">// Vue instinct: mutate count.value++</span>
+<span class="tok-k">export function</span> <span class="tok-f">Counter</span>() {
+  <span class="tok-k">const</span> [count, setCount] = <span class="tok-f">useState</span>(<span class="tok-n">0</span>)
+  <span class="tok-k">const</span> doubled = count * <span class="tok-n">2</span> <span class="tok-c">// derived, not an effect</span>
+
+  <span class="tok-k">return</span> (
+    &lt;<span class="tok-f">button</span> onClick={() =&gt; <span class="tok-f">setCount</span>(c =&gt; c + <span class="tok-n">1</span>)}&gt;
+      {count} → {doubled}
+    &lt;/<span class="tok-f">button</span>&gt;
+  )
+}</code></pre>
+          </div>
+
+          <h2 id="fetching">Data fetching</h2>
+          <p>This is the easy transfer. TanStack Query is the same library I used on Particula v2. Query keys, stale time, and cancelling in-flight requests with <code>AbortController</code> all came along.</p>
+          <p>The new piece is Next.js: Server Components fetch on the server, the admin hydrates a QueryClient. I do not put <code>useQuery</code> on the public case-study page. That page is a document, not an app.</p>
+
+          <div class="codeblock">
+            <div class="bar"><span>app/[locale]/projects/page.tsx</span><span>copy</span></div>
+            <pre><code><span class="diff-line diff-del tok-d">- const { data } = useQuery({ queryKey: ['projects'], queryFn })</span>
+<span class="diff-line diff-add">+ <span class="tok-k">export default async function</span> <span class="tok-f">Page</span>({ params }: Props) {
++   <span class="tok-k">const</span> projects = <span class="tok-k">await</span> <span class="tok-f">apiServer</span>(<span class="tok-s">`/public/projects?locale=${params.locale}`</span>)
++   <span class="tok-k">return</span> &lt;<span class="tok-f">ProjectGrid</span> projects={projects} /&gt;
++ }</span></code></pre>
+          </div>
+
+          <p>What does not transfer: Vue SFCs with <code>&lt;script setup&gt;</code> colocating template and styles. React wants the same colocation, but the file is JS-shaped. I miss <code>defineModel</code>. I do not miss implicit provides.</p>
+        </div>
+      </article>
+
+      <aside class="toc">
+        <p>On this page</p>
+        <a class="current" href="#reactivity">Reactivity</a>
+        <a href="#effects">Effects</a>
+        <a href="#fetching">Data fetching</a>
+        <p style="margin-top:28px;font-size:12px;color:var(--subtle-foreground)">Share</p>
+        <a href="#" style="border:0;padding-left:0">Copy link</a>
+      </aside>
+    </div>
+
+    <div class="container">
+      <div class="pager">
+        <a href="#">← Previous<br /><strong>TanStack Query in Nuxt 3</strong></a>
+        <a href="#" style="text-align:right">Next →<br /><strong>Strangler vs big-bang</strong></a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
