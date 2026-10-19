@@ -1002,21 +1002,25 @@
         "vi": "Dựng một codebase frontend như nào, làm thế nào để scale nếu có hơn 100 features?"
       },
       "answer": {
-        "en": "**Short answer:** Start with a **modular monolith** with strong feature boundaries, then scale through domain ownership, state policy, and architecture enforcement rather than jumping straight to micro-frontends.\n\n**Why:**\n\n- `app/` or shell should own routing, layout, and providers.\n- `modules/<feature>/` should own feature pages, components, hooks/composables, API client, and tests.\n- `shared/ui` and `shared/lib` should stay small and intentional.\n\nAt scale, the big wins are:\n\n1. clear domain ownership,\n2. route/feature-level lazy loading,\n3. typed API contracts,\n4. a written state policy,\n5. import boundaries enforced by tooling and review.\n\n**Trade-offs:**\n\n- too much “shared” code creates coupling,\n- too much fragmentation creates navigation overhead,\n- micro-frontends solve real org problems but add runtime and UX complexity.\n\nThe main failure mode is not file count. It is **unclear ownership and accidental coupling**.",
-        "vi": "**Trả lời ngắn:** Bắt đầu bằng **modular monolith** với feature boundary rõ, rồi scale bằng domain ownership, state policy và enforcement kiến trúc thay vì nhảy ngay sang micro-frontend.\n\n**Vì sao:**\n\n- `app/` hoặc shell nên ownership routing, layout và provider.\n- `modules/<feature>/` nên ownership page, component, hook/composable, API client và test của feature đó.\n- `shared/ui` và `shared/lib` nên giữ nhỏ và có chủ đích.\n\nKhi scale, giá trị lớn nhất nằm ở:\n\n1. domain ownership rõ,\n2. lazy loading ở mức route/feature,\n3. API contract có type,\n4. state policy được viết rõ,\n5. boundary import được enforce bằng tooling và code review.\n\n**Trade-off:**\n\n- quá nhiều code “shared” sẽ tăng coupling,\n- tách quá vụn sẽ tăng chi phí điều hướng,\n- micro-frontend giải quyết bài toán tổ chức thật nhưng thêm complexity về runtime và UX.\n\nFailure mode chính không phải số lượng file, mà là **ownership mơ hồ và coupling vô tình**."
+        "en": "**Short answer:** This answer is **in-app structure past 100 features** — a modular monolith with feature public APIs and linted boundaries — not micro-frontends (that is the when question) and not a monorepo of many apps (that is monorepo-strategy). Start with feature folders; scale with ownership, state policy, and enforcement.\n\n**Explanation:**\n`app/` or the shell owns routing, layout, and providers. `features/<name>/` owns components, composable, API module, types, tests, and a public `index.ts`. Other features import only that index. `shared/` stays boring: `http`, app composites, not domain widgets. The design system is a package (15.6), not a junk drawer inside `shared/ui`.\n\nScale is not more folders. It is: domain ownership, lazy load at the route/feature, typed API contracts, a written state policy (URL vs query cache vs Pinia), and **lint that forbids deep imports**. Micro-frontends wait until two deploy clocks exist. A type-based `components/` at the root dies at 100 features.\n\n**Senior perspective:**\n- Enforce with `no-restricted-paths` or Nx boundaries. A README is a suggestion.\n- Server lists are a query cache, not a global store. Shareable filters live in the URL (16.4).\n- `shared/` that imports a feature is a cycle. Move the code into the feature.\n- Verify: time for a new hire to find the order-status flow; PRs that stay inside one feature.\n\n**Common pitfalls:**\n- Symptom: 400 files in `components/`. Cause: type folders. Fix: feature slices + public index.\n- Symptom: checkout imports `orders/components/OrderRow.vue`. Cause: no lint. Fix: restricted-paths.\n- Symptom: jump to Federation at feature 40. Cause: fashion. Fix: packages + one deploy until clocks diverge.\n\n**How to say it (about 45 s):**\n> I start with a modular monolith. Each feature owns its table, composable, API module, and tests, and it exports a public index. Pages are thin. Shared stays boring. The design system is a package. I enforce the boundary with lint so checkout cannot import OrderRow internals. State policy is written: URL for shareable filters, query cache for server lists, Pinia for client UX. I lazy-load at the route. I do not jump to micro-frontends at one hundred features — that is an org move when two deploy clocks exist. On the admin product, the restricted-path rule is what scaled us, not a folder rename.",
+        "vi": "**Trả lời ngắn:** Câu này là **cấu trúc trong app sau 100 feature** — modular monolith với public API feature và ranh giới có lint — không phải micro-frontend (đó là câu khi nào) và không phải monorepo nhiều app (đó là monorepo-strategy). Bắt đầu bằng thư mục feature; scale bằng ownership, policy state, và enforcement.\n\n**Giải thích:**\n`app/` hoặc shell sở hữu routing, layout và provider. `features/<name>/` sở hữu component, composable, module API, type, test, và `index.ts` public. Feature khác chỉ import index đó. `shared/` ở lại nhàm: `http`, composite app, không phải widget domain. Design system là một package (15.6), không phải ngăn đồ trong `shared/ui`.\n\nScale không phải thêm thư mục. Nó là: ownership domain, lazy load ở route/feature, hợp đồng API có type, policy state viết ra (URL khác query cache khác Pinia), và **lint cấm import sâu**. Micro-frontend chờ đến khi có hai đồng hồ deploy. `components/` theo type ở root chết ở 100 feature.\n\n**Góc nhìn senior:**\n- Enforce bằng `no-restricted-paths` hoặc ranh giới Nx. README là gợi ý.\n- List server là query cache, không phải store global. Filter chia sẻ được sống trên URL (16.4).\n- `shared/` import một feature là cycle. Dời code vào feature.\n- Kiểm chứng: thời gian người mới tìm flow trạng thái đơn; PR ở lại trong một feature.\n\n**Lỗi hay gặp:**\n- Triệu chứng: 400 file trong `components/`. Nguyên nhân: thư mục theo type. Cách xử lý: slice feature + index public.\n- Triệu chứng: checkout import `orders/components/OrderRow.vue`. Nguyên nhân: không lint. Cách xử lý: restricted-paths.\n- Triệu chứng: nhảy Federation ở feature 40. Nguyên nhân: mốt. Cách xử lý: package + một deploy đến khi đồng hồ lệch.\n\n**Nói khi phỏng vấn (~45 giây):**\n> Tôi bắt đầu bằng modular monolith. Mỗi feature sở hữu table, composable, module API và test, và export index public. Trang mỏng. Shared ở lại nhàm. Design system là một package. Tôi enforce ranh giới bằng lint để checkout không import nội bộ OrderRow. Policy state được viết: URL cho filter chia sẻ được, query cache cho list server, Pinia cho UX client. Tôi lazy-load ở route. Tôi không nhảy micro-frontend ở một trăm feature — đó là nước đi tổ chức khi có hai đồng hồ deploy. Ở sản phẩm admin, rule restricted-path mới scale chúng tôi, không phải lần đổi tên thư mục."
       },
       "example": {
-        "en": "A good pattern is `modules/customers/{pages,components,api,model,tests}` with a public entry file. Other modules import the public API, not deep internals.",
-        "vi": "Pattern tốt là `modules/customers/{pages,components,api,model,tests}` kèm một public entry file. Module khác chỉ import public API, không chui sâu vào internals."
+        "en": "```text\napp/\n  features/orders/{components,composables,api,index.ts}\n  features/checkout/          # imports @app/orders only\n  shared/{ui,lib/http.ts}     # no feature imports\n  pages/                      # thin compose\npackages/ui/                  # DS, peer vue\n# eslint: checkout ↛ orders/components/*\n```\n\nCheckout talks to orders through `index.ts`. Lint, not a wiki, holds the line. Federation is not in this tree.",
+        "vi": "```text\napp/\n  features/orders/{components,composables,api,index.ts}\n  features/checkout/          # chỉ import @app/orders\n  shared/{ui,lib/http.ts}     # không import feature\n  pages/                      # compose mỏng\npackages/ui/                  # DS, peer vue\n# eslint: checkout ↛ orders/components/*\n```\n\nCheckout nói với orders qua `index.ts`. Lint, không phải wiki, giữ lằn ranh. Federation không có trong cây này."
       },
       "followUps": [
         {
-          "en": "What belongs in URL state vs global store?",
-          "vi": "Cái gì nên nằm ở URL state và cái gì nên vào global store?"
+          "en": "What lint rule do you add on day one of a hundred-feature app?",
+          "vi": "Bạn thêm rule lint nào ngày đầu của app trăm feature?"
         },
         {
-          "en": "At what point would you seriously consider package splitting or micro-frontends?",
-          "vi": "Tới ngưỡng nào bạn mới cân nhắc tách package hoặc micro-frontend?"
+          "en": "Where do Pinia stores live once you have feature folders?",
+          "vi": "Store Pinia sống ở đâu khi đã có thư mục feature?"
+        },
+        {
+          "en": "When does this story become the micro-frontends question instead?",
+          "vi": "Khi nào câu chuyện này biến thành câu micro-frontend?"
         }
       ]
     },
@@ -4128,9 +4132,27 @@
         "vi": "AI generate component React 1.500 dòng chạy đúng. Có merge không? Tiêu chí đánh giá?"
       },
       "answer": {
-        "en": "Default answer: **not as-is**.\n\nI would evaluate:\n\n1. responsibility boundaries,\n2. readability and naming,\n3. testing quality,\n4. accessibility and security,\n5. render performance,\n6. consistency with codebase conventions,\n7. whether the team can maintain it without the AI conversation.\n\nIf the code is only “working” but impossible to reason about, that is debt disguised as velocity.",
-        "vi": "Câu trả lời mặc định: **không merge nguyên xi**.\n\nEm sẽ đánh giá:\n\n1. boundary của responsibility,\n2. readability và naming,\n3. chất lượng test,\n4. accessibility và security,\n5. render performance,\n6. consistency với convention của codebase,\n7. team có maintain được khi không còn chat AI hay không.\n\nNếu code chỉ “chạy được” nhưng không thể reasoning nổi thì đó là debt được hóa trang thành tốc độ."
-      }
+        "en": "**What they are checking:** Whether you **refuse to merge a 1,500-line generated SFC as-is** — ownership, test, a11y, security — not “AI is the future.” Distinct from refactor-under-deadline (that is seam work under a date).\n\n**How to structure it:**\n1. Default: not as-is. A working screenshot is not a merge bar.\n2. Split by reason to change (15.3): data, permissions, view. Name the files you would extract.\n3. Check tests, a11y, XSS (`v-html`), secrets, and render cost.\n4. Align with codebase conventions (composables, URL state, DS primitives).\n5. Merge a slice behind a flag, or reject and keep the prompt + the useful bits.\n\n**Senior signals to include:**\n- You will not own a 1,500-line file you cannot explain in review.\n- Generated `useEffect` / `watch` soup is a smell; extract a composable and test it.\n- A11y and authz are not optional because the model skipped them.\n- Credit the tool; you still sign the PR.\n\n**Avoid:**\n- Merging because the demo clicked.\n- Rewriting from scratch as ego — keep the useful bits.\n- Pretending you reviewed 1,500 lines in five minutes.\n\nOn the admin product I would treat it like any oversized PR: slice, test, then land.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Bạn **từ chối merge SFC generate 1.500 dòng nguyên trạng** — ownership, test, a11y, bảo mật — không phải “AI là tương lai.” Khác refactor-under-deadline (câu đó là việc seam dưới một mốc).\n\n**Cách trình bày:**\n1. Mặc định: không nguyên trạng. Screenshot chạy được không phải thanh merge.\n2. Tách theo lý do đổi (15.3): data, permission, view. Gọi tên file bạn sẽ tách.\n3. Kiểm test, a11y, XSS (`v-html`), secret, và chi phí render.\n4. Khớp quy ước codebase (composable, state URL, primitive DS).\n5. Merge một lát sau flag, hoặc từ chối và giữ prompt + phần hữu ích.\n\n**Tín hiệu senior nên có:**\n- Bạn sẽ không sở hữu file 1.500 dòng bạn không giải thích được lúc review.\n- Đống `useEffect` / `watch` generate là mùi; tách composable và test.\n- A11y và authz không tùy chọn vì model bỏ chúng.\n- Ghi công cụ; bạn vẫn ký PR.\n\n**Nên tránh:**\n- Merge vì demo đã click.\n- Viết lại từ đầu vì ego — hãy giữ phần hữu ích.\n- Giả vờ đã review 1.500 dòng trong năm phút.\n\nỞ sản phẩm admin tôi sẽ coi như mọi PR quá khổ: lát, test, rồi hạ cánh."
+      },
+      "example": {
+        "en": "Situation: a teammate opened a PR on the internal admin product with a 1,500-line generated Vue SFC that listed orders, filtered, refunded, and drew a chart — and the screenshot worked. Task: I owned merge or not. Action: I said no as-is, listed the cuts — useOrders, useRefund, OrderTable, chart behind ClientOnly — asked for tests on refund and an axe pass, and flagged v-html in a note field. We kept the chart config and the filter URL idea from the generation. Result: three files plus tests landed two days later; the giant SFC did not. I credited the tool in the PR. Distinct from deadline-refactor: there was no launch date forcing a seam; the bar was ownership.",
+        "vi": "Situation: teammate mở PR trên sản phẩm admin nội bộ với SFC Vue generate 1.500 dòng, liệt kê đơn, filter, refund, và vẽ chart — và screenshot chạy. Task: tôi sở hữu merge hay không. Action: tôi nói không nguyên trạng, liệt kê đường cắt — useOrders, useRefund, OrderTable, chart sau ClientOnly — đòi test refund và một lần axe, và gắn cờ v-html trong field ghi chú. Chúng tôi giữ config chart và ý filter URL từ lần generate. Result: ba file kèm test hạ cánh hai ngày sau; SFC khổng lồ thì không. Tôi ghi công cụ trong PR. Khác refactor-deadline: không có mốc launch buộc một seam; thanh là ownership."
+      },
+      "followUps": [
+        {
+          "en": "What is the smallest slice you would merge from a generated giant file?",
+          "vi": "Lát nhỏ nhất bạn sẽ merge từ file generate khổng lồ là gì?"
+        },
+        {
+          "en": "Which generated patterns do you treat as security or a11y blockers?",
+          "vi": "Pattern generate nào bạn coi là chặn bảo mật hoặc a11y?"
+        },
+        {
+          "en": "How do you review volume you cannot honestly read line by line?",
+          "vi": "Bạn review khối lượng không thể đọc thật từng dòng thế nào?"
+        }
+      ]
     },
     {
       "id": "table-50k-rows",
@@ -4283,9 +4305,27 @@
         "vi": "Bạn sẽ thiết kế frontend cho news feed như thế nào?"
       },
       "answer": {
-        "en": "I would break it into:\n\n1. feed retrieval model: cursor pagination and stable ordering,\n2. item rendering strategy: virtualization or incremental rendering if the list is large,\n3. optimistic actions: like/save/follow with rollback strategy,\n4. media loading and placeholders,\n5. refresh strategy for new content,\n6. caching and deduplication of items across views.\n\nSenior considerations include scroll restoration, partial failures, accessibility for dynamic content, and analytics without harming performance.",
-        "vi": "Em sẽ tách bài toán thành:\n\n1. mô hình lấy feed: cursor pagination và thứ tự ổn định,\n2. chiến lược render item: virtualization hoặc incremental rendering nếu list lớn,\n3. optimistic action: like/save/follow kèm rollback strategy,\n4. media loading và placeholder,\n5. chiến lược refresh nội dung mới,\n6. cache và dedupe item giữa các view.\n\nConsideration mức senior còn có scroll restoration, partial failure, accessibility cho nội dung động và analytics mà không làm hại performance."
-      }
+        "en": "**What they are checking:** Whether you can design a **feed as a system** — retrieval, rendering, optimistic actions, and failure — not a list of “virtualize and cache.” Distinct from autocomplete (prefix suggest) and from chat (ordered realtime).\n\n**How to structure it:**\n1. Clarify: public vs authenticated, ranking vs chronological, write volume, media, notifications, SEO.\n2. Name components: list shell, item renderer, composer, infinite loader, live region for new items.\n3. Data flow: cursor pagination from a BFF, stable sort key, incremental render / virtualize if the window is long.\n4. Hard parts: out-of-order likes, deleted items, unseen cursor, media CLS.\n5. v1 cuts: no live socket; poll or SSE for a “new posts” chip. Do not cut a11y or a stable cursor.\n\n**Senior signals to include:**\n- Cursor pagination and a stable order key, not `page=2` that drifts when new posts arrive.\n- Optimistic like/save with rollback; the item id is the idempotency key.\n- Virtualize when the window is thousands of DOM nodes, not for twenty cards.\n- Permissions and ranking stay on the server; hiding a card is UX.\n\n**Avoid:**\n- Offset pagination as the only story.\n- Opening a websocket for a mostly-read feed.\n- Treating this as the autocomplete or chat design.\n\nThis is a walk-through. The 16.1 six steps still apply; folders are 15.5.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Bạn thiết kế **feed như một hệ thống** — lấy dữ liệu, render, action lạc quan, và kịch bản lỗi — không phải list “ảo hóa và cache.” Khác autocomplete (suggest theo prefix) và khác chat (realtime có thứ tự).\n\n**Cách trình bày:**\n1. Làm rõ: public hay đã auth, ranking hay theo thời gian, write volume, media, notification, SEO.\n2. Gọi tên component: shell list, renderer item, composer, infinite loader, live region cho item mới.\n3. Luồng data: cursor pagination từ BFF, sort key ổn định, render tăng dần / ảo hóa nếu cửa sổ dài.\n4. Phần khó: like lệch thứ tự, item bị xóa, cursor chưa thấy, CLS media.\n5. Cắt v1: không socket live; poll hoặc SSE cho chip “bài mới.” Đừng cắt a11y hoặc cursor ổn định.\n\n**Tín hiệu senior nên có:**\n- Cursor pagination và order key ổn định, không phải `page=2` lệch khi bài mới tới.\n- Like/save lạc quan kèm rollback; id item là khóa idempotency.\n- Ảo hóa khi cửa sổ là hàng nghìn node DOM, không phải hai mươi card.\n- Permission và ranking ở lại trên server; giấu card là UX.\n\n**Nên tránh:**\n- Offset pagination làm cả câu chuyện.\n- Mở websocket cho feed chủ yếu đọc.\n- Coi đây là thiết kế autocomplete hoặc chat.\n\nĐây là walk-through. Sáu bước 16.1 vẫn áp; thư mục là 15.5."
+      },
+      "example": {
+        "en": "Requirements I would lock: authenticated ops/activity feed on the internal admin product, chronological with a server cursor, media optional, no SEO, likes and saves, a “new items” affordance. Components: a virtualized list shell, a card renderer, a composer drawer, a live region, a sticky chip for newer-than-cursor. Data flow: GET /bff/feed?cursor=&limit=20 returns items plus nextCursor; the client appends; pull-to-refresh or the chip fetches with a since cursor. Optimistic like POSTs with the item id as the idempotency key and rolls back on 409. Trade-offs I name: I would not open a websocket for a mostly-read feed — 30s poll or SSE for the chip; I virtualize only if we keep hundreds of cards mounted; ranking stays on the server. I would cut live presence for v1. I would not cut the stable cursor or alt text on media. Distinct from autocomplete: there is no debounce-and-abort of a prefix suggest here.",
+        "vi": "Yêu cầu tôi khóa: feed hoạt động đã auth trên sản phẩm admin nội bộ, theo thời gian với cursor server, media tùy chọn, không SEO, like và save, affordance “item mới.” Component: shell list ảo hóa, renderer card, drawer composer, live region, chip dính cho newer-than-cursor. Luồng data: GET /bff/feed?cursor=&limit=20 trả items kèm nextCursor; client append; pull-to-refresh hoặc chip fetch với cursor since. Like lạc quan POST với id item làm khóa idempotency và rollback khi 409. Đánh đổi tôi gọi tên: tôi không mở websocket cho feed chủ yếu đọc — poll 30s hoặc SSE cho chip; tôi ảo hóa chỉ khi giữ hàng trăm card mounted; ranking ở lại server. Tôi cắt presence live cho v1. Tôi không cắt cursor ổn định hoặc alt text trên media. Khác autocomplete: ở đây không có debounce-and-abort của suggest prefix."
+      },
+      "followUps": [
+        {
+          "en": "Why is offset pagination a poor default for a live feed?",
+          "vi": "Vì sao offset pagination là mặc định kém cho feed đang sống?"
+        },
+        {
+          "en": "When would you add a websocket versus a new-items chip?",
+          "vi": "Khi nào bạn thêm websocket so với chip bài mới?"
+        },
+        {
+          "en": "How do you roll back an optimistic like that the server rejects?",
+          "vi": "Bạn rollback like lạc quan mà server từ chối thế nào?"
+        }
+      ]
     },
     {
       "id": "design-autocomplete",
@@ -4334,9 +4374,27 @@
         "vi": "Bạn tiếp cận UI realtime chat như thế nào?"
       },
       "answer": {
-        "en": "I would think about:\n\n- message ordering and deduplication,\n- optimistic send state and retry,\n- unread/read markers,\n- reconnection behavior,\n- pagination for history,\n- typing indicators and presence as secondary signals,\n- accessibility and keyboard workflows.\n\nA robust chat UI is less about WebSocket trivia and more about handling imperfect network conditions gracefully.",
-        "vi": "Em sẽ nghĩ tới:\n\n- ordering và dedupe của message,\n- optimistic send state và retry,\n- unread/read marker,\n- behavior khi reconnect,\n- pagination cho history,\n- typing indicator và presence như tín hiệu phụ,\n- accessibility và keyboard workflow.\n\nMột chat UI vững không nằm ở trivia về WebSocket, mà nằm ở việc xử lý mạng không hoàn hảo một cách graceful."
-      }
+        "en": "**What they are checking:** Whether you can design **ordered realtime** — send, reconnect, history, and unread — not a news feed and not autocomplete. The unit is a conversation with a socket (or SSE) plus a history API.\n\n**How to structure it:**\n1. Clarify: 1:1 vs rooms, retention, attachments, presence, moderation, multi-device, offline.\n2. Components: transcript, composer, connection banner, day separators, optional thread panel.\n3. Data flow: history via cursor from a BFF; live via WebSocket with auth on the first message; optimistic send with a client id.\n4. Hard parts: ordering, dedup, reconnect backoff, unread watermarks, catch-up after a gap.\n5. v1 cuts: typing indicators and presence. Do not cut reconnect, ordering, or history pagination.\n\n**Senior signals to include:**\n- Each message has a server id and a client id. Dedup on either. Sort by server timestamp plus id, not arrival time.\n- Optimistic send: pending → ok / failed with retry. Do not hide a failed send.\n- Reconnect with backoff and a heartbeat; then catch-up from last-seen cursor, not “replay the whole room.”\n- Auth the socket (cookie or token in the first message). Distinct from REST CSRF; see networking later.\n\n**Avoid:**\n- Treating chat as a news feed with a socket glued on.\n- Presence as a required v1.\n- A single infinite DOM of the whole history.\n\nWalk through requirements, boxes, data flow, then the trade-offs you name. Folders are 15.5.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Bạn thiết kế được **realtime có thứ tự** — gửi, reconnect, lịch sử, và chưa đọc — không phải news feed và không phải autocomplete. Đơn vị là một conversation với socket (hoặc SSE) kèm API lịch sử.\n\n**Cách trình bày:**\n1. Làm rõ: 1:1 hay room, retention, đính kèm, presence, moderation, đa thiết bị, offline.\n2. Component: transcript, composer, banner kết nối, ngăn ngày, panel thread tùy chọn.\n3. Luồng data: lịch sử qua cursor từ BFF; live qua WebSocket với auth ở message đầu; gửi lạc quan với client id.\n4. Phần khó: thứ tự, dedup, reconnect backoff, watermark chưa đọc, catch-up sau khoảng trống.\n5. Cắt v1: typing indicator và presence. Đừng cắt reconnect, thứ tự, hoặc pagination lịch sử.\n\n**Tín hiệu senior nên có:**\n- Mỗi message có server id và client id. Dedup trên một trong hai. Sort theo timestamp server kèm id, không phải lúc tới.\n- Gửi lạc quan: pending → ok / failed kèm retry. Đừng giấu lần gửi fail.\n- Reconnect với backoff và heartbeat; rồi catch-up từ cursor last-seen, không phải “replay cả room.”\n- Auth socket (cookie hoặc token ở message đầu). Khác CSRF REST; xem networking sau.\n\n**Nên tránh:**\n- Coi chat như news feed dán socket.\n- Presence như v1 bắt buộc.\n- Một DOM vô hạn của cả lịch sử.\n\nWalk-through yêu cầu, hộp, luồng data, rồi đánh đổi bạn gọi tên. Thư mục là 15.5."
+      },
+      "example": {
+        "en": "Requirements I would lock: 1:1 support chat on the internal admin product, persistence, attachments later, multi-tab, no presence in v1. Components: a virtualized transcript, a composer with pending/failed states, a connection banner, a catch-up bar. Data flow: GET /bff/chat/:id/messages?cursor= for history; WebSocket after cookie auth on the first message; each send carries a client id. The server acks with a server id; I dedup and sort by server time plus id. On drop I backoff, heartbeat, then catch-up from last-seen — I do not replay the room. Trade-offs: SSE is enough for mostly-inbound notices; a bidirectional socket is justified here because agents send. I would cut typing indicators. I would not cut failed-send retry or the banner. Distinct from the news-feed item: ordering and reconnect are the design, not a cursor of ranked cards.",
+        "vi": "Yêu cầu tôi khóa: chat 1:1 support trên sản phẩm admin nội bộ, persistence, đính kèm sau, đa tab, không presence ở v1. Component: transcript ảo hóa, composer với trạng thái pending/failed, banner kết nối, thanh catch-up. Luồng data: GET /bff/chat/:id/messages?cursor= cho lịch sử; WebSocket sau auth cookie ở message đầu; mỗi lần gửi mang client id. Server ack với server id; tôi dedup và sort theo giờ server kèm id. Khi rớt tôi backoff, heartbeat, rồi catch-up từ last-seen — không replay room. Đánh đổi: SSE đủ cho notice chủ yếu inbound; socket hai chiều đáng ở đây vì agent gửi. Tôi cắt typing indicator. Tôi không cắt retry gửi fail hoặc banner. Khác mục news-feed: thứ tự và reconnect là thiết kế, không phải cursor card đã rank."
+      },
+      "followUps": [
+        {
+          "en": "How do you deduplicate a message that arrives both from the socket and from catch-up?",
+          "vi": "Bạn dedup message tới cả từ socket và từ catch-up thế nào?"
+        },
+        {
+          "en": "What do you do on reconnect so you do not replay the whole room?",
+          "vi": "Bạn làm gì lúc reconnect để không replay cả room?"
+        },
+        {
+          "en": "When is SSE enough instead of a bidirectional socket?",
+          "vi": "Khi nào SSE đủ thay cho socket hai chiều?"
+        }
+      ]
     },
     {
       "id": "design-system-strategy",
@@ -4350,9 +4408,27 @@
         "vi": "Bạn sẽ phát triển một frontend design system như thế nào?"
       },
       "answer": {
-        "en": "Start with real product needs, not a giant abstract component library.\n\nGood sequence:\n\n1. establish tokens and primitives,\n2. extract repeated patterns from real screens,\n3. define API conventions and accessibility expectations,\n4. document usage, dos/don'ts, and ownership,\n5. version and migrate carefully.\n\nA design system succeeds when it improves consistency and delivery speed without becoming a bottleneck team.",
-        "vi": "Hãy bắt đầu từ nhu cầu thật của product, không phải dựng một thư viện component trừu tượng khổng lồ ngay từ đầu.\n\nThứ tự tốt thường là:\n\n1. chốt token và primitive,\n2. tách pattern lặp lại từ màn hình thật,\n3. định nghĩa API convention và kỳ vọng accessibility,\n4. tài liệu hóa usage, dos/don'ts và ownership,\n5. version và migrate cẩn thận.\n\nDesign system thành công khi nó tăng consistency và tốc độ delivery mà không biến thành team bottleneck."
-      }
+        "en": "**What they are checking:** Whether you can **grow** a design system as a product — sequence, ownership, adoption — not the primitive-vs-app-widget cut (that is architecture 15.6 / system-design 16.3). This answer is the rollout strategy.\n\n**How to structure it:**\n1. Start from real screens, not a giant abstract library.\n2. Sequence: tokens → primitives → extract repeated patterns → API conventions and a11y → versioning and a guild.\n3. Name adoption: pin semver, RFC for new primitives, no domain widgets in the package.\n4. Measure success as adoption and a11y on primitives, not Storybook count.\n5. Say what you refuse from product teams and what you offer instead (composition in the app).\n\n**Senior signals to include:**\n- Tokens and primitives first. Checkout steppers stay in the app.\n- A guild with a public roadmap beats three unowned Buttons.\n- Visual break is a major. Changelog plus codemods.\n- Vue + React: share tokens, native primitives per framework.\n\n**Avoid:**\n- Building 80 components before one product uses them.\n- Putting `orderId` on `Button` to “go faster.”\n- Counting Storybook stories as adoption.\n\nWalk through sequence, ownership, then trade-offs. Distinct from 16.3’s API sketch: here the question is how it grows.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Bạn **nuôi** design system như một product — thứ tự, ownership, adoption — không phải đường cắt primitive khác widget app (đó là kiến trúc 15.6 / system-design 16.3). Câu này là strategy rollout.\n\n**Cách trình bày:**\n1. Bắt đầu từ màn thật, không phải thư viện trừu tượng khổng lồ.\n2. Thứ tự: token → primitive → tách pattern lặp → quy ước API và a11y → versioning và guild.\n3. Gọi tên adoption: ghim semver, RFC cho primitive mới, không widget domain trong package.\n4. Đo thành công bằng adoption và a11y trên primitive, không phải số Storybook.\n5. Nói thứ bạn từ chối từ product team và thứ bạn đưa thay (compose trong app).\n\n**Tín hiệu senior nên có:**\n- Token và primitive trước. Stepper checkout ở lại trong app.\n- Guild với roadmap công hơn ba Button vô chủ.\n- Gãy visual là major. Changelog kèm codemod.\n- Vue + React: chia token, primitive native mỗi framework.\n\n**Nên tránh:**\n- Dựng 80 component trước khi một product dùng.\n- Gắn `orderId` lên `Button` để “nhanh hơn.”\n- Đếm story Storybook như adoption.\n\nWalk-through thứ tự, ownership, rồi đánh đổi. Khác phác API 16.3: ở đây câu hỏi là nó lớn lên thế nào."
+      },
+      "example": {
+        "en": "Requirements I would lock: four product teams on Vue, one visual language, dark mode later, no domain widgets in the package. Sequence: semantic tokens from the current admin screens, then Button / TextField / Dialog as APG primitives in a versioned package with peer Vue, then extract the repeated filter bar as a composite in the app — not in the DS — until a second product needs it. Data/ownership flow: RFC for a new primitive, apps pin semver, Renovate, a guild roadmap. Trade-offs: styled-plus-tokens is faster while we have one brand; I would not go headless yet. I refuse orderId on Button and I offer PayButton in checkout. Success is: the next form does not invent a text field, axe on primitives is clean, majors are rare. I would not count Storybook stories. Distinct from 16.3: this is the growth path, not the exports map.",
+        "vi": "Yêu cầu tôi khóa: bốn product team trên Vue, một ngôn ngữ visual, dark mode sau, không widget domain trong package. Thứ tự: token ngữ nghĩa từ màn admin hiện tại, rồi Button / TextField / Dialog như primitive APG trong package có version với peer Vue, rồi tách filter bar lặp như composite trong app — không trong DS — đến khi product thứ hai cần. Luồng data/ownership: RFC cho primitive mới, app ghim semver, Renovate, roadmap guild. Đánh đổi: styled-kèm-token nhanh hơn khi còn một brand; tôi chưa đi headless. Tôi từ chối orderId trên Button và đưa PayButton trong checkout. Thành công là: form sau không bịa text field, axe trên primitive sạch, major hiếm. Tôi không đếm story Storybook. Khác 16.3: đây là đường lớn lên, không phải exports map."
+      },
+      "followUps": [
+        {
+          "en": "When do you promote an app composite into the design system?",
+          "vi": "Khi nào bạn nâng composite của app vào design system?"
+        },
+        {
+          "en": "How do you say no to a domain prop on a primitive without blocking the team?",
+          "vi": "Bạn nói không với prop domain trên primitive mà không chặn team thế nào?"
+        },
+        {
+          "en": "What would make you split the library into per-component packages?",
+          "vi": "Điều gì khiến bạn tách library thành package theo component?"
+        }
+      ]
     },
     {
       "id": "micro-frontends-when",
@@ -4366,9 +4442,27 @@
         "vi": "Khi nào cân nhắc micro-frontend, và khi nào nên tránh?"
       },
       "answer": {
-        "en": "Consider micro-frontends when organizational boundaries, release independence, or platform scale truly demand them.\n\nAvoid them when:\n\n- a modular monolith still works,\n- team coordination is manageable,\n- you would mainly be adding complexity for prestige.\n\nTrade-offs:\n\n- independent delivery vs duplicated runtime and tooling complexity,\n- team autonomy vs fragmented UX and standards,\n- local speed vs global consistency.\n\nSenior answer: micro-frontends are an org and product decision as much as a technical one.",
-        "vi": "Cân nhắc micro-frontend khi boundary tổ chức, nhu cầu release độc lập hoặc scale platform thực sự đòi hỏi.\n\nNên tránh khi:\n\n- modular monolith vẫn hoạt động tốt,\n- coordination giữa team vẫn còn quản được,\n- bạn chỉ đang thêm complexity vì “nghe có vẻ enterprise”.\n\nTrade-off:\n\n- delivery độc lập vs runtime và tooling complexity bị nhân lên,\n- autonomy của team vs UX/standard dễ bị phân mảnh,\n- tốc độ cục bộ vs consistency toàn cục.\n\nCâu trả lời senior là: micro-frontend là quyết định về tổ chức và product không kém gì quyết định kỹ thuật."
-      }
+        "en": "**What they are checking:** Judgment on **when the org tax is worth it** — independent deploy clocks and team boundaries — not a Module Federation config. Distinct from architecture 15.4 (how Federation works): here the question is **when**.\n\n**How to structure it:**\n1. Restate the user still has one document, one tab order, one cookie, one design language.\n2. Say yes only if independent deploys **and** team boundaries already fight a single pipeline.\n3. Name the default: monorepo packages, one deploy (see also monorepo-strategy).\n4. Name the costs you would accept: shared Vue, versioning, UX drift, incident coordination, LCP.\n5. Say what you would try first: packages, linted feature boundaries, a design-system package.\n\n**Senior signals to include:**\n- Eight Vue developers: no. Fashion is not a reason.\n- Share Vue as a singleton or provide/inject dies. iframes for untrusted/legacy only.\n- Hard navigation is OK for truly separate products (careers vs app).\n- Verify with independent deploys without shell coordination, and LCP versus the monolith.\n\n**Avoid:**\n- “Scale” as a reason when the team is one squad.\n- Federation as a rewrite plan for a tangled monolith — fix folders first (15.5).\n- Ignoring a11y and auth across remotes.\n\nDifferent story from scale-codebase-100-features (that one stays a modular monolith).",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Phán đoán **khi nào thuế tổ chức đáng** — đồng hồ deploy độc lập và ranh giới team — không phải config Module Federation. Khác kiến trúc 15.4 (Federation chạy thế nào): ở đây câu hỏi là **khi nào**.\n\n**Cách trình bày:**\n1. Nhắc lại user vẫn có một document, một thứ tự tab, một cookie, một ngôn ngữ design.\n2. Chỉ nói có nếu deploy độc lập **và** ranh giới team đã đánh nhau với một pipeline.\n3. Gọi mặc định: package monorepo, một deploy (xem thêm monorepo-strategy).\n4. Gọi chi phí bạn chấp nhận: Vue share, versioning, UX lệch, điều phối incident, LCP.\n5. Nói thứ bạn thử trước: package, ranh giới feature có lint, package design system.\n\n**Tín hiệu senior nên có:**\n- Tám dev Vue: không. Mốt không phải lý do.\n- Share Vue như singleton nếu không provide/inject chết. iframe chỉ cho không tin cậy/legacy.\n- Điều hướng cứng ổn cho product thật sự tách (careers khác app).\n- Kiểm chứng bằng deploy độc lập không cần shell phối hợp, và LCP so với monolith.\n\n**Nên tránh:**\n- “Scale” làm lý do khi team là một squad.\n- Federation như kế hoạch rewrite monolith rối — sửa thư mục trước (15.5).\n- Bỏ qua a11y và auth xuyên remote.\n\nKhác câu scale-codebase-100-features (câu đó ở lại modular monolith)."
+      },
+      "example": {
+        "en": "Situation: a staff engineer wanted Module Federation so “teams can deploy independently” on the internal admin product — eight Vue developers, one pipeline, one design language. Task: I had to recommend yes or no without a fashion answer. Action: I restated that the user still has one tab order and one auth cookie, listed the tax (shared Vue or two Vues, LCP, UX drift), and proposed packages in the monorepo — ui, domain-orders — plus linted feature boundaries. Independent deploys per week was zero; team boundaries were not fighting CI. Result: we did not federate. Checkout stayed a package. I said yes would wait until a second deploy clock existed. Distinct from 15.4: I did not walk webpack shared config; I walked the org test.",
+        "vi": "Situation: một staff muốn Module Federation để “team deploy độc lập” trên sản phẩm admin nội bộ — tám dev Vue, một pipeline, một ngôn ngữ design. Task: tôi phải khuyên có hoặc không mà không trả lời theo mốt. Action: tôi nhắc user vẫn có một thứ tự tab và một cookie auth, liệt kê thuế (Vue share hoặc hai Vue, LCP, UX lệch), và đề package trong monorepo — ui, domain-orders — kèm ranh giới feature có lint. Deploy độc lập mỗi tuần là zero; ranh giới team không đánh nhau với CI. Result: chúng tôi không federate. Checkout ở lại một package. Tôi nói “có” sẽ chờ đến khi có đồng hồ deploy thứ hai. Khác 15.4: tôi không walk config shared webpack; tôi walk bài test tổ chức."
+      },
+      "followUps": [
+        {
+          "en": "What two conditions would make you reverse a no on micro-frontends?",
+          "vi": "Hai điều kiện nào khiến bạn đảo lời không với micro-frontend?"
+        },
+        {
+          "en": "When are iframes justified if Federation is not?",
+          "vi": "Khi nào iframe đáng nếu Federation thì không?"
+        },
+        {
+          "en": "How is this different from splitting packages inside one deploy?",
+          "vi": "Câu này khác tách package trong một deploy thế nào?"
+        }
+      ]
     },
     {
       "id": "monorepo-strategy",
@@ -4382,19 +4476,27 @@
         "vi": "Khi nào monorepo giúp ích cho frontend team?"
       },
       "answer": {
-        "en": "**What they actually ask:** Will a design-system change land in three apps this week, and will CI still finish before standup?\n\n**How a senior answers:** Choose a monorepo when you **coordinate types, UI kit, and tooling** across apps more often than you release them independently. Constraint: you still need **ownership, affected-package CI, and a publish story** (changesets). A folder of apps without task graph is not a strategy.\n\n**Failure mode:** One pipeline that installs/builds everything. Circular packages. “Just import from `../../other-app`.” No CODEOWNERS so every package is everyone’s leftover.\n\n**Measure:** CI minutes vs affected graph. Time to land a type change in app + BFF. Cache hit rate (Nx/Turborepo). Broken publish of the design system.\n\n**Tradeoffs:** Polyrepo isolates blast radius and duplicates tooling. Monorepo makes atomic refactors cheap and review/CI policy harder. Vue + React in one repo is fine if packages do not share a runtime.\n\n**Production gotchas:** Vite prebundling across workspace packages. TS project references stale. Nuxt/Nitro bundling a server-only package into the client. Version drift of “internal” packages that were never versioned.",
-        "vi": "**Họ thực sự hỏi:** Thay đổi design system có vào ba app tuần này không, và CI còn xong trước standup?\n\n**Cách senior trả lời:** Chọn monorepo khi bạn **phối hợp type, UI kit, tooling** giữa các app thường hơn là release độc lập. Constraint: vẫn cần **ownership, CI theo package bị ảnh hưởng, và chuyện publish** (changeset). Một folder app không có task graph chưa phải strategy.\n\n**Failure mode:** Một pipeline install/build tất cả. Package vòng. “Import `../../other-app`.” Không CODEOWNERS nên mọi package là đồ thừa của mọi người.\n\n**Measure:** Phút CI vs graph affected. Thời gian đưa type change vào app + BFF. Cache hit (Nx/Turborepo). Publish design system gãy.\n\n**Tradeoffs:** Polyrepo cô lập blast radius, nhân đôi tooling. Monorepo refactor atomic rẻ, policy review/CI khó hơn. Vue + React chung repo ổn nếu package không share runtime.\n\n**Production gotchas:** Vite prebundle qua workspace package. TS project references stale. Nuxt/Nitro nhét package chỉ server vào client. Version lệch của package “internal” chưa từng được version."
+        "en": "**What they are checking:** Whether a monorepo is a **coordination tool** for types, UI kit, and CI — not “Google does it.” Distinct from micro-frontends-when (that is independent deploys). Here the question is **when one repo helps frontend teams**.\n\n**How to structure it:**\n1. Name the pain: a design-system change must land in three apps this week; types drift; CI duplication.\n2. Choose a monorepo when you coordinate those, and the apps share a release train or can tolerate a shared pipeline.\n3. Name the shape: apps/* plus packages/ui, packages/domain-*, one lockfile, affected-only CI.\n4. Name the costs: slow CI if you do not use affected graphs; version coupling; noisy diffs.\n5. Say when you would refuse: truly separate products, separate security boundaries, or two org clocks that already hate sharing a pipeline.\n\n**Senior signals to include:**\n- The win is atomic DS + type changes across apps, not a folder aesthetic.\n- Affected CI (Nx, Turborepo, pnpm filters) is part of the decision, not a later patch.\n- Publish the DS only when an outside consumer exists. Inside the repo, workspace packages are enough.\n- Distinct from 15.4: a monorepo is the default *instead of* Federation.\n\n**Avoid:**\n- “Monorepo because it is modern.”\n- One giant package with no boundaries (that is a junk drawer).\n- Ignoring CI time — that is how the bet dies.\n\nDifferent from scale-codebase-100-features: that one is in-app feature folders; this is cross-app coordination.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Monorepo là **công cụ phối hợp** cho type, UI kit, và CI — không phải “Google làm vậy.” Khác micro-frontends-when (câu đó là deploy độc lập). Ở đây câu hỏi là **khi nào một repo giúp team frontend**.\n\n**Cách trình bày:**\n1. Gọi đau: một thay đổi design system phải vào ba app tuần này; type lệch; CI trùng.\n2. Chọn monorepo khi bạn phối hợp những thứ đó, và các app chung một tàu release hoặc chịu được pipeline chung.\n3. Gọi shape: apps/* kèm packages/ui, packages/domain-*, một lockfile, CI chỉ affected.\n4. Gọi chi phí: CI chậm nếu không dùng affected graph; coupling version; diff ồn.\n5. Nói khi từ chối: product thật sự tách, ranh giới bảo mật tách, hoặc hai đồng hồ org đã ghét chia pipeline.\n\n**Tín hiệu senior nên có:**\n- Thắng là thay đổi DS + type atomic xuyên app, không phải thẩm mỹ thư mục.\n- CI affected (Nx, Turborepo, pnpm filter) là một phần quyết định, không phải vá sau.\n- Publish DS chỉ khi có consumer ngoài. Trong repo, package workspace là đủ.\n- Khác 15.4: monorepo là mặc định *thay cho* Federation.\n\n**Nên tránh:**\n- “Monorepo vì nó hiện đại.”\n- Một package khổng lồ không ranh giới (đó là ngăn đồ).\n- Bỏ qua thời gian CI — đó là cách cú hích chết.\n\nKhác scale-codebase-100-features: câu đó là thư mục feature trong app; đây là phối hợp xuyên app."
       },
       "followUps": [
         {
-          "en": "How do you keep CI from building every package on a docs typo?",
-          "vi": "Bạn giữ CI khỏi build mọi package vì một typo docs thế nào?"
+          "en": "What CI graph do you require before you call a monorepo a win?",
+          "vi": "Bạn đòi graph CI nào trước khi gọi monorepo là thắng?"
         },
         {
-          "en": "When would you split an app back out of the monorepo?",
-          "vi": "Khi nào bạn tách một app ra khỏi monorepo?"
+          "en": "When would you still publish the design system to a registry?",
+          "vi": "Khi nào bạn vẫn publish design system lên registry?"
+        },
+        {
+          "en": "How is this different from choosing micro-frontends?",
+          "vi": "Câu này khác việc chọn micro-frontend thế nào?"
         }
-      ]
+      ],
+      "example": {
+        "en": "Situation: a Button padding fix on the internal admin product took three PRs in three repos, and one app stayed on the old token for a month. Task: I had to choose monorepo versus keep publishing the DS. Action: I counted the coordination cost — types, UI kit, shared ESLint — against CI risk, then proposed apps/admin plus packages/ui in one repo with affected CI so a DS change is one PR. We did not publish to npm because there was no outside consumer. Result: the next token change landed in admin the same day; CI stayed green because we ran affected tests only. I would still refuse a monorepo if a second org clock needed its own pipeline. Distinct from micro-frontends: we wanted one deploy, not remotes.",
+        "vi": "Situation: một lần sửa padding Button trên sản phẩm admin nội bộ mất ba PR trong ba repo, và một app ở token cũ một tháng. Task: tôi phải chọn monorepo hay tiếp tục publish DS. Action: tôi đếm chi phí phối hợp — type, UI kit, ESLint chung — với rủi ro CI, rồi đề apps/admin kèm packages/ui trong một repo với CI affected để đổi DS là một PR. Chúng tôi không publish npm vì không có consumer ngoài. Result: lần đổi token sau vào admin cùng ngày; CI còn xanh vì chúng tôi chỉ chạy test affected. Tôi vẫn từ chối monorepo nếu đồng hồ org thứ hai cần pipeline riêng. Khác micro-frontend: chúng tôi muốn một deploy, không phải remote."
+      }
     },
     {
       "id": "role-permission-ui",
@@ -4409,9 +4511,27 @@
         "vi": "Bạn thiết kế role/permission handling trong UI như thế nào?"
       },
       "answer": {
-        "en": "Separate three concerns:\n\n1. backend is the source of truth for authorization,\n2. frontend uses permissions to shape UX,\n3. UI logic should be centralized enough to avoid copy-paste checks everywhere.\n\nI like modeling capabilities explicitly rather than scattering raw role-name checks across components.\n\nGood UX also distinguishes:\n\n- hidden because unavailable,\n- disabled because lacking permission,\n- not loaded yet because auth state is unknown.",
-        "vi": "Hãy tách ba concern:\n\n1. backend là source of truth cho authorization,\n2. frontend dùng permission để định hình UX,\n3. UI logic nên đủ tập trung để tránh copy-paste check role khắp nơi.\n\nEm thích model capability tường minh hơn là rải raw role-name check khắp component.\n\nUX tốt cũng phải phân biệt:\n\n- ẩn vì không có feature,\n- disable vì thiếu quyền,\n- chưa load xong vì auth state còn chưa biết."
-      }
+        "en": "**What they are checking:** You separate **authorization** (server is the source of truth) from **UX shaping** (the UI hides what the role cannot use) — not a `v-if=\"isAdmin\"` soup. Distinct from security auth topics: here the unit is the UI model.\n\n**How to structure it:**\n1. Backend decides allow/deny. The UI never trusts a hidden button.\n2. Centralize capability checks (`can(\"orders.refund\")`) — not scattered `role === \"admin\"`.\n3. Shape UX: hide, disable with a reason, or show an unauthorized empty state.\n4. Do not register routes the role cannot see. Catalog vs chrome.\n5. Test a permission matrix, not a screenshot of the sidebar.\n\n**Senior signals to include:**\n- Hiding a column is UX. The BFF already stripped the field (dashboard 16.4).\n- Disable + tooltip is better than hide when the user should know the action exists but is denied.\n- Feature flags are not permissions. Do not mix the two maps.\n- Vue: a `v-can` directive or a composable; React: a `<Can>` wrapper. Same model.\n\n**Avoid:**\n- `isAdmin` booleans copied into ten components.\n- Client-only checks as security.\n- Encoding roles in the URL as the only gate.\n\nOn the admin product the unauthorized empty state was a route the role never registered.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Bạn tách **authorization** (server là nguồn sự thật) khỏi **định hình UX** (UI giấu thứ role không dùng được) — không phải đống `v-if=\"isAdmin\"`. Khác topic auth bảo mật: đơn vị ở đây là mô hình UI.\n\n**Cách trình bày:**\n1. Backend quyết allow/deny. UI không bao giờ tin một nút ẩn.\n2. Tập trung check capability (`can(\"orders.refund\")`) — không phải `role === \"admin\"` rải rác.\n3. Định hình UX: ẩn, disable kèm lý do, hoặc empty state không đủ quyền.\n4. Đừng đăng route mà role không thấy. Catalog khác chrome.\n5. Test ma trận permission, không phải screenshot sidebar.\n\n**Tín hiệu senior nên có:**\n- Giấu cột là UX. BFF đã strip field (dashboard 16.4).\n- Disable + tooltip hơn ẩn khi user nên biết action tồn tại nhưng bị từ chối.\n- Feature flag không phải permission. Đừng trộn hai map.\n- Vue: directive `v-can` hoặc composable; React: wrapper `<Can>`. Cùng mô hình.\n\n**Nên tránh:**\n- Boolean `isAdmin` copy vào mười component.\n- Check chỉ-client như bảo mật.\n- Mã hóa role trên URL làm cổng duy nhất.\n\nỞ sản phẩm admin, empty state không đủ quyền là route mà role không bao giờ đăng."
+      },
+      "example": {
+        "en": "Situation: cashiers on the internal admin product could still hit refund if they guessed the URL; the button was only hidden. Task: I needed a UI permission model that did not pretend to be security. Action: I moved allow/deny to the BFF, introduced can(\"orders.refund\") in a composable, stopped registering the refund route for that role, and rendered an unauthorized empty state instead of a hidden button. The matrix test listed role × action. Result: guessed URLs returned 403; cashiers saw why refund was unavailable; we stopped copying isAdmin. Distinct from CSRF/XSS answers: this is how the UI tells the truth, not how cookies work.",
+        "vi": "Situation: cashier trên sản phẩm admin nội bộ vẫn refund được nếu đoán URL; nút chỉ bị ẩn. Task: tôi cần mô hình permission UI không giả làm bảo mật. Action: tôi dời allow/deny sang BFF, đưa can(\"orders.refund\") vào composable, ngừng đăng route refund cho role đó, và render empty state không đủ quyền thay vì nút ẩn. Test ma trận liệt kê role × action. Result: URL đoán ra 403; cashier thấy vì sao refund không dùng được; chúng tôi thôi copy isAdmin. Khác câu CSRF/XSS: đây là cách UI nói thật, không phải cookie chạy thế nào."
+      },
+      "followUps": [
+        {
+          "en": "When do you hide an action versus disable it with a reason?",
+          "vi": "Khi nào bạn ẩn một action so với disable kèm lý do?"
+        },
+        {
+          "en": "How do you keep feature flags from becoming a second permission system?",
+          "vi": "Bạn giữ feature flag khỏi biến thành hệ permission thứ hai thế nào?"
+        },
+        {
+          "en": "Where should a permission matrix live in tests?",
+          "vi": "Ma trận permission nên sống ở đâu trong test?"
+        }
+      ]
     },
     {
       "id": "bff-when",
@@ -4426,9 +4546,27 @@
         "vi": "Khi nào bạn giới thiệu một BFF?"
       },
       "answer": {
-        "en": "A BFF makes sense when frontend needs composition, shaping, or policy that the downstream APIs do not provide cleanly.\n\nTypical reasons:\n\n- multiple backend calls need aggregation,\n- frontend-specific payload shaping is repeated,\n- auth/session or edge caching logic belongs close to the UI,\n- you want to isolate the frontend from backend churn.\n\nDo not introduce a BFF just because it sounds elegant. It adds another operational surface.",
-        "vi": "BFF hợp lý khi frontend cần composition, shaping hoặc policy mà các API phía dưới chưa cung cấp sạch sẽ.\n\nLý do thường gặp:\n\n- nhiều backend call cần được aggregate,\n- frontend lặp lại việc reshape payload,\n- auth/session hoặc edge caching logic nên nằm gần UI,\n- muốn tách frontend khỏi sự thay đổi liên tục của backend.\n\nĐừng đưa BFF vào chỉ vì nó nghe “đẹp”. Nó thêm một bề mặt vận hành mới phải gánh."
-      }
+        "en": "**What they are checking:** Whether a BFF (Backend for Frontend: a server the UI owns for aggregation, shaping, and policy) is a **real seam** — not “because GraphQL is cool.” Distinct from dashboard 16.4 (how you use one) and from micro-frontends (org split).\n\n**How to structure it:**\n1. Name the pain: the browser fans out N APIs, or payloads are BE-shaped, or policy (authz, PII strip) does not belong in Vue.\n2. Introduce a BFF when aggregation, shaping, or policy is cheaper on a server you own (Nitro `server/api`, Next route handlers).\n3. Keep it thin: DTO for a screen, not a second domain model that duplicates BE.\n4. Name costs: extra hop, ownership, another deploy. Skip it on a simple CRUD with one resource.\n5. Verify: fewer waterfalls, p95 of the DTO, 403s at the BFF not in the client.\n\n**Senior signals to include:**\n- Dashboards almost always get a BFF. A marketing page with one CMS GET does not.\n- Authz and PII strip belong here, not in a `v-if`.\n- Nuxt Nitro is a BFF you already have. A separate service waits until a second consumer or a different runtime appears.\n- GraphQL is one shape of BFF, not a religion.\n\n**Avoid:**\n- A BFF that is a 1:1 proxy of every BE endpoint (you added latency for nothing).\n- Business rules that BE already owns, copied into Nitro.\n- Using a BFF as the answer to a tangled Vue folder tree.\n\nDifferent from scale-codebase: folders first; BFF is a network seam.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** BFF (Backend for Frontend: server UI sở hữu để gộp, định hình, và policy) là **seam thật** — không phải “vì GraphQL hay.” Khác dashboard 16.4 (cách dùng một cái) và khác micro-frontend (tách tổ chức).\n\n**Cách trình bày:**\n1. Gọi đau: browser xòe N API, hoặc payload theo shape BE, hoặc policy (authz, strip PII) không thuộc Vue.\n2. Đưa BFF vào khi gộp, định hình, hoặc policy rẻ hơn trên server bạn sở hữu (Nitro `server/api`, route handler Next).\n3. Giữ mỏng: DTO cho một màn, không phải domain model thứ hai nhân bản BE.\n4. Gọi chi phí: thêm hop, ownership, thêm một deploy. Bỏ trên CRUD đơn với một resource.\n5. Kiểm chứng: ít waterfall hơn, p95 của DTO, 403 ở BFF không phải ở client.\n\n**Tín hiệu senior nên có:**\n- Dashboard gần như luôn có BFF. Trang marketing với một GET CMS thì không.\n- Authz và strip PII thuộc đây, không phải trong `v-if`.\n- Nuxt Nitro là BFF bạn đã có. Service tách chờ đến khi có consumer thứ hai hoặc runtime khác.\n- GraphQL là một shape của BFF, không phải tôn giáo.\n\n**Nên tránh:**\n- BFF là proxy 1:1 mọi endpoint BE (bạn thêm latency không công).\n- Business rule BE đã sở hữu, copy vào Nitro.\n- Dùng BFF làm câu trả lời cho cây thư mục Vue rối.\n\nKhác scale-codebase: thư mục trước; BFF là seam network."
+      },
+      "example": {
+        "en": "Situation: the internal admin dashboard fired twelve GETs from the browser and cashiers waited on the slowest join; permissions were a v-if on a field that still arrived. Task: I needed aggregation and policy without a new microservice religion. Action: I added a Nitro GET /bff/dashboard that joined the twelve, stripped billing for the role, and returned one DTO keyed by the URL filters. Vue called one endpoint. Result: time-to-first-widget dropped because the waterfall left the browser; 403 moved to the BFF; we did not stand up a separate BFF service because Nuxt already was one. I would still skip a BFF on a single-resource settings form. Distinct from 16.4: here the question is when to introduce the seam, not how to virtualize the table.",
+        "vi": "Situation: dashboard admin nội bộ bắn mười hai GET từ browser và cashier chờ join chậm nhất; permission là v-if trên field vẫn tới. Task: tôi cần gộp và policy mà không tôn giáo microservice mới. Action: tôi thêm Nitro GET /bff/dashboard gộp mười hai, strip billing theo role, và trả một DTO khóa theo filter URL. Vue gọi một endpoint. Result: time-to-first-widget giảm vì waterfall rời browser; 403 dời sang BFF; chúng tôi không dựng BFF service tách vì Nuxt đã là một. Tôi vẫn bỏ BFF trên form cài đặt một resource. Khác 16.4: ở đây câu hỏi là khi nào đưa seam vào, không phải ảo hóa table thế nào."
+      },
+      "followUps": [
+        {
+          "en": "When is Nuxt server/api enough versus a separate BFF service?",
+          "vi": "Khi nào Nuxt server/api đủ so với BFF service tách?"
+        },
+        {
+          "en": "How do you keep a BFF from becoming a one-to-one proxy?",
+          "vi": "Bạn giữ BFF khỏi biến thành proxy một-một thế nào?"
+        },
+        {
+          "en": "Where should authorization run if you add a BFF?",
+          "vi": "Authorization nên chạy ở đâu nếu bạn thêm BFF?"
+        }
+      ]
     },
     {
       "id": "feature-flags-rollout",
@@ -4492,9 +4630,27 @@
         "vi": "Bạn refactor an toàn như thế nào khi áp lực product đang cao?"
       },
       "answer": {
-        "en": "Under pressure, I avoid broad rewrites and look for seam-based refactors.\n\nGood pattern:\n\n1. isolate the painful area,\n2. add safety nets where cheap and valuable,\n3. refactor behind stable interfaces,\n4. move in slices while still delivering product value,\n5. prove that risk is going down, not up.\n\nSenior judgment is knowing when to improve the foundation incrementally instead of trying to “fix everything properly” in one shot.",
-        "vi": "Khi đang áp lực, em tránh rewrite diện rộng và đi tìm seam để refactor.\n\nPattern tốt:\n\n1. cô lập vùng đau nhất,\n2. thêm safety net ở chỗ rẻ mà đáng giá,\n3. refactor sau interface ổn định,\n4. đi theo từng lát nhỏ mà vẫn giao được giá trị product,\n5. chứng minh rằng risk đang giảm chứ không tăng.\n\nJudgment kiểu senior là biết lúc nào nên cải thiện nền tảng dần dần thay vì cố “sửa cho đúng toàn bộ” trong một phát."
-      }
+        "en": "**What they are checking:** You **avoid a rewrite under a date** and pick **seam-based slices** with a safety net — not heroics. Distinct from legacy-refactor-pitch (selling debt) and from ai-1500-line-component (generated volume).\n\n**How to structure it:**\n1. Isolate the painful area. Do not boil the admin product.\n2. Add a cheap safety net where it pays (characterization test on the money path — testing 8.6).\n3. Refactor behind a stable interface (composable, BFF DTO, public feature index).\n4. Move in slices that ship with the feature, behind a flag if needed.\n5. Name what you will not touch until after the date.\n\n**Senior signals to include:**\n- Behavior-preserving first. Then structure. Then deletion.\n- The interface is the product: URL filters, `useOrders()`, a DTO. Internals can move.\n- Rollback is a flag or the old path, not “git revert if we have time.”\n- You tell PM what is in the slice and what stays ugly on purpose.\n\n**Avoid:**\n- A rewrite quarter hidden inside a two-week feature.\n- Refactor with no test on the revenue path.\n- Drive-by renames that blow every PR.\n\nThe search-race AbortController story is the incident question. Here the unit is a dated seam.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Bạn **tránh rewrite dưới một mốc** và chọn **lát theo seam** có lưới an toàn — không phải anh hùng. Khác legacy-refactor-pitch (bán nợ) và khác ai-1500-line-component (khối generate).\n\n**Cách trình bày:**\n1. Cô lập vùng đau. Đừng luộc cả sản phẩm admin.\n2. Thêm lưới an toàn rẻ chỗ đáng (characterization test trên path tiền — kiểm thử 8.6).\n3. Refactor sau interface ổn định (composable, DTO BFF, index feature public).\n4. Đi từng lát đưa lên cùng feature, sau flag nếu cần.\n5. Gọi tên thứ bạn sẽ không đụng đến sau mốc.\n\n**Tín hiệu senior nên có:**\n- Giữ hành vi trước. Rồi cấu trúc. Rồi xóa.\n- Interface là product: filter URL, `useOrders()`, một DTO. Nội bộ có thể dời.\n- Rollback là flag hoặc path cũ, không phải “git revert nếu còn giờ.”\n- Bạn nói PM lát nào trong scope và thứ gì cố ý còn xấu.\n\n**Nên tránh:**\n- Một quý rewrite giấu trong feature hai tuần.\n- Refactor không test trên path doanh thu.\n- Rename đi ngang thổi mọi PR.\n\nChuyện search-race AbortController là câu incident. Ở đây đơn vị là một seam có mốc."
+      },
+      "example": {
+        "en": "Situation: PM needed a new refund reason on the internal admin product in two weeks; Checkout.vue was 800 lines of fetch, VAT, Stripe, and UI. Task: ship the reason without a rewrite. Action: I added a Playwright characterization on the refund path, extracted useRefund() as the seam, left VAT and Stripe in place, and put the new reason behind the existing form. No folder grand tour. Result: the reason shipped on the date; Checkout stayed ugly on purpose; the next slice was useVat after the launch. Rollback was the flag off. Distinct from the debt pitch: I did not ask for a quarter. Distinct from the AI PR: the code was ours, the date was the constraint.",
+        "vi": "Situation: PM cần lý do refund mới trên sản phẩm admin nội bộ trong hai tuần; Checkout.vue dài 800 dòng fetch, VAT, Stripe, và UI. Task: đưa lý do lên mà không rewrite. Action: tôi thêm Playwright characterization trên path refund, tách useRefund() làm seam, để VAT và Stripe yên, và nhét lý do mới vào form sẵn có. Không tour thư mục. Result: lý do lên đúng mốc; Checkout cố ý còn xấu; lát sau là useVat sau launch. Rollback là tắt flag. Khác pitch nợ: tôi không xin một quý. Khác PR AI: code là của chúng tôi, mốc là ràng buộc."
+      },
+      "followUps": [
+        {
+          "en": "What safety net do you add when you cannot write a full unit suite in time?",
+          "vi": "Bạn thêm lưới an toàn nào khi không viết kịp bộ unit đầy đủ?"
+        },
+        {
+          "en": "How do you tell PM which ugliness is staying until after the date?",
+          "vi": "Bạn nói PM sự xấu nào ở lại đến sau mốc thế nào?"
+        },
+        {
+          "en": "When would you still refuse the feature until a seam exists?",
+          "vi": "Khi nào bạn vẫn từ chối feature đến khi có seam?"
+        }
+      ]
     },
     {
       "id": "adr-when-you-write-one",
@@ -4509,19 +4665,27 @@
         "vi": "Khi nào một senior viết ADR?"
       },
       "answer": {
-        "en": "**What they actually ask:** Pinia vs Vuex — would you write an ADR, or only talk in Slack?\n\n**How a senior answers:** Write one when the choice is **expensive to reverse** or will look random in six months: rendering model, state library, BFF vs FE aggregation, MF vs monorepo, cookie vs token, “why not GraphQL.” One to two pages: context, decision, alternatives, consequences. Status: proposed → accepted → superseded. Constraint: nobody reads novels; link it from the README and the PR.\n\n**Failure mode:** An ADR for every rename. Beautiful docs nobody links. Using an ADR to **win after shipping**. Never superseding, so the repo lies.\n\n**Measure:** Can a new hire find *why* Pinia / *why* `routeRules` / *why* no MF? Time spent re-litigating settled choices should drop.\n\n**Tradeoffs:** Too many ADRs are noise; none is tribal knowledge in one head. Markdown in repo beats Confluence (it sits next to the code). A weekend prototype can stay a Slack thread until it graduates.\n\n**Production gotchas:** Org announces MF while the ADR says no — update status. Decision without **owner** and review date. Disagree-and-commit: spike, named owner, then implement the chosen path.",
-        "vi": "**Họ thực sự hỏi:** Pinia vs Vuex — bạn viết ADR, hay chỉ nói trên Slack?\n\n**Cách senior trả lời:** Viết khi lựa chọn **đắt để đảo** hoặc sáu tháng sau trông như ngẫu nhiên: model render, thư viện state, BFF vs gom ở FE, MF vs monorepo, cookie vs token, “vì sao không GraphQL.” Một đến hai trang: context, quyết định, phương án, hệ quả. Status: proposed → accepted → superseded. Constraint: không ai đọc tiểu thuyết; link từ README và PR.\n\n**Failure mode:** ADR cho mỗi lần đổi tên. Doc đẹp không ai link. Dùng ADR để **thắng sau khi ship**. Không bao giờ superseded, repo nói dối.\n\n**Measure:** Newbie tìm được *vì sao* Pinia / `routeRules` / không MF? Thời gian tranh cãi lại quyết định đã chốt phải giảm.\n\n**Tradeoffs:** Quá nhiều ADR là nhiễu; không có là kiến thức trong đầu một người. Markdown trong repo hơn Confluence (nằm cạnh code). Prototype cuối tuần có thể ở Slack đến khi tốt nghiệp.\n\n**Production gotchas:** Org tuyên bố MF trong khi ADR nói không — cập nhật status. Quyết định không **owner** và ngày review. Disagree-and-commit: spike, owner có tên, rồi làm đúng hướng đã chọn."
+        "en": "**What they are checking:** You write an ADR (Architecture Decision Record: a short, dated, reversible-looking note of **context, options, decision, consequences**) when the choice is **expensive to reverse** — not for every Slack poll. Distinct from disagree-tech-decision (the conversation); here the artefact is the record.\n\n**How to structure it:**\n1. Trigger: expensive to reverse, or will look random in six months.\n2. Contents: context, options with trade-offs, the pick, consequences, how to revisit.\n3. Examples that deserve one: SSR vs SPA for a surface, Pinia vs URL for shareable filters, introducing a BFF, Federation vs packages.\n4. Examples that do not: variable names, a one-sprint experiment behind a flag.\n5. Where it lives: `docs/adr/00xx-title.md` next to the code, linked from the PR.\n\n**Senior signals to include:**\n- Pinia vs Vuex / URL vs store for admin filters — yes, because the next engineer will re-litigate it.\n- A spike can precede the ADR; the ADR is the close, not the research dump.\n- Revisit criteria are part of the record (“we reverse if CI > [time] or a second deploy clock appears”).\n- You do not ADR in private notes. The point is the next reader.\n\n**Avoid:**\n- ADRs for every component rename.\n- A three-page essay. One or two screens.\n- Writing it after the third incident as fan fiction.\n\nDifferent from influence-without-authority: that story is the BE envelope. This is when you write the note.",
+        "vi": "**Nhà tuyển dụng muốn thấy:** Bạn viết ADR (bản ghi kiến trúc: ghi chú ngắn, có ngày, trông đảo được gồm **ngữ cảnh, lựa chọn, quyết định, hệ quả**) khi lựa chọn **đắt để đảo** — không phải mọi poll Slack. Khác câu không đồng ý kỹ thuật (cuộc trò chuyện); ở đây artefact là bản ghi.\n\n**Cách trình bày:**\n1. Cò súng: đắt để đảo, hoặc sáu tháng sau trông ngẫu nhiên.\n2. Nội dung: ngữ cảnh, lựa chọn kèm đánh đổi, cái chọn, hệ quả, cách xem lại.\n3. Ví dụ đáng một cái: SSR khác SPA cho một bề mặt, Pinia khác URL cho filter chia sẻ được, đưa BFF vào, Federation khác package.\n4. Ví dụ không đáng: tên biến, thí nghiệm một sprint sau flag.\n5. Nó sống ở: `docs/adr/00xx-title.md` cạnh code, link từ PR.\n\n**Tín hiệu senior nên có:**\n- Pinia khác Vuex / URL khác store cho filter admin — có, vì engineer sau sẽ đem ra đánh lại.\n- Spike có thể trước ADR; ADR là lần đóng, không phải đống nghiên cứu.\n- Tiêu chí xem lại là một phần bản ghi (“chúng tôi đảo nếu CI > [time] hoặc xuất hiện đồng hồ deploy thứ hai”).\n- Bạn không ADR trong ghi chú riêng. Điểm là người đọc sau.\n\n**Nên tránh:**\n- ADR cho mọi lần đổi tên component.\n- Bài luận ba trang. Một hoặc hai màn hình.\n- Viết sau incident thứ ba như fan fiction.\n\nKhác influence-without-authority: chuyện đó là envelope BE. Đây là khi bạn viết bản ghi."
       },
       "followUps": [
         {
-          "en": "Show me an ADR you regret, and what you would write now.",
-          "vi": "Cho xem một ADR bạn hối, và giờ bạn sẽ viết gì."
+          "en": "What belongs in an ADR versus a Slack thread or a wiki page?",
+          "vi": "Thứ gì thuộc ADR so với thread Slack hoặc trang wiki?"
         },
         {
-          "en": "How do ADRs interact with RFCs and Jira on your team?",
-          "vi": "ADR tương tác với RFC và Jira trên team bạn thế nào?"
+          "en": "When would you revisit or supersede an ADR instead of editing it silently?",
+          "vi": "Khi nào bạn xem lại hoặc thay ADR thay vì sửa im lặng?"
+        },
+        {
+          "en": "Which frontend choice on your last team deserved an ADR and did not have one?",
+          "vi": "Lựa chọn frontend nào ở team trước đáng một ADR mà không có?"
         }
-      ]
+      ],
+      "example": {
+        "en": "Situation: we kept relitigating URL filters versus Pinia on the internal admin product in Slack, and a new engineer implemented a third copy in a store. Task: I needed a record that would survive me. Action: I wrote a one-page ADR — context (shareable support views, back button), options (Pinia, URL, hybrid), decision (URL is source of truth, Pinia for ephemeral UX), consequences (support can paste a link; no secrets in the query), revisit if the query string blows 2 kB. Linked it from the PR that moved the first table. Result: the next table followed the URL rule without a debate. Distinct from disagree-tech-decision: that conversation was in the room; this is the artefact I left.",
+        "vi": "Situation: chúng tôi cứ đưa filter URL khác Pinia ra Slack trên sản phẩm admin nội bộ, và một engineer mới implement bản thứ ba trong store. Task: tôi cần bản ghi sống lâu hơn tôi. Action: tôi viết ADR một trang — ngữ cảnh (view support chia sẻ được, nút back), lựa chọn (Pinia, URL, hybrid), quyết định (URL là nguồn sự thật, Pinia cho UX phù du), hệ quả (support dán link được; không secret trên query), xem lại nếu query string vượt 2 kB. Link từ PR dời table đầu. Result: table sau theo rule URL không cần tranh. Khác câu không đồng ý kỹ thuật: cuộc trò chuyện đó ở trong phòng; đây là artefact tôi để lại."
+      }
     },
     {
       "id": "oauth-pkce-spa",
