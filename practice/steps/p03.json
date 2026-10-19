@@ -1,0 +1,149 @@
+{
+  "kind": "practice-step",
+  "id": "p03",
+  "milestone": "m0",
+  "order": 3,
+  "title": {
+    "en": "SQL by hand",
+    "vi": "SQL viết tay"
+  },
+  "summary": {
+    "en": "Prisma writes SQL for you later, so you need to recognise what it generates.",
+    "vi": "Prisma sẽ viết SQL giúp bạn sau này, nên bạn cần nhận ra SQL nó sinh ra."
+  },
+  "estimateMin": 120,
+  "prereqs": ["p02"],
+  "tags": ["sql", "mysql", "schema"],
+  "concepts": [
+    {
+      "term": {
+        "en": "Primary key",
+        "vi": "Primary key"
+      },
+      "explain": {
+        "en": "The column that uniquely identifies a row, usually `id`. Two rows cannot share the same primary key.",
+        "vi": "Cột định danh duy nhất một hàng, thường là `id`. Hai hàng không được trùng primary key."
+      }
+    },
+    {
+      "term": {
+        "en": "Foreign key",
+        "vi": "Foreign key"
+      },
+      "explain": {
+        "en": "A column that points at another table's primary key, for example `experience.profileId` → `profile.id`. The database refuses (or cascades) when the parent is missing.",
+        "vi": "Cột trỏ tới primary key của bảng khác, ví dụ `experience.profileId` → `profile.id`. Database từ chối (hoặc cascade) khi hàng cha không còn."
+      }
+    },
+    {
+      "term": {
+        "en": "JOIN",
+        "vi": "JOIN"
+      },
+      "explain": {
+        "en": "A query that combines rows from two tables using the foreign key. `SELECT … FROM experience JOIN profile ON …` returns experiences with their profile.",
+        "vi": "Câu query ghép hàng từ hai bảng nhờ foreign key. `SELECT … FROM experience JOIN profile ON …` trả experience kèm profile."
+      }
+    },
+    {
+      "term": {
+        "en": "utf8mb4",
+        "vi": "utf8mb4"
+      },
+      "explain": {
+        "en": "The MySQL charset that stores full Unicode, including Vietnamese diacritics and emoji. `utf8` (three-byte) is not enough.",
+        "vi": "Charset MySQL lưu đủ Unicode, gồm dấu tiếng Việt và emoji. `utf8` (3 byte) là không đủ."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "system-design",
+      "label": {
+        "en": "System Design",
+        "vi": "Thiết kế hệ thống"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "n-plus-one",
+      "label": {
+        "en": "N+1 query problem",
+        "vi": "Vấn đề N+1 query"
+      }
+    }
+  ],
+  "specRefs": ["§1.5", "§1.6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "Open a MySQL shell in the container",
+        "vi": "Mở shell MySQL trong container"
+      },
+      "detail": {
+        "en": "With the db service healthy, exec into it. You are now typing SQL against the same engine Prisma will use later.",
+        "vi": "Khi service db đã healthy, exec vào trong đó. Bạn đang gõ SQL trên đúng engine mà Prisma sẽ dùng sau."
+      },
+      "code": {
+        "lang": "bash",
+        "text": "docker compose exec db mysql -u root -p"
+      }
+    },
+    {
+      "title": {
+        "en": "Create profile and experience tables",
+        "vi": "Tạo bảng profile và experience"
+      },
+      "detail": {
+        "en": "CREATE TABLE both with utf8mb4. Give experience a foreign key to profile. This is the 1-to-many you will later see in Prisma as `Experience[]` on Profile.",
+        "vi": "CREATE TABLE cả hai với utf8mb4. experience có foreign key tới profile. Đây là quan hệ 1-nhiều mà sau này Prisma hiện thành `Experience[]` trên Profile."
+      },
+      "code": {
+        "lang": "sql",
+        "text": "CREATE TABLE profile (\n  id INT PRIMARY KEY AUTO_INCREMENT,\n  display_name VARCHAR(120) NOT NULL\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;\n\nCREATE TABLE experience (\n  id INT PRIMARY KEY AUTO_INCREMENT,\n  profile_id INT NOT NULL,\n  company VARCHAR(120) NOT NULL,\n  CONSTRAINT fk_experience_profile\n    FOREIGN KEY (profile_id) REFERENCES profile(id)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
+      }
+    },
+    {
+      "title": {
+        "en": "INSERT, SELECT JOIN, UPDATE, DELETE",
+        "vi": "INSERT, SELECT JOIN, UPDATE, DELETE"
+      },
+      "detail": {
+        "en": "Insert one profile and two experiences. JOIN them. UPDATE a company name. Try DELETE on the profile and watch the FK block it (or CASCADE if you chose that — then write down why).",
+        "vi": "Insert một profile và hai experience. JOIN chúng. UPDATE tên company. Thử DELETE profile và xem FK chặn (hoặc CASCADE nếu bạn chọn — hãy ghi rõ lý do)."
+      },
+      "code": {
+        "lang": "sql",
+        "text": "INSERT INTO profile (display_name) VALUES ('Parker Vu');\nINSERT INTO experience (profile_id, company) VALUES (1, 'Kobizo'), (1, 'CMC Global');\nSELECT p.display_name, e.company\nFROM experience e\nJOIN profile p ON p.id = e.profile_id;"
+      }
+    },
+    {
+      "title": {
+        "en": "Save the queries",
+        "vi": "Lưu các câu query"
+      },
+      "detail": {
+        "en": "Copy every statement you ran into docs/sql-notes.sql, including the DELETE attempt and what happened. These notes are the study sheet for Prisma later.",
+        "vi": "Copy mọi câu bạn đã chạy vào docs/sql-notes.sql, gồm cả lần thử DELETE và kết quả. Đây là tài liệu ôn khi học Prisma."
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "A JOIN query returns the experiences for one profile.",
+      "vi": "Một câu JOIN trả về các experience của một profile."
+    },
+    {
+      "en": "Deleting the profile is blocked by the FK, or it cascades and you explain that choice in docs/sql-notes.sql.",
+      "vi": "Xóa profile bị FK chặn, hoặc cascade và bạn giải thích lựa chọn đó trong docs/sql-notes.sql."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Forgetting `utf8mb4`, which breaks Vietnamese text. Set it at table creation, not as an afterthought.",
+      "vi": "Quên `utf8mb4` sẽ làm hỏng tiếng Việt. Set ngay lúc tạo bảng, đừng để sau."
+    }
+  ],
+  "commit": "docs: sql fundamentals notes"
+}
