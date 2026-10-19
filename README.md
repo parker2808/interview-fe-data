@@ -21,6 +21,8 @@ schema/                        # JSON Schema for Localized + blocks
 scripts/validate.mjs           # fails on missing en/vi; also checks Q&A counts
 scripts/check-content.mjs      # schema, anchors, vi/en parity, migration status
 scripts/sync-kb-index.mjs      # rebuild knowledge-base/index.json from the docs
+scripts/check-plan.mjs         # 30-day plan: links, budgets, empty lab stub
+scripts/sync-plan-index.mjs    # rebuild plan/index.json from meta + day files
 ```
 
 ## Editing
@@ -34,6 +36,8 @@ scripts/sync-kb-index.mjs      # rebuild knowledge-base/index.json from the docs
 ```bash
 node scripts/validate.mjs .
 node scripts/check-content.mjs .
+node scripts/check-plan.mjs .
+node scripts/sync-plan-index.mjs --check
 ```
 
 `check-content.mjs` also runs `sync-kb-index.mjs --check`. After editing a knowledge-base doc, regenerate the catalog:
@@ -42,13 +46,23 @@ node scripts/check-content.mjs .
 node scripts/sync-kb-index.mjs
 ```
 
+After editing `plan/days` or `plan/meta.json`, regenerate the plan index:
+
+```bash
+node scripts/sync-plan-index.mjs
+```
+
+`check-plan.mjs --lookup slug#en-id` prints the vi heading id. `--days 1-7 --strict` applies format rules only to that range. `--stats` prints per-day word and byte counts. GitHub Actions runs `check-plan.mjs` in warn mode (format/budget issues are warnings until `--strict`).
+
 A later PR can rewrite the prose for readability. This repo is the format + content home; do not keep a second copy in the public app.
 
 ## Validation
 
 `scripts/validate.mjs` walks every JSON object that looks like `{ en, vi }` and exits non-zero if either side is missing or blank. It also fails if `qna/questions.json` drops below 142 questions (or below the per-category floors: soft 29, technical 86, situational 27) and prints the live counts.
 
-`scripts/check-content.mjs` checks block schema, heading-id uniqueness, in-KB anchors (same locale), Q&A shape, en/vi markdown parity, and rewrite-migration status (`KB migrated X/192, Q&A migrated Y/142`). Pass `--strict` only on the final pass, when every topic and question has been rewritten. GitHub Actions runs `validate.mjs` and `check-content.mjs` on every PR and push.
+`scripts/check-content.mjs` checks block schema, heading-id uniqueness, in-KB anchors (same locale), Q&A shape, en/vi markdown parity, and rewrite-migration status (`KB migrated X/192, Q&A migrated Y/142`). Pass `--strict` only on the final pass, when every topic and question has been rewritten. GitHub Actions runs `validate.mjs`, `check-content.mjs`, and `check-plan.mjs` on every PR and push.
+
+`scripts/check-plan.mjs` checks the 30 day files: week ranges, study/Q&A ids, empty `lab.sections` (the Lab tab is retired; keep a stub so the app still parses), no calendar dates, and (with `--strict`) Plan-tab length budgets. `scripts/sync-plan-index.mjs` rebuilds `plan/index.json` from `plan/meta.json` plus each day file without `lab`. `--check` exits non-zero if the file would change.
 
 `scripts/sync-kb-index.mjs` rebuilds each `docs[]` and `groups[].topics[]` entry from the matching knowledge-base file: `slug`, `title`, `category`, `order`, `tags`, a clipped `summary` (219 chars + `…` when longer than 220), and level-2/3 `headings`. It keeps `groups` order and `defaultSlug`. `--check` exits non-zero if the file would change.
 
