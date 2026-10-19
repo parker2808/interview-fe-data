@@ -1,0 +1,124 @@
+{
+  "kind": "practice-step",
+  "id": "p22",
+  "milestone": "m4",
+  "order": 22,
+  "title": {
+    "en": "Admin editor forms",
+    "vi": "Form editor admin"
+  },
+  "summary": {
+    "en": "Shared zod schemas plus TanStack Form give the same validation in the browser and on the server.",
+    "vi": "Schema zod dùng chung cộng TanStack Form cho cùng một validation trên browser và server."
+  },
+  "estimateMin": 240,
+  "prereqs": ["p21", "p12"],
+  "tags": ["forms", "zod", "blocks", "admin"],
+  "concepts": [
+    {
+      "term": {
+        "en": "TanStack Form + zod",
+        "vi": "TanStack Form + zod"
+      },
+      "explain": {
+        "en": "The form uses the same packages/shared schema as the API. Browser errors and server `fields` map onto the same inputs.",
+        "vi": "Form dùng cùng schema packages/shared với API. Lỗi trên browser và `fields` từ server map vào đúng input."
+      }
+    },
+    {
+      "term": {
+        "en": "Block editor list",
+        "vi": "List block editor"
+      },
+      "explain": {
+        "en": "Add / reorder / remove typed blocks. Reorder is a list, not a rich-text HTML dump. The payload is the JSON `blocks` column from p12.",
+        "vi": "Thêm / đổi chỗ / xóa block có type. Reorder là một list, không phải HTML rich-text. Payload là cột JSON `blocks` từ p12."
+      }
+    },
+    {
+      "term": {
+        "en": "Dirty guard",
+        "vi": "Dirty guard"
+      },
+      "explain": {
+        "en": "If the form has unsaved changes, navigating away asks to confirm. Save via mutation and `invalidateQueries` so the public page (and after p25, publish) refreshes.",
+        "vi": "Form còn thay đổi chưa lưu thì rời trang phải confirm. Save bằng mutation và `invalidateQueries` để trang public (và sau p25, lúc publish) refresh."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "typescript",
+      "label": {
+        "en": "TypeScript",
+        "vi": "TypeScript"
+      }
+    },
+    {
+      "slug": "react",
+      "label": {
+        "en": "React",
+        "vi": "React"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "ts-designing-api-props",
+      "label": {
+        "en": "Designing TypeScript types for APIs",
+        "vi": "Thiết kế type TypeScript cho API"
+      }
+    }
+  ],
+  "specRefs": ["§5.9", "§5.11"],
+  "tasks": [
+    {
+      "title": {
+        "en": "Post and project editors",
+        "vi": "Editor post và project"
+      },
+      "detail": {
+        "en": "Fields from spec §5.9 / §5.11 v2: locale tabs EN/VI, slug, status, SEO, plus project \"Card & facts\" (domain, key facts 2–4 lines, fact chips ≤ 6). Import schemas from shared.",
+        "vi": "Field từ spec §5.9 / §5.11 v2: tab locale EN/VI, slug, status, SEO, thêm tab project \"Card & facts\" (domain, key facts 2–4 dòng, fact chips ≤ 6). Import schema từ shared."
+      }
+    },
+    {
+      "title": {
+        "en": "Block editor (add, reorder, remove)",
+        "vi": "Block editor (thêm, đổi chỗ, xóa)"
+      },
+      "detail": {
+        "en": "A list of blocks with type picker, up/down, delete. Validate with the p12 zod union before save. No raw HTML field.",
+        "vi": "List block với picker type, lên/xuống, xóa. Validate bằng union zod ở p12 trước khi save. Không có field HTML thô."
+      }
+    },
+    {
+      "title": {
+        "en": "Dirty guard and save mutation",
+        "vi": "Dirty guard và mutation save"
+      },
+      "detail": {
+        "en": "Warn on navigation when dirty. Save PATCH, map server `fields` onto inputs, invalidate the entity query. Until p25, a saved published row can show on the public page immediately.",
+        "vi": "Cảnh báo khi rời trang nếu dirty. Save PATCH, map `fields` từ server lên input, invalidate query của entity. Trước p25, hàng PUBLISHED vừa save có thể hiện ngay trên trang public."
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "Submitting an empty EN title returns 400 and the field error maps onto that input.",
+      "vi": "Gửi title EN trống thì API trả 400 và field error gắn đúng input đó."
+    },
+    {
+      "en": "Edits show on the public page after save (after p25: only on publish).",
+      "vi": "Bản sửa hiện trên trang public sau khi save (sau p25: chỉ khi publish)."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Duplicating schemas in the web app. Import from `shared`.",
+      "vi": "Copy schema trong web app. Hãy import từ `shared`."
+    }
+  ],
+  "commit": "feat(web): admin editors"
+}

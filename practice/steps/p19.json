@@ -1,0 +1,135 @@
+{
+  "kind": "practice-step",
+  "id": "p19",
+  "milestone": "m4",
+  "order": 19,
+  "title": {
+    "en": "Guards, roles, CSRF",
+    "vi": "Guard, role, CSRF"
+  },
+  "summary": {
+    "en": "Only the admin can write, and cookies need CSRF protection.",
+    "vi": "Chỉ admin được ghi, và cookie cần chống CSRF."
+  },
+  "estimateMin": 120,
+  "prereqs": ["p18"],
+  "tags": ["guards", "csrf", "throttle"],
+  "concepts": [
+    {
+      "term": {
+        "en": "Guard",
+        "vi": "Guard"
+      },
+      "explain": {
+        "en": "Nest code that runs before the controller and says yes/no. SessionGuard loads the session; RolesGuard checks `ADMIN` / `EDITOR`.",
+        "vi": "Code Nest chạy trước controller và nói yes/no. SessionGuard load session; RolesGuard kiểm `ADMIN` / `EDITOR`."
+      }
+    },
+    {
+      "term": {
+        "en": "CSRF double-submit",
+        "vi": "CSRF double-submit"
+      },
+      "explain": {
+        "en": "A random token in a readable cookie plus the same value in a header. The server rejects mutating requests when they differ. Extra to SameSite=Lax.",
+        "vi": "Token ngẫu nhiên trong cookie đọc được, cộng cùng giá trị trên header. Server từ chối request ghi khi chúng khác nhau. Bổ sung cho SameSite=Lax."
+      }
+    },
+    {
+      "term": {
+        "en": "@Public()",
+        "vi": "@Public()"
+      },
+      "explain": {
+        "en": "Make the guard global, then opt out login, health, and public GET with `@Public()`. New write routes are protected by default.",
+        "vi": "Để guard chạy global, rồi opt out login, health và GET public bằng `@Public()`. Route ghi mới mặc định đã được bảo vệ."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "security",
+      "label": {
+        "en": "Security",
+        "vi": "Bảo mật"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "security-xss-csrf-csp",
+      "label": {
+        "en": "XSS, CSRF, and CSP in frontend terms",
+        "vi": "XSS, CSRF và CSP theo góc nhìn frontend"
+      }
+    },
+    {
+      "id": "csrf-vs-xss",
+      "label": {
+        "en": "How CSRF and XSS differ with cookie auth",
+        "vi": "CSRF và XSS khác nhau thế nào với cookie auth"
+      }
+    },
+    {
+      "id": "jwt-login-flow",
+      "label": {
+        "en": "Login flow (contrast with sessions)",
+        "vi": "Luồng login (đối chiếu với session)"
+      }
+    }
+  ],
+  "specRefs": ["§1.6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "SessionGuard and RolesGuard",
+        "vi": "SessionGuard và RolesGuard"
+      },
+      "detail": {
+        "en": "Register both globally. `@Roles('ADMIN')` on publish/delete if EDITOR should not. Write routes without a session return 401; wrong role returns 403.",
+        "vi": "Đăng ký cả hai global. `@Roles('ADMIN')` trên publish/delete nếu EDITOR không được. Route ghi không session trả 401; sai role trả 403."
+      }
+    },
+    {
+      "title": {
+        "en": "CSRF double-submit header",
+        "vi": "Header CSRF double-submit"
+      },
+      "detail": {
+        "en": "Issue a CSRF token on login / GET /auth/me. Require it on POST/PATCH/DELETE (header name documented in README). Missing or mismatch → 403.",
+        "vi": "Cấp CSRF token lúc login / GET /auth/me. Bắt buộc trên POST/PATCH/DELETE (tên header ghi trong README). Thiếu hoặc lệch → 403."
+      }
+    },
+    {
+      "title": {
+        "en": "Throttle login",
+        "vi": "Throttle login"
+      },
+      "detail": {
+        "en": "Add `@nestjs/throttler` on `POST /auth/login`. Five failures in a minute are allowed; the sixth returns 429.",
+        "vi": "Thêm `@nestjs/throttler` trên `POST /auth/login`. Năm lần fail trong một phút còn được; lần thứ sáu trả 429."
+      },
+      "code": {
+        "lang": "bash",
+        "text": "for i in 1 2 3 4 5 6; do curl -s -o /dev/null -w \"%{http_code}\\n\" \\\n  -X POST localhost:4000/api/auth/login \\\n  -H 'content-type: application/json' \\\n  -d '{\"login\":\"admin\",\"password\":\"wrong\"}'; done"
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "Writes without a session return 401; writes without the CSRF header return 403.",
+      "vi": "Ghi không session trả 401; ghi không header CSRF trả 403."
+    },
+    {
+      "en": "The 6th bad login in a minute returns 429.",
+      "vi": "Lần login sai thứ 6 trong một phút trả 429."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Guarding the controller but forgetting new routes. Make the guard global and add a `@Public()` opt-out.",
+      "vi": "Chỉ gắn guard lên controller rồi quên route mới. Để guard global và thêm `@Public()` để opt out."
+    }
+  ],
+  "commit": "feat(api): guards + csrf + throttle"
+}
