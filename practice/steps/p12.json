@@ -5,11 +5,11 @@
   "order": 12,
   "title": {
     "en": "Posts + rich content blocks",
-    "vi": "Post + content block"
+    "vi": "Post + rich content block"
   },
   "summary": {
     "en": "Blog and case studies share one block format, so one renderer serves both.",
-    "vi": "Blog và case study dùng chung một format block, nên một renderer phục vụ cả hai."
+    "vi": "Blog và case study dùng chung một format block, nên một renderer lo cả hai."
   },
   "estimateMin": 180,
   "prereqs": ["p11"],
@@ -22,7 +22,7 @@
       },
       "explain": {
         "en": "A JSON array of typed chunks (heading, paragraph, list, code, callout) instead of one HTML string. The renderer switches on `type`. Never `dangerouslySetInnerHTML`.",
-        "vi": "Mảng JSON các đoạn có type (heading, paragraph, list, code, callout) thay vì một chuỗi HTML. Renderer switch theo `type`. Không dùng `dangerouslySetInnerHTML`."
+        "vi": "Một mảng JSON các chunk có type (heading, paragraph, list, code, callout), không phải một chuỗi HTML. Renderer switch theo `type`. Không bao giờ `dangerouslySetInnerHTML`."
       }
     },
     {
@@ -42,7 +42,7 @@
       },
       "explain": {
         "en": "Prisma type `Json` is `any`. Parse it with a zod discriminated union on `type` at seed and at write time so invalid blocks never land.",
-        "vi": "Type Prisma `Json` là `any`. Parse bằng discriminated union zod theo `type` lúc seed và lúc ghi, để block sai không vào DB."
+        "vi": "Type Prisma `Json` là `any`. Parse bằng discriminated union của zod theo `type` lúc seed và lúc ghi, để block sai không lọt vào."
       }
     }
   ],
@@ -83,7 +83,7 @@
       },
       "detail": {
         "en": "Allow a small set: heading, paragraph, list, code, callout. Reject unknown `type` and missing localized text. Use the same schema in the seed.",
-        "vi": "Cho phép tập nhỏ: heading, paragraph, list, code, callout. Từ chối `type` lạ và thiếu text locale. Seed dùng cùng schema."
+        "vi": "Chỉ cho một tập nhỏ: heading, paragraph, list, code, callout. Từ chối `type` lạ và thiếu text theo locale. Seed dùng cùng schema."
       }
     },
     {
@@ -93,7 +93,7 @@
       },
       "detail": {
         "en": "Published only. Detail 404s for drafts and unknown slugs. Seed one published post and one draft so you can prove the filter.",
-        "vi": "Chỉ PUBLISHED. Detail trả 404 với draft và slug lạ. Seed một post published và một draft để chứng minh filter."
+        "vi": "Chỉ lấy published. Detail trả 404 với draft và slug lạ. Seed một post published và một draft để chứng minh filter."
       },
       "code": {
         "lang": "bash",
@@ -104,17 +104,17 @@
   "doneWhen": [
     {
       "en": "A draft post is invisible on `GET /posts` and `GET /posts/:slug` returns 404.",
-      "vi": "Post draft không xuất hiện trên `GET /posts` và `GET /posts/:slug` trả 404."
+      "vi": "Post draft không hiện trên `GET /posts` và `GET /posts/:slug` trả 404."
     },
     {
       "en": "Invalid block JSON is rejected at seed or write time (zod error, not a 500 HTML dump).",
-      "vi": "JSON block sai bị từ chối lúc seed hoặc ghi (lỗi zod, không phải dump HTML 500)."
+      "vi": "JSON block sai bị từ chối lúc seed hoặc lúc ghi (lỗi zod, không phải dump HTML 500)."
     }
   ],
   "pitfalls": [
     {
       "en": "Rendering raw HTML from content. Allow block types only and never `dangerouslySetInnerHTML`.",
-      "vi": "Render HTML thô từ content. Chỉ cho phép block type và không bao giờ `dangerouslySetInnerHTML`."
+      "vi": "Render HTML thô từ content. Chỉ cho phép các block type, không bao giờ `dangerouslySetInnerHTML`."
     }
   ],
   "commit": "feat(api): posts with blocks"

@@ -9,7 +9,7 @@
   },
   "summary": {
     "en": "A project uses many skills and a skill appears in many projects, so a join table is needed.",
-    "vi": "Một project dùng nhiều skill và một skill xuất hiện ở nhiều project, nên cần bảng join."
+    "vi": "Một project dùng nhiều skill, một skill xuất hiện ở nhiều project, nên cần bảng join."
   },
   "estimateMin": 120,
   "prereqs": ["p10"],
@@ -22,7 +22,7 @@
       },
       "explain": {
         "en": "Neither side owns the other. You store pairs in a join table: project 3 ↔ skill `nuxt`.",
-        "vi": "Không bên nào sở hữu bên kia. Bạn lưu từng cặp trong bảng join: project 3 ↔ skill `nuxt`."
+        "vi": "Không bên nào là owner của bên kia. Bạn lưu từng cặp trong bảng join: project 3 ↔ skill `nuxt`."
       }
     },
     {
@@ -32,17 +32,17 @@
       },
       "explain": {
         "en": "Prisma can hide the join (`skills Skill[]`). Hide it only when you have no extra columns. We need `order` on ProjectSkill, so model the join yourself.",
-        "vi": "Prisma có thể giấu bảng join (`skills Skill[]`). Chỉ giấu khi không có cột thêm. Ta cần `order` trên ProjectSkill, nên tự khai báo join."
+        "vi": "Prisma có thể giấu bảng join (`skills Skill[]`). Chỉ giấu khi không có cột thêm. Cần `order` trên ProjectSkill, nên tự model join."
       }
     },
     {
       "term": {
         "en": "Filter query",
-        "vi": "Query filter"
+        "vi": "Filter query"
       },
       "explain": {
         "en": "`GET /projects?skill=nuxt` is a WHERE on the join: only projects that have that skill slug. Keep it a server filter, not a client `.filter`.",
-        "vi": "`GET /projects?skill=nuxt` là WHERE trên bảng join: chỉ project có skill slug đó. Filter ở server, không `.filter` trên client."
+        "vi": "`GET /projects?skill=nuxt` là WHERE trên bảng join: chỉ project có skill slug đó. Filter trên server, đừng `.filter` ở client."
       }
     }
   ],
@@ -65,7 +65,7 @@
       },
       "detail": {
         "en": "Skill: `name`, `slug` unique, `depth` (DAILY/SHIPPED/GROWING). Tag: `slug`, `nameEn`/`nameVi`. ProjectSkill is explicit with `order`. Project↔Tag can stay implicit unless you need extra columns.",
-        "vi": "Skill: `name`, `slug` unique, `depth` (DAILY/SHIPPED/GROWING). Tag: `slug`, `nameEn`/`nameVi`. ProjectSkill khai báo tường minh với `order`. Project↔Tag có thể implicit nếu không cần cột thêm."
+        "vi": "Skill: `name`, `slug` unique, `depth` (DAILY/SHIPPED/GROWING). Tag: `slug`, `nameEn`/`nameVi`. ProjectSkill khai báo tường minh với `order`. Project↔Tag cứ để implicit, trừ khi bạn cần cột thêm."
       }
     },
     {
@@ -75,7 +75,7 @@
       },
       "detail": {
         "en": "Seed grouped skills from spec §1.4 (Daily / Shipped / Growing). Attach Vue, Nuxt, TypeScript to Particula. Confirm join rows in Prisma Studio.",
-        "vi": "Seed skill theo nhóm spec §1.4 (Daily / Shipped / Growing). Gắn Vue, Nuxt, TypeScript vào Particula. Kiểm tra hàng join trong Prisma Studio."
+        "vi": "Seed skill theo nhóm spec §1.4 (Daily / Shipped / Growing). Gắn Vue, Nuxt, TypeScript vào Particula. Xác nhận hàng join trong Prisma Studio."
       }
     },
     {
@@ -85,7 +85,7 @@
       },
       "detail": {
         "en": "Parse `skill` as a slug. Return only matching published projects. Unknown slugs return an empty list, not 500.",
-        "vi": "Parse `skill` như một slug. Chỉ trả project PUBLISHED khớp. Slug lạ trả list rỗng, không 500."
+        "vi": "Parse `skill` như slug. Chỉ trả project published khớp. Slug lạ thì list rỗng, không 500."
       },
       "code": {
         "lang": "bash",

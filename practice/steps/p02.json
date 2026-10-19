@@ -9,7 +9,7 @@
   },
   "summary": {
     "en": "The database runs in a container so it behaves the same on every machine and can be thrown away safely.",
-    "vi": "Database chạy trong container nên giống nhau trên mọi máy, và xóa đi cũng an toàn."
+    "vi": "Database chạy trong container nên mọi máy đều giống nhau, vứt đi cũng an toàn."
   },
   "estimateMin": 120,
   "prereqs": ["p01"],
@@ -42,7 +42,7 @@
       },
       "explain": {
         "en": "`3306:3306` means your laptop's port 3306 forwards to the container's MySQL port. If a local MySQL already uses 3306, the new container will fail to bind.",
-        "vi": "`3306:3306` nghĩa là cổng 3306 trên máy bạn chuyển tới cổng MySQL trong container. Nếu MySQL local đã chiếm 3306, container mới sẽ không bind được."
+        "vi": "`3306:3306` nghĩa là cổng 3306 trên laptop bạn forward vào cổng MySQL trong container. Nếu MySQL local đã chiếm 3306, container mới sẽ không bind được."
       }
     },
     {
@@ -52,7 +52,7 @@
       },
       "explain": {
         "en": ".env holds real secrets and stays gitignored. .env.example lists the keys with dummy values so the next machine knows what to set.",
-        "vi": ".env chứa secret thật và nằm trong gitignore. .env.example liệt kê key với giá trị giả để máy khác biết cần set gì."
+        "vi": ".env chứa secret thật và bị gitignore. .env.example liệt kê các key với giá trị giả để máy khác biết cần set gì."
       }
     }
   ],
@@ -75,7 +75,7 @@
       },
       "detail": {
         "en": "Read the glossary in spec §1.6. In your own words: an image is the recipe, a container is the running cake, a volume is the fridge that keeps leftovers.",
-        "vi": "Đọc glossary trong spec §1.6. Nói bằng lời của bạn: image là công thức, container là bánh đang nướng, volume là tủ lạnh giữ đồ thừa."
+        "vi": "Đọc glossary trong spec §1.6. Nói bằng lời của bạn: image là công thức, container là chiếc bánh đang chạy, volume là tủ lạnh giữ đồ thừa."
       }
     },
     {
@@ -85,7 +85,7 @@
       },
       "detail": {
         "en": "Add a `db` service: image mysql:8, a named volume for /var/lib/mysql, a healthcheck (`mysqladmin ping`), and port 3306. Set MYSQL_DATABASE and MYSQL_ROOT_PASSWORD from env.",
-        "vi": "Thêm service `db`: image mysql:8, named volume cho /var/lib/mysql, healthcheck (`mysqladmin ping`), và port 3306. MYSQL_DATABASE cùng MYSQL_ROOT_PASSWORD lấy từ env."
+        "vi": "Thêm một service `db`: image mysql:8, named volume cho /var/lib/mysql, healthcheck (`mysqladmin ping`), và port 3306. Set MYSQL_DATABASE và MYSQL_ROOT_PASSWORD lấy từ env."
       },
       "code": {
         "lang": "yaml",
@@ -99,7 +99,7 @@
       },
       "detail": {
         "en": "Put DATABASE_URL in .env.example (mysql://…@localhost:3306/portfolio). Copy it to .env locally. Add `.env` to .gitignore so secrets never land in git.",
-        "vi": "Ghi DATABASE_URL vào .env.example (mysql://…@localhost:3306/portfolio). Copy sang .env trên máy. Thêm `.env` vào .gitignore để secret không vào git."
+        "vi": "Ghi DATABASE_URL vào .env.example (mysql://…@localhost:3306/portfolio). Copy sang .env trên máy. Thêm `.env` vào .gitignore để secrets không lọt vào git."
       },
       "code": {
         "lang": "bash",
@@ -113,7 +113,7 @@
       },
       "detail": {
         "en": "Start only the db service. Wait until health is healthy. Stop it, start it again, and confirm the data directory was not wiped — that is the volume doing its job.",
-        "vi": "Chỉ start service db. Đợi health thành healthy. Stop rồi start lại, xác nhận data không bị xóa — đó là volume đang làm việc."
+        "vi": "Chỉ start service db. Đợi health thành healthy. Stop rồi start lại, xác nhận thư mục data không bị xóa sạch. Đó là volume đang làm đúng việc."
       },
       "code": {
         "lang": "bash",
@@ -128,17 +128,17 @@
     },
     {
       "en": "`docker compose down` then `up` keeps the data because of the named volume.",
-      "vi": "`docker compose down` rồi `up` vẫn giữ data nhờ named volume."
+      "vi": "`docker compose down` rồi lệnh `up` vẫn giữ data nhờ named volume."
     }
   ],
   "pitfalls": [
     {
       "en": "Committing `.env`. Keep secrets in `.env` and only commit `.env.example`.",
-      "vi": "Commit file `.env`. Giữ secret trong `.env` và chỉ commit `.env.example`."
+      "vi": "Commit `.env`. Giữ secrets trong `.env`, chỉ commit `.env.example`."
     },
     {
       "en": "Port 3306 already taken by a local MySQL. Stop the local service, or map a different host port.",
-      "vi": "Port 3306 đã bị MySQL local chiếm. Tắt service local, hoặc map sang cổng host khác."
+      "vi": "Port 3306 đã bị MySQL local chiếm sẵn. Tắt service local, hoặc map sang host port khác."
     }
   ],
   "commit": "chore(infra): mysql via docker compose"
