@@ -1,0 +1,131 @@
+{
+  "kind": "practice-step",
+  "id": "p26",
+  "milestone": "m6",
+  "order": 26,
+  "title": {
+    "en": "SEO",
+    "vi": "SEO"
+  },
+  "summary": {
+    "en": "Metadata also comes from the CMS, so sharing a link looks right.",
+    "vi": "Metadata cũng tới từ CMS, nên khi share link trông đúng."
+  },
+  "estimateMin": 120,
+  "prereqs": ["p14"],
+  "tags": ["seo", "metadata", "json-ld"],
+  "concepts": [
+    {
+      "term": {
+        "en": "generateMetadata",
+        "vi": "generateMetadata"
+      },
+      "explain": {
+        "en": "A Next server function per page. Title/description/canonical/OG come from API SEO fields, with SiteSettings as the default.",
+        "vi": "Hàm server Next trên mỗi trang. Title/description/canonical/OG lấy từ field SEO trên API, SiteSettings là mặc định."
+      }
+    },
+    {
+      "term": {
+        "en": "metadataBase",
+        "vi": "metadataBase"
+      },
+      "explain": {
+        "en": "The site origin used to resolve relative OG URLs. Missing it makes `og:image` a relative path that chat apps cannot fetch.",
+        "vi": "Origin của site dùng để resolve URL OG tương đối. Thiếu nó thì `og:image` thành path tương đối, app chat không fetch được."
+      }
+    },
+    {
+      "term": {
+        "en": "JSON-LD Person",
+        "vi": "JSON-LD Person"
+      },
+      "explain": {
+        "en": "Structured data on home/about: name, job title, GitHub `parker2808`. No personal inbox address, no phone number.",
+        "vi": "Dữ liệu có cấu trúc trên home/about: tên, job title, GitHub `parker2808`. Không địa chỉ hộp thư cá nhân, không số điện thoại."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "nextjs",
+      "label": {
+        "en": "Next.js",
+        "vi": "Next.js"
+      }
+    },
+    {
+      "slug": "performance",
+      "label": {
+        "en": "Performance",
+        "vi": "Hiệu năng"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "next-metadata-image-font-deployment",
+      "label": {
+        "en": "Next.js metadata, SEO, image/font, deployment",
+        "vi": "Metadata, SEO, image/font, deployment trên Next.js"
+      }
+    },
+    {
+      "id": "core-web-vitals",
+      "label": {
+        "en": "Core Web Vitals",
+        "vi": "Core Web Vitals"
+      }
+    }
+  ],
+  "specRefs": ["§5"],
+  "tasks": [
+    {
+      "title": {
+        "en": "generateMetadata per page",
+        "vi": "generateMetadata mỗi trang"
+      },
+      "detail": {
+        "en": "Home, about, project, post: `{page seoTitle} · {siteName}`. Set `metadataBase` from SiteSettings.domain. Fallback to default SEO fields when a row has none.",
+        "vi": "Home, about, project, post: `{page seoTitle} · {siteName}`. Set `metadataBase` từ SiteSettings.domain. Fallback field SEO mặc định khi hàng không có."
+      }
+    },
+    {
+      "title": {
+        "en": "sitemap.ts, robots.ts, OG images",
+        "vi": "sitemap.ts, robots.ts, ảnh OG"
+      },
+      "detail": {
+        "en": "Sitemap lists published slugs only (both locales). robots.ts points at the sitemap. `opengraph-image.tsx` draws title from CMS data.",
+        "vi": "Sitemap chỉ list slug PUBLISHED (cả hai locale). robots.ts trỏ tới sitemap. `opengraph-image.tsx` vẽ title từ data CMS."
+      }
+    },
+    {
+      "title": {
+        "en": "JSON-LD Person",
+        "vi": "JSON-LD Person"
+      },
+      "detail": {
+        "en": "On home/about emit Person (name, jobTitle, sameAs GitHub). Do not put a personal inbox address or a phone number in the JSON-LD.",
+        "vi": "Trên home/about emit Person (name, jobTitle, sameAs GitHub). Không đưa địa chỉ hộp thư cá nhân hay số điện thoại vào JSON-LD."
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "Lighthouse SEO prints 100 on home, a post, and a project.",
+      "vi": "Lighthouse SEO in 100 trên home, một post và một project."
+    },
+    {
+      "en": "The sitemap lists published slugs only (drafts absent).",
+      "vi": "Sitemap chỉ list slug đã publish (không có draft)."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "The `metadataBase` is missing, which breaks OG URLs.",
+      "vi": "Thiếu `metadataBase`, làm gãy URL OG."
+    }
+  ],
+  "commit": "feat(web): seo from cms"
+}

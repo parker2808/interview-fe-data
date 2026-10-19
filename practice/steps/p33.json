@@ -1,0 +1,131 @@
+{
+  "kind": "practice-step",
+  "id": "p33",
+  "milestone": "m7",
+  "order": 33,
+  "title": {
+    "en": "Deploy + launch checklist",
+    "vi": "Deploy + checklist launch"
+  },
+  "summary": {
+    "en": "Shipping is the goal, and a checklist prevents launch-day surprises.",
+    "vi": "Ship là mục tiêu, và checklist tránh bất ngờ ngày launch."
+  },
+  "estimateMin": 180,
+  "prereqs": ["p30", "p31", "p32"],
+  "tags": ["deploy", "dns", "ci"],
+  "concepts": [
+    {
+      "term": {
+        "en": "Caddy auto-HTTPS",
+        "vi": "Caddy auto-HTTPS"
+      },
+      "explain": {
+        "en": "Caddy gets a certificate for your domain and terminates TLS. You point DNS A/AAAA at the VPS.",
+        "vi": "Caddy lấy certificate cho domain và kết TLS. Bạn trỏ DNS A/AAAA về VPS."
+      }
+    },
+    {
+      "term": {
+        "en": "GHCR + ssh pull",
+        "vi": "GHCR + ssh pull"
+      },
+      "explain": {
+        "en": "CI builds images, pushes to GitHub Container Registry, then ssh to the VPS to pull and `compose up`. Secrets stay in GitHub Actions / the server env, not in git.",
+        "vi": "CI build image, push lên GitHub Container Registry, rồi ssh vào VPS để pull và `compose up`. Secret nằm ở GitHub Actions / env server, không nằm trong git."
+      }
+    },
+    {
+      "term": {
+        "en": "Launch checklist",
+        "vi": "Checklist launch"
+      },
+      "explain": {
+        "en": "Walk spec §5 screens in both themes and both locales. Home, case study, post, contact, admin login. Uptime ping after.",
+        "vi": "Đi các màn spec §5 ở cả hai theme và hai locale. Home, case study, post, contact, login admin. Sau đó mới bật uptime ping."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "devops",
+      "label": {
+        "en": "DevOps",
+        "vi": "DevOps"
+      }
+    },
+    {
+      "slug": "monitoring",
+      "label": {
+        "en": "Monitoring",
+        "vi": "Giám sát và xử lý lỗi"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "fe-ci-preview-deploys",
+      "label": {
+        "en": "Preview deploys, env, and rollback",
+        "vi": "Preview deploy, env và rollback"
+      }
+    },
+    {
+      "id": "observability-frontend",
+      "label": {
+        "en": "What good frontend observability looks like",
+        "vi": "Frontend observability tốt trông như thế nào"
+      }
+    }
+  ],
+  "specRefs": ["§5", "§1.6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "VPS, DNS, Caddy, env secrets",
+        "vi": "VPS, DNS, Caddy, secret env"
+      },
+      "detail": {
+        "en": "Provision a VPS, install Docker, point DNS, drop env files on the server (not in the repo). Confirm Caddy serves HTTPS on the custom domain.",
+        "vi": "Tạo VPS, cài Docker, trỏ DNS, đặt file env trên server (không trong repo). Xác nhận Caddy phục vụ HTTPS trên domain riêng."
+      }
+    },
+    {
+      "title": {
+        "en": "GitHub Actions deploy",
+        "vi": "Deploy bằng GitHub Actions"
+      },
+      "detail": {
+        "en": "On push to `main`: build, push to GHCR, ssh pull + up. Store registry and ssh keys in Actions secrets. No secrets in image layers (`docker history`).",
+        "vi": "Khi push lên `main`: build, push GHCR, ssh pull + up. Giữ registry và ssh key trong Actions secrets. Không secret trong layer image (`docker history`)."
+      }
+    },
+    {
+      "title": {
+        "en": "Uptime + launch checklist",
+        "vi": "Uptime + checklist launch"
+      },
+      "detail": {
+        "en": "Add an uptime ping on `/api/health`. Walk spec §5 screens, both themes, both locales. Fix what breaks before you call it launched.",
+        "vi": "Thêm uptime ping vào `/api/health`. Đi màn spec §5, cả hai theme, cả hai locale. Sửa chỗ gãy trước khi gọi là đã launch."
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "The custom domain serves HTTPS (browser padlock, `curl -I` shows 200).",
+      "vi": "Domain riêng phục vụ HTTPS (padlock trên browser, `curl -I` ra 200)."
+    },
+    {
+      "en": "The deploy runs from a push to `main`, and an uptime ping is configured.",
+      "vi": "Deploy chạy từ một push lên `main`, và uptime ping đã được cấu hình."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Secrets in the repo or image layers. Scan git history and `docker history` before going live.",
+      "vi": "Secret trong repo hoặc layer image. Soi git history và `docker history` trước khi live."
+    }
+  ],
+  "commit": "chore: deploy pipeline"
+}
