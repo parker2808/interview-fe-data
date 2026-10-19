@@ -151,7 +151,7 @@ function withoutFences(text) {
 }
 
 function inlineCodes(text) {
-  return withoutFences(text).match(INLINE_CODE) || []
+  return withoutFences(text).match(/``[\s\S]*?``|`[^`]+`/g) || []
 }
 
 function sortedJoin(items) {
