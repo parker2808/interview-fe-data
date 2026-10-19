@@ -1,6 +1,7 @@
 # 30-day study plan: concise redesign
 
-**Status:** source of truth for execution (B0–B6). Lab tab is **removed** from this plan. A full-stack practice app is a **separate module** (not written here).
+**Status:** B0–B6 executed as stacked **draft** PRs (never merge). Lab tab is **removed**. A full-stack practice app is a **separate module** (not written here).
+**After B6 (measured):** 30 day files **77.9 KB** (was 416.9 KB on `main`); en words **2,766** (was 13,682); vi **3,264** (was 15,061); lab sections/blocks **0/0** (was 8×19); Q&A links **95** to **79** distinct ids (was 83 / 68); `testing` is linked; `web-apis` stays unlinked (optional extra, not a day). CI runs `check-plan.mjs --strict`.
 **Audience:** the agent(s) executing the rewrite. Read sections 0–2 once, then work batch by batch from section 4.
 **Unchanged:** Senior FE interview readiness for Parker (~5 years Vue/Nuxt/TypeScript, closing the React/Next *knowledge* gap). 30 days in 5 week groups, labelled only **Day N** / **Ngày N**, bilingual, Plan-tab JSON fields the app already renders.
 
@@ -502,7 +503,7 @@ node scripts/check-plan.mjs . --strict                        # B6
 node scripts/check-plan.mjs . --stats
 ```
 
-Expected after B6: day files ≈ 110–150 KB; en words ≈ 3,000 (≤ 110/day); lab sections/blocks 0/0; KB docs all linked including `testing`; distinct Q&A up; Lab tab hidden in the app.
+Actual after B6: day files **77.9 KB**; en words **2,766** (max 108/day, all ≤ 110); lab sections/blocks **0/0**; KB docs linked **21/22** including `testing` (`web-apis` unlinked on purpose); Q&A **95** links / **79** distinct; Lab tab still rendered by the app until it hides empty `lab.sections`.
 
 ---
 
