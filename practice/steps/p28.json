@@ -1,0 +1,120 @@
+{
+  "kind": "practice-step",
+  "id": "p28",
+  "milestone": "m6",
+  "order": 28,
+  "title": {
+    "en": "Tests",
+    "vi": "Test"
+  },
+  "summary": {
+    "en": "A small safety net lets you change things later without fear.",
+    "vi": "Một lưới an toàn nhỏ để sau này sửa mà không sợ."
+  },
+  "estimateMin": 180,
+  "prereqs": ["p25"],
+  "tags": ["vitest", "playwright", "ci"],
+  "concepts": [
+    {
+      "term": {
+        "en": "Test database",
+        "vi": "Database test"
+      },
+      "explain": {
+        "en": "A second MySQL in Compose (`profiles: [test]`). Tests never point at your dev volume. Reset per file so order does not matter.",
+        "vi": "MySQL thứ hai trong Compose (`profiles: [test]`). Test không trỏ volume dev. Reset mỗi file để thứ tự không quan trọng."
+      }
+    },
+    {
+      "term": {
+        "en": "supertest",
+        "vi": "supertest"
+      },
+      "explain": {
+        "en": "Calls your Nest app as HTTP in-process. Use it for auth, CRUD, and publish. Faster than clicking; asserts status codes.",
+        "vi": "Gọi Nest app như HTTP in-process. Dùng cho auth, CRUD và publish. Nhanh hơn click; assert status code."
+      }
+    },
+    {
+      "term": {
+        "en": "Playwright smoke",
+        "vi": "Playwright smoke"
+      },
+      "explain": {
+        "en": "Three browser paths: home renders from API, a published post is readable, admin login reaches the dashboard. Not a full suite.",
+        "vi": "Ba đường browser: home render từ API, một post published đọc được, login admin vào được dashboard. Không phải suite đầy đủ."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "testing",
+      "label": {
+        "en": "Testing",
+        "vi": "Kiểm thử"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "testing-pyramid",
+      "label": {
+        "en": "A good frontend testing strategy",
+        "vi": "Chiến lược testing frontend tốt"
+      }
+    },
+    {
+      "id": "fe-ci-preview-deploys",
+      "label": {
+        "en": "Preview deploys, env, and rollback",
+        "vi": "Preview deploy, env và rollback"
+      }
+    }
+  ],
+  "specRefs": ["§6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "API tests against a test DB",
+        "vi": "Test API trên DB test"
+      },
+      "detail": {
+        "en": "vitest + supertest. Compose profile `test`. Cover login cookie, CRUD 201/409, publish → public GET. Reset schema per file.",
+        "vi": "vitest + supertest. Compose profile `test`. Cover cookie login, CRUD 201/409, publish → GET public. Reset schema mỗi file."
+      }
+    },
+    {
+      "title": {
+        "en": "Playwright smoke",
+        "vi": "Playwright smoke"
+      },
+      "detail": {
+        "en": "home, one post, admin login. Run headed once so you see it, then headless in CI.",
+        "vi": "home, một post, login admin. Chạy headed một lần để nhìn, rồi headless trên CI."
+      }
+    },
+    {
+      "title": {
+        "en": "GitHub Actions workflow",
+        "vi": "Workflow GitHub Actions"
+      },
+      "detail": {
+        "en": "On pull_request: install, migrate the test DB, `pnpm test`. Fail the job if either API or e2e fails.",
+        "vi": "Khi pull_request: install, migrate DB test, `pnpm test`. Fail job nếu API hoặc e2e fail."
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "`pnpm test` is green locally and in CI.",
+      "vi": "`pnpm test` xanh trên máy và trên CI."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Tests sharing state. Reset the DB per file.",
+      "vi": "Test dùng chung state. Hãy reset DB mỗi file."
+    }
+  ],
+  "commit": "test: api + e2e smoke"
+}

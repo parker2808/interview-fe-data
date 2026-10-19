@@ -1,0 +1,117 @@
+{
+  "kind": "practice-step",
+  "id": "p27",
+  "milestone": "m6",
+  "order": 27,
+  "title": {
+    "en": "Analytics + audit log",
+    "vi": "Analytics + audit log"
+  },
+  "summary": {
+    "en": "Own your numbers (no third-party tracker) and know who changed what.",
+    "vi": "Tự giữ số liệu (không tracker bên thứ ba) và biết ai đã đổi gì."
+  },
+  "estimateMin": 180,
+  "prereqs": ["p19", "p23"],
+  "tags": ["analytics", "audit", "privacy"],
+  "concepts": [
+    {
+      "term": {
+        "en": "PageView",
+        "vi": "PageView"
+      },
+      "explain": {
+        "en": "A cookieless hit: path, locale, referrer host, device, a daily visitor hash. Do not store IP. Day-bucket so you can chart 7/30/90d.",
+        "vi": "Hit không cookie: path, locale, referrer host, device, hash visitor theo ngày. Không lưu IP. Gom theo ngày để vẽ chart 7/30/90d."
+      }
+    },
+    {
+      "term": {
+        "en": "AuditLog",
+        "vi": "AuditLog"
+      },
+      "explain": {
+        "en": "Append-only row written in the same transaction as the admin write: actor, action, entity, summary/diff. If the write rolls back, the audit row rolls back too.",
+        "vi": "Hàng chỉ thêm, ghi trong cùng transaction với lệnh ghi admin: actor, action, entity, summary/diff. Write rollback thì audit cũng rollback."
+      }
+    },
+    {
+      "term": {
+        "en": "First-party analytics",
+        "vi": "Analytics first-party"
+      },
+      "explain": {
+        "en": "Your own `POST /analytics/view`. No third-party script, so no extra cookies and no surprise PII.",
+        "vi": "`POST /analytics/view` của bạn. Không script bên thứ ba, nên không cookie thêm và không PII bất ngờ."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "monitoring",
+      "label": {
+        "en": "Monitoring",
+        "vi": "Giám sát và xử lý lỗi"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "observability-frontend",
+      "label": {
+        "en": "What good frontend observability looks like",
+        "vi": "Frontend observability tốt trông như thế nào"
+      }
+    }
+  ],
+  "specRefs": ["§1.5", "§5.7"],
+  "tasks": [
+    {
+      "title": {
+        "en": "POST /analytics/view",
+        "vi": "POST /analytics/view"
+      },
+      "detail": {
+        "en": "Body: path, locale, referrer host, device. Hash the visitor with a salt that changes daily. Never persist IP. Beacon from the public layout once per page.",
+        "vi": "Body: path, locale, referrer host, device. Hash visitor với salt đổi mỗi ngày. Không persist IP. Beacon từ layout public một lần mỗi trang."
+      }
+    },
+    {
+      "title": {
+        "en": "AuditLog on admin writes",
+        "vi": "AuditLog khi admin ghi"
+      },
+      "detail": {
+        "en": "In the same `$transaction` as create/update/publish/archive, insert an AuditLog. Dashboard and `/admin/audit` read it. Skip logging secrets.",
+        "vi": "Trong cùng `$transaction` với create/update/publish/archive, insert AuditLog. Dashboard và `/admin/audit` đọc nó. Không log secret."
+      }
+    },
+    {
+      "title": {
+        "en": "Dashboard charts + audit table",
+        "vi": "Chart dashboard + table audit"
+      },
+      "detail": {
+        "en": "Spec §5.7: views by day, period toggle 7d/30d/90d. Audit table uses the list contract (cursor). Charts from `--chart-*` tokens.",
+        "vi": "Spec §5.7: view theo ngày, toggle 7d/30d/90d. Table audit dùng contract list (cursor). Chart lấy token `--chart-*`."
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "Page views increase on visits (`GET /admin/stats` shows the new count).",
+      "vi": "Page view tăng khi có lượt xem (`GET /admin/stats` hiện count mới)."
+    },
+    {
+      "en": "Every CRUD action creates one audit row (visible in Prisma Studio or `/admin/audit`).",
+      "vi": "Mỗi hành động CRUD tạo một hàng audit (thấy trong Prisma Studio hoặc `/admin/audit`)."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Storing personal data in analytics (IP, raw address fields, names from the contact form).",
+      "vi": "Lưu data cá nhân trong analytics (IP, field địa chỉ thô, tên từ form liên hệ)."
+    }
+  ],
+  "commit": "feat: analytics + audit log"
+}
