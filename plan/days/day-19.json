@@ -3,433 +3,104 @@
   "day": 19,
   "week": 3,
   "title": {
-    "en": "Next data fetching, cache, and rendering modes",
-    "vi": "Data fetching, cache và rendering mode của Next"
+    "en": "HTTP caching and data fetching",
+    "vi": "HTTP cache và lấy dữ liệu"
   },
   "goal": {
-    "en": "Cover the Next.js topics that usually reveal whether someone only skimmed the framework or really understands it.",
-    "vi": "Ôn các chủ đề Next.js thường bộc lộ ngay việc một người chỉ lướt qua hay đã hiểu framework thật sự."
+    "en": "Pick a cache policy for 3 routes and write the Nuxt `routeRules` equivalent.",
+    "vi": "Chọn chính sách cache cho 3 route và viết `routeRules` Nuxt tương đương."
   },
   "studyLinks": [
     {
       "kind": "docs",
-      "slug": "nextjs",
-      "label": {
-        "en": "Next.js notes",
-        "vi": "Tài liệu Next.js"
-      }
-    },
-    {
-      "kind": "docs",
       "slug": "networking",
       "label": {
-        "en": "Networking notes",
-        "vi": "Tài liệu networking"
+        "en": "Networking",
+        "vi": "Mạng và giao thức"
       }
     },
     {
       "kind": "docs",
       "slug": "nuxt",
       "label": {
-        "en": "Nuxt notes",
-        "vi": "Tài liệu Nuxt"
+        "en": "Nuxt.js",
+        "vi": "Nuxt.js"
+      }
+    },
+    {
+      "kind": "docs",
+      "slug": "state-management",
+      "label": {
+        "en": "State Management",
+        "vi": "Quản lý state"
       }
     }
   ],
   "questionLinks": [
     {
-      "id": "next-data-fetching-cache-revalidation",
+      "id": "api-caching",
       "label": {
-        "en": "Next data fetching, cache, and revalidation",
-        "vi": "Data fetching, cache và revalidation trong Next"
-      }
-    },
-    {
-      "id": "next-rendering-modes-streaming",
-      "label": {
-        "en": "SSR, SSG, ISR, and streaming in Next",
-        "vi": "SSR, SSG, ISR và streaming trong Next"
+        "en": "API caching",
+        "vi": "Cache API"
       }
     },
     {
       "id": "nuxt-data-fetching",
       "label": {
-        "en": "Nuxt data fetching as a comparison point",
-        "vi": "Data fetching của Nuxt để so sánh"
+        "en": "useFetch vs useAsyncData vs $fetch",
+        "vi": "useFetch, useAsyncData hay $fetch"
+      }
+    },
+    {
+      "id": "nuxt-route-rules-caching",
+      "label": {
+        "en": "Route rules and caching",
+        "vi": "Route rules và cache"
       }
     }
   ],
   "handsOn": [
     {
-      "en": "Write a comparison table: useAsyncData/useFetch in Nuxt vs server fetch / no-store / revalidate in Next.",
-      "vi": "Viết bảng so sánh: useAsyncData/useFetch của Nuxt với server fetch / no-store / revalidate của Next."
+      "en": "Pick static, revalidate, or dynamic for 3 routes, one reason each.",
+      "vi": "Chọn static, revalidate hoặc dynamic cho 3 route, mỗi route một lý do."
     },
     {
-      "en": "For three page types (marketing, admin list, personalized detail), choose SSR/SSG/ISR/streaming and explain why.",
-      "vi": "Với ba loại trang (marketing, admin list, personalized detail), chọn SSR/SSG/ISR/streaming và giải thích vì sao."
+      "en": "Write the Nuxt `routeRules` equivalent next to each.",
+      "vi": "Viết `routeRules` Nuxt tương đương cạnh từng route."
+    },
+    {
+      "en": "Note when a client cache still helps after the server cache.",
+      "vi": "Ghi khi nào cache phía client vẫn cần sau cache server."
     }
   ],
   "algorithm": {
     "resourceId": "algo-day-19",
     "path": "artifacts/algo/problems/day-19.md",
     "label": {
-      "en": "Climbing Stairs · DP",
-      "vi": "Climbing Stairs · DP"
+      "en": "Climbing Stairs · 1D DP",
+      "vi": "Climbing Stairs · DP 1 chiều"
     }
   },
   "checklist": [
     {
-      "en": "Cache vs fresh data decisions are written by page type.",
-      "vi": "Quyết định cache vs fresh data đã được ghi theo từng loại trang."
+      "en": "Three routes have a cache policy and a Nuxt equivalent.",
+      "vi": "Ba route có chính sách cache và bản Nuxt."
     },
     {
-      "en": "Streaming and ISR no longer sound like buzzwords only.",
-      "vi": "Streaming và ISR không còn chỉ là buzzword."
+      "en": "Client-cache note names one mutation that busts it.",
+      "vi": "Ghi chú cache client gọi một mutation làm vỡ cache."
     },
     {
-      "en": "Algo is done and the DP recurrence is clear.",
-      "vi": "Bài algo xong và recurrence của DP đã rõ."
+      "en": "“API caching” answered aloud in 60 s, no notes.",
+      "vi": "Đã trả lời “Cache API” thành lời trong 60 giây, không nhìn ghi chú."
     }
   ],
   "lab": {
     "resourceId": "lab-day-19",
     "title": {
       "en": "Day 19 — Lab",
-      "vi": "Day 19 — Lab"
+      "vi": "Ngày 19 — Lab"
     },
-    "sections": [
-      {
-        "id": {
-          "en": "intro",
-          "vi": "intro"
-        },
-        "title": {
-          "en": "Day 19 — Lab",
-          "vi": "Day 19 — Lab"
-        },
-        "blocks": [
-          {
-            "type": "heading",
-            "level": 1,
-            "text": {
-              "en": "Day 19 — Lab",
-              "vi": "Day 19 — Lab"
-            },
-            "id": {
-              "en": "day-19-lab",
-              "vi": "day-19-lab"
-            }
-          },
-          {
-            "type": "callout",
-            "kind": "quote",
-            "text": {
-              "en": "Timebox 45-60 minutes. Interview drill, not a product build.",
-              "vi": "Timebox 45-60 phút. Drill phỏng vấn, không phải dựng sản phẩm."
-            }
-          }
-        ]
-      },
-      {
-        "id": {
-          "en": "what-they-will-ask",
-          "vi": "ho-se-hoi-gi"
-        },
-        "title": {
-          "en": "What they will ask",
-          "vi": "Họ sẽ hỏi gì"
-        },
-        "blocks": [
-          {
-            "type": "heading",
-            "level": 2,
-            "text": {
-              "en": "What they will ask",
-              "vi": "Họ sẽ hỏi gì"
-            },
-            "id": {
-              "en": "what-they-will-ask",
-              "vi": "ho-se-hoi-gi"
-            }
-          },
-          {
-            "type": "paragraph",
-            "text": {
-              "en": "How does Next fetch, cache, and revalidate? SSR vs SSG vs ISR vs streaming — pick for marketing, admin list, and personalized detail. Map that to Nuxt `useAsyncData` / `useFetch`.",
-              "vi": "Next fetch, cache và revalidate thế nào? SSR vs SSG vs ISR vs streaming — chọn cho marketing, admin list và detail cá nhân hoá. Map sang `useAsyncData` / `useFetch` của Nuxt."
-            }
-          }
-        ]
-      },
-      {
-        "id": {
-          "en": "what-you-will-produce",
-          "vi": "ban-se-produce-gi"
-        },
-        "title": {
-          "en": "What you will produce",
-          "vi": "Bạn sẽ produce gì"
-        },
-        "blocks": [
-          {
-            "type": "heading",
-            "level": 2,
-            "text": {
-              "en": "What you will produce",
-              "vi": "Bạn sẽ produce gì"
-            },
-            "id": {
-              "en": "what-you-will-produce",
-              "vi": "ban-se-produce-gi"
-            }
-          },
-          {
-            "type": "list",
-            "style": "ul",
-            "items": [
-              {
-                "en": "Write a comparison table: useAsyncData/useFetch in Nuxt vs server fetch / no-store / revalidate in Next.",
-                "vi": "Viết bảng so sánh: useAsyncData/useFetch của Nuxt với server fetch / no-store / revalidate của Next."
-              },
-              {
-                "en": "For three page types (marketing, admin list, personalized detail), choose SSR/SSG/ISR/streaming and explain why.",
-                "vi": "Với ba loại trang (marketing, admin list, personalized detail), chọn SSR/SSG/ISR/streaming và giải thích vì sao."
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": {
-          "en": "how-a-senior-works-this",
-          "vi": "senior-lam-the-nao"
-        },
-        "title": {
-          "en": "How a senior works this",
-          "vi": "Senior làm thế nào"
-        },
-        "blocks": [
-          {
-            "type": "heading",
-            "level": 2,
-            "text": {
-              "en": "How a senior works this",
-              "vi": "Senior làm thế nào"
-            },
-            "id": {
-              "en": "how-a-senior-works-this",
-              "vi": "senior-lam-the-nao"
-            }
-          },
-          {
-            "type": "list",
-            "style": "ul",
-            "items": [
-              {
-                "en": "**Decision:** Choose per page type, not per framework loyalty. Marketing → SSG/ISR. Admin list → SSR or no-store. Personalized detail → SSR + streaming the below-the-fold widgets.",
-                "vi": "**Quyết định:** Chọn theo loại trang, không theo trung thành framework. Marketing → SSG/ISR. Admin list → SSR hoặc no-store. Detail cá nhân hoá → SSR + stream widget dưới fold."
-              },
-              {
-                "en": "**Constraint:** A comparison table in a note. No cache-experiment app today.",
-                "vi": "**Constraint:** Bảng so sánh trong note. Hôm nay không dựng app thí nghiệm cache."
-              },
-              {
-                "en": "**Failure mode:** Reciting `revalidate: 60` with no idea who sees stale data. Treating ISR as ‘SSG but magic’. Streaming as a buzzword with no Suspense boundary.",
-                "vi": "**Failure mode:** Thuộc `revalidate: 60` mà không biết ai thấy data stale. Coi ISR là ‘SSG nhưng có phép’. Streaming như buzzword không có boundary Suspense."
-              },
-              {
-                "en": "**Measure:** Cache vs fresh is written by page type. Streaming and ISR sound like decisions, not slogans.",
-                "vi": "**Cách đo:** Cache vs fresh đã ghi theo loại trang. Streaming và ISR nghe như quyết định, không phải khẩu hiệu."
-              },
-              {
-                "en": "**Tradeoff:** Fresh admin data costs TTFB and origin load. ISR is cheap and can serve a deleted record for a minute. Say who is allowed to see stale.",
-                "vi": "**Trade-off:** Data admin tươi tốn TTFB và origin. ISR rẻ và có thể phục vụ record đã xoá trong một phút. Nói ai được phép thấy stale."
-              },
-              {
-                "en": "**Production gotcha:** Next cache is not your CDN and not Pinia. `fetch` cache defaults have changed across versions — say which mental model you use (explicit `cache` / `next.revalidate`) and do not bluff a version you have not run.",
-                "vi": "**Gotcha production:** Cache Next không phải CDN và không phải Pinia. Default cache của `fetch` đã đổi qua các version — nói mental model bạn dùng (`cache` / `next.revalidate` rõ ràng) và đừng bluff version chưa chạy."
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": {
-          "en": "done-when",
-          "vi": "tieu-chi-xong"
-        },
-        "title": {
-          "en": "Done when",
-          "vi": "Tiêu chí xong"
-        },
-        "blocks": [
-          {
-            "type": "heading",
-            "level": 2,
-            "text": {
-              "en": "Done when",
-              "vi": "Tiêu chí xong"
-            },
-            "id": {
-              "en": "done-when",
-              "vi": "tieu-chi-xong"
-            }
-          },
-          {
-            "type": "list",
-            "style": "ul",
-            "items": [
-              {
-                "en": "Cache vs fresh data decisions are written by page type.",
-                "vi": "Quyết định cache vs fresh data đã được ghi theo từng loại trang."
-              },
-              {
-                "en": "Streaming and ISR no longer sound like buzzwords only.",
-                "vi": "Streaming và ISR không còn chỉ là buzzword."
-              },
-              {
-                "en": "Algo is done and the DP recurrence is clear.",
-                "vi": "Bài algo xong và recurrence của DP đã rõ."
-              },
-              {
-                "en": "You can explain one trade-off from today in under 2 minutes (decision → constraint → failure → measure).",
-                "vi": "Giải thích được một trade-off của hôm nay dưới 2 phút (quyết định → constraint → failure → cách đo)."
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": {
-          "en": "stretch",
-          "vi": "stretch"
-        },
-        "title": {
-          "en": "Stretch",
-          "vi": "Stretch"
-        },
-        "blocks": [
-          {
-            "type": "heading",
-            "level": 2,
-            "text": {
-              "en": "Stretch",
-              "vi": "Stretch"
-            },
-            "id": {
-              "en": "stretch",
-              "vi": "stretch"
-            }
-          },
-          {
-            "type": "paragraph",
-            "text": {
-              "en": "Add one row: tag-based revalidation vs time-based, and when you would pick each.",
-              "vi": "Thêm một hàng: revalidate theo tag vs theo thời gian, và khi nào chọn cái nào."
-            }
-          }
-        ]
-      },
-      {
-        "id": {
-          "en": "algorithm",
-          "vi": "thuat-toan"
-        },
-        "title": {
-          "en": "Algorithm",
-          "vi": "Thuật toán"
-        },
-        "blocks": [
-          {
-            "type": "heading",
-            "level": 2,
-            "text": {
-              "en": "Algorithm",
-              "vi": "Thuật toán"
-            },
-            "id": {
-              "en": "algorithm",
-              "vi": "thuat-toan"
-            }
-          },
-          {
-            "type": "list",
-            "style": "ul",
-            "items": [
-              {
-                "en": "**Problem:** Climbing Stairs · DP",
-                "vi": "**Bài:** Climbing Stairs · DP"
-              },
-              {
-                "en": "**Constraints:**",
-                "vi": "**Ràng buộc:**"
-              },
-              {
-                "en": "1 ≤ n ≤ 45",
-                "vi": "1 ≤ n ≤ 45"
-              },
-              {
-                "en": "**Hint:** dp[i] = dp[i-1] + dp[i-2] (Fibonacci).",
-                "vi": "**Hint:** dp[i] = dp[i-1] + dp[i-2] (Fibonacci)."
-              }
-            ]
-          },
-          {
-            "type": "code",
-            "lang": "text",
-            "code": {
-              "en": "algorithms/day-19/solution.ts\nalgorithms/day-19/solution.test.ts",
-              "vi": "algorithms/day-19/solution.ts\nalgorithms/day-19/solution.test.ts"
-            }
-          },
-          {
-            "type": "paragraph",
-            "text": {
-              "en": "Run: `pnpm test:algo -- day-19`",
-              "vi": "Chạy: `pnpm test:algo -- day-19`"
-            }
-          },
-          {
-            "type": "paragraph",
-            "text": {
-              "en": "Open the full prompt: [day-19.md](../artifacts/algo/problems/day-19.md)",
-              "vi": "Mở đề đầy đủ: [day-19.md](../artifacts/algo/problems/day-19.md)"
-            }
-          }
-        ]
-      },
-      {
-        "id": {
-          "en": "suggested-commit",
-          "vi": "commit-goi-y"
-        },
-        "title": {
-          "en": "Suggested commit",
-          "vi": "Commit gợi ý"
-        },
-        "blocks": [
-          {
-            "type": "heading",
-            "level": 2,
-            "text": {
-              "en": "Suggested commit",
-              "vi": "Commit gợi ý"
-            },
-            "id": {
-              "en": "suggested-commit",
-              "vi": "commit-goi-y"
-            }
-          },
-          {
-            "type": "code",
-            "lang": "text",
-            "code": {
-              "en": "day-19: Next vs Nuxt fetch table and three rendering choices",
-              "vi": "day-19: Next vs Nuxt fetch table and three rendering choices"
-            }
-          }
-        ]
-      }
-    ]
+    "sections": []
   }
 }
