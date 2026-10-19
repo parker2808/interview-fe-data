@@ -1,0 +1,128 @@
+{
+  "kind": "practice-step",
+  "id": "p31",
+  "milestone": "m7",
+  "order": 31,
+  "title": {
+    "en": "Hardening + backup",
+    "vi": "Hardening + backup"
+  },
+  "summary": {
+    "en": "A public server is attacked from day one, and backups are only real once you have restored one.",
+    "vi": "Server public bị tấn công từ ngày đầu, và backup chỉ thật khi bạn đã restore được một bản."
+  },
+  "estimateMin": 120,
+  "prereqs": ["p30"],
+  "tags": ["security", "backup", "csp"],
+  "concepts": [
+    {
+      "term": {
+        "en": "helmet + CSP",
+        "vi": "helmet + CSP"
+      },
+      "explain": {
+        "en": "HTTP headers that limit what the browser will load. CSP must allow `next/font` and OG images or the site looks broken. Test before deploy.",
+        "vi": "Header HTTP giới hạn thứ browser được load. CSP phải cho phép `next/font` và ảnh OG, không thì site trông gãy. Test trước khi deploy."
+      }
+    },
+    {
+      "term": {
+        "en": "Non-root user",
+        "vi": "User non-root"
+      },
+      "explain": {
+        "en": "The process inside the container is not uid 0. A breakout then has fewer privileges.",
+        "vi": "Process trong container không phải uid 0. Khi bị breakout thì ít quyền hơn."
+      }
+    },
+    {
+      "term": {
+        "en": "mysqldump rotation",
+        "vi": "Xoay mysqldump"
+      },
+      "explain": {
+        "en": "A `backup` service dumps daily into a volume and deletes files older than 7 days. `scripts/restore.sh` is the other half — untested dumps are wishes.",
+        "vi": "Service `backup` dump mỗi ngày vào volume và xóa file hơn 7 ngày. `scripts/restore.sh` là nửa còn lại — dump chưa test chỉ là ước."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "security",
+      "label": {
+        "en": "Security",
+        "vi": "Bảo mật"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "security-xss-csrf-csp",
+      "label": {
+        "en": "XSS, CSRF, and CSP in frontend terms",
+        "vi": "XSS, CSRF và CSP theo góc nhìn frontend"
+      }
+    },
+    {
+      "id": "third-party-script-risk",
+      "label": {
+        "en": "Evaluating third-party scripts",
+        "vi": "Đánh giá third-party script"
+      }
+    }
+  ],
+  "specRefs": ["§1.6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "Headers, CORS, cookie Secure, non-root",
+        "vi": "Header, CORS, cookie Secure, non-root"
+      },
+      "detail": {
+        "en": "helmet + a CSP you actually tested. Strict CORS (site origin only). Cookie `Secure` in prod. USER in Dockerfiles is not root.",
+        "vi": "helmet + CSP đã test thật. CORS chặt (chỉ origin của site). Cookie `Secure` trên prod. USER trong Dockerfile không phải root."
+      }
+    },
+    {
+      "title": {
+        "en": "Daily dump + 7-day rotation",
+        "vi": "Dump hằng ngày + xoay 7 ngày"
+      },
+      "detail": {
+        "en": "backup service: `mysqldump` into a volume, delete dumps older than 7 days. Document the schedule in README.",
+        "vi": "Service backup: `mysqldump` vào volume, xóa dump hơn 7 ngày. Ghi lịch vào README."
+      }
+    },
+    {
+      "title": {
+        "en": "Restore drill",
+        "vi": "Diễn tập restore"
+      },
+      "detail": {
+        "en": "Write `scripts/restore.sh`. Restore yesterday's dump into a fresh DB and confirm the site boots. That is the acceptance, not the dump file existing.",
+        "vi": "Viết `scripts/restore.sh`. Restore dump hôm trước vào DB mới và xác nhận site chạy. Đó mới là acceptance, không phải file dump tồn tại."
+      },
+      "code": {
+        "lang": "bash",
+        "text": "scripts/restore.sh backups/latest.sql"
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "`scripts/restore.sh` into a fresh DB brings the site back.",
+      "vi": "`scripts/restore.sh` vào DB mới đưa site trở lại."
+    },
+    {
+      "en": "securityheaders.com gives grade A on the production origin (or a local Caddy with the same headers).",
+      "vi": "securityheaders.com cho grade A trên origin production (hoặc Caddy local với cùng header)."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "A CSP that blocks `next/font` or OG images. Test before deploying.",
+      "vi": "CSP chặn `next/font` hoặc ảnh OG. Test trước khi deploy."
+    }
+  ],
+  "commit": "chore: hardening + backups"
+}

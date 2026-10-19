@@ -1,0 +1,135 @@
+{
+  "kind": "practice-step",
+  "id": "p18",
+  "milestone": "m4",
+  "order": 18,
+  "title": {
+    "en": "Users, argon2, MySQL sessions",
+    "vi": "User, argon2, session MySQL"
+  },
+  "summary": {
+    "en": "Server sessions are the simplest safe login, and logout really logs out.",
+    "vi": "Session trên server là cách login an toàn dễ hiểu nhất, và logout là logout thật."
+  },
+  "estimateMin": 180,
+  "prereqs": ["p15"],
+  "tags": ["auth", "sessions", "argon2"],
+  "concepts": [
+    {
+      "term": {
+        "en": "Session row",
+        "vi": "Hàng session"
+      },
+      "explain": {
+        "en": "Logged in = a `Session` row exists. The browser only holds an httpOnly cookie with a random id. The DB stores a hash of that id, plus `userId` and `expiresAt`.",
+        "vi": "Đã login = còn một hàng `Session`. Browser chỉ giữ cookie httpOnly với id ngẫu nhiên. DB lưu hash của id đó, kèm `userId` và `expiresAt`."
+      }
+    },
+    {
+      "term": {
+        "en": "argon2id",
+        "vi": "argon2id"
+      },
+      "explain": {
+        "en": "A password hash. You never store the raw password. Verify on login by hashing the attempt and comparing.",
+        "vi": "Hash mật khẩu. Không bao giờ lưu mật khẩu thô. Lúc login hash phần nhập vào rồi so sánh."
+      }
+    },
+    {
+      "term": {
+        "en": "Cookie flags",
+        "vi": "Cookie flags"
+      },
+      "explain": {
+        "en": "`httpOnly` (JS cannot read it), `Secure` (HTTPS only in prod), `SameSite=Lax` (sent on top-level GET, not on CSRF POSTs from other sites).",
+        "vi": "`httpOnly` (JS không đọc được), `Secure` (chỉ HTTPS trên prod), `SameSite=Lax` (gửi kèm GET top-level, không gửi kèm CSRF POST từ site khác)."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "security",
+      "label": {
+        "en": "Security",
+        "vi": "Bảo mật"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "auth-token-storage",
+      "label": {
+        "en": "Where should auth tokens live on the frontend?",
+        "vi": "Auth token nên được lưu ở đâu phía frontend?"
+      }
+    },
+    {
+      "id": "jwt-not-localstorage",
+      "label": {
+        "en": "Why not store JWTs in LocalStorage?",
+        "vi": "Vì sao không nên lưu JWT trong LocalStorage?"
+      }
+    },
+    {
+      "id": "cookies-local-session-storage",
+      "label": {
+        "en": "Cookies vs LocalStorage vs SessionStorage",
+        "vi": "Cookies vs LocalStorage vs SessionStorage"
+      }
+    }
+  ],
+  "specRefs": ["§1.5", "§1.6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "User and Session models",
+        "vi": "Model User và Session"
+      },
+      "detail": {
+        "en": "User: login name unique, `passwordHash`, `role` (`ADMIN` | `EDITOR`), `isActive`. Session: `tokenHash` unique, `userId`, `expiresAt`, optional ip/ua hash. Migrate. No JWT.",
+        "vi": "User: tên login unique, `passwordHash`, `role` (`ADMIN` | `EDITOR`), `isActive`. Session: `tokenHash` unique, `userId`, `expiresAt`, hash ip/ua tùy chọn. Migrate. Không JWT."
+      }
+    },
+    {
+      "title": {
+        "en": "login, logout, me",
+        "vi": "login, logout, me"
+      },
+      "detail": {
+        "en": "`POST /auth/login` verifies argon2id, inserts a Session, sets the cookie. POST a gitignored `login.json` built from `ADMIN_PASSWORD` in `.env` (never commit that file). `GET /auth/me` returns the user DTO (never `passwordHash`); `POST /auth/logout` deletes the session row and clears the cookie.",
+        "vi": "`POST /auth/login` kiểm argon2id, insert Session, set cookie. POST file `login.json` (gitignore, dựng từ `ADMIN_PASSWORD` trong `.env`, không commit). `GET /auth/me` trả DTO user (không `passwordHash`); `POST /auth/logout` xóa hàng session và xóa cookie."
+      },
+      "code": {
+        "lang": "bash",
+        "text": "curl -i -c cookies.txt -X POST localhost:4000/api/auth/login \\\n  -H 'content-type: application/json' \\\n  -d @login.json\ncurl -b cookies.txt localhost:4000/api/auth/me"
+      }
+    },
+    {
+      "title": {
+        "en": "Seed admin from env",
+        "vi": "Seed admin từ env"
+      },
+      "detail": {
+        "en": "A seed script reads `ADMIN_PASSWORD` from env (gitignore `.env`). Hash with argon2id before insert. Do not commit a password or a personal inbox address.",
+        "vi": "Script seed đọc `ADMIN_PASSWORD` từ env (gitignore `.env`). Hash argon2id trước khi insert. Không commit mật khẩu hay địa chỉ hộp thư cá nhân."
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "Login sets the httpOnly cookie, and `GET /auth/me` returns the user DTO.",
+      "vi": "Login set cookie httpOnly, và `GET /auth/me` trả DTO user."
+    },
+    {
+      "en": "Logout deletes the session row; an expired session gives 401.",
+      "vi": "Logout xóa hàng session; session hết hạn trả 401."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Logging passwords or raw session ids. Store only the hash of the session id.",
+      "vi": "Log mật khẩu hoặc session id thô. Chỉ lưu hash của session id."
+    }
+  ],
+  "commit": "feat(api): session auth"
+}
