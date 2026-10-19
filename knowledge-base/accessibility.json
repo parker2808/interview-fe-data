@@ -3,11 +3,11 @@
   "slug": "accessibility",
   "title": {
     "en": "Accessibility",
-    "vi": "Accessibility"
+    "vi": "Khả năng truy cập"
   },
   "summary": {
-    "en": "Seniors ship accessible components and can walk a modal: open, trap focus, Escape, restore focus, announce the title. Interviewers are not scoring ARIA trivia — they score native HTML first, tests beyond axe, and whether a design-system PR would pass your review.",
-    "vi": "Senior ship component accessible và đi được một modal: mở, trap focus, Escape, restore focus, announce title. Interviewer không chấm trivia ARIA — họ chấm native HTML trước, test vượt axe, và PR design-system có qua được review của bạn."
+    "en": "Senior a11y is name/role/value, keyboard, and contrast — WCAG 2.2 AA. Native HTML first; ARIA second. Walk a modal: trap, Escape, restore. Axe in CI is not AA. Start with 11.1–11.3.",
+    "vi": "A11y mức senior là name/role/value, bàn phím, và tương phản — WCAG 2.2 AA. HTML native trước; ARIA sau. Đi một modal: bẫy, Escape, trả focus. Axe trong CI không phải AA. Bắt đầu từ 11.1–11.3."
   },
   "category": "practices",
   "order": 14,
@@ -23,7 +23,7 @@
       },
       "title": {
         "en": "Accessibility",
-        "vi": "Accessibility"
+        "vi": "Khả năng truy cập"
       },
       "blocks": [
         {
@@ -31,7 +31,7 @@
           "level": 1,
           "text": {
             "en": "Accessibility (A11y)",
-            "vi": "Accessibility (A11y)"
+            "vi": "Khả năng truy cập (A11y)"
           },
           "id": {
             "en": "accessibility-a11y",
@@ -41,15 +41,15 @@
         {
           "type": "paragraph",
           "text": {
-            "en": "Seniors **ship accessible components** and can **walk a modal**: open, trap focus, Escape, restore focus, announce the title, not drop the user into the void. Interviewers are not scoring ARIA trivia flashcards. They are scoring whether you reach for **native HTML first**, whether you can test beyond “axe was green,” and whether a design-system PR would pass your review.",
-            "vi": "Senior **ship component accessible** và **đi được một modal**: mở, trap focus, Escape, restore focus, announce title, không để user mất chỗ. Interviewer không chấm flashcard trivia ARIA. Họ chấm bạn có với **native HTML trước**, có test vượt “axe xanh,” và PR design-system có qua được review của bạn."
+            "en": "This doc is senior accessibility for interviews: the first rule of ARIA, keyboard (tab order, trap, restore), semantic HTML, WCAG 2.2 AA, and what CI can and cannot catch. It is for engineers who already ship Vue and now need to argue for a11y with product — not a checklist of attributes.",
+            "vi": "Tài liệu này là khả năng truy cập (a11y) mức senior cho phỏng vấn: rule đầu của ARIA, bàn phím (thứ tự tab, bẫy, trả focus), HTML ngữ nghĩa, WCAG 2.2 AA, và CI bắt được gì / không. Dành cho engineer đã làm việc với Vue trên production và giờ cần tranh luận a11y với product — không phải checklist thuộc tính."
           }
         },
         {
           "type": "paragraph",
           "text": {
-            "en": "**First rule of ARIA:** do not use ARIA if a native element already does the job. A tutorial that shows `<div role=\"button\">` as the basic example is teaching an **anti-pattern**. Vue 3 + TS first; the same rules apply to React Testing Library / Next.",
-            "vi": "**First rule of ARIA:** đừng dùng ARIA nếu native element đã làm việc đó. Tutorial lấy `<div role=\"button\">` làm ví dụ cơ bản đang dạy **anti-pattern**. Vue 3 + TS trước; cùng rule cho React Testing Library / Next."
+            "en": "Study 11.1–11.3 first (ARIA, keyboard, semantics). Interviewers walk a modal more than they quiz POUR. Then 11.4 for AA numbers and 11.5 for axe plus real Tab in Playwright. Name/role/value, keyboard, and contrast catch most frontend failures. Axe green with a Pay `div` is the failure mode.",
+            "vi": "Hãy học 11.1–11.3 trước (ARIA, bàn phím, ngữ nghĩa). Người phỏng vấn đi một modal nhiều hơn họ hỏi POUR. Rồi 11.4 cho số AA và 11.5 cho axe cộng Tab thật trong Playwright. Name/role/value, bàn phím, và tương phản bắt hầu hết lỗi frontend. Axe xanh với `div` Pay là kịch bản lỗi."
           }
         },
         {
@@ -64,7 +64,7 @@
       },
       "title": {
         "en": "11. Accessibility (A11y)",
-        "vi": "11. Accessibility (A11y)"
+        "vi": "11. Khả năng truy cập (A11y)"
       },
       "blocks": [
         {
@@ -72,7 +72,7 @@
           "level": 2,
           "text": {
             "en": "11. Accessibility (A11y)",
-            "vi": "11. Accessibility (A11y)"
+            "vi": "11. Khả năng truy cập (A11y)"
           },
           "id": {
             "en": "11-accessibility-a11y",
@@ -92,62 +92,65 @@
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "What they actually ask",
-            "vi": "Họ thực sự hỏi gì"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "You review a design-system PR that ships `<div role=\"button\" tabindex=\"0\" @click=\"submit\">`. They ask what ARIA is for, `aria-label` vs `aria-labelledby`, when you set `role` — and they wait for you to reject the div.",
-            "vi": "Bạn review PR design-system ship `<div role=\"button\" tabindex=\"0\" @click=\"submit\">`. Họ hỏi ARIA để làm gì, `aria-label` vs `aria-labelledby`, khi nào set `role` — và đợi bạn bác bỏ cái div."
+            "en": "**In short:** **First rule of ARIA:** do not use ARIA if a native element already does the job. Roles name the widget, states (`aria-expanded`, `aria-pressed`) change, properties (`aria-labelledby`) stay. A `<div @click>` with `role=\"button\"` still needs keyboard and Enter/Space. Prefer `<button>`.",
+            "vi": "**Tóm tắt:** **Rule đầu của ARIA:** đừng dùng ARIA nếu phần tử native đã làm việc đó. Role đặt tên widget, state (`aria-expanded`, `aria-pressed`) đổi, property (`aria-labelledby`) đứng yên. `<div @click>` với `role=\"button\"` vẫn cần bàn phím và Enter/Space. Ưu tiên `<button>`."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Takeaway",
-            "vi": "Ý chính"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "Native HTML first; ARIA supplies name, role, and value only when HTML has no widget — and every ARIA widget is a keyboard contract you now own.",
-            "vi": "Native HTML trước; ARIA chỉ bổ sung name, role, và value khi HTML không có widget — và mọi ARIA widget là keyboard contract bạn phải chịu."
+            "en": "**Why it matters:** Interviewers show a Pay `div` that axe still likes if you add a role, then they Tab. The first rule is the senior close. Name, role, and value (WCAG 4.1.2) are what you owe the accessibility tree.",
+            "vi": "**Vì sao quan trọng:** Người phỏng vấn đưa `div` Pay mà axe vẫn thích nếu bạn thêm role, rồi họ Tab. Rule đầu là cách đóng senior. Name, role, và value (WCAG 4.1.2) là thứ bạn nợ cây accessibility."
           }
         },
         {
           "type": "list",
-          "style": "ul",
+          "style": "ol",
           "items": [
             {
-              "en": "**Decision.** Native HTML first (`button`, `a`, `input`, `dialog`, `select`). ARIA for widgets HTML does not have (tabs, combobox, tree). Prefer Headless UI / Radix / Reka / Vuestic primitives over hand-rolled `role=\"listbox\"`. Follow the ARIA Authoring Practices pattern; do not invent.",
-              "vi": "**Quyết định.** Native HTML trước (`button`, `a`, `input`, `dialog`, `select`). ARIA cho widget HTML không có (tab, combobox, tree). Prefer primitive Headless UI / Radix / Reka / Vuestic hơn `role=\"listbox\"` tự viết. Theo pattern ARIA Authoring Practices; đừng tự invent."
+              "en": "**How it works:** Start with the native control (`button`, `a[href]`, `input`, `dialog`). Add ARIA only to name it (`aria-label` / `aria-labelledby`), describe it (`aria-describedby`), or expose state (`aria-expanded`, `aria-controls`, `aria-invalid`).",
+              "vi": "**Cách hoạt động:** Bắt đầu với control native (`button`, `a[href]`, `input`, `dialog`). Thêm ARIA chỉ để đặt tên (`aria-label` / `aria-labelledby`), mô tả (`aria-describedby`), hoặc lộ state (`aria-expanded`, `aria-controls`, `aria-invalid`)."
             },
             {
-              "en": "**Why.** ARIA does not create behavior. `role=\"button\"` without Enter/Space, focus styles, and disabled semantics fails WCAG 2.1.1. Accname comes from contents, `aria-labelledby` (text already on screen), or `aria-label` (no visible name). `aria-describedby` is extra, not the name — wire the `id`.",
-              "vi": "**Vì sao.** ARIA không tạo hành vi. `role=\"button\"` thiếu Enter/Space, focus style, và semantics disabled thì fail WCAG 2.1.1. Accname lấy từ contents, `aria-labelledby` (text đã trên màn), hoặc `aria-label` (không có visible name). `aria-describedby` là phần bổ sung, không phải name — phải wire `id`."
+              "en": "`role=\"button\"` on a `div` without `tabindex=\"0\"` and key handlers is a lie. `aria-hidden=\"true\"` on focusable content is another. Live regions (`aria-live=\"polite\"`) announce toasts; do not steal focus for “Saved.”",
+              "vi": "`role=\"button\"` trên `div` không `tabindex=\"0\"` và handler phím là lời nói dối. `aria-hidden=\"true\"` trên nội dung focus được là cái nữa. Live region (`aria-live=\"polite\"`) đọc toast; đừng cướp focus cho “Đã lưu.”"
             },
             {
-              "en": "**Trade-off.** Visible text wins for users who do not run AT — keep `aria-label` in sync or it overrides what they see. Native `<select>` is ugly and accessible; a custom widget is branded and expensive. Icon-only is a valid ARIA use: the name is missing on a native button.",
-              "vi": "**Đánh đổi / rủi ro.** Visible text thắng với user không chạy AT — `aria-label` phải khớp, không thì AT đọc khác những gì họ thấy. Native `<select>` xấu và accessible; custom widget có brand và đắt. Icon-only là chỗ ARIA hợp lệ: name thiếu trên native button."
-            },
-            {
-              "en": "**How to verify.** Accname computation in DevTools. axe + keyboard + one screen-reader pass (11.4 / 11.5). Name/role/value for every custom widget.",
-              "vi": "**Cách kiểm chứng.** Accname trong DevTools. axe + keyboard + một pass screen-reader (11.4 / 11.5). Name/role/value cho mọi custom widget."
+              "en": "Vue: bind state, do not hardcode `aria-expanded=\"true\"`. `:aria-invalid=\"!!error || undefined\"` so the attribute disappears when valid. Icon-only buttons need an accessible name. Vue analog of a bad pattern: `<div @click=\"pay\">Pay</div>`.",
+              "vi": "Vue: bind state, đừng hardcode `aria-expanded=\"true\"`. `:aria-invalid=\"!!error || undefined\"` để attribute biến mất khi hợp lệ. Button chỉ-icon cần tên truy cập được. Analog Vue của pattern xấu: `<div @click=\"pay\">Pay</div>`."
             }
           ]
+        },
+        {
+          "type": "code",
+          "lang": "vue",
+          "code": {
+            "en": "<script setup lang=\"ts\">\nconst open = ref(false)\n</script>\n<template>\n  <!-- ❌ div with a click is not a button. Axe may still pass with a role. -->\n  <!-- <div role=\"button\" @click=\"open = !open\">Account</div> -->\n  <button type=\"button\" :aria-expanded=\"open\" aria-controls=\"user-menu\" @click=\"open = !open\">\n    Account\n  </button>\n  <ul v-show=\"open\" id=\"user-menu\" role=\"menu\">\n    <li role=\"none\"><a role=\"menuitem\" href=\"/billing\">Billing</a></li>\n  </ul>\n</template>",
+            "vi": "<script setup lang=\"ts\">\nconst open = ref(false)\n</script>\n<template>\n  <!-- ❌ div với click không phải button. Axe vẫn có thể pass với role. -->\n  <!-- <div role=\"button\" @click=\"open = !open\">Account</div> -->\n  <button type=\"button\" :aria-expanded=\"open\" aria-controls=\"user-menu\" @click=\"open = !open\">\n    Account\n  </button>\n  <ul v-show=\"open\" id=\"user-menu\" role=\"menu\">\n    <li role=\"none\"><a role=\"menuitem\" href=\"/billing\">Billing</a></li>\n  </ul>\n</template>"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** The real `<button>` is focusable, clicks with Enter/Space, and exposes `aria-expanded` as the menu opens. The commented `div` would need a full keyboard implementation and still miss `type=\"button\"` semantics. Axe can stay green either way — Tab would not.",
+            "vi": "**Điều gì xảy ra:** `<button>` thật focus được, click bằng Enter/Space, và lộ `aria-expanded` khi menu mở. `div` trong comment cần cả bàn phím và vẫn thiếu semantics `type=\"button\"`. Axe có thể xanh cả hai — Tab thì không."
+          }
         },
         {
           "type": "table",
           "headers": [
             {
               "en": "Need",
-              "vi": "Nhu cầu"
+              "vi": "Cần"
             },
             {
               "en": "Native first",
               "vi": "Native trước"
             },
             {
-              "en": "ARIA only when",
+              "en": "ARIA only if",
               "vi": "ARIA chỉ khi"
             }
           ],
@@ -155,29 +158,43 @@
             [
               {
                 "en": "Action",
-                "vi": "Action"
+                "vi": "Hành động"
               },
               {
-                "en": "`<button>` — role, keyboard, submit, disabled come free",
-                "vi": "`<button>` — role, keyboard, submit, disabled có sẵn"
+                "en": "`<button type=\"button\">`",
+                "vi": "`<button type=\"button\">`"
               },
               {
-                "en": "`role=\"button\"` plus Enter/Space, focus ring, disabled — you own the contract",
-                "vi": "`role=\"button\"` kèm Enter/Space, focus ring, disabled — bạn chịu contract"
+                "en": "You cannot change the tag",
+                "vi": "Bạn không đổi được tag"
               }
             ],
             [
               {
-                "en": "Name",
-                "vi": "Name"
+                "en": "Navigation",
+                "vi": "Điều hướng"
               },
               {
-                "en": "Contents or `<label for>`",
-                "vi": "Contents hoặc `<label for>`"
+                "en": "`<a href>`",
+                "vi": "`<a href>`"
               },
               {
-                "en": "`aria-labelledby` when text is on screen; `aria-label` when there is no visible name",
-                "vi": "`aria-labelledby` khi text đã trên màn; `aria-label` khi không có visible name"
+                "en": "SPA fake link — still an `href`",
+                "vi": "Link giả SPA — vẫn cần `href`"
+              }
+            ],
+            [
+              {
+                "en": "Name a widget",
+                "vi": "Đặt tên widget"
+              },
+              {
+                "en": "Visible `<label>` / heading",
+                "vi": "`<label>` / heading nhìn thấy"
+              },
+              {
+                "en": "`aria-labelledby` / `aria-label`",
+                "vi": "`aria-labelledby` / `aria-label`"
               }
             ],
             [
@@ -186,91 +203,88 @@
                 "vi": "State"
               },
               {
-                "en": "Real `disabled` on native controls",
-                "vi": "`disabled` thật trên native control"
+                "en": "`<dialog open>` / checkbox",
+                "vi": "`<dialog open>` / checkbox"
               },
               {
-                "en": "`aria-expanded`, `aria-selected`, `aria-checked`, `aria-invalid`, `aria-current`",
-                "vi": "`aria-expanded`, `aria-selected`, `aria-checked`, `aria-invalid`, `aria-current`"
-              }
-            ],
-            [
-              {
-                "en": "Extra hint / live status",
-                "vi": "Gợi ý thêm / live status"
-              },
-              {
-                "en": "—",
-                "vi": "—"
-              },
-              {
-                "en": "`aria-describedby` (wired `id`); `aria-live=\"polite\"` for toasts; `role=\"alert\"` when the error must interrupt",
-                "vi": "`aria-describedby` (wire `id`); `aria-live=\"polite\"` cho toast; `role=\"alert\"` khi lỗi phải ngắt"
+                "en": "`aria-expanded` / `aria-pressed`",
+                "vi": "`aria-expanded` / `aria-pressed`"
               }
             ]
           ]
         },
         {
-          "type": "code",
-          "lang": "vue",
-          "code": {
-            "en": "<!-- Anti-pattern: you inherited click, not keyboard, focus ring, or forms. -->\n<div role=\"button\" tabindex=\"0\" @click=\"submit\">Submit</div>\n\n<button type=\"submit\" :disabled=\"saving\">\n  {{ saving ? \"Saving\" : \"Submit\" }}\n</button>\n\n<button type=\"button\" aria-label=\"Close dialog\" @click=\"close\">\n  <svg aria-hidden=\"true\"><!-- X --></svg>\n</button>\n\n<button\n  type=\"button\"\n  :aria-expanded=\"open\"\n  aria-controls=\"user-menu\"\n  @click=\"open = !open\"\n>\n  Account\n</button>",
-            "vi": "<!-- Anti-pattern: chỉ có click, không có keyboard, focus ring, hay form. -->\n<div role=\"button\" tabindex=\"0\" @click=\"submit\">Submit</div>\n\n<button type=\"submit\" :disabled=\"saving\">\n  {{ saving ? \"Saving\" : \"Submit\" }}\n</button>\n\n<button type=\"button\" aria-label=\"Close dialog\" @click=\"close\">\n  <svg aria-hidden=\"true\"><!-- X --></svg>\n</button>\n\n<button\n  type=\"button\"\n  :aria-expanded=\"open\"\n  aria-controls=\"user-menu\"\n  @click=\"open = !open\"\n>\n  Account\n</button>"
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- First rule, then name/role/value. Reciting attributes is the junior close.\n- `aria-label` wins over visible text in many ATs — do not duplicate a wrong name.\n- `role=\"presentation\"` / `aria-hidden` on a focusable node is a trap. Hide or remove from tab order.\n- Live regions are for status, not for every keystroke. Polite toasts; assertive for blocking errors.\n- Axe green is not the first rule. Tab the Pay control.",
+            "vi": "- Rule đầu, rồi name/role/value. Đọc thuộc tính là cách đóng junior.\n- `aria-label` thắng text nhìn thấy trên nhiều AT — đừng nhân đôi tên sai.\n- `role=\"presentation\"` / `aria-hidden` trên node focus được là bẫy. Hãy ẩn hoặc gỡ khỏi thứ tự tab.\n- Live region cho status, không phải mọi phím. Toast lịch sự; assertive cho lỗi chặn.\n- Axe xanh không phải rule đầu. Hãy Tab control Pay."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: Tab skips Pay. Cause: `div @click` with a role. Fix: `<button>`.\n- Symptom: SR says “button” forever open. Cause: hardcoded `aria-expanded=\"true\"`. Fix: bind it.\n- Symptom: two names. Cause: visible text plus a wrong `aria-label`. Fix: one name.\n- Symptom: focusable but hidden. Cause: `aria-hidden` on a tab stop. Fix: `inert` or remove tabindex.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: Tab bỏ qua Pay. Nguyên nhân: `div @click` với role. Cách xử lý: `<button>`.\n- Triệu chứng: SR nói “button” mở mãi. Nguyên nhân: hardcode `aria-expanded=\"true\"`. Cách xử lý: bind nó.\n- Triệu chứng: hai tên. Nguyên nhân: text nhìn thấy cộng `aria-label` sai. Cách xử lý: một tên.\n- Triệu chứng: focus được nhưng bị ẩn. Nguyên nhân: `aria-hidden` trên tab stop. Cách xử lý: `inert` hoặc gỡ tabindex."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Interview phrasing",
-            "vi": "Nói khi phỏng vấn"
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
           },
           "text": {
-            "en": "I start with native HTML — `button`, `a`, `input`, `dialog`, `select`. ARIA only when HTML has no widget: tabs, combobox, tree. Then I own the keyboard contract. A `div` with `role=\"button\"` is an anti-pattern: you inherited click, not Enter/Space, focus ring, or form submit. I prefer Headless UI or Radix over a hand-rolled listbox. `aria-labelledby` when the name is on screen; `aria-label` when it is not — and I never let `aria-label` override visible text out of sync.",
-            "vi": "Tôi bắt đầu với native HTML — `button`, `a`, `input`, `dialog`, `select`. ARIA chỉ khi HTML không có widget: tab, combobox, tree. Lúc đó tôi chịu keyboard contract. `div` với `role=\"button\"` là anti-pattern: chỉ có click, không có Enter/Space, focus ring, hay form submit. Tôi prefer Headless UI hoặc Radix hơn listbox tự viết. `aria-labelledby` khi name đã trên màn; `aria-label` khi không có — và không để `aria-label` lệch với text hiện."
+            "en": "A Vue layout ships a menu of `<div @click>`. Why not just ARIA roles on those divs? They want the first rule, then name/role/value, then Tab.",
+            "vi": "Layout Vue đưa menu toàn `<div @click>`. Sao không chỉ gắn role ARIA lên những div đó? Họ muốn rule đầu, rồi name/role/value, rồi Tab."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "First rule of ARIA: do not use ARIA if a native element already does the job. I ship a button, not a div with role button. Roles name the widget, states change, properties stay. aria-expanded is bound, not hardcoded. An icon-only control gets an accessible name. Name, role, and value are WCAG 4.1.2. Axe can stay green on a Pay div; Tab would fail. Live regions announce toasts without stealing focus. If I cannot change the tag, then I add the role and I also add keyboard.",
+            "vi": "Rule đầu của ARIA: đừng dùng ARIA nếu phần tử native đã làm việc đó. Tôi đưa button lên production, không phải div với role button. Role đặt tên widget, state đổi, property đứng yên. aria-expanded được bind, không hardcode. Control chỉ-icon nhận tên truy cập được. Name, role, và value là WCAG 4.1.2. Axe có thể xanh trên div Pay; Tab sẽ fail. Live region đọc toast mà không cướp focus. Nếu tôi không đổi được tag, thì tôi thêm role và tôi cũng thêm bàn phím."
           }
         },
         {
           "type": "key-takeaways",
           "items": [
             {
-              "en": "First rule of ARIA: do not use ARIA if a native element already does the job. Do not duplicate native semantics (`<button role=\"button\">`).",
-              "vi": "First rule of ARIA: đừng dùng ARIA nếu native element đã làm việc đó. Đừng duplicate native semantics (`<button role=\"button\">`)."
+              "en": "First rule of ARIA: native HTML first. `<button>` over `role=\"button\"`.",
+              "vi": "Rule đầu của ARIA: HTML native trước. `<button>` hơn `role=\"button\"`."
             },
             {
-              "en": "Bind states: `:aria-expanded=\"open\"` (boolean serializes correctly). Never `aria-expanded=\"isOpen\"` as a static string. `aria-hidden` on decorative SVG; never on the modal currently focused.",
-              "vi": "Bind state: `:aria-expanded=\"open\"` (boolean serialize đúng). Đừng `aria-expanded=\"isOpen\"` như string tĩnh. `aria-hidden` trên SVG trang trí; không bao giờ trên modal đang focused."
+              "en": "Roles name, states change, properties stay. Bind `aria-expanded`.",
+              "vi": "Role đặt tên, state đổi, property đứng yên. Bind `aria-expanded`."
             },
             {
-              "en": "Vue Router `<RouterLink>` is an `<a>` when it has `to` — keep it; `@click.prevent` to a `div` loses it. `placeholder` is not a name. Omit `aria-invalid` until the field is actually invalid — `\"false\"` is still announced by some SRs.",
-              "vi": "Vue Router `<RouterLink>` là `<a>` khi có `to` — giữ vậy; `@click.prevent` sang `div` là mất nó. `placeholder` không phải name. Omit `aria-invalid` đến khi field thực sự invalid — `\"false\"` vẫn bị một số SR announce."
+              "en": "Name/role/value is WCAG 4.1.2. Axe green is not Tab.",
+              "vi": "Name/role/value là WCAG 4.1.2. Axe xanh không phải Tab."
+            },
+            {
+              "en": "Icon-only controls need an accessible name.",
+              "vi": "Control chỉ-icon cần tên truy cập được."
             }
           ]
         },
         {
-          "type": "list",
-          "style": "ol",
-          "items": [
-            {
-              "en": "Difference `aria-labelledby` vs `aria-describedby` (name vs extra).",
-              "vi": "Khác `aria-labelledby` vs `aria-describedby` (name vs phần bổ sung)."
-            },
-            {
-              "en": "React: same first rule; `eslint-plugin-jsx-a11y` vs `eslint-plugin-vuejs-accessibility`.",
-              "vi": "React: cùng first rule; `eslint-plugin-jsx-a11y` vs `eslint-plugin-vuejs-accessibility`."
-            },
-            {
-              "en": "When is a live region `aria-live=\"polite\"` vs `role=\"alert\"`?",
-              "vi": "Khi nào live region `aria-live=\"polite\"` vs `role=\"alert\"`?"
-            },
-            {
-              "en": "Why does `aria-invalid=\"false\"` still get announced, and what do you ship instead?",
-              "vi": "Vì sao `aria-invalid=\"false\"` vẫn bị announce, và bạn ship cái gì thay thế?"
-            },
-            {
-              "en": "How do you name an icon-only button without overriding visible text elsewhere on the control?",
-              "vi": "Name icon-only button thế nào mà không ghi đè text hiện ở chỗ khác trên control?"
-            }
-          ]
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **div role button without tabindex?** Not in the tab order. Still missing Enter and Space.\n- **aria-label vs visible text?** Label wins in many ATs. Do not ship a conflicting name.\n- **When is ARIA required?** Custom widgets with no native: tabs, combobox, tree.\n- **aria-live for saved?** Polite, no focus steal. Blocking errors may be assertive.",
+            "vi": "- **div role button không tabindex?** Không nằm thứ tự tab. Vẫn thiếu Enter và Space.\n- **aria-label khác text nhìn thấy?** Label thắng trên nhiều AT. Đừng đưa tên xung đột.\n- **Khi nào ARIA bắt buộc?** Widget custom không native: tab, combobox, tree.\n- **aria-live cho đã lưu?** Lịch sự, không cướp focus. Lỗi chặn có thể assertive."
+          }
         },
         {
           "type": "thematic-break"
@@ -288,48 +302,51 @@
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "What they actually ask",
-            "vi": "Họ thực sự hỏi gì"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "“Walk me through a modal”: the user clicks Edit billing, Tab must not hit the page behind, Escape closes, focus returns to the opener. Then they probe focus trap, restore, roving tabindex, and where the skip link lives. This is the section that separates seniors.",
-            "vi": "“Đi một modal giúp”: user click Edit billing, Tab không được đụng page phía sau, Escape đóng, focus về opener. Rồi họ hỏi focus trap, restore, roving tabindex, và skip link nằm đâu. Đây là section tách senior."
+            "en": "**In short:** Keyboard users must reach every pointer action. **Tab order is DOM order.** `tabindex=\"0\"` is rare; greater than 0 never. A modal: store the opener, move focus in, **trap**, Escape closes, **restore**. Composite widgets use **roving tabindex**. See [11.5](#115-testing-a11y-in-ci-and-design-system-prs) for Playwright Tab.",
+            "vi": "**Tóm tắt:** User bàn phím phải tới mọi hành động con trỏ. **Thứ tự tab là thứ tự DOM.** `tabindex=\"0\"` hiếm; lớn hơn 0 thì không bao giờ. Modal: lưu opener, đưa focus vào, **bẫy**, Escape đóng, **trả**. Widget tổng hợp dùng **roving tabindex**. Xem [11.5](#115-test-a11y-trong-ci-va-pr-design-system) cho Tab Playwright."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Takeaway",
-            "vi": "Ý chính"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "Keyboard users must reach every pointer action; tab order is DOM order, and a modal moves focus in, traps it, Escape closes, and restores to the opener.",
-            "vi": "User keyboard phải với mọi pointer action; tab order là DOM order, và modal chuyển focus vào, trap, Escape đóng, rồi restore về opener."
+            "en": "**Why it matters:** “Walk me through a modal” separates seniors: Edit billing, Tab must not hit the page behind, Escape closes, focus returns to the opener. `focus-visible` versus a global `:focus { outline: none }` is a review comment that ships.",
+            "vi": "**Vì sao quan trọng:** “Đi với tôi một modal” tách senior: Edit billing, Tab không được đụng trang phía sau, Escape đóng, focus trả opener. `focus-visible` khác `:focus { outline: none }` toàn cục là comment review được đưa lên production."
           }
         },
         {
           "type": "list",
-          "style": "ul",
+          "style": "ol",
           "items": [
             {
-              "en": "**Decision.** `tabindex=\"0\"` rare, `tabindex > 0` never. Modals: store the opener, Teleport to `body`, native `<dialog>` `showModal()` when you can (trap, `::backdrop`, Esc). `nextTick` then focus the first meaningful control. Composite widgets (tabs, listbox, menus): roving tabindex — one `0`, siblings `-1`, arrows move, Home/End, typeahead on a long list. Skip link is the first focusable. If you cannot use `<dialog>`, VueUse `useFocusTrap` / a DS primitive — not a 20-line Tab handler.",
-              "vi": "**Quyết định.** `tabindex=\"0\"` hiếm, `tabindex > 0` không bao giờ. Modal: lưu opener, Teleport ra `body`, native `<dialog>` `showModal()` khi được (trap, `::backdrop`, Esc). `nextTick` rồi focus control có nghĩa đầu tiên. Composite widget (tab, listbox, menu): roving tabindex — một `0`, sibling `-1`, mũi tên di chuyển, Home/End, typeahead nếu list dài. Skip link là focusable đầu tiên. Không dùng `<dialog>` được thì VueUse `useFocusTrap` / primitive DS — không phải handler Tab 20 dòng."
+              "en": "**How it works:** Tab moves through tab stops in DOM order. Skip link is the first focusable, points at `main`. Native `<dialog>.showModal()` traps, paints `::backdrop`, and handles Escape. `nextTick` then focus the first meaningful control (not the close icon if a title field exists).",
+              "vi": "**Cách hoạt động:** Tab đi qua tab stop theo thứ tự DOM. Skip link là focusable đầu, trỏ `main`. `<dialog>.showModal()` native bẫy, vẽ `::backdrop`, và xử lý Escape. `nextTick` rồi focus control có nghĩa đầu (không phải icon đóng nếu có field title)."
             },
             {
-              "en": "**Why.** jsdom tests will not prove focus trap — prove it in Playwright + a real browser. Focus left on `display: none`, a `keydown` Tab handler that misses Shadow DOM / Vue Teleport, or opening without storing `document.activeElement` drops the user. Putting every table row in the tab order costs 50 Tabs to leave.",
-              "vi": "**Vì sao.** Test jsdom không chứng minh focus trap — chứng minh bằng Playwright + browser thật. Focus kẹt trên `display: none`, handler `keydown` Tab miss Shadow DOM / Vue Teleport, hoặc mở mà không lưu `document.activeElement` thì user mất chỗ. Nhét mọi hàng table vào tab order thì 50 Tab mới ra khỏi."
+              "en": "If you cannot use `<dialog>`, Teleport to `body`, set `inert` on `#app` siblings (`aria-modal` is not enough on old SR), trap Tab/Shift+Tab, listen for Escape. On close: `opener.focus()`, with a fallback if the list re-rendered the opener away.",
+              "vi": "Nếu không dùng `<dialog>` được, Teleport tới `body`, gán `inert` trên sibling `#app` (`aria-modal` không đủ trên SR cũ), bẫy Tab/Shift+Tab, lắng nghe Escape. Lúc đóng: `opener.focus()`, với fallback nếu list render lại làm mất opener."
             },
             {
-              "en": "**Trade-off.** Native `<dialog>` wins a11y; styling `::backdrop` and top-layer stacking are the cost. Tooltips must **not** trap — `Escape`, focus stays on the trigger. Do not always dump focus on the heading unless that heading is `tabindex=\"-1\"`. `aria-modal` is not enough on old SRs; `inert` on `#app` siblings or native top layer.",
-              "vi": "**Đánh đổi / rủi ro.** Native `<dialog>` thắng a11y; style `::backdrop` và top-layer stacking là cost. Tooltip **không** trap — `Escape`, focus ở lại trigger. Đừng luôn đưa focus lên heading trừ khi heading `tabindex=\"-1\"`. `aria-modal` không đủ trên SR cũ; `inert` trên sibling `#app` hoặc native top layer."
-            },
-            {
-              "en": "**How to verify.** Full keyboard pass of checkout. Modal: Tab never hits the page behind. Screen reader: focus is not lost on close. Playwright real Tab keys (11.5). Restore `:focus-visible` when design removes `:focus` outlines.",
-              "vi": "**Cách kiểm chứng.** Full keyboard pass checkout. Modal: Tab không bao giờ đụng page phía sau. Screen reader: focus không mất lúc đóng. Playwright Tab key thật (11.5). Restore `:focus-visible` khi design gỡ outline `:focus`."
+              "en": "Roving tabindex: one `0`, siblings `-1`, arrows move, Home/End, typeahead on a long list. Tab leaves the composite. Tooltip stays on the trigger. Vue analog: `watch(open)` plus `nextTick` before `showModal()`.",
+              "vi": "Roving tabindex: một `0`, sibling `-1`, mũi tên dịch, Home/End, typeahead trên list dài. Tab rời widget tổng hợp. Tooltip ở lại trigger. Analog Vue: `watch(open)` cộng `nextTick` trước `showModal()`."
             }
           ]
+        },
+        {
+          "type": "code",
+          "lang": "vue",
+          "code": {
+            "en": "<script setup lang=\"ts\">\nconst open = ref(false)\nconst dialog = ref<HTMLDialogElement | null>(null)\nconst opener = ref<HTMLElement | null>(null)\nwatch(open, async (v) => {\n  if (v) {\n    opener.value = document.activeElement as HTMLElement\n    await nextTick()\n    dialog.value?.showModal() // trap + backdrop + Esc\n  } else {\n    dialog.value?.close()\n    opener.value?.focus() // restore; fallback if the row unmounted\n  }\n})\n</script>\n<template>\n  <a href=\"#main\" class=\"skip-link\">Skip to main content</a>\n  <button type=\"button\" @click=\"open = true\">Edit billing</button>\n  <dialog ref=\"dialog\" @close=\"open = false\"><slot /></dialog>\n</template>",
+            "vi": "<script setup lang=\"ts\">\nconst open = ref(false)\nconst dialog = ref<HTMLDialogElement | null>(null)\nconst opener = ref<HTMLElement | null>(null)\nwatch(open, async (v) => {\n  if (v) {\n    opener.value = document.activeElement as HTMLElement\n    await nextTick()\n    dialog.value?.showModal() // bẫy + backdrop + Esc\n  } else {\n    dialog.value?.close()\n    opener.value?.focus() // trả; fallback nếu hàng unmount\n  }\n})\n</script>\n<template>\n  <a href=\"#main\" class=\"skip-link\">Skip to main content</a>\n  <button type=\"button\" @click=\"open = true\">Edit billing</button>\n  <dialog ref=\"dialog\" @close=\"open = false\"><slot /></dialog>\n</template>"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** Click Edit billing stores the opener, opens a modal dialog (browser trap), and on close restores focus. The skip link is first in the DOM. A dropdown inside still owns arrows; Tab is the trap’s job.",
+            "vi": "**Điều gì xảy ra:** Click Edit billing lưu opener, mở dialog modal (bẫy của trình duyệt), và lúc đóng trả focus. Skip link đứng đầu DOM. Dropdown bên trong vẫn sở hữu mũi tên; Tab là việc của bẫy."
+          }
         },
         {
           "type": "table",
@@ -340,15 +357,11 @@
             },
             {
               "en": "Focus move",
-              "vi": "Chuyển focus"
+              "vi": "Focus đi"
             },
             {
               "en": "Trap?",
-              "vi": "Trap?"
-            },
-            {
-              "en": "On close / leave",
-              "vi": "Khi đóng / rời"
+              "vi": "Bẫy?"
             }
           ],
           "rows": [
@@ -358,16 +371,12 @@
                 "vi": "Modal / `<dialog>`"
               },
               {
-                "en": "Into first meaningful control after `nextTick`",
-                "vi": "Vào control có nghĩa đầu tiên sau `nextTick`"
+                "en": "First meaningful control after `nextTick`",
+                "vi": "Control có nghĩa đầu sau `nextTick`"
               },
               {
-                "en": "Yes — Tab / Shift+Tab cycle inside",
-                "vi": "Có — Tab / Shift+Tab vòng bên trong"
-              },
-              {
-                "en": "`opener.focus()`; fallback if the list re-rendered the opener away",
-                "vi": "`opener.focus()`; fallback nếu list re-render làm mất opener"
+                "en": "Yes",
+                "vi": "Có"
               }
             ],
             [
@@ -380,12 +389,8 @@
                 "vi": "Ở lại trigger"
               },
               {
-                "en": "No",
-                "vi": "Không"
-              },
-              {
-                "en": "`Escape` dismisses",
-                "vi": "`Escape` đóng"
+                "en": "No — Esc dismisses",
+                "vi": "Không — Esc đóng"
               }
             ],
             [
@@ -394,81 +399,102 @@
                 "vi": "Listbox / tab / menu"
               },
               {
-                "en": "Roving tabindex + arrows; Home/End; typeahead if long",
-                "vi": "Roving tabindex + mũi tên; Home/End; typeahead nếu dài"
+                "en": "Roving tabindex + arrows",
+                "vi": "Roving tabindex + mũi tên"
               },
               {
-                "en": "No — Tab leaves the composite",
-                "vi": "Không — Tab rời composite"
+                "en": "No — Tab leaves",
+                "vi": "Không — Tab rời"
+              }
+            ],
+            [
+              {
+                "en": "Skip link",
+                "vi": "Skip link"
               },
               {
-                "en": "One tab stop, not one per row",
-                "vi": "Một tab stop, không phải mỗi hàng một cái"
+                "en": "First tab stop → `#main`",
+                "vi": "Tab stop đầu → `#main`"
+              },
+              {
+                "en": "No",
+                "vi": "Không"
               }
             ]
           ]
         },
         {
-          "type": "code",
-          "lang": "vue",
-          "code": {
-            "en": "<script setup lang=\"ts\">\nimport { nextTick, ref, watch } from \"vue\"\n\nconst open = ref(false)\nconst dialog = ref<HTMLDialogElement | null>(null)\nconst opener = ref<HTMLElement | null>(null)\n\nwatch(open, async (v) => {\n  if (v) {\n    opener.value = document.activeElement as HTMLElement\n    await nextTick()\n    dialog.value?.showModal()\n  } else {\n    dialog.value?.close()\n    opener.value?.focus()\n  }\n})\n</script>\n\n<template>\n  <a href=\"#main\" class=\"skip-link\">Skip to main content</a>\n  <button type=\"button\" @click=\"open = true\">Edit billing</button>\n  <dialog ref=\"dialog\" aria-labelledby=\"billing-title\" @close=\"open = false\">\n    <h2 id=\"billing-title\">Edit billing</h2>\n    <button type=\"button\" @click=\"open = false\">Cancel</button>\n  </dialog>\n  <main id=\"main\" tabindex=\"-1\"><!-- hash focus -->\n</template>",
-            "vi": "<script setup lang=\"ts\">\nimport { nextTick, ref, watch } from \"vue\"\n\nconst open = ref(false)\nconst dialog = ref<HTMLDialogElement | null>(null)\nconst opener = ref<HTMLElement | null>(null)\n\nwatch(open, async (v) => {\n  if (v) {\n    opener.value = document.activeElement as HTMLElement\n    await nextTick()\n    dialog.value?.showModal()\n  } else {\n    dialog.value?.close()\n    opener.value?.focus()\n  }\n})\n</script>\n\n<template>\n  <a href=\"#main\" class=\"skip-link\">Skip to main content</a>\n  <button type=\"button\" @click=\"open = true\">Edit billing</button>\n  <dialog ref=\"dialog\" aria-labelledby=\"billing-title\" @close=\"open = false\">\n    <h2 id=\"billing-title\">Edit billing</h2>\n    <button type=\"button\" @click=\"open = false\">Cancel</button>\n  </dialog>\n  <main id=\"main\" tabindex=\"-1\"><!-- hash focus -->\n</template>"
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- `tabindex > 0` never. You will fight every future widget.\n- Restore fails when the opener unmounted (list filtered). Keep a fallback (`#main` or the toolbar).\n- `focus-visible` is the senior review comment when design removed `:focus`. Restore the ring for keyboard only.\n- Inner combobox arrows versus trap: the composite owns arrows; the modal owns Tab.\n- Prove with Playwright real Tab keys (11.5), not `element.focus()` in a unit test.",
+            "vi": "- `tabindex > 0` không bao giờ. Bạn sẽ đánh nhau với mọi widget sau.\n- Trả focus fail khi opener unmount (list bị filter). Hãy giữ fallback (`#main` hoặc toolbar).\n- `focus-visible` là comment review senior khi design gỡ `:focus`. Hãy trả ring cho chỉ bàn phím.\n- Mũi tên combobox trong khác bẫy: widget tổng hợp sở hữu mũi tên; modal sở hữu Tab.\n- Chứng minh bằng phím Tab thật Playwright (11.5), không phải `element.focus()` trong unit test."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: Tab hits the page behind. Cause: no trap / no `showModal()`. Fix: `<dialog>` or `inert` + trap.\n- Symptom: focus lost on close. Cause: opener unmounted. Fix: fallback target.\n- Symptom: every row is a tab stop. Cause: no roving tabindex. Fix: one `0`, arrows move.\n- Symptom: no outline. Cause: global `:focus { outline: none }`. Fix: `:focus-visible`.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: Tab đụng trang phía sau. Nguyên nhân: không bẫy / không `showModal()`. Cách xử lý: `<dialog>` hoặc `inert` + bẫy.\n- Triệu chứng: mất focus lúc đóng. Nguyên nhân: opener unmount. Cách xử lý: đích fallback.\n- Triệu chứng: mọi hàng là tab stop. Nguyên nhân: không roving tabindex. Cách xử lý: một `0`, mũi tên dịch.\n- Triệu chứng: không outline. Nguyên nhân: `:focus { outline: none }` toàn cục. Cách xử lý: `:focus-visible`."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Interview phrasing",
-            "vi": "Nói khi phỏng vấn"
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
           },
           "text": {
-            "en": "Keyboard users reach every pointer action. Tab order is DOM order — `tabindex=\"0\"` is rare, greater than 0 never. For a modal I store the opener, Teleport to `body`, use native `<dialog>` `showModal()` when I can, `nextTick` then focus the first meaningful control, trap Tab, Escape closes, then `opener.focus()`. If I cannot use `<dialog>` I ship VueUse `useFocusTrap` or a DS primitive, not a 20-line Tab handler that misses Teleport. Listbox and tabs use roving tabindex so you do not Tab through 50 rows. Skip link first; `tabindex=\"-1\"` on `main` so hash focus works.",
-            "vi": "User keyboard với mọi pointer action. Tab order là DOM order — `tabindex=\"0\"` hiếm, lớn hơn 0 không bao giờ. Modal: tôi lưu opener, Teleport ra `body`, dùng native `<dialog>` `showModal()` khi được, `nextTick` rồi focus control có nghĩa đầu tiên, trap Tab, Escape đóng, rồi `opener.focus()`. Không dùng `<dialog>` được thì ship VueUse `useFocusTrap` hoặc primitive DS, không handler Tab 20 dòng miss Teleport. Listbox và tab dùng roving tabindex để không Tab 50 hàng. Skip link trước; `tabindex=\"-1\"` trên `main` để hash focus chạy."
+            "en": "Walk me through a modal: Edit billing, Tab must not hit the page behind, Escape closes, focus returns. Then roving tabindex and the skip link.",
+            "vi": "Đi với tôi một modal: Edit billing, Tab không được đụng trang phía sau, Escape đóng, focus trả. Rồi roving tabindex và skip link."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "Keyboard users reach every pointer action. Tab order is DOM order — tabindex 0 is rare, greater than 0 never. For a modal I store the opener, Teleport to body, use native dialog showModal when I can, nextTick then focus the first meaningful control, trap Tab, Escape closes, then opener focus. If the opener unmounted I fall back to main. Composite widgets use roving tabindex — one tab stop, arrows move. Skip link is first. I restore focus-visible when design removed outlines. I prove it with Playwright real Tab keys.",
+            "vi": "User bàn phím tới mọi hành động con trỏ. Thứ tự tab là thứ tự DOM — tabindex 0 hiếm, lớn hơn 0 thì không bao giờ. Với modal tôi lưu opener, Teleport tới body, dùng dialog native showModal khi được, nextTick rồi focus control có nghĩa đầu, bẫy Tab, Escape đóng, rồi opener focus. Nếu opener unmount tôi fallback về main. Widget tổng hợp dùng roving tabindex — một tab stop, mũi tên dịch. Skip link đứng đầu. Tôi trả focus-visible khi design gỡ outline. Tôi chứng minh bằng phím Tab thật Playwright."
           }
         },
         {
           "type": "key-takeaways",
           "items": [
             {
-              "en": "Modal script: store opener → Teleport / `<dialog>` → focus in → trap → Escape → restore. If the opener is gone (list re-render), focus a sensible fallback. Store the element — Vue `v-if` on the dialog can destroy a ref that lived inside.",
-              "vi": "Script modal: lưu opener → Teleport / `<dialog>` → focus vào → trap → Escape → restore. Opener mất (list re-render) thì focus fallback hợp lý. Lưu element — Vue `v-if` trên dialog có thể destroy ref nằm bên trong."
+              "en": "Tab order is DOM order. `tabindex > 0` never.",
+              "vi": "Thứ tự tab là thứ tự DOM. `tabindex > 0` không bao giờ."
             },
             {
-              "en": "If you polyfill: `role=\"dialog\"`, `aria-modal=\"true\"`, `aria-labelledby` on the visible title. Escape must not close the page’s other listeners first — `stopPropagation` with care.",
-              "vi": "Polyfill: `role=\"dialog\"`, `aria-modal=\"true\"`, `aria-labelledby` trỏ title hiện. Escape không được đóng listener khác của page trước — `stopPropagation` cẩn thận."
+              "en": "Modal: opener, in, trap, Escape, restore. Prefer `<dialog>.showModal()`.",
+              "vi": "Modal: opener, vào, bẫy, Escape, trả. Ưu tiên `<dialog>.showModal()`."
             },
             {
-              "en": "SPA route change: move focus to a wrapper (`tabindex=\"-1\"`) so SR users are not stuck in the old footer. Dropdown inside a modal: stop the inner widget from `preventDefault` on Tab.",
-              "vi": "Đổi route SPA: chuyển focus tới wrapper (`tabindex=\"-1\"`) để user SR không kẹt footer cũ. Dropdown trong modal: chặn widget trong `preventDefault` trên Tab."
+              "en": "Roving tabindex for composites. Tab leaves. Skip link first.",
+              "vi": "Roving tabindex cho widget tổng hợp. Tab rời. Skip link đứng đầu."
+            },
+            {
+              "en": "Prove with real Tab keys. Restore `:focus-visible`.",
+              "vi": "Chứng minh bằng phím Tab thật. Hãy trả `:focus-visible`."
             }
           ]
         },
         {
-          "type": "list",
-          "style": "ol",
-          "items": [
-            {
-              "en": "How do you test this in CI? (Playwright real Tab keys — 11.5.)",
-              "vi": "Test trên CI thế nào? (Playwright Tab key thật — 11.5.)"
-            },
-            {
-              "en": "`focus-visible` vs `:focus` outlines removed by design — restoring `:focus-visible` is a senior review comment.",
-              "vi": "`focus-visible` vs outline `:focus` bị design gỡ — restore `:focus-visible` là comment review senior."
-            },
-            {
-              "en": "Dropdown inside a modal: inner widget arrows vs trap — who owns Tab?",
-              "vi": "Dropdown trong modal: mũi tên widget trong vs trap — ai sở hữu Tab?"
-            },
-            {
-              "en": "Why is `aria-modal` not enough on old screen readers? When do you set `inert` on `#app` siblings?",
-              "vi": "Vì sao `aria-modal` không đủ trên screen reader cũ? Khi nào set `inert` trên sibling `#app`?"
-            },
-            {
-              "en": "What happens if the opener unmounts because the list re-rendered?",
-              "vi": "Chuyện gì xảy ra nếu opener unmount vì list re-render?"
-            }
-          ]
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **How do you test this in CI?** Playwright real Tab and Escape. 11.5. Not element.focus in jsdom.\n- **Dropdown inside a modal?** Inner widget owns arrows. Modal owns Tab.\n- **aria-modal not enough?** Old screen readers. Set inert on app siblings.\n- **Opener unmounted?** Fallback to main or the toolbar. Do not focus body silently.",
+            "vi": "- **Test trong CI thế nào?** Tab và Escape thật Playwright. 11.5. Không element.focus trong jsdom.\n- **Dropdown trong modal?** Widget trong sở hữu mũi tên. Modal sở hữu Tab.\n- **aria-modal không đủ?** SR cũ. Hãy gán inert trên sibling app.\n- **Opener unmount?** Fallback về main hoặc toolbar. Đừng focus body thầm."
+          }
         },
         {
           "type": "thematic-break"
@@ -478,7 +504,7 @@
           "level": 3,
           "text": {
             "en": "11.3. Semantic HTML",
-            "vi": "11.3. HTML Ngữ nghĩa"
+            "vi": "11.3. HTML ngữ nghĩa"
           },
           "id": {
             "en": "113-semantic-html",
@@ -486,108 +512,35 @@
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "What they actually ask",
-            "vi": "Họ thực sự hỏi gì"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "A Vue layout ships four `<h1>`s, a menu of `<div @click>`, and invoice rows as divs. They ask about landmarks, heading outline, lists vs divs — and “why not just ARIA roles on those divs?”",
-            "vi": "Vue layout ship bốn `<h1>`, menu `<div @click>`, và hàng invoice toàn div. Họ hỏi landmark, heading outline, list vs div — và “sao không ARIA role trên những div đó?”"
+            "en": "**In short:** The accessibility tree should look like a **document**: one `main`, `header` / `nav` / `aside` / `footer`, a logical heading outline, lists for lists, tables for tables. Native elements give keyboard and SR behaviour for free. ARIA landmarks are a backup when you cannot change the tag — not the design-system default.",
+            "vi": "**Tóm tắt:** Cây accessibility phải trông như một **tài liệu**: một `main`, `header` / `nav` / `aside` / `footer`, outline heading logic, list cho list, table cho table. Phần tử native cho hành vi bàn phím và SR miễn phí. Landmark ARIA là backup khi bạn không đổi được tag — không phải mặc định design system."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Takeaway",
-            "vi": "Ý chính"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "The accessibility tree should look like a document; semantics give keyboard and screen-reader behavior for free.",
-            "vi": "Accessibility tree phải trông như một document; semantics cho keyboard và hành vi screen reader miễn phí."
+            "en": "**Why it matters:** A Vue layout ships four `<h1>`s, a menu of `<div @click>`, and invoice rows as divs. They ask about landmarks, heading outline, lists versus divs — and “why not just ARIA roles on those divs?” See 11.1 for the first rule.",
+            "vi": "**Vì sao quan trọng:** Layout Vue đưa bốn `<h1>`, menu toàn `<div @click>`, và hàng invoice là div. Họ hỏi landmark, outline heading, list khác div — và “sao không chỉ gắn role ARIA lên những div đó?” Xem 11.1 cho rule đầu."
           }
         },
         {
           "type": "list",
-          "style": "ul",
+          "style": "ol",
           "items": [
             {
-              "en": "**Decision.** `header` / `nav` / `main` / `aside` / `footer`, one `main`, a logical heading outline, lists for lists, tables for tables, buttons for actions, links for navigation. ARIA landmarks (`role=\"navigation\"`) are backups when you cannot change the tag — not the design-system default.",
-              "vi": "**Quyết định.** `header` / `nav` / `main` / `aside` / `footer`, một `main`, heading outline logic, list cho list, table cho table, button cho action, link cho navigation. Landmark ARIA (`role=\"navigation\"`) là backup khi không đổi được tag — không phải default design system."
+              "en": "**How it works:** One `<h1>` per view (route change resets it). Widgets are `<section>` with a heading, not nested `<article>` for fashion. Invoices are a list or a table with headers — CSS Flex still works on `<li>`. `RouterLink` still sits in `<li>`.",
+              "vi": "**Cách hoạt động:** Một `<h1>` mỗi view (đổi route reset nó). Widget là `<section>` với heading, không phải `<article>` lồng vì mốt. Invoice là list hoặc table với header — CSS Flex vẫn chạy trên `<li>`. `RouterLink` vẫn ngồi trong `<li>`."
             },
             {
-              "en": "**Why.** Marketing layouts and CSS grids push div soup; you can still wrap the soup in landmarks. Four `<h1>`s, headings skipped because “the style is `text-xl`,” `<div @click>` menus, tables made of divs, and nested Vue layouts with multiple `main`s break the tree. SR users jump by list and landmark — divs force a linear read.",
-              "vi": "**Vì sao.** Layout marketing và CSS grid đẩy vào div soup; bạn vẫn wrap soup trong landmark được. Bốn `<h1>`, heading skip vì “style là `text-xl`,” menu `<div @click>`, table làm từ div, và Vue layout nest nhiều `main` làm gãy tree. User SR nhảy theo list và landmark — div buộc đọc tuyến tính."
+              "en": "Do not put `main` in both the Nuxt layout and the page. SVG-only `<nav>` needs an accessible name (`aria-label=\"Primary\"`). Skip link plus `id=\"main\"` completes the loop from 11.2.",
+              "vi": "Đừng để `main` ở cả layout Nuxt lẫn trang. `<nav>` chỉ-SVG cần tên truy cập được (`aria-label=\"Primary\"`). Skip link cộng `id=\"main\"` khép vòng từ 11.2."
             },
             {
-              "en": "**Trade-off.** `<section>` without a heading is a weak landmark — label it (`aria-labelledby`) or skip the tag. `<article>` for syndicated items, not every card. Style with CSS (`text-sm` on an `h2` is legal; an `h4` because it looks small is not).",
-              "vi": "**Đánh đổi / rủi ro.** `<section>` không heading là landmark yếu — gắn label (`aria-labelledby`) hoặc bỏ tag. `<article>` cho item syndicated, không phải mọi card. Style bằng CSS (`text-sm` trên `h2` hợp lệ; `h4` vì trông nhỏ thì không)."
-            },
-            {
-              "en": "**How to verify.** Accessibility tree in Chrome. Headings map in axe / a headings extension. Landmark list in VoiceOver rotor / NVDA elements list.",
-              "vi": "**Cách kiểm chứng.** Accessibility tree trong Chrome. Headings map trong axe / headings extension. Landmark list trong VoiceOver rotor / NVDA elements list."
+              "en": "PDF/export HTML still needs a heading tree. `role=\"navigation\"` on a `div` as the DS default is worse than `<nav>` — extra ARIA, same CSS. Vue analog: keep one `<h1>` in the page, not in every card component.",
+              "vi": "HTML PDF/export vẫn cần cây heading. `role=\"navigation\"` trên `div` như mặc định DS tệ hơn `<nav>` — thêm ARIA, cùng CSS. Analog Vue: giữ một `<h1>` trong trang, không phải mọi component card."
             }
-          ]
-        },
-        {
-          "type": "table",
-          "headers": [
-            {
-              "en": "Job",
-              "vi": "Việc"
-            },
-            {
-              "en": "Element",
-              "vi": "Element"
-            },
-            {
-              "en": "Failure",
-              "vi": "Failure"
-            }
-          ],
-          "rows": [
-            [
-              {
-                "en": "Page title after a route change",
-                "vi": "Page title sau đổi route"
-              },
-              {
-                "en": "One `<h1>` per view",
-                "vi": "Một `<h1>` mỗi view"
-              },
-              {
-                "en": "Every card an `<h1>`; skip levels for look",
-                "vi": "Mỗi card một `<h1>`; skip level vì look"
-              }
-            ],
-            [
-              {
-                "en": "Primary / complementary chrome",
-                "vi": "Chrome chính / phụ"
-              },
-              {
-                "en": "`header` `nav` `main` `aside` `footer`",
-                "vi": "`header` `nav` `main` `aside` `footer`"
-              },
-              {
-                "en": "`main` in both the Nuxt layout and the page",
-                "vi": "`main` ở cả Nuxt layout lẫn page"
-              }
-            ],
-            [
-              {
-                "en": "Invoices / nav items",
-                "vi": "Invoice / item nav"
-              },
-              {
-                "en": "`<ul>`/`<ol>` or a `<table>` with headers — CSS `flex` still works",
-                "vi": "`<ul>`/`<ol>` hoặc `<table>` có header — CSS `flex` vẫn chạy"
-              },
-              {
-                "en": "`RouterLink` list with no `<li>`; SVG-only `<nav>` with no accessible name",
-                "vi": "List `RouterLink` không `<li>`; `<nav>` chỉ SVG không accessible name"
-              }
-            ]
           ]
         },
         {
@@ -599,54 +552,159 @@
           }
         },
         {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** One banner, one primary nav with a name, one main, one h1, a section with h2, a list of invoices. The accessibility tree looks like a document. CSS can still Flex the `ul`.",
+            "vi": "**Điều gì xảy ra:** Một banner, một nav chính có tên, một main, một h1, một section với h2, một list invoice. Cây accessibility trông như tài liệu. CSS vẫn Flex `ul` được."
+          }
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Job",
+              "vi": "Việc"
+            },
+            {
+              "en": "Element",
+              "vi": "Phần tử"
+            },
+            {
+              "en": "Failure",
+              "vi": "Kịch bản lỗi"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Page title after a route change",
+                "vi": "Tiêu đề trang sau đổi route"
+              },
+              {
+                "en": "One `<h1>` per view",
+                "vi": "Một `<h1>` mỗi view"
+              },
+              {
+                "en": "Every card an `<h1>`",
+                "vi": "Mọi card một `<h1>`"
+              }
+            ],
+            [
+              {
+                "en": "Chrome",
+                "vi": "Chrome"
+              },
+              {
+                "en": "`header` `nav` `main` `aside` `footer`",
+                "vi": "`header` `nav` `main` `aside` `footer`"
+              },
+              {
+                "en": "`main` in layout and page",
+                "vi": "`main` ở layout và trang"
+              }
+            ],
+            [
+              {
+                "en": "Invoices / nav items",
+                "vi": "Invoice / item nav"
+              },
+              {
+                "en": "`<ul>` / `<table>` with headers",
+                "vi": "`<ul>` / `<table>` với header"
+              },
+              {
+                "en": "`RouterLink` with no `<li>`",
+                "vi": "`RouterLink` không `<li>`"
+              }
+            ],
+            [
+              {
+                "en": "Named nav",
+                "vi": "Nav có tên"
+              },
+              {
+                "en": "`<nav aria-label=\"Primary\">`",
+                "vi": "`<nav aria-label=\"Primary\">`"
+              },
+              {
+                "en": "SVG-only nav, no name",
+                "vi": "Nav chỉ-SVG, không tên"
+              }
+            ]
+          ]
+        },
+        {
           "type": "senior-answer",
           "label": {
-            "en": "Interview phrasing",
-            "vi": "Nói khi phỏng vấn"
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
           },
           "text": {
-            "en": "The accessibility tree should look like a document: one `main`, `header` / `nav` / `aside` / `footer`, a logical heading outline, lists for lists, tables for tables. Semantics give keyboard and SR behavior for free — ARIA landmarks are a backup when I cannot change the tag, not the design-system default. I would not put `role=\"navigation\"` on a div if I can ship `<nav>`. One `<h1>` per view after a route change; I style with CSS instead of skipping levels because the type looks small. Nested Vue layouts with two `main`s are a real bug I look for in Nuxt.",
-            "vi": "Accessibility tree phải trông như một document: một `main`, `header` / `nav` / `aside` / `footer`, heading outline logic, list cho list, table cho table. Semantics cho keyboard và hành vi SR miễn phí — landmark ARIA là backup khi không đổi được tag, không phải default design system. Tôi không gắn `role=\"navigation\"` lên div nếu ship được `<nav>`. Một `<h1>` mỗi view sau đổi route; style bằng CSS, không skip level vì type trông nhỏ. Vue layout nest hai `main` là bug thật tôi tìm trong Nuxt."
+            "en": "- Semantics are free behaviour. ARIA on div soup is paid behaviour you will forget to keyboard.\n- Heading levels skip for look is a SR maze. Restyle `h2`; do not fake `h1` size.\n- Dashboard widgets: `section` + heading. Do not nest `article` because a blog used it.\n- Two `main`s after a Nuxt layout compose is a landmark bug. Count them on a route.\n- Keep CSS independent: Flex/Grid on semantic tags, not the other way around.",
+            "vi": "- Ngữ nghĩa là hành vi miễn phí. ARIA trên div soup là hành vi trả phí bạn sẽ quên gắn bàn phím.\n- Nhảy cấp heading vì look là mê cung SR. Hãy style lại `h2`; đừng giả size `h1`.\n- Widget dashboard: `section` + heading. Đừng lồng `article` vì blog đã dùng.\n- Hai `main` sau khi layout Nuxt ghép là bug landmark. Hãy đếm chúng trên một route.\n- Giữ CSS độc lập: Flex/Grid trên tag ngữ nghĩa, không ngược lại."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: four h1s. Cause: card component ships h1. Fix: heading as a prop, one h1 in the page.\n- Symptom: two mains. Cause: layout + page. Fix: one owner.\n- Symptom: SR says “group” on invoices. Cause: div rows. Fix: `ul`/`li` or a table.\n- Symptom: unnamed nav. Cause: SVG icons only. Fix: `aria-label`.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: bốn h1. Nguyên nhân: component card đưa h1. Cách xử lý: heading như prop, một h1 trong trang.\n- Triệu chứng: hai main. Nguyên nhân: layout + trang. Cách xử lý: một chủ.\n- Triệu chứng: SR nói “group” trên invoice. Nguyên nhân: hàng div. Cách xử lý: `ul`/`li` hoặc table.\n- Triệu chứng: nav không tên. Nguyên nhân: chỉ icon SVG. Cách xử lý: `aria-label`."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+          },
+          "text": {
+            "en": "Four h1s, a menu of div clicks, invoice rows as divs — landmarks, heading outline, lists versus divs, and why not just ARIA roles on those divs?",
+            "vi": "Bốn h1, menu toàn div click, hàng invoice là div — landmark, outline heading, list khác div, và sao không chỉ gắn role ARIA lên những div đó?"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "The accessibility tree should look like a document: one main, header nav aside footer, a logical heading outline, lists for lists, tables for tables. Semantics give keyboard and screen-reader behaviour for free — ARIA landmarks are a backup when I cannot change the tag, not the design-system default. I would not put main in both the Nuxt layout and the page. One h1 per view after a route change. Invoices are a list or a table; CSS Flex still works. Why not roles on those divs is the first rule of ARIA in 11.1.",
+            "vi": "Cây accessibility phải trông như tài liệu: một main, header nav aside footer, outline heading logic, list cho list, table cho table. Ngữ nghĩa cho hành vi bàn phím và trình đọc màn hình miễn phí — landmark ARIA là backup khi tôi không đổi được tag, không phải mặc định design system. Tôi không để main ở cả layout Nuxt lẫn trang. Một h1 mỗi view sau đổi route. Invoice là list hoặc table; CSS Flex vẫn chạy. Sao không role trên những div đó là rule đầu của ARIA ở 11.1."
           }
         },
         {
           "type": "key-takeaways",
           "items": [
             {
-              "en": "One `<h1>` per view. Cards in a grid: consistent `h2`/`h3`, not every card an `h1`.",
-              "vi": "Một `<h1>` mỗi view. Card trong grid: `h2`/`h3` nhất quán, không mỗi card một `h1`."
+              "en": "One `main`, one `<h1>` per view, real lists and tables.",
+              "vi": "Một `main`, một `<h1>` mỗi view, list và table thật."
             },
             {
-              "en": "Nuxt layouts: `main` in the layout **or** the page, not both.",
-              "vi": "Nuxt layout: `main` ở layout **hoặc** page, không cả hai."
+              "en": "Native landmarks over `role=\"navigation\"` as the DS default.",
+              "vi": "Landmark native hơn `role=\"navigation\"` như mặc định DS."
             },
             {
-              "en": "`RouterLink` lists still need `<ul>/<li>`. SVG-only nav needs an accessible name on the `<nav>`.",
-              "vi": "List `RouterLink` vẫn cần `<ul>/<li>`. Nav chỉ SVG cần accessible name trên `<nav>`."
+              "en": "Widgets are `section` + heading. Do not nest `article` for fashion.",
+              "vi": "Widget là `section` + heading. Đừng lồng `article` vì mốt."
+            },
+            {
+              "en": "CSS Flex/Grid still works on semantic tags.",
+              "vi": "CSS Flex/Grid vẫn chạy trên tag ngữ nghĩa."
             }
           ]
         },
         {
-          "type": "list",
-          "style": "ol",
-          "items": [
-            {
-              "en": "How do you handle a dashboard of widgets? (Each widget a `section` with its heading; do not nest `article` for fashion.)",
-              "vi": "Dashboard widget thế nào? (Mỗi widget một `section` với heading; đừng nest `article` vì mốt.)"
-            },
-            {
-              "en": "PDF/export views still need a heading tree if they are HTML.",
-              "vi": "View PDF/export vẫn cần heading tree nếu chúng là HTML."
-            },
-            {
-              "en": "Why is `role=\"navigation\"` on a `div` worse than `<nav>` as the design-system default?",
-              "vi": "Vì sao `role=\"navigation\"` trên `div` tệ hơn `<nav>` làm default design system?"
-            },
-            {
-              "en": "How do you keep one `<h1>` after a Vue route change?",
-              "vi": "Giữ một `<h1>` sau khi Vue đổi route thế nào?"
-            }
-          ]
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **Dashboard of widgets?** Each is a section with a heading. Do not nest article for fashion.\n- **PDF/export HTML?** Still needs a heading tree if it is HTML.\n- **role navigation on a div vs nav?** nav is the DS default. Role is a backup.\n- **One h1 after a Vue route change?** The page owns it. Cards take a heading prop.",
+            "vi": "- **Dashboard widget?** Mỗi cái là section với heading. Đừng lồng article vì mốt.\n- **HTML PDF/export?** Vẫn cần cây heading nếu nó là HTML.\n- **role navigation trên div khác nav?** nav là mặc định DS. Role là backup.\n- **Một h1 sau đổi route Vue?** Trang sở hữu nó. Card nhận heading như prop."
+          }
         },
         {
           "type": "thematic-break"
@@ -664,48 +722,51 @@
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "What they actually ask",
-            "vi": "Họ thực sự hỏi gì"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "They ask A vs AA vs AAA and the contrast numbers, then how you actually test a checkout — not a POUR recitation. A teammate says “we run axe in CI so we are AA.”",
-            "vi": "Họ hỏi A vs AA vs AAA và số contrast, rồi bạn thực sự test checkout thế nào — không phải đọc thuộc POUR. Đồng nghiệp nói “chạy axe trên CI nên ta AA.”"
+            "en": "**In short:** **WCAG 2.2 AA** is the usual contractual bar. **POUR** (Perceivable, Operable, Understandable, Robust) is how you talk, not a recitation. **Name/role/value**, **keyboard**, and **contrast** (4.5:1 text, 3:1 large/UI) catch most frontend failures. Axe finds maybe half. AAA is not a blanket target.",
+            "vi": "**Tóm tắt:** **WCAG 2.2 AA** là bar hợp đồng thường gặp. **POUR** (Perceivable, Operable, Understandable, Robust) là cách nói, không phải bài đọc. **Name/role/value**, **bàn phím**, và **tương phản** (4.5:1 chữ, 3:1 chữ lớn/UI) bắt hầu hết lỗi frontend. Axe tìm được khoảng một nửa. AAA không phải mục tiêu phủ hết."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Takeaway",
-            "vi": "Ý chính"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "WCAG 2.2 AA is the usual contractual bar — name/role/value, keyboard, and contrast catch most frontend failures, and axe finds maybe half.",
-            "vi": "WCAG 2.2 AA là thanh hợp đồng thường — name/role/value, keyboard, và contrast bắt hầu hết failure frontend, còn axe chỉ bắt được khoảng nửa."
+            "en": "**Why it matters:** They ask A versus AA versus AAA and the contrast numbers, then how you test a checkout — not a POUR recitation. A teammate says “we run axe in CI so we are AA.” That sentence is the miss.",
+            "vi": "**Vì sao quan trọng:** Họ hỏi A khác AA khác AAA và số tương phản, rồi bạn test checkout thế nào — không phải đọc POUR. Đồng nghiệp nói “ta chạy axe trong CI nên ta AA.” Câu đó là miss."
           }
         },
         {
           "type": "list",
-          "style": "ul",
+          "style": "ol",
           "items": [
             {
-              "en": "**Decision.** AA is the bar (EU EAA, many US lawsuits, most enterprise RFPs). AAA is not a blanket target. POUR (Perceivable, Operable, Understandable, Robust) is how you talk, not a checklist you recite. **Name, role, value** (4.1.2) plus **keyboard** (2.1.1) plus **contrast** (1.4.3) catch most frontend failures. Test with **axe + full keyboard + one screen-reader pass**. Contrast fights go to design tokens, not an `aria-label` hack.",
-              "vi": "**Quyết định.** AA là thanh (EU EAA, nhiều lawsuit US, hầu hết RFP enterprise). AAA không phải target cho mọi thứ. POUR (Perceivable, Operable, Understandable, Robust) là cách nói, không checklist đọc thuộc. **Name, role, value** (4.1.2) cộng **keyboard** (2.1.1) cộng **contrast** (1.4.3) bắt hầu hết failure frontend. Test bằng **axe + full keyboard + một pass screen-reader**. Trận contrast đưa lên design token, không hack `aria-label`."
+              "en": "**How it works:** AA is the bar (EU EAA, many US lawsuits, most enterprise RFPs). POUR is the framing. Test name/role/value (4.1.2), keyboard (2.1.1), contrast (1.4.3 / 1.4.11), plus 2.2 extras you actually hit: **2.4.11 focus not obscured**, **2.5.8 target size**.",
+              "vi": "**Cách hoạt động:** AA là bar (EAA EU, nhiều lawsuit Mỹ, hầu hết RFP enterprise). POUR là khung nói. Test name/role/value (4.1.2), bàn phím (2.1.1), tương phản (1.4.3 / 1.4.11), cộng phần 2.2 bạn thật sự đụng: **2.4.11 focus không bị che**, **2.5.8 kích thước đích**."
             },
             {
-              "en": "**Why.** “Axe is green so we are AA” is the failure mode — axe finds maybe half. Tokens often ship 3:1 gray-on-white for “hint” text that is actually the only label. Color-only error states, missing 24px click targets on mobile (2.5.8 in 2.2), autoplaying video with no pause, `outline: none` without `:focus-visible` (2.4.7).",
-              "vi": "**Vì sao.** “Axe xanh nên ta AA” là failure mode — axe bắt được khoảng nửa. Token thường ship xám-trên-trắng 3:1 cho text “hint” mà thực ra là label duy nhất. Error state chỉ màu, thiếu click target 24px trên mobile (2.5.8 trong 2.2), video autoplay không pause, `outline: none` không thay `:focus-visible` (2.4.7)."
+              "en": "Contrast: measure the **computed** pair, not hex folklore. Large text (≥18pt / 14pt bold) is 3:1. UI components and focus rings are 3:1 against adjacent colors. `outline: none` without `:focus-visible` fails 2.4.7. 1.4.10 Reflow: 400% zoom, no two-dimensional scrolling for text.",
+              "vi": "Tương phản: đo cặp **computed**, không phải folklore hex. Chữ lớn (≥18pt / 14pt đậm) là 3:1. Component UI và focus ring là 3:1 với màu kề. `outline: none` không `:focus-visible` fail 2.4.7. Reflow 1.4.10: zoom 400%, không cuộn hai chiều cho chữ."
             },
             {
-              "en": "**Trade-off.** Lighthouse a11y 100 vs a VoiceOver pass that fails the date picker — buy the latter. Honor `prefers-reduced-motion` vs marketing animations. AAA contrast 7:1 is a token project, not a Vue directive. `aria-modal=\"true\"` only when the rest of the page is inert; non-modal dialogs must not trap.",
-              "vi": "**Đánh đổi / rủi ro.** Lighthouse a11y 100 vs VoiceOver pass fail date picker — chọn cái sau. Tôn trọng `prefers-reduced-motion` vs animation marketing. Contrast AAA 7:1 là project token, không phải Vue directive. `aria-modal=\"true\"` chỉ khi phần còn lại của page inert; dialog non-modal không được trap."
-            },
-            {
-              "en": "**How to verify.** AA audit on the money paths. Contrast of the actual computed pair (overlays, opacity, glassmorphism fail hex folklore). Bug count by WCAG SC. Legal/QA sign-off on a screen-reader script, not a Lighthouse a11y score.",
-              "vi": "**Cách kiểm chứng.** Audit AA trên path tiền. Contrast của cặp computed thật (overlay, opacity, glassmorphism fail folklore hex). Bug count theo WCAG SC. Sign-off legal/QA trên script screen-reader, không score Lighthouse a11y."
+              "en": "Take gray-on-white “hint” labels to design as a **token** fight. `prefers-contrast` / forced-colors: `background-image` icons vanish — ship an SVG or text. Route announce: a visually hidden polite live region after Vue Router `afterEach`.",
+              "vi": "Đưa label “hint” xám-trên-trắng tới design như một trận **token**. `prefers-contrast` / forced-colors: icon `background-image` biến mất — hãy đưa SVG hoặc chữ. Thông báo route: live region lịch sự ẩn nhìn thấy sau `afterEach` của Vue Router."
             }
           ]
+        },
+        {
+          "type": "code",
+          "lang": "vue",
+          "code": {
+            "en": "<label for=\"email\">Email</label>\n<input\n  id=\"email\"\n  type=\"email\"\n  :aria-invalid=\"!!emailError || undefined\"\n  :aria-describedby=\"emailError ? 'email-err' : undefined\"\n/>\n<p v-if=\"emailError\" id=\"email-err\" role=\"alert\">{{ emailError }}</p>\n<div class=\"sr-only\" aria-live=\"polite\">{{ routeAnnounce }}</div>\n<!-- Toasts: aria-live=\"polite\"; do not steal focus for \"saved\". -->\n<!-- Blocking errors may be assertive / role=\"alert\". -->\n<!-- Contrast: measure computed pair. Hint gray-on-white is a token fight. -->",
+            "vi": "<label for=\"email\">Email</label>\n<input\n  id=\"email\"\n  type=\"email\"\n  :aria-invalid=\"!!emailError || undefined\"\n  :aria-describedby=\"emailError ? 'email-err' : undefined\"\n/>\n<p v-if=\"emailError\" id=\"email-err\" role=\"alert\">{{ emailError }}</p>\n<div class=\"sr-only\" aria-live=\"polite\">{{ routeAnnounce }}</div>\n<!-- Toast: aria-live=\"polite\"; đừng cướp focus cho \"đã lưu\". -->\n<!-- Lỗi chặn có thể assertive / role=\"alert\". -->\n<!-- Tương phản: đo cặp computed. Hint xám-trên-trắng là trận token. -->"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** The field has a visible name, an invalid state, and a described error. Route changes announce without moving focus. Contrast and focus rings are token work, not a Vue directive. Axe still would not prove keyboard or 400% zoom.",
+            "vi": "**Điều gì xảy ra:** Field có tên nhìn thấy, state invalid, và lỗi được mô tả. Đổi route thông báo mà không chuyển focus. Tương phản và focus ring là việc token, không phải directive Vue. Axe vẫn không chứng minh bàn phím hay zoom 400%."
+          }
         },
         {
           "type": "table",
@@ -727,7 +788,7 @@
             [
               {
                 "en": "Normal text",
-                "vi": "Text thường"
+                "vi": "Chữ thường"
               },
               {
                 "en": "4.5:1",
@@ -741,94 +802,119 @@
             [
               {
                 "en": "Large text (≥18pt / 14pt bold)",
-                "vi": "Text lớn (≥18pt / 14pt bold)"
+                "vi": "Chữ lớn (≥18pt / 14pt đậm)"
               },
               {
                 "en": "3:1",
                 "vi": "3:1"
               },
               {
-                "en": "AAA 7:1 is a token project if brand asks",
-                "vi": "AAA 7:1 là project token nếu brand hỏi"
+                "en": "AAA 7:1 is a token project",
+                "vi": "AAA 7:1 là dự án token"
               }
             ],
             [
               {
-                "en": "UI components and graphics (1.4.11)",
-                "vi": "UI component và graphic (1.4.11)"
+                "en": "UI / graphics (1.4.11)",
+                "vi": "UI / đồ họa (1.4.11)"
               },
               {
-                "en": "3:1 against adjacent colors",
-                "vi": "3:1 so với màu kề"
+                "en": "3:1 vs adjacent",
+                "vi": "3:1 với màu kề"
               },
               {
-                "en": "Focus rings included — `outline: none` fails 2.4.7 without `:focus-visible`",
-                "vi": "Gồm focus ring — `outline: none` fail 2.4.7 nếu không có `:focus-visible`"
+                "en": "Focus rings included",
+                "vi": "Gồm focus ring"
+              }
+            ],
+            [
+              {
+                "en": "Reflow (1.4.10)",
+                "vi": "Reflow (1.4.10)"
+              },
+              {
+                "en": "400% zoom",
+                "vi": "Zoom 400%"
+              },
+              {
+                "en": "No 2D scroll for text",
+                "vi": "Không cuộn 2D cho chữ"
               }
             ]
           ]
         },
         {
-          "type": "code",
-          "lang": "vue",
-          "code": {
-            "en": "<label for=\"email\">Email</label>\n<input id=\"email\" type=\"email\" :aria-invalid=\"!!emailError || undefined\" :aria-describedby=\"emailError ? 'email-err' : undefined\" />\n<p v-if=\"emailError\" id=\"email-err\" role=\"alert\">{{ emailError }}</p>\n\n<!-- Route announce: Vue Router afterEach + visually hidden polite live region -->\n<div class=\"sr-only\" aria-live=\"polite\">{{ routeAnnounce }}</div>\n<!-- Toasts: aria-live=\"polite\"; do not steal focus for \"saved\". Blocking errors may be assertive / role=\"alert\". -->",
-            "vi": "<label for=\"email\">Email</label>\n<input id=\"email\" type=\"email\" :aria-invalid=\"!!emailError || undefined\" :aria-describedby=\"emailError ? 'email-err' : undefined\" />\n<p v-if=\"emailError\" id=\"email-err\" role=\"alert\">{{ emailError }}</p>\n\n<!-- Announce route: Vue Router afterEach + live region polite ẩn visual -->\n<div class=\"sr-only\" aria-live=\"polite\">{{ routeAnnounce }}</div>\n<!-- Toast: aria-live=\"polite\"; đừng cướp focus cho \"saved\". Lỗi chặn task có thể assertive / role=\"alert\". -->"
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- Axe in CI is not AA. Axe finds maybe half. Keyboard + one SR pass complete the sentence.\n- Argue with product in tokens and lawsuits, not guilt. Gray hint labels fail 4.5:1 — that is a Figma token.\n- AAA contrast 7:1 is a brand/token project if they ask, not a Vue plugin.\n- 2.4.11 sticky headers that cover focus are a 2.2 miss you will actually ship.\n- `overflow-x: hidden` on `body` (3.6) is also a 1.4.10 miss.",
+            "vi": "- Axe trong CI không phải AA. Axe tìm được khoảng một nửa. Bàn phím + một lần SR khép câu.\n- Tranh luận với product bằng token và lawsuit, không phải tội lỗi. Label hint xám fail 4.5:1 — đó là token Figma.\n- Tương phản AAA 7:1 là dự án brand/token nếu họ hỏi, không phải plugin Vue.\n- 2.4.11 sticky header che focus là miss 2.2 bạn sẽ thật sự đưa lên production.\n- `overflow-x: hidden` trên `body` (3.6) cũng là miss 1.4.10."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: “axe is green so we are AA.” Cause: machines miss keyboard and SR. Fix: 11.5.\n- Symptom: hint text fails contrast. Cause: gray-on-white token. Fix: design, not a directive.\n- Symptom: focus hidden under sticky. Cause: 2.4.11. Fix: scroll-margin / shorter header.\n- Symptom: 400% zoom two-axis scroll. Cause: `overflow-x: hidden` on `body`. Fix: 3.6.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: “axe xanh nên ta AA.” Nguyên nhân: máy miss bàn phím và SR. Cách xử lý: 11.5.\n- Triệu chứng: chữ hint fail tương phản. Nguyên nhân: token xám-trên-trắng. Cách xử lý: design, không phải directive.\n- Triệu chứng: focus bị sticky che. Nguyên nhân: 2.4.11. Cách xử lý: scroll-margin / header thấp hơn.\n- Triệu chứng: zoom 400% cuộn hai trục. Nguyên nhân: `overflow-x: hidden` trên `body`. Cách xử lý: 3.6."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Interview phrasing",
-            "vi": "Nói khi phỏng vấn"
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
           },
           "text": {
-            "en": "WCAG 2.2 AA is the contractual bar I quote — EU EAA, lawsuits, enterprise RFPs. AAA is not a blanket target. I talk POUR, but I test name/role/value, keyboard, and contrast, because those catch most frontend failures. Axe in CI is not AA; axe finds maybe half. I take gray-on-white “hint” labels to design as a token fight, not an `aria-label` hack. I want an AA audit on the money path and a VoiceOver or NVDA script, not a Lighthouse 100 that still fails the date picker.",
-            "vi": "WCAG 2.2 AA là thanh hợp đồng tôi nêu — EU EAA, lawsuit, RFP enterprise. AAA không phải target cho mọi thứ. Tôi nói POUR, nhưng test name/role/value, keyboard, và contrast, vì chúng bắt hầu hết failure frontend. Axe trên CI không phải AA; axe bắt được khoảng nửa. Text “hint” xám-trên-trắng tôi đưa lên design như trận token, không hack `aria-label`. Tôi muốn audit AA trên path tiền và script VoiceOver hoặc NVDA, không Lighthouse 100 mà date picker vẫn fail."
+            "en": "A versus AA versus AAA and the contrast numbers, then how you actually test a checkout. A teammate says axe in CI means you are AA.",
+            "vi": "A khác AA khác AAA và số tương phản, rồi bạn test checkout thế nào. Đồng nghiệp nói axe trong CI nghĩa là bạn AA."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "WCAG 2.2 AA is the contractual bar I quote — EU EAA, lawsuits, enterprise RFPs. AAA is not a blanket target. I talk POUR, but I test name, role, value, keyboard, and contrast, because those catch most frontend failures. Axe in CI is not AA; axe finds maybe half. I take gray-on-white hint labels to design as a token fight. I measure computed pairs: 4.5 to 1 for text, 3 to 1 for large text and UI. 2.2 extras I actually hit are focus not obscured and target size. 400 percent zoom is reflow, not a screenshot.",
+            "vi": "WCAG 2.2 AA là bar hợp đồng tôi nêu — EAA EU, lawsuit, RFP enterprise. AAA không phải mục tiêu phủ hết. Tôi nói POUR, nhưng tôi test name, role, value, bàn phím, và tương phản, vì những cái đó bắt hầu hết lỗi frontend. Axe trong CI không phải AA; axe tìm được khoảng một nửa. Tôi đưa label hint xám-trên-trắng tới design như một trận token. Tôi đo cặp computed: 4.5 trên 1 cho chữ, 3 trên 1 cho chữ lớn và UI. Phần 2.2 tôi thật sự đụng là focus không bị che và kích thước đích. Zoom 400 phần trăm là reflow, không phải screenshot."
           }
         },
         {
           "type": "key-takeaways",
           "items": [
             {
-              "en": "Forms: visible `<label for>` (or wrap); required in text, not only color / `*`; errors via `aria-invalid` + `aria-describedby`; `<fieldset>`/`<legend>` for radios; `type` that matches the data.",
-              "vi": "Form: `<label for>` hiện (hoặc wrap); required trong text, không chỉ màu / `*`; lỗi qua `aria-invalid` + `aria-describedby`; `<fieldset>`/`<legend>` cho radio; `type` khớp data."
+              "en": "WCAG 2.2 AA is the bar. AAA is not a blanket target.",
+              "vi": "WCAG 2.2 AA là bar. AAA không phải mục tiêu phủ hết."
             },
             {
-              "en": "Images: informative get a real `alt`; decorative `alt=\"\"`; never omit (AT reads the filename). Icon button: name on the button, `aria-hidden` on the SVG. Charts need a text summary or data table — `alt=\"chart\"` is not AA (1.1.1).",
-              "vi": "Ảnh: informative có `alt` thật; decorative `alt=\"\"`; không bao giờ omit (AT đọc filename). Icon button: name trên button, `aria-hidden` trên SVG. Chart cần tóm tắt text hoặc data table — `alt=\"chart\"` không phải AA (1.1.1)."
+              "en": "Name/role/value + keyboard + contrast catch most FE failures.",
+              "vi": "Name/role/value + bàn phím + tương phản bắt hầu hết lỗi FE."
             },
             {
-              "en": "Route changes announce (live region or focus the `h1`). Toasts: `aria-live=\"polite\"` — do not steal focus for “saved.” 1.4.10 Reflow at 400% zoom; `overflow-x: hidden` on `body` is a bug factory. Forced-colors: CSS `background-image` icons vanish.",
-              "vi": "Đổi route phải announce (live region hoặc focus `h1`). Toast: `aria-live=\"polite\"` — đừng cướp focus cho “saved.” 1.4.10 Reflow ở zoom 400%; `overflow-x: hidden` trên `body` là nhà máy bug. Forced-colors: icon CSS `background-image` biến mất."
+              "en": "Text 4.5:1. Large/UI 3:1. Measure computed pairs.",
+              "vi": "Chữ 4.5:1. Lớn/UI 3:1. Đo cặp computed."
+            },
+            {
+              "en": "Axe in CI is not AA. Axe finds maybe half.",
+              "vi": "Axe trong CI không phải AA. Axe tìm được khoảng một nửa."
             }
           ]
         },
         {
-          "type": "list",
-          "style": "ol",
-          "items": [
-            {
-              "en": "WCAG 2.2 additions you actually hit: 2.4.11 focus not obscured, 2.5.8 target size.",
-              "vi": "Bổ sung WCAG 2.2 bạn thực sự đụng: 2.4.11 focus không bị che, 2.5.8 target size."
-            },
-            {
-              "en": "AAA contrast 7:1 — when a brand asks, it is a token project, not a Vue directive.",
-              "vi": "Contrast AAA 7:1 — khi brand hỏi, đó là project token, không phải Vue directive."
-            },
-            {
-              "en": "`prefers-contrast` / forced-colors (Windows High Contrast): CSS `background-image` icons vanish. What do you ship instead?",
-              "vi": "`prefers-contrast` / forced-colors (Windows High Contrast): icon CSS `background-image` biến mất. Bạn ship cái gì thay thế?"
-            },
-            {
-              "en": "1.4.10 Reflow: 400% zoom, no two-dimensional scrolling for text. Why is `overflow-x: hidden` on `body` a bug factory?",
-              "vi": "1.4.10 Reflow: zoom 400%, không scroll hai chiều cho text. Vì sao `overflow-x: hidden` trên `body` là nhà máy bug?"
-            },
-            {
-              "en": "Captions vs auto-generated YouTube captions as “we have captions.” Dialog vs non-modal: when is `aria-modal=\"true\"` wrong?",
-              "vi": "Caption vs caption YouTube auto-generate như “chúng tôi có caption.” Dialog vs non-modal: khi nào `aria-modal=\"true\"` sai?"
-            }
-          ]
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **WCAG 2.2 extras you hit?** 2.4.11 focus not obscured, 2.5.8 target size.\n- **AAA 7:1?** A token project if brand asks, not a Vue directive.\n- **forced-colors?** background-image icons vanish. Ship SVG or text.\n- **1.4.10 Reflow?** 400% zoom, no 2D scroll for text. overflow-x hidden on body fails it.",
+            "vi": "- **Phần 2.2 bạn đụng?** 2.4.11 focus không bị che, 2.5.8 kích thước đích.\n- **AAA 7:1?** Dự án token nếu brand hỏi, không phải directive Vue.\n- **forced-colors?** Icon background-image biến mất. Hãy đưa SVG hoặc chữ.\n- **Reflow 1.4.10?** Zoom 400%, không cuộn 2D cho chữ. overflow-x hidden trên body fail nó."
+          }
         },
         {
           "type": "thematic-break"
@@ -846,55 +932,58 @@
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "What they actually ask",
-            "vi": "Họ thực sự hỏi gì"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "“How do you keep this from rotting?” What belongs in CI versus a VoiceOver pass, and what would bounce a design-system `Drawer` PR with no focus story?",
-            "vi": "“Giữ cái này khỏi regress thế nào?” Thứ nào thuộc CI, thứ nào là pass VoiceOver, và PR `Drawer` design-system không có focus story bị bounce vì đâu?"
+            "en": "**In short:** CI catches regressions **machines** can see; humans catch the rest. Pipeline: lint (`vuejs-accessibility` / `jsx-a11y`), **axe-core** in Vitest (DS) and Playwright (checkout), **real Tab/Escape** on traps, contrast via tokens/screenshots (axe in jsdom misses computed style). Axe green with a Pay `div` is the failure mode.",
+            "vi": "**Tóm tắt:** CI bắt regression **máy** thấy được; người bắt phần còn. Pipeline: lint (`vuejs-accessibility` / `jsx-a11y`), **axe-core** trong Vitest (DS) và Playwright (checkout), **Tab/Escape thật** trên bẫy, tương phản qua token/screenshot (axe trong jsdom miss style computed). Axe xanh với `div` Pay là kịch bản lỗi."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Takeaway",
-            "vi": "Ý chính"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "CI catches regressions machines can see; humans catch the rest — and axe green with a Pay `div` is the failure mode.",
-            "vi": "CI bắt regression máy thấy được; người bắt phần còn lại — và axe xanh trong khi nút Pay là `div` chính là failure mode."
+            "en": "**Why it matters:** “How do you keep this from rotting?” What belongs in CI versus a VoiceOver pass, and what would bounce a design-system `Drawer` PR with no focus story? DS owns primitives; product owns composition and copy.",
+            "vi": "**Vì sao quan trọng:** “Giữ cái này khỏi mục thế nào?” Cái gì thuộc CI khác một lần VoiceOver, và gì sẽ bounce PR `Drawer` design system không có câu chuyện focus? DS sở hữu primitive; product sở hữu composition và copy."
           }
         },
         {
           "type": "list",
-          "style": "ul",
+          "style": "ol",
           "items": [
             {
-              "en": "**Decision.** Pipeline: (1) `eslint-plugin-vuejs-accessibility` (or `jsx-a11y` on Next) on PRs. (2) **axe-core** in Vitest for DS components and in Playwright for critical pages (`@axe-core/playwright`). (3) Playwright **real keyboard** on modal/combobox. (4) Visual contrast via DS tokens / screenshot, not eyeballed hex. (5) DS PR: Storybook stories for keyboard, inverted contrast, reduced motion, plus axe + Testing Library queries by role. A **manual SR pass** (VoiceOver or NVDA) on the DS modal/listbox **once per release**, not every commit.",
-              "vi": "**Quyết định.** Pipeline: (1) `eslint-plugin-vuejs-accessibility` (hoặc `jsx-a11y` trên Next) trên PR. (2) **axe-core** trong Vitest cho component DS và trong Playwright cho page critical (`@axe-core/playwright`). (3) Playwright **keyboard thật** trên modal/combobox. (4) Contrast visual qua token DS / screenshot, không nhìn hex. (5) PR DS: Storybook story cho keyboard, inverted contrast, reduced motion, cộng axe + query Testing Library theo role. **Pass SR tay** (VoiceOver hoặc NVDA) trên modal/listbox DS **một lần mỗi release**, không mỗi commit."
+              "en": "**How it works:** (1) eslint-plugin-vuejs-accessibility (or jsx-a11y on Next) on PRs. (2) axe-core in Vitest for DS components and `@axe-core/playwright` for critical pages, tagged `wcag2a` / `wcag2aa` / `wcag22aa`. (3) Playwright real keyboard on modal/combobox.",
+              "vi": "**Cách hoạt động:** (1) eslint-plugin-vuejs-accessibility (hoặc jsx-a11y trên Next) trên PR. (2) axe-core trong Vitest cho component DS và `@axe-core/playwright` cho trang tối quan trọng, gắn tag `wcag2a` / `wcag2aa` / `wcag22aa`. (3) Bàn phím thật Playwright trên modal/combobox."
             },
             {
-              "en": "**Why.** Axe coverage is incomplete by design. CI cannot run VoiceOver on every GitHub runner. Do not block merge on a third-party widget you do not own — isolate and ticket, do not `--disable-rule` globally. Snapshotting axe JSON nobody reads, or “we test a11y” meaning Lighthouse in a README, is how it rots. Visual regression (8.6) does not replace this — a pixel-perfect inaccessible button still ships.",
-              "vi": "**Vì sao.** Coverage axe incomplete by design. CI không chạy VoiceOver trên mọi GitHub runner. Đừng block merge vì widget third-party bạn không own — isolate và ticket, đừng `--disable-rule` global. Snapshot JSON axe không ai đọc, hoặc “chúng tôi test a11y” nghĩa Lighthouse trong README, là cách nó regress. Visual regression (8.6) không thay cái này — button pixel-perfect inaccessible vẫn ship."
+              "en": "(4) Contrast via DS tokens / screenshot, not eyeballed hex — axe in jsdom misses computed style. (5) DS PR: Storybook stories for keyboard, inverted contrast, reduced motion, and a written focus trap. Allowlist is versioned and reviewed; it is not `/checkout` forever.",
+              "vi": "(4) Tương phản qua token DS / screenshot, không hex nhìn mắt — axe trong jsdom miss style computed. (5) PR DS: story Storybook cho bàn phím, tương phản đảo, reduced motion, và bẫy focus viết ra. Allowlist được version và review; không phải `/checkout` mãi."
             },
             {
-              "en": "**Trade-off.** Strict `expect(violations).toEqual([])` vs allowlisting `color-contrast` on a branded page you cannot fix this sprint: allowlist **per route + rule + expiry**, never a global skip. Paid SR automation vs a quarterly human pass — for most Vue teams the human pass on DS + checkout is the senior plan.",
-              "vi": "**Đánh đổi / rủi ro.** `expect(violations).toEqual([])` chặt vs allowlist `color-contrast` trên page branded sprint này chưa fix: allowlist **theo route + rule + expiry**, không skip global. Automation SR trả phí vs pass người theo quý — hầu hết team Vue, pass người trên DS + checkout là plan senior."
-            },
-            {
-              "en": "**How to verify.** Number of axe violations in Playwright on `/checkout`. Keyboard journey duration in a recorded script. DS PRs missing an a11y section get bounced. If you cannot `getByRole('button', { name: 'Close dialog' })`, neither can AT.",
-              "vi": "**Cách kiểm chứng.** Số violation axe trong Playwright trên `/checkout`. Duration keyboard journey trong script ghi. PR DS thiếu section a11y bị bounce. Query không được `getByRole('button', { name: 'Close dialog' })` thì AT cũng không."
+              "en": "Legacy Vue: Playwright + axe on login/checkout first (same as testing 8.6), eslint warn→error. i18n: query roles/labels from fixtures, not English strings. Teleport overlays false-positive if you scan before the dialog is open. Third-party widgets get a contract test, not hope.",
+              "vi": "Vue legacy: Playwright + axe trên login/checkout trước (giống testing 8.6), eslint warn→error. i18n: query role/label từ fixture, không phải chuỗi tiếng Anh. Overlay Teleport false-positive nếu bạn scan trước khi dialog mở. Widget bên thứ ba nhận contract test, không phải hy vọng."
             }
           ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "import { test, expect } from '@playwright/test'\nimport AxeBuilder from '@axe-core/playwright'\ntest('checkout has no serious axe violations', async ({ page }) => {\n  await page.goto('/checkout')\n  const results = await new AxeBuilder({ page })\n    .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])\n    .analyze()\n  expect(results.violations).toEqual([])\n})\ntest('billing dialog traps focus', async ({ page }) => {\n  await page.goto('/settings')\n  await page.getByRole('button', { name: 'Edit billing' }).click()\n  await page.keyboard.press('Tab')\n  await expect(page.getByRole('dialog')).toBeFocused() // or first control inside\n})",
+            "vi": "import { test, expect } from '@playwright/test'\nimport AxeBuilder from '@axe-core/playwright'\ntest('checkout has no serious axe violations', async ({ page }) => {\n  await page.goto('/checkout')\n  const results = await new AxeBuilder({ page })\n    .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])\n    .analyze()\n  expect(results.violations).toEqual([])\n})\ntest('billing dialog traps focus', async ({ page }) => {\n  await page.goto('/settings')\n  await page.getByRole('button', { name: 'Edit billing' }).click()\n  await page.keyboard.press('Tab')\n  await expect(page.getByRole('dialog')).toBeFocused() // hoặc control đầu bên trong\n})"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** Checkout must have zero tagged axe violations. The billing dialog is proven with a real Tab key, not `element.focus()`. jsdom unit axe would have missed both the trap and computed contrast.",
+            "vi": "**Điều gì xảy ra:** Checkout phải không có vi phạm axe đã gắn tag. Dialog billing được chứng minh bằng phím Tab thật, không phải `element.focus()`. Axe unit jsdom sẽ miss cả bẫy lẫn tương phản computed."
+          }
         },
         {
           "type": "table",
           "headers": [
             {
               "en": "Layer",
-              "vi": "Layer"
+              "vi": "Lớp"
             },
             {
               "en": "Catches",
@@ -902,14 +991,14 @@
             },
             {
               "en": "Misses",
-              "vi": "Bỏ sót"
+              "vi": "Miss"
             }
           ],
           "rows": [
             [
               {
-                "en": "eslint-plugin-vuejs-accessibility / jsx-a11y",
-                "vi": "eslint-plugin-vuejs-accessibility / jsx-a11y"
+                "en": "eslint a11y plugin",
+                "vi": "Plugin eslint a11y"
               },
               {
                 "en": "Static anti-patterns on the PR",
@@ -917,114 +1006,125 @@
               },
               {
                 "en": "Runtime focus, contrast, SR speech",
-                "vi": "Focus runtime, contrast, lời SR"
+                "vi": "Focus runtime, tương phản, lời SR"
               }
             ],
             [
               {
-                "en": "axe-core in Vitest / Playwright",
-                "vi": "axe-core trong Vitest / Playwright"
+                "en": "axe in Vitest / Playwright",
+                "vi": "axe trong Vitest / Playwright"
               },
               {
-                "en": "Name/role/value, many WCAG A/AA rules on `/checkout`",
-                "vi": "Name/role/value, nhiều rule WCAG A/AA trên `/checkout`"
+                "en": "Name/role/value, many A/AA rules",
+                "vi": "Name/role/value, nhiều rule A/AA"
               },
               {
-                "en": "Contrast in jsdom; keyboard trap; VoiceOver",
-                "vi": "Contrast trong jsdom; keyboard trap; VoiceOver"
+                "en": "jsdom contrast; keyboard trap; VoiceOver",
+                "vi": "Tương phản jsdom; bẫy bàn phím; VoiceOver"
               }
             ],
             [
               {
-                "en": "Playwright real Tab / Escape",
-                "vi": "Playwright Tab / Escape thật"
+                "en": "Playwright real Tab / Esc",
+                "vi": "Tab / Esc thật Playwright"
               },
               {
                 "en": "Modal trap, restore, combobox arrows",
-                "vi": "Trap modal, restore, mũi tên combobox"
+                "vi": "Bẫy modal, trả focus, mũi tên combobox"
               },
               {
                 "en": "What AT actually speaks",
-                "vi": "AT thực sự đọc gì"
+                "vi": "AT thực sự nói gì"
               }
             ],
             [
               {
                 "en": "Manual SR once per release",
-                "vi": "SR tay một lần mỗi release"
+                "vi": "SR tay mỗi release"
               },
               {
-                "en": "DS modal/listbox speech and focus loss",
-                "vi": "Lời và mất focus trên modal/listbox DS"
+                "en": "DS modal/listbox speech",
+                "vi": "Lời nói modal/listbox DS"
               },
               {
                 "en": "Every commit — do not block on this",
-                "vi": "Mỗi commit — đừng block vì cái này"
+                "vi": "Mọi commit — đừng block cái này"
               }
             ]
           ]
         },
         {
-          "type": "code",
-          "lang": "ts",
-          "code": {
-            "en": "import { test, expect } from \"@playwright/test\"\nimport AxeBuilder from \"@axe-core/playwright\"\n\ntest(\"checkout has no serious axe violations\", async ({ page }) => {\n  await page.goto(\"/checkout\")\n  const results = await new AxeBuilder({ page })\n    .withTags([\"wcag2a\", \"wcag2aa\", \"wcag22aa\"])\n    .analyze()\n  expect(results.violations).toEqual([])\n})\n\ntest(\"billing dialog traps focus\", async ({ page }) => {\n  await page.goto(\"/settings\")\n  await page.getByRole(\"button\", { name: \"Edit billing\" }).click()\n  const dialog = page.getByRole(\"dialog\", { name: \"Edit billing\" })\n  await expect(dialog).toBeVisible()\n  await page.keyboard.press(\"Tab\")\n  await expect(dialog.getByRole(\"button\", { name: \"Cancel\" })).toBeFocused()\n  await page.keyboard.press(\"Escape\")\n  await expect(page.getByRole(\"button\", { name: \"Edit billing\" })).toBeFocused()\n})",
-            "vi": "import { test, expect } from \"@playwright/test\"\nimport AxeBuilder from \"@axe-core/playwright\"\n\ntest(\"checkout has no serious axe violations\", async ({ page }) => {\n  await page.goto(\"/checkout\")\n  const results = await new AxeBuilder({ page })\n    .withTags([\"wcag2a\", \"wcag2aa\", \"wcag22aa\"])\n    .analyze()\n  expect(results.violations).toEqual([])\n})\n\ntest(\"billing dialog traps focus\", async ({ page }) => {\n  await page.goto(\"/settings\")\n  await page.getByRole(\"button\", { name: \"Edit billing\" }).click()\n  const dialog = page.getByRole(\"dialog\", { name: \"Edit billing\" })\n  await expect(dialog).toBeVisible()\n  await page.keyboard.press(\"Tab\")\n  await expect(dialog.getByRole(\"button\", { name: \"Cancel\" })).toBeFocused()\n  await page.keyboard.press(\"Escape\")\n  await expect(page.getByRole(\"button\", { name: \"Edit billing\" })).toBeFocused()\n})"
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- Bounce a Drawer PR with no focus story: no opener restore, no Esc, no Storybook keyboard tale. That is a DS gate.\n- Who owns bugs: DS for primitives; product for composition and copy. Do not ping-pong.\n- Allowlists rot. Review them like code. `/checkout` is never forever.\n- i18n CI: `getByRole('button', { name: fixture.editBilling })`, not English.\n- Axe green + Pay div is 11.1. Keep the Tab test even when axe is quiet.",
+            "vi": "- Bounce PR Drawer không câu chuyện focus: không trả opener, không Esc, không story bàn phím Storybook. Đó là cổng DS.\n- Ai sở hữu bug: DS cho primitive; product cho composition và copy. Đừng ping-pong.\n- Allowlist mục. Hãy review như code. `/checkout` không bao giờ mãi.\n- CI i18n: `getByRole('button', { name: fixture.editBilling })`, không phải tiếng Anh.\n- Axe xanh + div Pay là 11.1. Hãy giữ test Tab dù axe im."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: axe green, Tab skips Pay. Cause: CI is only axe. Fix: real keyboard tests.\n- Symptom: Teleport overlay false-positive. Cause: scan before open. Fix: open, then analyze.\n- Symptom: FR CI fails names. Cause: English locators. Fix: fixtures.\n- Symptom: Drawer merged with no restore. Cause: no DS a11y gate. Fix: Storybook + Playwright trap.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: axe xanh, Tab bỏ Pay. Nguyên nhân: CI chỉ axe. Cách xử lý: test bàn phím thật.\n- Triệu chứng: overlay Teleport false-positive. Nguyên nhân: scan trước khi mở. Cách xử lý: mở, rồi analyze.\n- Triệu chứng: CI FR fail tên. Nguyên nhân: locator tiếng Anh. Cách xử lý: fixture.\n- Triệu chứng: Drawer merge không trả focus. Nguyên nhân: không cổng a11y DS. Cách xử lý: Storybook + bẫy Playwright."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Interview phrasing",
-            "vi": "Nói khi phỏng vấn"
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
           },
           "text": {
-            "en": "CI catches what machines can see; humans catch the rest. On every PR I want vuejs-accessibility or jsx-a11y, axe-core in Vitest for DS components and Playwright for checkout, and real Tab/Escape on anything with a trap or arrows. Contrast runs in Playwright or Storybook — axe in jsdom misses computed style. I allowlist per route, rule, and expiry, never `--disable-rule` globally, and I exclude a third-party chat iframe instead of turning axe off. A DS Drawer with no focus story bounces. VoiceOver or NVDA on the DS modal once per release, not every commit. If Testing Library cannot `getByRole` it, neither can AT.",
-            "vi": "CI bắt thứ máy thấy được; người bắt phần còn lại. Mỗi PR tôi muốn vuejs-accessibility hoặc jsx-a11y, axe-core trong Vitest cho component DS và Playwright cho checkout, và Tab/Escape thật trên thứ có trap hoặc mũi tên. Contrast chạy trong Playwright hoặc Storybook — axe trong jsdom miss computed style. Allowlist theo route, rule, và expiry, không `--disable-rule` global, và exclude iframe chat third-party thay vì tắt axe. Drawer DS không có focus story thì bounce. VoiceOver hoặc NVDA trên modal DS một lần mỗi release, không mỗi commit. Testing Library không `getByRole` được thì AT cũng không."
+            "en": "How do you keep a11y from rotting? What belongs in CI versus a VoiceOver pass, and what would bounce a design-system Drawer PR with no focus story?",
+            "vi": "Giữ a11y khỏi mục thế nào? Cái gì thuộc CI khác một lần VoiceOver, và gì sẽ bounce PR Drawer design system không câu chuyện focus?"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "CI catches what machines can see; humans catch the rest. On every PR I want vuejs-accessibility or jsx-a11y, axe-core in Vitest for DS components and Playwright for checkout, and real Tab and Escape on anything with a trap or arrows. Contrast runs in Playwright or Storybook — axe in jsdom misses computed style. I allowlist with review, not forever. A Drawer PR with no focus story bounces. DS owns primitives; product owns composition. Axe green with a Pay div is why the Tab test stays. VoiceOver is once per release, not every commit.",
+            "vi": "CI bắt cái máy thấy được; người bắt phần còn. Mọi PR tôi muốn vuejs-accessibility hoặc jsx-a11y, axe-core trong Vitest cho component DS và Playwright cho checkout, và Tab cùng Escape thật trên mọi thứ có bẫy hoặc mũi tên. Tương phản chạy trong Playwright hoặc Storybook — axe trong jsdom miss style computed. Tôi allowlist có review, không phải mãi. PR Drawer không câu chuyện focus thì bounce. DS sở hữu primitive; product sở hữu composition. Axe xanh với div Pay là lý do test Tab ở lại. VoiceOver là mỗi release, không phải mọi commit."
           }
         },
         {
           "type": "key-takeaways",
           "items": [
             {
-              "en": "DS PR bar: name the APG pattern (or “native element, no APG”); stories for default, disabled, error, RTL, reduced motion, keyboard-only; axe on the story **and** a keyboard spec; contrast of the actual tokens, not the Figma screenshot; no `<div role=\"button\">` without a written exception.",
-              "vi": "Thanh PR DS: nêu pattern APG (hoặc “native element, không APG”); story default, disabled, error, RTL, reduced motion, keyboard-only; axe trên story **và** spec keyboard; contrast của token thật, không screenshot Figma; không `<div role=\"button\">` trừ exception viết ra."
+              "en": "Lint + axe + real Tab in CI. Manual SR once per release.",
+              "vi": "Lint + axe + Tab thật trong CI. SR tay mỗi release."
             },
             {
-              "en": "axe in jsdom misses contrast (needs computed style). False positives on Vue Teleport/overlays if you scan before the dialog is open. i18n: English `getByRole` names break in FR CI — `lang` fixtures or a name regex from the message catalog.",
-              "vi": "axe trong jsdom miss contrast (cần computed style). False positive trên Vue Teleport/overlay nếu scan trước khi dialog mở. i18n: `getByRole` tên English gãy trên CI FR — fixture `lang` hoặc `name` regex từ message catalog."
+              "en": "Axe in jsdom misses contrast and traps. Playwright owns those.",
+              "vi": "Axe trong jsdom miss tương phản và bẫy. Playwright sở hữu những cái đó."
             },
             {
-              "en": "DS owns primitives; product owns composition and copy. Introduce this to a legacy Vue app the same way as 8.6: Playwright + axe on login/checkout first; eslint warn→error.",
-              "vi": "DS own primitive; product own composition và copy. Introduce vào app Vue legacy như 8.6: Playwright + axe trên login/checkout trước; eslint warn→error."
+              "en": "Bounce a DS Drawer with no focus story. DS primitives, product composition.",
+              "vi": "Bounce Drawer DS không câu chuyện focus. DS primitive, product composition."
+            },
+            {
+              "en": "Axe green + Pay `div` is the failure mode. Keep the Tab test.",
+              "vi": "Axe xanh + `div` Pay là kịch bản lỗi. Hãy giữ test Tab."
             }
           ]
         },
         {
-          "type": "list",
-          "style": "ol",
-          "items": [
-            {
-              "en": "Who owns a11y bugs — DS team or product? (DS for primitives; product for composition and copy.)",
-              "vi": "Ai own bug a11y — team DS hay product? (DS cho primitive; product cho composition và copy.)"
-            },
-            {
-              "en": "How would you introduce this to a legacy Vue app? (Playwright + axe on login/checkout first, same as 8.6; eslint as warn→error.)",
-              "vi": "Introduce vào app Vue legacy thế nào? (Playwright + axe trên login/checkout trước, như 8.6; eslint warn→error.)"
-            },
-            {
-              "en": "i18n: tests that query English names break in FR CI — what fixture do you use?",
-              "vi": "i18n: test query tên English gãy trên CI FR — fixture nào bạn dùng?"
-            },
-            {
-              "en": "Why do Vue Teleport overlays false-positive if you scan before the dialog is open?",
-              "vi": "Vì sao overlay Vue Teleport false-positive nếu scan trước khi dialog mở?"
-            },
-            {
-              "en": "Third-party chat widgets fail axe forever — exclude the iframe or disable axe?",
-              "vi": "Widget chat third-party fail axe mãi — exclude iframe hay tắt axe?"
-            }
-          ]
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **Who owns a11y bugs?** DS for primitives; product for composition and copy.\n- **Legacy Vue app?** Playwright plus axe on login/checkout first; eslint warn then error.\n- **i18n locators?** Fixtures, not English names, or CI in FR breaks.\n- **Teleport false-positive?** Scan after the dialog is open. Third-party gets a contract test.",
+            "vi": "- **Ai sở hữu bug a11y?** DS cho primitive; product cho composition và copy.\n- **App Vue legacy?** Playwright cộng axe trên login/checkout trước; eslint warn rồi error.\n- **Locator i18n?** Fixture, không phải tên tiếng Anh, không thì CI FR gãy.\n- **Teleport false-positive?** Scan sau khi dialog mở. Bên thứ ba nhận contract test."
+          }
         },
         {
           "type": "thematic-break"

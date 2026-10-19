@@ -3,11 +3,11 @@
   "slug": "state-management",
   "title": {
     "en": "State Management",
-    "vi": "State Management"
+    "vi": "Quản lý state"
   },
   "summary": {
-    "en": "Pinia is the default for Vue 3. Vuex is a dialect you can speak for legacy interviews and migrations — seniors are graded on where state lives, SSR hydration, and store boundaries.",
-    "vi": "Pinia là default cho Vue 3. Vuex là dialect bạn nói được cho interview legacy và migration — senior được chấm ở chỗ state sống, SSR hydration, và biên store."
+    "en": "Pinia is the Vue 3 default. Vuex is a dialect for legacy interviews. Seniors are graded on where state lives, per-request SSR, and store boundaries — not commit versus dispatch. Start with 7.1–7.3.",
+    "vi": "Pinia là mặc định Vue 3. Vuex là dialect cho phỏng vấn legacy. Senior được chấm ở chỗ state sống, SSR theo request, và biên store — không phải commit khác dispatch. Bắt đầu từ 7.1–7.3."
   },
   "category": "vue",
   "order": 7,
@@ -23,7 +23,7 @@
       },
       "title": {
         "en": "State Management",
-        "vi": "State Management"
+        "vi": "Quản lý state"
       },
       "blocks": [
         {
@@ -31,7 +31,7 @@
           "level": 1,
           "text": {
             "en": "State Management",
-            "vi": "State Management"
+            "vi": "Quản lý state"
           },
           "id": {
             "en": "state-management",
@@ -41,15 +41,15 @@
         {
           "type": "paragraph",
           "text": {
-            "en": "Pinia is the default answer for Vue 3. Vuex still appears in **legacy interviews** and migration stories; treat it as a dialect you can speak, not the architecture you would start today. Seniors are graded on **where state lives** (component, URL, Pinia, server cache), **SSR hydration**, and **store boundaries** — not on memorizing `commit` vs `dispatch`. A strong answer is a **decision** under a **constraint**, the **failure mode** you have already shipped, and how you would **measure** it.",
-            "vi": "Pinia là câu default cho Vue 3. Vuex vẫn xuất hiện trong **interview legacy** và chuyện migrate; coi nó là dialect bạn nói được, không phải kiến trúc bạn khởi đầu hôm nay. Senior được chấm ở **state sống ở đâu** (component, URL, Pinia, server cache), **SSR hydration**, và **biên store** — không phải thuộc `commit` vs `dispatch`. Câu trả lời mạnh là **quyết định** dưới **ràng buộc**, **failure mode** bạn đã ship, và cách bạn **đo**."
+            "en": "This doc is senior Vue state for interviews: Pinia is the default, Vuex is a dialect for legacy apps, and the real question is where a piece of state lives — component, URL, Pinia, or a server cache. It is for engineers who already know `defineStore` and now need a decision under SSR, store boundaries, and invalidation.",
+            "vi": "Tài liệu này là state Vue mức senior cho phỏng vấn: Pinia là mặc định, Vuex là dialect cho app legacy, và câu hỏi thật là một mảnh state sống ở đâu — component, URL, Pinia, hay cache server. Dành cho engineer đã thuộc `defineStore` và giờ cần một quyết định dưới SSR, biên store, và làm mất hiệu lực cache (invalidation)."
           }
         },
         {
           "type": "paragraph",
           "text": {
-            "en": "React / Next twin (Zustand, Redux Toolkit, TanStack Query, RSC): [State Management (React)](./state-management-react.md).",
-            "vi": "Bản đôi React / Next (Zustand, Redux Toolkit, TanStack Query, RSC): [State Management (React)](./state-management-react.md)."
+            "en": "Study 7.1–7.3 first (Pinia versus Vuex, the flow, global versus local versus URL). Interviewers drill store boundaries, per-request SSR, and “Pinia is not a REST cache” more than `commit` versus `dispatch`. Then 7.4–7.5 only if the role still has Vuex, and 7.6–7.7 for hydration and invalidation. The React twin is [State Management (React)](./state-management-react.md). For every topic, name the constraint, the failure you have seen, and how you would prove the fix.",
+            "vi": "Hãy học 7.1–7.3 trước (Pinia khác Vuex, luồng, global khác local khác URL). Người phỏng vấn đào biên store, SSR theo request, và “Pinia không phải REST cache” nhiều hơn `commit` khác `dispatch`. Rồi 7.4–7.5 chỉ khi role còn Vuex, và 7.6–7.7 cho hydration và làm mất hiệu lực cache. Bản React là [State Management (React)](./state-management-react.md). Với mỗi topic, hãy nêu ràng buộc, lỗi bạn đã gặp, và cách chứng minh cách xử lý."
           }
         },
         {
@@ -64,7 +64,7 @@
       },
       "title": {
         "en": "7. State Management",
-        "vi": "7. State Management"
+        "vi": "7. Quản lý state"
       },
       "blocks": [
         {
@@ -72,7 +72,7 @@
           "level": 2,
           "text": {
             "en": "7. State Management",
-            "vi": "7. State Management"
+            "vi": "7. Quản lý state"
           },
           "id": {
             "en": "7-state-management",
@@ -84,7 +84,7 @@
           "level": 3,
           "text": {
             "en": "7.1. Vuex vs Pinia",
-            "vi": "7.1. Vuex vs Pinia"
+            "vi": "7.1. Vuex khác Pinia"
           },
           "id": {
             "en": "71-vuex-vs-pinia",
@@ -92,48 +92,55 @@
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "What they actually ask",
-            "vi": "Họ thực sự hỏi gì"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "A Vue 2 monolith is on Vuex 3 with 40 namespaced modules. You are moving one checkout slice to Vue 3 this quarter. “Why Pinia?” is the warmup — they want the **migration order**, **per-request SSR**, and whether you would copy the god object into `useMainStore`.",
-            "vi": "Monolith Vue 2 đang Vuex 3 với 40 module có namespace. Quý này bạn chuyển một slice checkout sang Vue 3. “Vì sao Pinia?” là warmup — họ muốn **thứ tự migrate**, **SSR per-request**, và bạn có copy god object vào `useMainStore` không."
+            "en": "**In short:** Pinia is Vue 3’s official store: many small stores, TypeScript that infers, and no mutations. Vuex is one namespaced store you still speak for legacy apps.",
+            "vi": "**Tóm tắt:** Pinia là store chính thức của Vue 3: nhiều store nhỏ, TypeScript suy luận được, và không mutation. Vuex là một store có namespace bạn vẫn nói cho app legacy."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Takeaway",
-            "vi": "Ý chính"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "Pinia is the Vue 3 default; migrate by bounded store, never by cloning the Vuex root into one `useMainStore`.",
-            "vi": "Pinia là default Vue 3; migrate theo store có biên, không clone root Vuex thành một `useMainStore`."
+            "en": "**Why it matters:** “Why Pinia?” is the warmup. They want the migration order, a per-request SSR instance, and whether you would copy a Vuex god object (one store holding every field) into `useMainStore`.",
+            "vi": "**Vì sao quan trọng:** “Vì sao Pinia?” là câu mở đầu. Họ muốn thứ tự migrate, một instance SSR theo request, và bạn có copy god object Vuex (một store giữ mọi field) vào `useMainStore` không."
           }
         },
         {
           "type": "list",
-          "style": "ul",
+          "style": "ol",
           "items": [
             {
-              "en": "**Decision.** Pinia for Vue 3 greenfield and every module you touch. Vuex 4 only if the app is Vuex-everywhere, the team already has mutation discipline, and you cannot pause delivery. Install Pinia **beside** Vuex; new features get Pinia; extract a module that already has a boundary (`cart`, flags); drop Vuex when no `mapState` remains. Do not run two global clients past the transition window.",
-              "vi": "**Quyết định.** Pinia cho Vue 3 greenfield và mọi module bạn đụng. Vuex 4 chỉ khi app là Vuex-everywhere, team đã có kỷ luật mutation, và bạn không dừng delivery. Install Pinia **cạnh** Vuex; feature mới nhận Pinia; extract module đã có biên (`cart`, flag); drop Vuex khi hết `mapState`. Đừng chạy hai global client lâu hơn cửa sổ chuyển tiếp."
+              "en": "**How it works:** Vuex is one root store with namespaced modules. You `commit` a mutation or `dispatch` an action by string (`cart/add`).",
+              "vi": "**Cách hoạt động:** Vuex là một store gốc với module có namespace. Bạn `commit` mutation hoặc `dispatch` action bằng chuỗi (`cart/add`)."
             },
             {
-              "en": "**Why.** Vuex is one store with namespaced modules; Pinia is many stores you compose at call time. Both need a **per-request** instance on SSR — Pinia’s Nuxt module is the path of least regret. Vuex plugins that hang state on a module singleton leak users across requests. Pinia inference actually works; Vuex typed modules fight `this`.",
-              "vi": "**Vì sao.** Vuex là một store với module có namespace; Pinia là nhiều store bạn compose lúc gọi. Cả hai cần instance **per-request** trên SSR — module Pinia của Nuxt là đường ít hối tiếc nhất. Plugin Vuex treo state trên singleton module sẽ leak user giữa request. Inference Pinia chạy thật; module typed Vuex đánh với `this`."
+              "en": "Pinia is many stores you compose at call time: `useCartStore().add(line)`. There is no mutation layer. The action writes state, or you assign with team discipline.",
+              "vi": "Pinia là nhiều store bạn compose lúc gọi: `useCartStore().add(line)`. Không có tầng mutation. Action ghi state, hoặc bạn gán với kỷ luật của team."
             },
             {
-              "en": "**Trade-off.** A 1:1 mutation map keeps the god object. `useAppStore` with 80 fields makes every SFC subscribe too widely — split `auth` / `ui` / `checkout`. Stores that import 12 others at top level circular-init; call `useX()` **inside actions**. Persist plugins must be `.client` in Nuxt and persist **UI preferences**, not server lists. Direct `store.count++` is legal; teams that need an audit log still wrap writes in named actions.",
-              "vi": "**Đánh đổi / rủi ro.** Map mutation 1:1 giữ god object. `useAppStore` 80 field khiến mọi SFC subscribe quá rộng — tách `auth` / `ui` / `checkout`. Store import 12 store khác ở top level sẽ init vòng; gọi `useX()` **trong action**. Plugin persist phải là `.client` trong Nuxt và persist **UI preference**, không phải list server. `store.count++` trực tiếp là hợp lệ; team cần audit log vẫn bọc ghi trong named action."
+              "en": "TypeScript infers Pinia `this` and setup-store returns. Vuex typed modules fight `this` and stringly-typed `dispatch`. DevTools still work; Pinia dropped the sync-mutation requirement.",
+              "vi": "TypeScript suy luận `this` của Pinia và giá trị trả về của setup-store. Module typed Vuex đánh với `this` và `dispatch` kiểu chuỗi. DevTools vẫn chạy; Pinia bỏ yêu cầu mutation sync."
             },
             {
-              "en": "**How to verify.** Time to add a feature without editing an unrelated store. Two concurrent SSR requests with different sessions. Bundle of unused Vuex modules (they rarely tree-shake). `store.$dispose()` in tests so specs are not order-dependent. Vuex `strict` in prod is a performance tax — Pinia has no equivalent gate; invariants live in actions and tests.",
-              "vi": "**Cách kiểm chứng.** Thời gian thêm feature không sửa store unrelated. Hai SSR request song song session khác. Bundle module Vuex không dùng (hiếm khi tree-shake sạch). `store.$dispose()` trong test để spec không phụ thuộc thứ tự. Vuex `strict` trên prod là thuế perf — Pinia không có cổng tương đương; invariant sống trong action và test."
+              "en": "Migrate by installing Pinia beside Vuex. New features get a Pinia store. Extract a module that already has a boundary (`cart`, flags). Drop Vuex when no `mapState` remains.",
+              "vi": "Migrate bằng cách cài Pinia cạnh Vuex. Feature mới nhận Pinia store. Extract module đã có biên (`cart`, flag). Bỏ Vuex khi hết `mapState`."
             }
           ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "// Same cart: Vuex module (legacy) vs Pinia store (Vue 3 default)\nconst cartModule = {\n  namespaced: true,\n  state: () => ({ lines: [] as string[] }),\n  mutations: {\n    add(state: { lines: string[] }, id: string) {\n      state.lines.push(id) // Vuex: sync mutation only\n    },\n  },\n}\nexport const useCartStore = defineStore('cart', {\n  state: () => ({ lines: [] as string[] }),\n  actions: {\n    add(id: string) {\n      this.lines.push(id) // Pinia: the action is the writer\n    },\n  },\n})",
+            "vi": "// Cùng cart: module Vuex (legacy) khác store Pinia (mặc định Vue 3)\nconst cartModule = {\n  namespaced: true,\n  state: () => ({ lines: [] as string[] }),\n  mutations: {\n    add(state: { lines: string[] }, id: string) {\n      state.lines.push(id) // Vuex: chỉ mutation sync\n    },\n  },\n}\nexport const useCartStore = defineStore('cart', {\n  state: () => ({ lines: [] as string[] }),\n  actions: {\n    add(id: string) {\n      this.lines.push(id) // Pinia: action chính là chỗ ghi\n    },\n  },\n})"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** Both hold `lines`. Vuex needs a namespaced module plus a sync mutation. Pinia is one `defineStore`: TypeScript infers `this.lines`, and there is no `commit`. Extract this shape; do not clone the Vuex root.",
+            "vi": "**Điều gì xảy ra:** Cả hai giữ `lines`. Vuex cần module có namespace cộng mutation sync. Pinia là một `defineStore`: TypeScript suy luận `this.lines`, và không có `commit`. Extract đúng hình này; đừng clone root Vuex."
+          }
         },
         {
           "type": "table",
@@ -155,10 +162,10 @@
             [
               {
                 "en": "Shape",
-                "vi": "Shape"
+                "vi": "Hình"
               },
               {
-                "en": "Single store, namespaced modules",
+                "en": "One store, namespaced modules",
                 "vi": "Một store, module có namespace"
               },
               {
@@ -172,12 +179,12 @@
                 "vi": "Ghi"
               },
               {
-                "en": "Mutations (sync) + actions",
-                "vi": "Mutation (sync) + action"
+                "en": "Sync mutations + actions",
+                "vi": "Mutation sync + action"
               },
               {
-                "en": "Actions (or direct assign, with discipline)",
-                "vi": "Action (hoặc gán trực tiếp, có kỷ luật)"
+                "en": "Actions (or direct assign)",
+                "vi": "Action (hoặc gán trực tiếp)"
               }
             ],
             [
@@ -186,12 +193,12 @@
                 "vi": "TypeScript"
               },
               {
-                "en": "Fight `this`, typed modules",
-                "vi": "Đánh với `this`, module typed"
+                "en": "Fights `this`; stringly `dispatch`",
+                "vi": "Đánh với `this`; `dispatch` kiểu chuỗi"
               },
               {
                 "en": "Inference that actually works",
-                "vi": "Inference thực sự chạy"
+                "vi": "Suy luận chạy thật"
               }
             ],
             [
@@ -201,46 +208,54 @@
               },
               {
                 "en": "`createStore` per request",
-                "vi": "`createStore` per request"
+                "vi": "`createStore` mỗi request"
               },
               {
                 "en": "`createPinia` per request (Nuxt module)",
-                "vi": "`createPinia` per request (module Nuxt)"
-              }
-            ],
-            [
-              {
-                "en": "When",
-                "vi": "Khi nào"
-              },
-              {
-                "en": "Legacy interviews, frozen apps",
-                "vi": "Interview legacy, app đóng băng"
-              },
-              {
-                "en": "Default for Vue 3",
-                "vi": "Default cho Vue 3"
+                "vi": "`createPinia` mỗi request (module Nuxt)"
               }
             ]
           ]
         },
         {
-          "type": "code",
-          "lang": "ts",
-          "code": {
-            "en": "// Extract a bounded Vuex module — do not clone the root.\nexport const useCartStore = defineStore('cart', {\n  state: () => ({ lines: [] as CartLine[] }),\n  actions: {\n    add(line: CartLine) {\n      this.lines.push(line)\n    },\n  },\n})\n\n// Cross-talk during the transition only.\nasync function addFromLegacy() {\n  const cart = useCartStore()\n  cart.add(await useVuexStore().dispatch('cart/peek'))\n}",
-            "vi": "// Extract module Vuex có biên — đừng clone root.\nexport const useCartStore = defineStore('cart', {\n  state: () => ({ lines: [] as CartLine[] }),\n  actions: {\n    add(line: CartLine) {\n      this.lines.push(line)\n    },\n  },\n})\n\n// Nói chuyện chéo chỉ trong cửa sổ chuyển tiếp.\nasync function addFromLegacy() {\n  const cart = useCartStore()\n  cart.add(await useVuexStore().dispatch('cart/peek'))\n}"
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- Pinia for Vue 3 greenfield and every module I touch. Vuex 4 only if the app is Vuex-everywhere and we cannot pause delivery.\n- Install Pinia beside Vuex. New features get Pinia. Extract a bounded module. Drop Vuex when no `mapState` remains.\n- Both need a per-request instance on SSR. `@pinia/nuxt` is the path of least regret. A module-scope singleton leaks users.\n- Do not clone an 80-field Vuex root into `useMainStore`. Split `auth`, `ui`, and `checkout` so subscribers stay narrow.\n- Direct `store.count++` is legal. Teams that need an audit log still wrap writes in named actions plus a plugin.",
+            "vi": "- Pinia cho Vue 3 greenfield và mọi module tôi đụng. Vuex 4 chỉ khi app là Vuex-everywhere và không dừng delivery được.\n- Cài Pinia cạnh Vuex. Feature mới nhận Pinia. Extract module có biên. Bỏ Vuex khi hết `mapState`.\n- Cả hai cần instance theo request trên SSR. `@pinia/nuxt` là đường ít hối tiếc. Singleton ở module scope làm rò user.\n- Đừng clone root Vuex 80 field vào `useMainStore`. Tách `auth`, `ui`, và `checkout` để subscriber hẹp.\n- `store.count++` trực tiếp là hợp lệ. Team cần audit log vẫn bọc ghi trong named action cộng plugin."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: every SFC re-renders. Cause: `useAppStore` with 80 fields. Fix: bounded stores and `storeToRefs`.\n- Symptom: User A’s cart in User B’s HTML. Cause: Pinia or Vuex at module scope. Fix: one instance per SSR request.\n- Symptom: stores hang at boot. Cause: `useX()` at setup top level. Fix: call `useX()` inside actions.\n- Symptom: header flashes logged-out. Cause: persist plugin overwrites the payload. Fix: persist after hydrate, UI prefs only.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: mọi SFC re-render. Nguyên nhân: `useAppStore` 80 field. Cách xử lý: store có biên và `storeToRefs`.\n- Triệu chứng: cart user A trong HTML user B. Nguyên nhân: Pinia hoặc Vuex ở module scope. Cách xử lý: một instance mỗi SSR request.\n- Triệu chứng: store treo lúc boot. Nguyên nhân: `useX()` ở top level setup. Cách xử lý: gọi `useX()` trong action.\n- Triệu chứng: header nháy logged-out. Nguyên nhân: plugin persist đè payload. Cách xử lý: persist sau hydrate, chỉ UI preference."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Interview phrasing",
-            "vi": "Nói khi phỏng vấn"
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
           },
           "text": {
-            "en": "I ship Pinia for Vue 3 and treat Vuex as a dialect for frozen apps. I install Pinia beside Vuex, give new features a Pinia store, and extract modules that already have a boundary — I would not copy an 80-field root into `useMainStore`. Both need a per-request instance on SSR; a plugin that hangs state on a module singleton leaks users. Pinia stores are cheap: more stores, small public surfaces, `useX()` inside actions so I do not circular-init.",
-            "vi": "Tôi ship Pinia cho Vue 3 và coi Vuex là dialect cho app đóng băng. Tôi install Pinia cạnh Vuex, feature mới nhận Pinia store, và extract module đã có biên — tôi không copy root 80 field vào `useMainStore`. Cả hai cần instance per-request trên SSR; plugin treo state trên singleton module sẽ leak user. Store Pinia rẻ: nhiều store, public surface nhỏ, gọi `useX()` trong action để không init vòng."
+            "en": "A Vue 2 monolith is on Vuex 3 with 40 namespaced modules. You move one checkout slice to Vue 3 this quarter. “Why Pinia?” is the warmup — they want the migration order, per-request SSR, and whether you copy the god object into `useMainStore`.",
+            "vi": "Monolith Vue 2 đang Vuex 3 với 40 module có namespace. Quý này bạn chuyển một slice checkout sang Vue 3. “Vì sao Pinia?” là câu mở đầu — họ muốn thứ tự migrate, SSR theo request, và bạn có copy god object vào `useMainStore` không."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "I ship Pinia for Vue 3 and treat Vuex as a dialect for frozen apps. Vuex is one store with namespaced modules; Pinia is many stores I compose at call time. TypeScript infers Pinia; Vuex typed modules fight this. I install Pinia beside Vuex, give new features a Pinia store, and extract modules that already have a boundary — I would not copy an 80-field root into useMainStore. On checkout I extracted cart as Pinia and left the other 39 Vuex modules alone until they had a boundary. Both need a per-request instance on SSR; a plugin that hangs state on a module singleton leaks users. Pinia stores are cheap: more stores, small public surfaces, useX() inside actions so I do not circular-init.",
+            "vi": "Tôi đưa Pinia cho Vue 3 và coi Vuex là dialect cho app đóng băng. Vuex là một store với module có namespace; Pinia là nhiều store tôi compose lúc gọi. TypeScript suy luận Pinia; module typed Vuex đánh với this. Tôi cài Pinia cạnh Vuex, feature mới nhận Pinia store, và extract module đã có biên — tôi không copy root 80 field vào useMainStore. Ở checkout tôi extract cart thành Pinia và để 39 module Vuex kia yên đến khi chúng có biên. Cả hai cần instance theo request trên SSR; plugin treo state trên singleton module sẽ làm rò user. Store Pinia rẻ: nhiều store, public surface nhỏ, gọi useX() trong action để không init vòng."
           }
         },
         {
@@ -248,39 +263,32 @@
           "items": [
             {
               "en": "Pinia is the Vue 3 default; Vuex stays for legacy interviews and frozen apps.",
-              "vi": "Pinia là default Vue 3; Vuex dành cho interview legacy và app đóng băng."
+              "vi": "Pinia là mặc định Vue 3; Vuex dành cho phỏng vấn legacy và app đóng băng."
             },
             {
               "en": "Migrate beside Vuex, by bounded store — never a 1:1 god-object rewrite.",
-              "vi": "Migrate cạnh Vuex, theo store có biên — không rewrite god object 1:1."
+              "vi": "Migrate cạnh Vuex, theo store có biên — không viết lại god object 1:1."
             },
             {
               "en": "SSR: one Pinia per request. Plugins that cache at module scope leak users.",
-              "vi": "SSR: một Pinia mỗi request. Plugin cache ở module scope sẽ leak user."
+              "vi": "SSR: một Pinia mỗi request. Plugin cache ở module scope sẽ làm rò user."
+            },
+            {
+              "en": "Pinia dropped mutations; TypeScript inference is the practical win.",
+              "vi": "Pinia bỏ mutation; suy luận TypeScript là thắng thực tế."
             }
           ]
         },
         {
-          "type": "list",
-          "style": "ol",
-          "items": [
-            {
-              "en": "Would you use Vuex 5? (Pinia is the official successor; do not bet a new app on Vuex.)",
-              "vi": "Có dùng Vuex 5 không? (Pinia là successor chính thức; đừng cược app mới vào Vuex.)"
-            },
-            {
-              "en": "How do you map namespaced `dispatch('cart/add')` to `useCartStore().add()`?",
-              "vi": "Map `dispatch('cart/add')` có namespace sang `useCartStore().add()` thế nào?"
-            },
-            {
-              "en": "Persist plugin vs cookie for auth — which wins on SSR, and why?",
-              "vi": "Persist plugin vs cookie cho auth — cái nào thắng trên SSR, vì sao?"
-            },
-            {
-              "en": "What does `store.$dispose()` fix in tests and session-scoped stores?",
-              "vi": "`store.$dispose()` sửa gì trong test và store theo session?"
-            }
-          ]
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **Would you use Vuex 5?** Pinia is the official successor. Do not bet a new app on Vuex.\n- **How do you map `dispatch('cart/add')`?** One Pinia store per Vuex module. The mutation body becomes the action.\n- **Persist plugin versus cookie for auth?** An httpOnly cookie on SSR. Persist is for client UI prefs, not tokens.\n- **What does `store.$dispose()` fix?** Tests and session-scoped stores that would otherwise leak across specs.",
+            "vi": "- **Có dùng Vuex 5 không?** Pinia là successor chính thức. Đừng cược app mới vào Vuex.\n- **Map `dispatch('cart/add')` thế nào?** Một Pinia store mỗi module Vuex. Thân mutation thành action.\n- **Plugin persist khác cookie cho auth?** Cookie httpOnly trên SSR. Persist cho UI preference phía client, không phải token.\n- **`store.$dispose()` sửa gì?** Test và store theo session nếu không sẽ rò giữa các spec."
+          }
         },
         {
           "type": "thematic-break"
@@ -290,7 +298,7 @@
           "level": 3,
           "text": {
             "en": "7.2. State Flow",
-            "vi": "7.2. State Flow"
+            "vi": "7.2. Luồng state"
           },
           "id": {
             "en": "72-state-flow",
@@ -298,55 +306,62 @@
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "What they actually ask",
-            "vi": "Họ thực sự hỏi gì"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "They let you sketch Flux for 20 seconds, then: this product table’s rows, this filter bar, this “item added” toast — **where does each piece actually live?** Dumping `useFetch` results into Pinia “so DevTools can see it” is the wrong default.",
-            "vi": "Họ cho bạn phác Flux 20 giây, rồi: row bảng product, thanh filter, toast “đã thêm” — **mảnh nào sống ở đâu?** Đổ kết quả `useFetch` vào Pinia “để DevTools thấy” là default sai."
+            "en": "**In short:** Unidirectional flow means the view asks for a change, an action writes state, and the view re-renders from that state. Pinia skips Vuex’s extra `commit` hop. Pinia is not a REST cache.",
+            "vi": "**Tóm tắt:** Luồng một chiều nghĩa là view xin một thay đổi, action ghi state, rồi view re-render từ state đó. Pinia bỏ bước `commit` thêm của Vuex. Pinia không phải REST cache."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Takeaway",
-            "vi": "Ý chính"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "Colocate first; Pinia is shared client UI, not a REST cache.",
-            "vi": "Colocate trước; Pinia là UI client được share, không phải REST cache."
+            "en": "**Why it matters:** They let you sketch Flux for twenty seconds, then ask where the product rows, the filter bar, and the “item added” toast actually live. Dumping `useFetch` results into Pinia so DevTools can see them is the wrong default.",
+            "vi": "**Vì sao quan trọng:** Họ cho bạn phác Flux hai mươi giây, rồi hỏi row bảng product, thanh filter, và toast “đã thêm” sống ở đâu. Đổ kết quả `useFetch` vào Pinia để DevTools thấy là mặc định sai."
           }
         },
         {
           "type": "list",
-          "style": "ul",
+          "style": "ol",
           "items": [
             {
-              "en": "**Decision.** Server state (lists, details, anything with a cache key and a TTL) lives in TanStack Query or Nuxt `useAsyncData` / `useFetch`. Client UI state (open modal, wizard step, optimistic overlay) lives in the component, the URL, or Pinia if it must be shared. One SFC → `ref`. URL already represents it (page, tab, sort, filters) → router query. Session-wide client (auth, theme, cart) → Pinia. After a POST, invalidate the cache — do not `store.items.push` as the source of truth.",
-              "vi": "**Quyết định.** Server state (list, detail, thứ có cache key và TTL) sống trong TanStack Query hoặc Nuxt `useAsyncData` / `useFetch`. Client UI state (modal mở, bước wizard, overlay optimistic) sống trong component, URL, hoặc Pinia nếu phải share. Một SFC → `ref`. URL đã biểu diễn (page, tab, sort, filter) → router query. Client cả session (auth, theme, cart) → Pinia. Sau POST, invalidate cache — đừng lấy `store.items.push` làm source of truth."
+              "en": "**How it works:** The user clicks in the component. The component calls a Pinia action (`store.add(line)`) or Vuex `dispatch('cart/add')`.",
+              "vi": "**Cách hoạt động:** User click trong component. Component gọi action Pinia (`store.add(line)`) hoặc Vuex `dispatch('cart/add')`."
             },
             {
-              "en": "**Why.** Vuex flow is `dispatch → action → commit → mutation → state → getter → view`. Pinia is `action (or assignment) → reactive state → view`. The constraint that bites is **lifetime**: server data goes stale; UI drafts should not. Two copies of `Product` (query + Pinia) will diverge.",
-              "vi": "**Vì sao.** Flow Vuex là `dispatch → action → commit → mutation → state → getter → view`. Pinia là `action (hoặc assignment) → reactive state → view`. Ràng buộc thực sự cắn là **lifetime**: data server sẽ stale; draft UI thì không nên. Hai bản `Product` (query + Pinia) sẽ lệch."
+              "en": "The action writes reactive state (Pinia) or commits a sync mutation (Vuex). Getters or computed values derive from that state.",
+              "vi": "Action ghi state reactive (Pinia) hoặc commit mutation sync (Vuex). Getter hoặc computed suy ra từ state đó."
             },
             {
-              "en": "**Trade-off.** `onMounted` → `store.fetchProducts()` parks products in Pinia forever, never invalidated, duplicated with a page that also `useFetch`s. Every keystroke in a filter bar writing Pinia re-renders the app shell. Getters that return a new array every time (`state.list.filter(...)`) force extra updates. `$subscribe` for persist can write on every patch including SSR — gate on client and debounce.",
-              "vi": "**Đánh đổi / rủi ro.** `onMounted` → `store.fetchProducts()` để product trong Pinia mãi, không invalidate, nhân đôi với page cũng `useFetch`. Mỗi phím thanh filter ghi Pinia rồi re-render app shell. Getter trả array mới mỗi lần (`state.list.filter(...)`) buộc update thừa. `$subscribe` cho persist có thể ghi mọi patch kể cả SSR — gate client và debounce."
+              "en": "The view re-renders. That is the whole loop: component → action → state → view. There is no two-way store binding.",
+              "vi": "View re-render. Đó là cả vòng: component → action → state → view. Không có binding store hai chiều."
             },
             {
-              "en": "**How to verify.** Duplicate GETs vs stale UI after a mutation. Count of Pinia stores that are just `items: []` + `fetch`. Render counts of the layout when a table paginates. Optimistic overlay in the component/store, rollback on error; the server cache stays authoritative.",
-              "vi": "**Cách kiểm chứng.** GET trùng vs UI stale sau mutation. Đếm Pinia store chỉ là `items: []` + `fetch`. Số render layout khi table paginate. Overlay optimistic trong component/store, rollback lúc lỗi; server cache vẫn authoritative."
+              "en": "Lifetime is the constraint that bites. Server lists go stale; UI drafts should not. Two copies of `Product` (query plus Pinia) will diverge.",
+              "vi": "Vòng đời là ràng buộc thực sự cắn. List server sẽ cũ; draft UI thì không nên. Hai bản `Product` (query cộng Pinia) sẽ lệch."
             }
           ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "export const useCartStore = defineStore('cart', {\n  state: () => ({ lines: [] as string[] }),\n  actions: {\n    add(id: string) {\n      this.lines.push(id) // action writes; view follows\n    },\n  },\n})\n\n// Click → action → state → view. Rows stay in the server cache.\nfunction onAdd(id: string) {\n  useCartStore().add(id)\n  // filters: route.query. toast: a local ref, not Pinia\n}",
+            "vi": "export const useCartStore = defineStore('cart', {\n  state: () => ({ lines: [] as string[] }),\n  actions: {\n    add(id: string) {\n      this.lines.push(id) // action ghi; view đi theo\n    },\n  },\n})\n\n// Click → action → state → view. Row ở lại server cache.\nfunction onAdd(id: string) {\n  useCartStore().add(id)\n  // filter: route.query. toast: ref local, không phải Pinia\n}"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** `onAdd` is the only write path. Pinia holds cart ids, not product rows. Filters belong in `route.query`. The toast is a local `ref`. After a POST, invalidate the server cache — do not treat `store.items.push` as truth.",
+            "vi": "**Điều gì xảy ra:** `onAdd` là đường ghi duy nhất. Pinia giữ id cart, không phải row product. Filter thuộc `route.query`. Toast là `ref` local. Sau POST, làm mất hiệu lực cache (invalidation) — đừng lấy `store.items.push` làm sự thật."
+          }
         },
         {
           "type": "table",
           "headers": [
             {
               "en": "Home",
-              "vi": "Nhà"
+              "vi": "Chỗ sống"
             },
             {
               "en": "Freshness",
@@ -354,7 +369,7 @@
             },
             {
               "en": "Sharing",
-              "vi": "Share"
+              "vi": "Chia sẻ"
             },
             {
               "en": "SSR",
@@ -439,17 +454,51 @@
         {
           "type": "senior-answer",
           "label": {
-            "en": "Interview phrasing",
-            "vi": "Nói khi phỏng vấn"
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
           },
           "text": {
-            "en": "I colocate first. Server lists live in Query or `useAsyncData` with a key and invalidation; Pinia is not a REST cache. Filters that belong in the URL stay in the router. Pinia is for session-shaped client state — auth, theme, cart — not for `fetchProducts` on every page. After a POST I call `refreshNuxtData` / `invalidateQueries`, I do not treat `store.items.push` as truth.",
-            "vi": "Tôi colocate trước. List server sống trong Query hoặc `useAsyncData` với key và invalidation; Pinia không phải REST cache. Filter thuộc URL thì ở router. Pinia cho client state hình session — auth, theme, cart — không phải `fetchProducts` mọi page. Sau POST tôi gọi `refreshNuxtData` / `invalidateQueries`, không lấy `store.items.push` làm sự thật."
+            "en": "- Colocate first. One SFC uses a `ref`. Promote only when sharing or lifetime demands it.\n- Server lists live in TanStack Query or Nuxt `useAsyncData` with a key. Pinia is not a REST cache.\n- Filters that the URL already represents stay in the router. Session-shaped client state (auth, theme, cart) goes to Pinia.\n- `onMounted` → `store.fetchProducts()` parks rows forever and duplicates a page that also fetches. On the admin table I keep rows in `useAsyncData`, not Pinia.\n- After a POST I call `refreshNuxtData` or `invalidateQueries`. I do not dual-write Pinia as the source of truth.",
+            "vi": "- Colocate trước. Một SFC dùng `ref`. Promote chỉ khi chia sẻ hoặc vòng đời đòi hỏi.\n- List server sống trong TanStack Query hoặc Nuxt `useAsyncData` với key. Pinia không phải REST cache.\n- Filter mà URL đã biểu diễn thì ở router. Client state hình session (auth, theme, cart) vào Pinia.\n- `onMounted` → `store.fetchProducts()` để row mãi và nhân đôi với trang cũng fetch. Ở bảng admin tôi giữ row trong `useAsyncData`, không Pinia.\n- Sau POST tôi gọi `refreshNuxtData` hoặc `invalidateQueries`. Tôi không dual-write Pinia làm nguồn sự thật."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: stale prices after an admin edit. Cause: `fetchProducts` wrote Pinia once. Fix: keyed server cache plus invalidation.\n- Symptom: the app shell re-renders on every filter keystroke. Cause: Pinia holds the draft. Fix: local `ref` or a debounced URL `replace`.\n- Symptom: extra updates from a getter. Cause: `state.list.filter(...)` returns a new array every read. Fix: cache the derived list.\n- Symptom: persist writes during SSR. Cause: `$subscribe` on every patch. Fix: client-only and debounce.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: giá cũ sau admin sửa. Nguyên nhân: `fetchProducts` ghi Pinia một lần. Cách xử lý: cache server có key cộng làm mất hiệu lực cache.\n- Triệu chứng: app shell re-render mỗi phím filter. Nguyên nhân: Pinia giữ draft. Cách xử lý: `ref` local hoặc URL `replace` đã debounce.\n- Triệu chứng: update thừa từ getter. Nguyên nhân: `state.list.filter(...)` trả array mới mỗi lần đọc. Cách xử lý: cache list suy ra.\n- Triệu chứng: persist ghi lúc SSR. Nguyên nhân: `$subscribe` mọi patch. Cách xử lý: chỉ client và debounce."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+          },
+          "text": {
+            "en": "They let you sketch Flux, then: this product table’s rows, this filter bar, this “item added” toast — where does each piece actually live? Dumping `useFetch` results into Pinia so DevTools can see them is the wrong default.",
+            "vi": "Họ cho bạn phác Flux, rồi: row bảng product, thanh filter, toast “đã thêm” — mảnh nào sống ở đâu? Đổ kết quả `useFetch` vào Pinia để DevTools thấy là mặc định sai."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "I colocate first. Server lists live in Query or useAsyncData with a key and invalidation; Pinia is not a REST cache. Filters that belong in the URL stay in the router. Pinia is for session-shaped client state — auth, theme, cart — not for fetchProducts on every page. On the admin product table, rows stay in useAsyncData; the added toast is a local ref; cart ids are the Pinia piece. The flow is component, then action, then state, then view. After a POST I call refreshNuxtData or invalidateQueries. I do not treat store.items.push as truth. Two copies of Product will diverge, and the SSR payload already is a cache.",
+            "vi": "Tôi colocate trước. List server sống trong Query hoặc useAsyncData với key và làm mất hiệu lực cache; Pinia không phải REST cache. Filter thuộc URL thì ở router. Pinia cho client state hình session — auth, theme, cart — không phải fetchProducts mọi trang. Ở bảng product admin, row ở lại useAsyncData; toast đã thêm là ref local; id cart là mảnh Pinia. Luồng là component, rồi action, rồi state, rồi view. Sau POST tôi gọi refreshNuxtData hoặc invalidateQueries. Tôi không lấy store.items.push làm sự thật. Hai bản Product sẽ lệch, và payload SSR đã là một cache."
           }
         },
         {
           "type": "key-takeaways",
           "items": [
+            {
+              "en": "Flow: component → action → state → view. Pinia skips the Vuex commit hop.",
+              "vi": "Luồng: component → action → state → view. Pinia bỏ bước commit của Vuex."
+            },
             {
               "en": "Colocate; use the URL when it already represents the state.",
               "vi": "Colocate; dùng URL khi nó đã biểu diễn state."
@@ -460,31 +509,20 @@
             },
             {
               "en": "After POST, invalidate the cache — do not dual-write Pinia as truth.",
-              "vi": "Sau POST, invalidate cache — đừng dual-write Pinia làm sự thật."
+              "vi": "Sau POST, làm mất hiệu lực cache — đừng dual-write Pinia làm sự thật."
             }
           ]
         },
         {
-          "type": "list",
-          "style": "ol",
-          "items": [
-            {
-              "en": "How do you invalidate server cache after a Pinia action that POSTs?",
-              "vi": "Invalidate server cache sau Pinia action POST thế nào?"
-            },
-            {
-              "en": "Where does optimistic UI live, and what rolls back on error?",
-              "vi": "Optimistic UI sống ở đâu, và rollback lúc lỗi ra sao?"
-            },
-            {
-              "en": "Why does a getter that `filter`s on every read force extra updates?",
-              "vi": "Vì sao getter `filter` mỗi lần đọc buộc update thừa?"
-            },
-            {
-              "en": "See [7.7](#77-server-cache-vs-client-store) — when is a Pinia list actually justified?",
-              "vi": "Xem [7.7](#77-server-cache-vs-client-store) — khi nào list trong Pinia thực sự đáng?"
-            }
-          ]
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **How do you invalidate after a Pinia POST?** Call `refreshNuxtData` or `invalidateQueries`. Do not `store.items.push` as truth. See [7.7](#77-server-cache-vs-client-store).\n- **Where does optimistic UI live?** Overlay flags in the component or Pinia. Roll back on error. The server cache stays authoritative.\n- **Why does a getter that `filter`s every read extra-update?** It returns a new array each time, so Vue sees a new dependency value.\n- **When is a Pinia list justified?** Client-only meaning — a compare-tray of ids — not refetchable entities.",
+            "vi": "- **Làm mất hiệu lực cache sau Pinia POST thế nào?** Gọi `refreshNuxtData` hoặc `invalidateQueries`. Đừng lấy `store.items.push` làm sự thật. Xem [7.7](#77-server-cache-vs-client-store).\n- **Optimistic UI sống ở đâu?** Overlay flag trong component hoặc Pinia. Rollback lúc lỗi. Server cache vẫn là nguồn sự thật.\n- **Vì sao getter `filter` mỗi lần đọc gây update thừa?** Nó trả array mới mỗi lần, nên Vue thấy giá trị dependency mới.\n- **Khi nào list trong Pinia đáng?** Ý nghĩa chỉ-client — compare-tray các id — không phải entity refetch được."
+          }
         },
         {
           "type": "thematic-break"
@@ -494,7 +532,7 @@
           "level": 3,
           "text": {
             "en": "7.3. When to Use Global vs Local State",
-            "vi": "7.3. When to Use Global vs Local State"
+            "vi": "7.3. Khi nào dùng state global khác local"
           },
           "id": {
             "en": "73-when-to-use-global-vs-local-state",
@@ -502,48 +540,55 @@
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "What they actually ask",
-            "vi": "Họ thực sự hỏi gì"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "Not “if many components need it → global.” A checkout wizard, a table’s filters, a theme toggle, and a hover tooltip — they want **auth/theme vs form drafts**, and **URL as source of truth for filters**. If a refresh should reset it, it was not global.",
-            "vi": "Không phải “nhiều component cần → global.” Wizard checkout, filter bảng, toggle theme, và tooltip hover — họ muốn **auth/theme vs form draft**, và **URL làm source of truth cho filter**. Refresh nên reset thì nó không phải global."
+            "en": "**In short:** Global state is session-shaped: auth, theme, locale, cart. Form drafts stay local. Filters that should survive a refresh live in the URL. Server data is not global UI state.",
+            "vi": "**Tóm tắt:** State global có hình session: auth, theme, locale, cart. Draft form ở local. Filter phải sống sót refresh thì ở URL. Data server không phải state UI global."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Takeaway",
-            "vi": "Ý chính"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "Global is session-shaped; drafts stay local; filters that should survive refresh live in the URL.",
-            "vi": "Global là hình session; draft ở local; filter phải sống sót refresh thì ở URL."
+            "en": "**Why it matters:** “If many components need it, put it in Pinia” is the junior rule. A checkout wizard, a table’s filters, a theme toggle, and a hover tooltip want different homes. If a refresh should reset it, it was not global.",
+            "vi": "**Vì sao quan trọng:** “Nhiều component cần thì nhét Pinia” là luật junior. Wizard checkout, filter bảng, toggle theme, và tooltip hover muốn chỗ khác nhau. Refresh nên reset thì nó không phải global."
           }
         },
         {
           "type": "list",
-          "style": "ul",
+          "style": "ol",
           "items": [
             {
-              "en": "**Decision.** Global (Pinia / `useState`) for session-shaped data: auth identity, theme, locale, cart, feature flags. Local (`ref`) for form drafts, hover, temporary flags. Filters, pagination, selected tab, sort → the URL unless they are secret or too large. Auth: Pinia holds the **hydrated user**, not an access token if it can be httpOnly. Theme: class on `<html>`, persist after paint or set a cookie so SSR matches. Pinia drafts only for **multi-route wizards** with an explicit discard and a max age.",
-              "vi": "**Quyết định.** Global (Pinia / `useState`) cho data hình session: identity auth, theme, locale, cart, feature flag. Local (`ref`) cho form draft, hover, flag tạm. Filter, pagination, tab chọn, sort → URL trừ khi secret hoặc quá lớn. Auth: Pinia giữ **user đã hydrate**, không phải access token nếu token có thể httpOnly. Theme: class trên `<html>`, persist sau paint hoặc set cookie để SSR khớp. Draft Pinia chỉ cho **wizard nhiều route** với discard tường minh và tuổi tối đa."
+              "en": "**How it works:** Ask three questions. Does a refresh keep it (session)? Does a shared link keep it (URL)? Does only this component need it (local `ref`)?",
+              "vi": "**Cách hoạt động:** Hỏi ba câu. Refresh có giữ không (session)? Link chia sẻ có giữ không (URL)? Chỉ component này cần ( `ref` local)?"
             },
             {
-              "en": "**Why.** Global subscriptions fan out. A chatty global store is a render-performance bug. The URL gives shareable links and a working back button for free. Auth only in memory logs you out on F5; filters only in component state fight the back button.",
-              "vi": "**Vì sao.** Subscription global là fan-out. Store global nói nhiều là bug perf render. URL cho link share được và nút back miễn phí. Auth chỉ trong memory thì F5 logged out; filter chỉ trong component state thì nút back đánh nhau với table."
+              "en": "Global (Pinia or Nuxt `useState`) for session-shaped data: auth identity, theme, locale, cart, flags. Local `ref` for drafts, hover, temporary flags.",
+              "vi": "Global (Pinia hoặc Nuxt `useState`) cho data hình session: identity auth, theme, locale, cart, flag. `ref` local cho draft, hover, flag tạm."
             },
             {
-              "en": "**Trade-off.** Form draft in Pinia so keep-alive miss does not lose it — then two tabs overwrite each other and logout must remember to `$reset`. URL length limits filter serialization; some UIs need a saved view on Pinia/server. Writing the URL on every typeahead keystroke floods history — debounce `replace`, or keep a local draft and commit on submit. `router.push` for page=1,2,3 fills history; prefer `replace` for filters. A global “loading” boolean toggles the whole-app spinner — prefer per-query pending.",
-              "vi": "**Đánh đổi / rủi ro.** Form draft trong Pinia để keep-alive miss không mất — rồi hai tab đè nhau và logout phải nhớ `$reset`. Độ dài URL giới hạn serialize filter; một số UI cần saved view trên Pinia/server. Ghi URL mỗi phím typeahead nhồi history — debounce `replace`, hoặc giữ draft local rồi commit lúc submit. `router.push` page=1,2,3 nhồi history; filter nên `replace`. Boolean “loading” global bật spinner cả app — ưu tiên pending per-query."
+              "en": "Filters, pagination, selected tab, and sort go in the URL unless they are secret or too large. Auth: Pinia holds the hydrated user, not an access token if the token can be httpOnly.",
+              "vi": "Filter, pagination, tab đang chọn, và sort vào URL trừ khi bí mật hoặc quá lớn. Auth: Pinia giữ user đã hydrate, không phải access token nếu token có thể httpOnly."
             },
             {
-              "en": "**How to verify.** Accidental re-renders of `App.vue` (`storeToRefs` of a fat store). Support tickets: “my filters disappeared” vs “the link doesn’t open the same view.” Restore a form after OAuth via sessionStorage, not Pinia. Prefer `provide/inject` over a tiny Pinia store for a subtree.",
-              "vi": "**Cách kiểm chứng.** Re-render tình cờ `App.vue` (`storeToRefs` store béo). Ticket support: “filter biến mất” vs “link không mở cùng view.” Restore form sau OAuth bằng sessionStorage, không Pinia. Ưu tiên `provide/inject` hơn Pinia store nhỏ cho subtree."
+              "en": "Pinia drafts only for multi-route wizards with an explicit discard and a max age. Prefer `provide`/`inject` over a tiny Pinia store for a subtree.",
+              "vi": "Draft Pinia chỉ cho wizard nhiều route với discard tường minh và tuổi tối đa. Ưu tiên `provide`/`inject` hơn Pinia store nhỏ cho subtree."
             }
           ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "const route = useRoute()\nconst router = useRouter()\nconst page = computed(() => Number(route.query.page ?? 1))\n\nfunction setPage(p: number) {\n  // replace: filter clicks must not flood history\n  router.replace({ query: { ...route.query, page: String(p) } })\n}\n\n// local draft — not Pinia, not the URL\nconst hoverSku = ref<string | null>(null)",
+            "vi": "const route = useRoute()\nconst router = useRouter()\nconst page = computed(() => Number(route.query.page ?? 1))\n\nfunction setPage(p: number) {\n  // replace: click filter không được nhồi history\n  router.replace({ query: { ...route.query, page: String(p) } })\n}\n\n// draft local — không Pinia, không URL\nconst hoverSku = ref<string | null>(null)"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** Pagination lives in `route.query`, so the link and the back button work. `replace` avoids flooding history. Hover is a local `ref` because a refresh should reset it. Pinia is not on this path.",
+            "vi": "**Điều gì xảy ra:** Pagination sống trong `route.query`, nên link và nút back chạy. `replace` tránh nhồi history. Hover là `ref` local vì refresh nên reset. Pinia không nằm trên path này."
+          }
         },
         {
           "type": "table",
@@ -573,7 +618,7 @@
               },
               {
                 "en": "Default",
-                "vi": "Default"
+                "vi": "Mặc định"
               },
               {
                 "en": "Rare (`?modal=`)",
@@ -587,7 +632,7 @@
             [
               {
                 "en": "Table filters",
-                "vi": "Filter table"
+                "vi": "Filter bảng"
               },
               {
                 "en": "No",
@@ -595,7 +640,7 @@
               },
               {
                 "en": "Default",
-                "vi": "Default"
+                "vi": "Mặc định"
               },
               {
                 "en": "Saved views",
@@ -608,8 +653,8 @@
                 "vi": "Draft wizard"
               },
               {
-                "en": "If one page",
-                "vi": "Nếu một page"
+                "en": "If one route",
+                "vi": "Nếu một route"
               },
               {
                 "en": "Ugly",
@@ -623,7 +668,7 @@
             [
               {
                 "en": "Auth user",
-                "vi": "Auth user"
+                "vi": "User auth"
               },
               {
                 "en": "No",
@@ -635,28 +680,50 @@
               },
               {
                 "en": "Default (+ cookie session)",
-                "vi": "Default (+ session cookie)"
+                "vi": "Mặc định (+ session cookie)"
               }
             ]
           ]
         },
         {
-          "type": "code",
-          "lang": "ts",
-          "code": {
-            "en": "// Filters live in the URL; Pinia is not in this path.\nconst router = useRouter()\nconst route = useRoute()\nconst page = computed(() => Number(route.query.page ?? 1))\nfunction setPage(p: number) {\n  router.replace({ query: { ...route.query, page: String(p) } })\n}",
-            "vi": "// Filter sống trên URL; Pinia không nằm trên path này.\nconst router = useRouter()\nconst route = useRoute()\nconst page = computed(() => Number(route.query.page ?? 1))\nfunction setPage(p: number) {\n  router.replace({ query: { ...route.query, page: String(p) } })\n}"
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- I do not promote state just because two components read it. Sharing is not the same as session lifetime.\n- Auth, theme, locale, and cart are session-shaped — Pinia plus a cookie session on SSR.\n- Form drafts stay local, or a named wizard store with discard. Logout must `$reset` that store.\n- Filters, page, and sort live in `route.query` so support can paste the link. `router.push` for `page=1,2,3` fills history; prefer `replace`.\n- A global loading boolean toggles the whole-app spinner. Prefer per-query pending. Nuxt `useState` is request-scoped, not Pinia-lite for everything.",
+            "vi": "- Tôi không promote state chỉ vì hai component đọc nó. Chia sẻ không giống vòng đời session.\n- Auth, theme, locale, và cart là hình session — Pinia cộng session cookie trên SSR.\n- Draft form ở local, hoặc wizard store có tên với discard. Logout phải `$reset` store đó.\n- Filter, trang, và sort sống trong `route.query` để support dán được link. `router.push` cho `page=1,2,3` nhồi history; filter nên `replace`.\n- Boolean loading global bật spinner cả app. Ưu tiên pending theo query. Nuxt `useState` theo request, không phải Pinia-lite cho mọi thứ."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: `App.vue` re-renders on every keystroke. Cause: `storeToRefs` of a fat store. Fix: split stores; subscribe to one field.\n- Symptom: “the link doesn’t open the same view.” Cause: filters lived in a component `ref`. Fix: put them in `route.query`.\n- Symptom: two tabs overwrite a wizard. Cause: Pinia draft without a tab key. Fix: sessionStorage per tab, or accept last-write.\n- Symptom: typeahead floods history. Cause: `router.push` on every key. Fix: debounce `replace`, or commit on submit.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `App.vue` re-render mỗi phím. Nguyên nhân: `storeToRefs` store béo. Cách xử lý: tách store; subscribe một field.\n- Triệu chứng: “link không mở cùng view.” Nguyên nhân: filter sống trong `ref` của component. Cách xử lý: đưa vào `route.query`.\n- Triệu chứng: hai tab đè wizard. Nguyên nhân: draft Pinia không có key tab. Cách xử lý: sessionStorage theo tab, hoặc chấp nhận ghi sau.\n- Triệu chứng: typeahead nhồi history. Nguyên nhân: `router.push` mỗi phím. Cách xử lý: debounce `replace`, hoặc commit lúc submit."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Interview phrasing",
-            "vi": "Nói khi phỏng vấn"
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
           },
           "text": {
-            "en": "I do not promote state just because two components read it. Auth, theme, locale, cart are session-shaped — Pinia plus a cookie session on SSR. Form drafts stay local, or a named wizard store with a discard. Filters, page, sort live in `route.query` so the link and the back button work. A refresh that should reset the value means it was never global. I would not put every `<input>` in the global store.",
-            "vi": "Tôi không promote state chỉ vì hai component đọc nó. Auth, theme, locale, cart là hình session — Pinia cộng session cookie trên SSR. Form draft ở local, hoặc wizard store có tên với discard. Filter, page, sort sống trong `route.query` để link và nút back chạy. Refresh nên reset thì nó chưa bao giờ là global. Tôi không nhét mọi `<input>` vào global store."
+            "en": "Not “if many components need it → global.” A checkout wizard, a table’s filters, a theme toggle, and a hover tooltip — they want auth/theme versus form drafts, and the URL as the source of truth for filters. If a refresh should reset it, it was not global.",
+            "vi": "Không phải “nhiều component cần thì global.” Wizard checkout, filter bảng, toggle theme, và tooltip hover — họ muốn auth/theme khác form draft, và URL làm nguồn sự thật cho filter. Refresh nên reset thì nó không phải global."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "I do not promote state just because two components read it. Auth, theme, locale, and cart are session-shaped — Pinia plus a cookie session on SSR. Form drafts stay local, or a named wizard store with a discard. Filters, page, and sort live in route.query so the link and the back button work — that is how support pastes the same table view. A refresh that should reset the value means it was never global. I would not put every input in the global store. For a subtree I prefer provide/inject over a tiny Pinia store. Nuxt useState is request-scoped global, not Pinia-lite for everything.",
+            "vi": "Tôi không promote state chỉ vì hai component đọc nó. Auth, theme, locale, và cart là hình session — Pinia cộng session cookie trên SSR. Draft form ở local, hoặc wizard store có tên với discard. Filter, trang, và sort sống trong route.query để link và nút back chạy — đó là cách support dán cùng một view bảng. Refresh nên reset thì nó chưa bao giờ là global. Tôi không nhét mọi input vào global store. Với subtree tôi ưu tiên provide/inject hơn Pinia store nhỏ. Nuxt useState là global theo request, không phải Pinia-lite cho mọi thứ."
           }
         },
         {
@@ -667,36 +734,29 @@
               "vi": "Global = hình session. Local = draft, hover, flag tạm."
             },
             {
-              "en": "Filters / page / sort belong in the URL unless secret or huge.",
-              "vi": "Filter / page / sort thuộc URL trừ khi secret hoặc quá lớn."
+              "en": "Filters, page, and sort belong in the URL unless secret or huge.",
+              "vi": "Filter, trang, và sort thuộc URL trừ khi bí mật hoặc quá lớn."
             },
             {
               "en": "If refresh should reset it, it was not global.",
               "vi": "Refresh nên reset thì nó không phải global."
+            },
+            {
+              "en": "Server data is not global UI state — see [7.7](#77-server-cache-vs-client-store).",
+              "vi": "Data server không phải state UI global — xem [7.7](#77-server-cache-vs-client-store)."
             }
           ]
         },
         {
-          "type": "list",
-          "style": "ol",
-          "items": [
-            {
-              "en": "How do you restore a form after an OAuth redirect?",
-              "vi": "Restore form sau OAuth redirect thế nào?"
-            },
-            {
-              "en": "`provide/inject` vs a tiny Pinia store for a subtree — which, and why?",
-              "vi": "`provide/inject` vs Pinia store nhỏ cho subtree — cái nào, vì sao?"
-            },
-            {
-              "en": "Why is Nuxt `useState('x')` request-scoped global, not “Pinia-lite for everything”?",
-              "vi": "Vì sao `useState('x')` trong Nuxt là global theo request, không phải “Pinia-lite cho mọi thứ”?"
-            },
-            {
-              "en": "`router.push` vs `replace` for table filters — what happens to history?",
-              "vi": "`router.push` vs `replace` cho filter table — history ra sao?"
-            }
-          ]
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **How do you restore a form after OAuth?** `sessionStorage` for the draft, not Pinia. Pinia would leak across users on a shared machine.\n- **`provide`/`inject` versus a tiny Pinia store?** Prefer inject for a subtree. Pinia if distant siblings or a session lifetime.\n- **Why is Nuxt `useState('x')` not Pinia-lite?** It is request-scoped SSR state for one value. It is not a store with actions.\n- **`router.push` versus `replace` for filters?** `push` fills history (page 1, 2, 3). `replace` keeps one history entry for the view.",
+            "vi": "- **Khôi phục form sau OAuth thế nào?** `sessionStorage` cho draft, không Pinia. Pinia sẽ rò giữa user trên máy dùng chung.\n- **`provide`/`inject` khác Pinia store nhỏ?** Ưu tiên inject cho subtree. Pinia nếu sibling xa hoặc vòng đời session.\n- **Vì sao Nuxt `useState('x')` không phải Pinia-lite?** Nó là state SSR theo request cho một giá trị. Không phải store có action.\n- **`router.push` khác `replace` cho filter?** `push` nhồi history (trang 1, 2, 3). `replace` giữ một mục history cho view."
+          }
         },
         {
           "type": "thematic-break"
@@ -706,7 +766,7 @@
           "level": 3,
           "text": {
             "en": "7.4. Vuex: commit vs dispatch",
-            "vi": "7.4. Vuex: commit vs dispatch"
+            "vi": "7.4. Vuex: commit khác dispatch"
           },
           "id": {
             "en": "74-vuex-commit-vs-dispatch",
@@ -714,46 +774,38 @@
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "What they actually ask",
-            "vi": "Họ thực sự hỏi gì"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "A 30-second Vuex answer, then whether you still split that way. Someone wrote `async FETCH` inside `mutations`. The senior close is: **in Pinia we do not split mutations and actions.**",
-            "vi": "Câu Vuex 30 giây, rồi bạn còn tách vậy không. Có người viết `async FETCH` trong `mutations`. Kết senior: **trong Pinia ta không tách mutation và action.**"
+            "en": "**In short:** Vuex splits `commit` (sync mutations) from `dispatch` (async actions) so DevTools can time-travel a pure log. Pinia does not split: the action is the writer. This topic is that split; [7.5](#75-dispatch-vs-actions-vuex) is who calls whom.",
+            "vi": "**Tóm tắt:** Vuex tách `commit` (mutation sync) khỏi `dispatch` (action async) để DevTools time-travel được một log thuần. Pinia không tách: action chính là chỗ ghi. Topic này là tách đó; [7.5](#75-dispatch-vs-actions-vuex) là ai gọi ai."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Takeaway",
-            "vi": "Ý chính"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "Vuex splits sync mutations from async actions for DevTools; Pinia actions are the writer.",
-            "vi": "Vuex tách mutation sync khỏi action async vì DevTools; action Pinia chính là writer."
+            "en": "**Why it matters:** Someone wrote `async FETCH` inside `mutations`. The log breaks, races appear, and the junior answer is “because Vue said so.” The senior close is: the split existed for DevTools, and Pinia dropped it.",
+            "vi": "**Vì sao quan trọng:** Có người viết `async FETCH` trong `mutations`. Log gãy, race xuất hiện, và câu junior là “vì Vue bảo vậy.” Kết senior: tách tồn tại vì DevTools, và Pinia đã bỏ."
           }
         },
         {
           "type": "list",
-          "style": "ul",
+          "style": "ol",
           "items": [
             {
-              "en": "**Decision.** Vuex: `commit` mutations for synchronous state changes; `dispatch` actions for async, I/O, and anything that might fail. Components almost always `dispatch`. Mutations must not `await`. Pinia: the action **is** the writer — no `commit`. If the team wants traceability, use named actions plus a Pinia plugin, not a fake mutation layer.",
-              "vi": "**Quyết định.** Vuex: `commit` mutation cho đổi state sync; `dispatch` action cho async, I/O, và thứ có thể fail. Component gần như luôn `dispatch`. Mutation không được `await`. Pinia: action **chính là** writer — không có `commit`. Team muốn traceability thì dùng named action cộng Pinia plugin, không phải tầng mutation giả."
+              "en": "**How it works:** `commit('SET_USER', user)` runs a mutation now. Mutations must be synchronous and should be pure enough to replay. They must not `await`.",
+              "vi": "**Cách hoạt động:** `commit('SET_USER', user)` chạy mutation ngay. Mutation phải sync và đủ thuần để replay. Chúng không được `await`."
             },
             {
-              "en": "**Why.** Vuex DevTools time-travel depends on **pure, sync mutations**. Async in a mutation breaks the log and races. The split existed for the log, not because JavaScript needed two function types. `dispatch` returns the action’s Promise; `commit` returns nothing useful.",
-              "vi": "**Vì sao.** Time-travel Vuex DevTools phụ thuộc **mutation thuần, sync**. Async trong mutation gãy log và race. Tách tồn tại vì log, không phải vì JavaScript cần hai loại hàm. `dispatch` trả Promise của action; `commit` không trả gì hữu ích."
+              "en": "`dispatch('fetchUser', id)` runs an action. Actions may be async, call APIs, and then `commit`. `dispatch` returns the action’s Promise; `commit` returns nothing useful.",
+              "vi": "`dispatch('fetchUser', id)` chạy action. Action có thể async, gọi API, rồi `commit`. `dispatch` trả Promise của action; `commit` không trả gì hữu ích."
             },
             {
-              "en": "**Trade-off.** Vuex split: better time-travel, more boilerplate, TypeScript pain. Pinia actions: less ceremony, but components can `$patch` multi-field invariants away — convention replaces the compiler. Recreating the Vuex split in Pinia is wasted ceremony unless you need an audit plugin. Returning data from Vuex actions vs always reading state — be consistent or callers race.",
-              "vi": "**Đánh đổi / rủi ro.** Tách Vuex: time-travel tốt hơn, boilerplate nhiều hơn, TypeScript đau. Action Pinia: ít nghi lễ, nhưng component có thể `$patch` mất invariant nhiều field — convention thay compiler. Tái tạo tách Vuex trong Pinia là nghi lễ thừa trừ khi cần plugin audit. Return data từ Vuex action vs luôn đọc state — nhất quán không thì caller race."
+              "en": "Components almost always `dispatch`. The split existed so Vuex DevTools could record a list of sync patches. JavaScript never needed two function types.",
+              "vi": "Component gần như luôn `dispatch`. Tách tồn tại để Vuex DevTools ghi một list patch sync. JavaScript chưa bao giờ cần hai loại hàm."
             },
             {
-              "en": "**How to verify.** In a Vuex app: mutation purity in code review — no `await` in `mutations`. In Pinia: you do not recreate this split. Vuex 4 + Vue 3: `useStore()` in `setup`, not Vue 2 `this.$store.commit`. Undo in Pinia is a command stack in a store, not a mutation log.",
-              "vi": "**Cách kiểm chứng.** App Vuex: độ thuần mutation lúc code review — không `await` trong `mutations`. App Pinia: bạn không tái tạo tách này. Vuex 4 + Vue 3: `useStore()` trong `setup`, không `this.$store.commit` kiểu Vue 2. Undo trong Pinia là command stack trong store, không phải mutation log."
+              "en": "In Pinia there is no `commit`. The action writes `this.user = …`. If the team wants an audit log, wrap writes in named actions plus a plugin — do not invent a mutation layer.",
+              "vi": "Trong Pinia không có `commit`. Action ghi `this.user = …`. Team muốn audit log thì bọc ghi trong named action cộng plugin — đừng bịa tầng mutation."
             }
           ]
         },
@@ -761,19 +813,131 @@
           "type": "code",
           "lang": "ts",
           "code": {
-            "en": "// Vuex: dispatch → action → commit → mutation (sync) → state\n// Pinia: the action is the writer. No commit.\nexport const useUserStore = defineStore('user', {\n  state: () => ({ user: null as User | null, error: null as string | null }),\n  actions: {\n    async fetchUser(id: string) {\n      this.error = null\n      this.user = await api.getUser(id)\n    },\n  },\n})",
-            "vi": "// Vuex: dispatch → action → commit → mutation (sync) → state\n// Pinia: action chính là writer. Không commit.\nexport const useUserStore = defineStore('user', {\n  state: () => ({ user: null as User | null, error: null as string | null }),\n  actions: {\n    async fetchUser(id: string) {\n      this.error = null\n      this.user = await api.getUser(id)\n    },\n  },\n})"
+            "en": "// Vuex: dispatch → action → commit → mutation (sync) → state\nconst mutations = {\n  SET_USER(state: { user: User | null }, user: User) {\n    state.user = user // no await — DevTools replays this\n  },\n}\nconst actions = {\n  async fetchUser({ commit }: { commit: Function }, id: string) {\n    commit('SET_USER', await api.getUser(id))\n  },\n}\n\n// Pinia: the action is the writer. No commit.\nexport const useUserStore = defineStore('user', {\n  state: () => ({ user: null as User | null }),\n  actions: {\n    async fetchUser(id: string) {\n      this.user = await api.getUser(id)\n    },\n  },\n})",
+            "vi": "// Vuex: dispatch → action → commit → mutation (sync) → state\nconst mutations = {\n  SET_USER(state: { user: User | null }, user: User) {\n    state.user = user // không await — DevTools replay cái này\n  },\n}\nconst actions = {\n  async fetchUser({ commit }: { commit: Function }, id: string) {\n    commit('SET_USER', await api.getUser(id))\n  },\n}\n\n// Pinia: action chính là chỗ ghi. Không commit.\nexport const useUserStore = defineStore('user', {\n  state: () => ({ user: null as User | null }),\n  actions: {\n    async fetchUser(id: string) {\n      this.user = await api.getUser(id)\n    },\n  },\n})"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** Vuex needs two functions for one write. `dispatch` returns the Promise so a caller can `await` it. Pinia folds that into one action. `async` inside a Vuex mutation would break the DevTools log and race the next commit.",
+            "vi": "**Điều gì xảy ra:** Vuex cần hai hàm cho một lần ghi. `dispatch` trả Promise để caller `await` được. Pinia gộp thành một action. `async` trong mutation Vuex sẽ gãy log DevTools và race với commit sau."
+          }
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "",
+              "vi": ""
+            },
+            {
+              "en": "Vuex",
+              "vi": "Vuex"
+            },
+            {
+              "en": "Pinia",
+              "vi": "Pinia"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Sync write",
+                "vi": "Ghi sync"
+              },
+              {
+                "en": "`commit` a mutation",
+                "vi": "`commit` một mutation"
+              },
+              {
+                "en": "Action body or `store.$patch`",
+                "vi": "Thân action hoặc `store.$patch`"
+              }
+            ],
+            [
+              {
+                "en": "Async / I/O",
+                "vi": "Async / I/O"
+              },
+              {
+                "en": "`dispatch` an action",
+                "vi": "`dispatch` một action"
+              },
+              {
+                "en": "The same action, then it writes",
+                "vi": "Cùng action, rồi nó ghi"
+              }
+            ],
+            [
+              {
+                "en": "Return value",
+                "vi": "Giá trị trả"
+              },
+              {
+                "en": "`dispatch` → Promise; `commit` ≈ void",
+                "vi": "`dispatch` → Promise; `commit` ≈ void"
+              },
+              {
+                "en": "The action’s return value",
+                "vi": "Giá trị trả về của action"
+              }
+            ],
+            [
+              {
+                "en": "Why the split",
+                "vi": "Vì sao tách"
+              },
+              {
+                "en": "DevTools time-travel",
+                "vi": "Time-travel DevTools"
+              },
+              {
+                "en": "Dropped — named actions + plugins",
+                "vi": "Đã bỏ — named action + plugin"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- Vuex: components `dispatch`. Mutations stay sync so DevTools can replay. `async FETCH` inside `mutations` is the classic junior bug.\n- `dispatch` returns the action Promise. `commit` does not. Callers that need to wait must dispatch, not commit.\n- Pinia: I do not recreate mutations. The action writes. `$patch` is fine for a one-liner, not for a multi-field invariant.\n- Recreating the Vuex split in Pinia is wasted ceremony unless an audit plugin needs a named write stream.\n- Vuex 4 + Vue 3: `useStore()` in `setup`, not Vue 2 `this.$store.commit`. Undo in Pinia is a command stack, not a mutation log.",
+            "vi": "- Vuex: component `dispatch`. Mutation giữ sync để DevTools replay. `async FETCH` trong `mutations` là bug junior kinh điển.\n- `dispatch` trả Promise của action. `commit` thì không. Caller cần chờ phải dispatch, không commit.\n- Pinia: tôi không tái tạo mutation. Action ghi. `$patch` ổn cho one-liner, không ổn cho invariant nhiều field.\n- Tái tạo tách Vuex trong Pinia là nghi lễ thừa trừ khi plugin audit cần luồng ghi có tên.\n- Vuex 4 + Vue 3: `useStore()` trong `setup`, không `this.$store.commit` kiểu Vue 2. Undo trong Pinia là command stack, không phải mutation log."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: DevTools time-travel lies. Cause: `await` inside a mutation. Fix: move I/O to an action, then `commit`.\n- Symptom: callers race after `commit`. Cause: they expected a Promise. Fix: `dispatch` and `await` the action.\n- Symptom: Pinia “mutations.ts” wrappers. Cause: a 1:1 Vuex port. Fix: let actions write; add a plugin only for audit.\n- Symptom: `$patch` breaks a two-field invariant. Cause: a component patched one field. Fix: a named action that writes both.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: time-travel DevTools nói dối. Nguyên nhân: `await` trong mutation. Cách xử lý: chuyển I/O sang action, rồi `commit`.\n- Triệu chứng: caller race sau `commit`. Nguyên nhân: họ chờ một Promise. Cách xử lý: `dispatch` và `await` action.\n- Triệu chứng: file `mutations.ts` trong Pinia. Nguyên nhân: port Vuex 1:1. Cách xử lý: để action ghi; plugin chỉ khi cần audit.\n- Triệu chứng: `$patch` gãy invariant hai field. Nguyên nhân: component patch một field. Cách xử lý: named action ghi cả hai."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Interview phrasing",
-            "vi": "Nói khi phỏng vấn"
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
           },
           "text": {
-            "en": "In Vuex I `dispatch` from components and keep mutations synchronous so DevTools can time-travel — `async FETCH` inside `mutations` is the classic junior bug. In Pinia I do not split: the action writes state. If we need an audit log I wrap writes in named actions and a plugin, I do not invent a mutation layer. `store.$patch` is fine for a one-liner, not for a multi-field invariant.",
-            "vi": "Trong Vuex tôi `dispatch` từ component và giữ mutation sync để DevTools time-travel được — `async FETCH` trong `mutations` là bug junior kinh điển. Trong Pinia tôi không tách: action ghi state. Cần audit log thì bọc ghi trong named action và plugin, không invent tầng mutation. `store.$patch` ổn cho one-liner, không ổn cho invariant nhiều field."
+            "en": "A 30-second Vuex answer, then whether you still split that way. Someone wrote `async FETCH` inside `mutations`. The senior close is: in Pinia we do not split mutations and actions.",
+            "vi": "Câu Vuex 30 giây, rồi bạn còn tách vậy không. Có người viết `async FETCH` trong `mutations`. Kết senior: trong Pinia ta không tách mutation và action."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "In Vuex I dispatch from components and keep mutations synchronous so DevTools can time-travel — async FETCH inside mutations is the classic junior bug. Commit is the sync write; dispatch is the async entry and it returns a Promise. The split existed for the log, not because JavaScript needed two function types. When I inherited a module with async FETCH in mutations, the first fix was moving I/O into an action, not rewriting Pinia that week. In Pinia I do not split: the action writes state. If we need an audit log I wrap writes in named actions and a plugin, I do not invent a mutation layer. store.$patch is fine for a one-liner, not for a multi-field invariant.",
+            "vi": "Trong Vuex tôi dispatch từ component và giữ mutation sync để DevTools time-travel được — async FETCH trong mutations là bug junior kinh điển. Commit là ghi sync; dispatch là cửa async và nó trả Promise. Tách tồn tại vì log, không phải vì JavaScript cần hai loại hàm. Khi nhận module có async FETCH trong mutations, việc đầu là chuyển I/O sang action, không viết lại Pinia tuần đó. Trong Pinia tôi không tách: action ghi state. Cần audit log thì bọc ghi trong named action và plugin, không bịa tầng mutation. store.$patch ổn cho one-liner, không ổn cho invariant nhiều field."
           }
         },
         {
@@ -788,32 +952,25 @@
               "vi": "Tách tồn tại vì time-travel DevTools, không phải vì JS cần hai loại hàm."
             },
             {
+              "en": "`dispatch` returns a Promise; `commit` does not.",
+              "vi": "`dispatch` trả Promise; `commit` thì không."
+            },
+            {
               "en": "Pinia: the action is the writer. Do not recreate mutations.",
-              "vi": "Pinia: action chính là writer. Đừng tái tạo mutation."
+              "vi": "Pinia: action chính là chỗ ghi. Đừng tái tạo mutation."
             }
           ]
         },
         {
-          "type": "list",
-          "style": "ol",
-          "items": [
-            {
-              "en": "Why Vuex mutations cannot be async — DevTools and predictability, not “because Vue said so.”",
-              "vi": "Vì sao Vuex mutation không async được — DevTools và predictability, không phải “vì Vue bảo vậy.”"
-            },
-            {
-              "en": "How would you implement undo in Pinia without mutations?",
-              "vi": "Implement undo trong Pinia không mutation thế nào?"
-            },
-            {
-              "en": "When is `store.$patch` from a component acceptable?",
-              "vi": "Khi nào `store.$patch` từ component chấp nhận được?"
-            },
-            {
-              "en": "What does `dispatch` return that `commit` does not?",
-              "vi": "`dispatch` trả gì mà `commit` không trả?"
-            }
-          ]
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **Why can’t Vuex mutations be async?** DevTools replay and predictability, not “because Vue said so.”\n- **How would you implement undo in Pinia?** A command stack in a store: push the inverse write. Not a mutation log.\n- **When is `store.$patch` from a component acceptable?** A one-line UI flag. Not a multi-field invariant.\n- **What does `dispatch` return that `commit` does not?** The action’s Promise (and any return value).",
+            "vi": "- **Vì sao mutation Vuex không async được?** Replay DevTools và tính đoán được, không phải “vì Vue bảo vậy.”\n- **Undo trong Pinia không mutation thế nào?** Command stack trong store: đẩy phép ghi ngược. Không phải mutation log.\n- **Khi nào `store.$patch` từ component chấp nhận được?** Một flag UI một dòng. Không phải invariant nhiều field.\n- **`dispatch` trả gì mà `commit` không trả?** Promise của action (và mọi giá trị trả về)."
+          }
         },
         {
           "type": "thematic-break"
@@ -823,7 +980,7 @@
           "level": 3,
           "text": {
             "en": "7.5. Dispatch vs Actions (Vuex)",
-            "vi": "7.5. Dispatch vs Actions (Vuex)"
+            "vi": "7.5. Dispatch khác action (Vuex)"
           },
           "id": {
             "en": "75-dispatch-vs-actions-vuex",
@@ -831,46 +988,38 @@
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "What they actually ask",
-            "vi": "Họ thực sự hỏi gì"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "The heading is Vuex trivia (`dispatch` **calls** an `action`). Do not repeat [7.4](#74-vuex-commit-vs-dispatch). Logout must clear cart, UI overlays, and the session — **who calls whom**, and what happens when `useCartStore` and `useAuthStore` import each other at setup?",
-            "vi": "Heading là trivia Vuex (`dispatch` **gọi** một `action`). Đừng lặp [7.4](#74-vuex-commit-vs-dispatch). Logout phải clear cart, overlay UI, và session — **ai gọi ai**, và chuyện gì xảy ra khi `useCartStore` và `useAuthStore` import nhau lúc setup?"
+            "en": "**In short:** [7.4](#74-vuex-commit-vs-dispatch) covers the `commit` versus `dispatch` basics. This topic is namespaced dispatch, return values, and who calls whom. `dispatch` **calls** an action; cycles at setup are the real bug.",
+            "vi": "**Tóm tắt:** [7.4](#74-vuex-commit-vs-dispatch) đã nói `commit` khác `dispatch`. Topic này là dispatch có namespace, giá trị trả về, và ai gọi ai. `dispatch` **gọi** một action; cycle lúc setup mới là bug thật."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Takeaway",
-            "vi": "Ý chính"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "Own a call direction; call the other store inside an action, never at setup top level.",
-            "vi": "Sở hữu một hướng gọi; gọi store kia trong action, không ở top level setup."
+            "en": "**Why it matters:** Logout must clear cart, UI overlays, and the session. Interviewers ask who calls whom, and what happens when `useCartStore` and `useAuthStore` import each other at setup.",
+            "vi": "**Vì sao quan trọng:** Logout phải xóa cart, overlay UI, và session. Người phỏng vấn hỏi ai gọi ai, và chuyện gì xảy ra khi `useCartStore` và `useAuthStore` import nhau lúc setup."
           }
         },
         {
           "type": "list",
-          "style": "ul",
+          "style": "ol",
           "items": [
             {
-              "en": "**Decision.** Vuex: `dispatch('cart/add')` / `dispatch('user/logout', null, { root: true })` is how modules talk. Pinia: call `useOtherStore()` **inside an action**, not at store setup top level. Own a direction: `auth` may reset `cart`; `cart` must not hydrate `auth`. For logout, a dedicated action on the owner store, or an explicit `resetAll()` in one composer, beats a web of imports.",
-              "vi": "**Quyết định.** Vuex: `dispatch('cart/add')` / `dispatch('user/logout', null, { root: true })` là cách module nói chuyện. Pinia: gọi `useOtherStore()` **trong action**, không ở top level setup store. Sở hữu một hướng: `auth` được reset `cart`; `cart` không được hydrate `auth`. Logout: action riêng trên store owner, hoặc `resetAll()` tường minh trong một composer, thắng mạng import."
+              "en": "**How it works:** Vuex `dispatch('cart/add')` is a namespaced call. `dispatch('user/logout', null, { root: true })` reaches another module. The return value is that action’s Promise.",
+              "vi": "**Cách hoạt động:** Vuex `dispatch('cart/add')` là lời gọi có namespace. `dispatch('user/logout', null, { root: true })` với tới module khác. Giá trị trả là Promise của action đó."
             },
             {
-              "en": "**Why.** Pinia allows `useFooStore()` during `defineStore` setup, but if `foo` imports `bar` and `bar` imports `foo`, **one of them is `undefined` on first call**. Vuex namespaced modules have the same cycle via `dispatch`. Cycles are an architecture bug. Setup functions must stay side-effect free; in stores, call the other store lazily.",
-              "vi": "**Vì sao.** Pinia cho `useFooStore()` lúc `defineStore` setup, nhưng nếu `foo` import `bar` và `bar` import `foo`, **một trong hai là `undefined` lần gọi đầu**. Module Vuex có namespace cùng cycle qua `dispatch`. Cycle là bug kiến trúc. Setup function phải không side-effect; trong store, gọi store kia lazily."
+              "en": "Pinia has no string dispatch. Call `useOtherStore()` **inside an action**, not at store setup top level. Own a direction: `auth` may reset `cart`; `cart` must not hydrate `auth`.",
+              "vi": "Pinia không có dispatch kiểu chuỗi. Gọi `useOtherStore()` **trong action**, không ở top level setup của store. Sở hữu một hướng: `auth` được reset `cart`; `cart` không được hydrate `auth`."
             },
             {
-              "en": "**Trade-off.** Direct `useOtherStore()` in actions is simple and can weave a graph. A composer/facade store is one place to read, extra layer. Domain events (`$onAction` in a plugin) decouple but are harder to trace on a whiteboard. Hiding the cycle behind Vuex `root` dispatch only made it stringly typed. `$reset()` does not run custom teardown (websockets) — pair with a `dispose()` action. `$onAction` / `subscribeAction` recurse if the hook dispatches the same action.",
-              "vi": "**Đánh đổi / rủi ro.** `useOtherStore()` trực tiếp trong action thì đơn giản và có thể dệt graph. Store composer/facade là một chỗ đọc, thêm tầng. Domain event (`$onAction` trong plugin) decouple nhưng khó trace trên whiteboard. Giấu cycle sau Vuex `root` dispatch chỉ biến nó thành stringly typed. `$reset()` không chạy teardown custom (websocket) — ghép action `dispose()`. `$onAction` / `subscribeAction` recurse nếu hook dispatch cùng action."
+              "en": "If `foo` imports `bar` and `bar` imports `foo` at setup, **one of them is `undefined` on first call**. Vuex namespaced modules have the same cycle via `dispatch`. Cycles are an architecture bug.",
+              "vi": "Nếu `foo` import `bar` và `bar` import `foo` lúc setup, **một trong hai là `undefined` lần gọi đầu**. Module Vuex có namespace cùng cycle qua `dispatch`. Cycle là bug kiến trúc."
             },
             {
-              "en": "**How to verify.** Grep a dependency graph of `useXStore` calls. A logout test with `setActivePinia(createPinia())` that asserts every user-scoped store is cleared. Circular import warnings in the bundler. Calling `useXStore()` outside `setup` / an active pinia context (plain TS module, `setTimeout` after tests) throws — pass `pinia` or call from an action.",
-              "vi": "**Cách kiểm chứng.** Grep graph dependency lời gọi `useXStore`. Test logout với `setActivePinia(createPinia())` rồi assert mọi store theo user đã clear. Warning circular import ở bundler. Gọi `useXStore()` ngoài `setup` / context pinia active (module TS thuần, `setTimeout` sau test) thì throw — truyền `pinia` hoặc gọi từ action."
+              "en": "For logout, one owner action or an explicit `resetAll()` in a composer beats a web of imports. `$reset()` does not run custom teardown (websockets) — pair with a `dispose()` action.",
+              "vi": "Logout: một action owner hoặc `resetAll()` tường minh trong composer thắng mạng import. `$reset()` không chạy teardown tùy chỉnh (websocket) — ghép action `dispose()`."
             }
           ]
         },
@@ -878,27 +1027,143 @@
           "type": "code",
           "lang": "ts",
           "code": {
-            "en": "export const useAuthStore = defineStore('auth', {\n  actions: {\n    async logout() {\n      await api.logout()\n      this.user = null\n      // Inside the action — not at setup top-level\n      useCartStore().$reset()\n      useUiStore().closeAllOverlays()\n    },\n  },\n})",
-            "vi": "export const useAuthStore = defineStore('auth', {\n  actions: {\n    async logout() {\n      await api.logout()\n      this.user = null\n      // Trong action — không ở top-level setup\n      useCartStore().$reset()\n      useUiStore().closeAllOverlays()\n    },\n  },\n})"
+            "en": "export const useAuthStore = defineStore('auth', {\n  state: () => ({ user: null as User | null }),\n  actions: {\n    async logout() {\n      await api.logout()\n      this.user = null\n      // inside the action — not at setup top level\n      useCartStore().$reset()\n      useUiStore().closeAllOverlays()\n    },\n  },\n})\n\n// Vuex: dispatch('cart/reset', null, { root: true })\n// dispatch returns the action Promise so logout can await it",
+            "vi": "export const useAuthStore = defineStore('auth', {\n  state: () => ({ user: null as User | null }),\n  actions: {\n    async logout() {\n      await api.logout()\n      this.user = null\n      // trong action — không ở top level setup\n      useCartStore().$reset()\n      useUiStore().closeAllOverlays()\n    },\n  },\n})\n\n// Vuex: dispatch('cart/reset', null, { root: true })\n// dispatch trả Promise của action để logout await được"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** `auth` owns the direction. Cart and UI are reset from inside `logout`, lazily, so neither store is imported at setup. Vuex would `dispatch` a namespaced string the same way. A cycle at setup would leave one store `undefined` on the first call.",
+            "vi": "**Điều gì xảy ra:** `auth` sở hữu hướng gọi. Cart và UI được reset từ trong `logout`, lazily, nên không store nào bị import lúc setup. Vuex sẽ `dispatch` chuỗi có namespace cùng cách. Cycle lúc setup sẽ để một store `undefined` lần gọi đầu."
+          }
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Talk",
+              "vi": "Nói chuyện"
+            },
+            {
+              "en": "Vuex",
+              "vi": "Vuex"
+            },
+            {
+              "en": "Pinia",
+              "vi": "Pinia"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Same module",
+                "vi": "Cùng module"
+              },
+              {
+                "en": "`dispatch('add')`",
+                "vi": "`dispatch('add')`"
+              },
+              {
+                "en": "`this.add()` or `useCartStore().add()`",
+                "vi": "`this.add()` hoặc `useCartStore().add()`"
+              }
+            ],
+            [
+              {
+                "en": "Other module",
+                "vi": "Module khác"
+              },
+              {
+                "en": "`dispatch('cart/reset', null, { root: true })`",
+                "vi": "`dispatch('cart/reset', null, { root: true })`"
+              },
+              {
+                "en": "`useCartStore()` inside an action",
+                "vi": "`useCartStore()` trong action"
+              }
+            ],
+            [
+              {
+                "en": "Return",
+                "vi": "Trả về"
+              },
+              {
+                "en": "Action Promise",
+                "vi": "Promise của action"
+              },
+              {
+                "en": "Action return value",
+                "vi": "Giá trị trả về của action"
+              }
+            ],
+            [
+              {
+                "en": "Cycle",
+                "vi": "Cycle"
+              },
+              {
+                "en": "Stringly `root` dispatch hides it",
+                "vi": "`root` dispatch kiểu chuỗi giấu nó"
+              },
+              {
+                "en": "`undefined` on first `useX()` at setup",
+                "vi": "`undefined` lần `useX()` đầu lúc setup"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- Own a call direction. Auth may reset cart. Cart must not hydrate auth. A composer `resetAll()` is one place to read.\n- Call `useOtherStore()` inside actions. Setup functions stay side-effect free. Lazy calls break the init cycle.\n- Domain events (`$onAction` in a plugin) decouple stores but are harder to trace on a whiteboard. Prefer a named owner.\n- `$onAction` / Vuex `subscribeAction` recurse if the hook dispatches the same action. Guard or filter the hook.\n- Calling `useXStore()` outside `setup` or an active pinia (plain TS module, `setTimeout` after tests) throws — pass `pinia` or call from an action.",
+            "vi": "- Sở hữu một hướng gọi. Auth được reset cart. Cart không được hydrate auth. Composer `resetAll()` là một chỗ đọc.\n- Gọi `useOtherStore()` trong action. Setup function không side-effect. Gọi lazily phá cycle init.\n- Domain event (`$onAction` trong plugin) tách store nhưng khó trace trên whiteboard. Ưu tiên owner có tên.\n- `$onAction` / Vuex `subscribeAction` recurse nếu hook dispatch cùng action. Guard hoặc lọc hook.\n- Gọi `useXStore()` ngoài `setup` hoặc pinia đang active (module TS thuần, `setTimeout` sau test) thì throw — truyền `pinia` hoặc gọi từ action."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: one store is `undefined` on boot. Cause: two stores import each other at setup. Fix: call `useX()` inside the action.\n- Symptom: logout tests pass only when cart is imported first. Cause: a hidden cycle. Fix: `setActivePinia(createPinia())` and assert every user-scoped store is cleared.\n- Symptom: websockets still open after `$reset()`. Cause: `$reset` is state-only. Fix: a `dispose()` action.\n- Symptom: an `$onAction` hook loops. Cause: the hook dispatches the same action. Fix: filter by name or a flag.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: một store `undefined` lúc boot. Nguyên nhân: hai store import nhau lúc setup. Cách xử lý: gọi `useX()` trong action.\n- Triệu chứng: test logout chỉ pass khi import cart trước. Nguyên nhân: cycle ẩn. Cách xử lý: `setActivePinia(createPinia())` rồi assert mọi store theo user đã xóa.\n- Triệu chứng: websocket vẫn mở sau `$reset()`. Nguyên nhân: `$reset` chỉ là state. Cách xử lý: action `dispose()`.\n- Triệu chứng: hook `$onAction` lặp. Nguyên nhân: hook dispatch cùng action. Cách xử lý: lọc theo tên hoặc một flag."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Interview phrasing",
-            "vi": "Nói khi phỏng vấn"
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
           },
           "text": {
-            "en": "`dispatch` is the invocation; an action is the function — that is the whole Vuex distinction. In Pinia I call the other store inside an action, never at setup, and I own a direction: auth may reset cart, cart does not hydrate auth. If two stores import each other at setup, one is `undefined` on first call and it will pass the test that imported cart first. Logout is one composer or one owner action, not a web of imports.",
-            "vi": "`dispatch` là lời gọi; action là hàm — đó là toàn bộ khác biệt Vuex. Trong Pinia tôi gọi store kia trong action, không lúc setup, và tôi sở hữu một hướng: auth được reset cart, cart không hydrate auth. Hai store import nhau lúc setup thì một cái là `undefined` lần gọi đầu và sẽ pass cái test import cart trước. Logout là một composer hoặc một action owner, không phải mạng import."
+            "en": "The heading looks like Vuex trivia (`dispatch` calls an action). Do not repeat [7.4](#74-vuex-commit-vs-dispatch). Logout must clear cart, overlays, and the session — who calls whom, and what happens when `useCartStore` and `useAuthStore` import each other at setup?",
+            "vi": "Heading trông như trivia Vuex (`dispatch` gọi một action). Đừng lặp [7.4](#74-vuex-commit-vs-dispatch). Logout phải xóa cart, overlay, và session — ai gọi ai, và chuyện gì xảy ra khi `useCartStore` và `useAuthStore` import nhau lúc setup?"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "Section 7.4 covers commit versus dispatch. Dispatch is the invocation; an action is the function — that is the whole Vuex distinction, including namespaced strings and the returned Promise. In Pinia I call the other store inside an action, never at setup, and I own a direction: auth may reset cart, cart does not hydrate auth. Logout lives on auth and resets cart and overlays; cart never imports auth. If two stores import each other at setup, one is undefined on first call and it will pass the test that imported cart first. Logout is one composer or one owner action, not a web of imports.",
+            "vi": "Mục 7.4 đã nói commit khác dispatch. Dispatch là lời gọi; action là hàm — đó là toàn bộ khác biệt Vuex, kể cả chuỗi có namespace và Promise trả về. Trong Pinia tôi gọi store kia trong action, không lúc setup, và tôi sở hữu một hướng: auth được reset cart, cart không hydrate auth. Logout sống trên auth và reset cart cùng overlay; cart không bao giờ import auth. Hai store import nhau lúc setup thì một cái là undefined lần gọi đầu và sẽ pass cái test import cart trước. Logout là một composer hoặc một action owner, không phải mạng import."
           }
         },
         {
           "type": "key-takeaways",
           "items": [
             {
-              "en": "`dispatch` calls an action. Orchestration is who calls whom.",
-              "vi": "`dispatch` gọi action. Orchestration là ai gọi ai."
+              "en": "[7.4](#74-vuex-commit-vs-dispatch) is the split. Here: `dispatch` calls an action; orchestration is who calls whom.",
+              "vi": "[7.4](#74-vuex-commit-vs-dispatch) là tách. Ở đây: `dispatch` gọi action; orchestration là ai gọi ai."
+            },
+            {
+              "en": "Namespaced `dispatch('cart/add')` maps to `useCartStore().add()`. Both return a Promise.",
+              "vi": "`dispatch('cart/add')` có namespace map sang `useCartStore().add()`. Cả hai trả Promise."
             },
             {
               "en": "Call `useOtherStore()` inside actions, never at setup top level.",
@@ -911,26 +1176,15 @@
           ]
         },
         {
-          "type": "list",
-          "style": "ol",
-          "items": [
-            {
-              "en": "How do you test a logout that touches four stores?",
-              "vi": "Test logout đụng bốn store thế nào?"
-            },
-            {
-              "en": "Should stores import API clients? Vue Router?",
-              "vi": "Store có nên import API client? Vue Router?"
-            },
-            {
-              "en": "Pinia circular + auto-import: is the cycle gone? ([vue3 auto-import](./vue3.md#513-auto-import-components))",
-              "vi": "Pinia circular + auto-import: cycle hết chưa? ([vue3 auto-import](./vue3.md#513-auto-import-components))"
-            },
-            {
-              "en": "How do you break a cycle without Vuex `root` dispatch?",
-              "vi": "Phá cycle không dùng Vuex `root` dispatch thế nào?"
-            }
-          ]
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **How do you test a logout that touches four stores?** `setActivePinia(createPinia())`, call `logout`, assert each user-scoped store is empty.\n- **Should stores import API clients? Vue Router?** API clients yes, behind a function. Router: pass the result in, do not import the singleton.\n- **Does auto-import hide a Pinia cycle?** No. It only hides the import line. See Vue 3 auto-import ([5.1.3](./vue3.md#513-auto-import-components)).\n- **How do you break a cycle without Vuex `root` dispatch?** An owner action, a composer store, or a plugin — not a stringly typed `root` call.",
+            "vi": "- **Test logout đụng bốn store thế nào?** `setActivePinia(createPinia())`, gọi `logout`, assert mỗi store theo user đã trống.\n- **Store có nên import API client? Vue Router?** API client thì có, sau một hàm. Router: truyền kết quả vào, đừng import singleton.\n- **Auto-import có giấu cycle Pinia không?** Không. Nó chỉ giấu dòng import. Xem auto-import Vue 3 ([5.1.3](./vue3.md#513-auto-import-components)).\n- **Phá cycle không dùng Vuex `root` dispatch thế nào?** Action owner, store composer, hoặc plugin — không phải lời gọi `root` kiểu chuỗi."
+          }
         },
         {
           "type": "thematic-break"
@@ -948,48 +1202,55 @@
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "What they actually ask",
-            "vi": "Họ thực sự hỏi gì"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "User A’s cart shows up in User B’s HTML. Or the header flashes logged-out after a correct SSR render. “How does Pinia get from the server to the client?” — they want **per-request instances**, **payload**, and **what you must not persist**.",
-            "vi": "Cart user A hiện trong HTML user B. Hoặc header flash logged-out sau khi SSR render đúng. “Pinia đi từ server sang client thế nào?” — họ muốn **instance per-request**, **payload**, và **cái bạn không được persist**."
+            "en": "**In short:** SSR hydration of stores means serialising Pinia state into the HTML payload and installing it on the client **before first paint**. Cross-request state pollution is User A’s store leftover appearing in User B’s HTML because one Pinia was reused across requests.",
+            "vi": "**Tóm tắt:** Hydration SSR của store nghĩa là serialize state Pinia vào payload HTML và cài nó trên client **trước first paint**. Cross-request state pollution (ô nhiễm state giữa request) là store còn sót của user A hiện trong HTML user B vì một Pinia bị tái sử dụng giữa các request."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Takeaway",
-            "vi": "Ý chính"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "One Pinia per SSR request; serialize a minimal session before first paint — never tokens or 2 MB lists.",
-            "vi": "Một Pinia mỗi SSR request; serialize session tối thiểu trước first paint — không token, không list 2 MB."
+            "en": "**Why it matters:** User A’s cart shows up in User B’s HTML. Or the header flashes logged-out after a correct SSR render. They want per-request instances, the payload, and what you must not persist.",
+            "vi": "**Vì sao quan trọng:** Cart user A hiện trong HTML user B. Hoặc header nháy logged-out sau khi SSR render đúng. Họ muốn instance theo request, payload, và thứ bạn không được persist."
           }
         },
         {
           "type": "list",
-          "style": "ul",
+          "style": "ol",
           "items": [
             {
-              "en": "**Decision.** Create **one Pinia per SSR request**. Serialize the stores you still need on the client into the Nuxt/Vue payload. On the client, install the same state **before first paint** so hydration matches. Prefer `@pinia/nuxt` over a hand-rolled `window.__PINIA__`. Yes in the payload: public profile already used in HTML, flags that gated SSR, cart **ids** if the header rendered a count. No: refresh tokens, full ACL matrices, duplicated `useAsyncData` lists.",
-              "vi": "**Quyết định.** Tạo **một Pinia mỗi SSR request**. Serialize store client vẫn cần vào payload Nuxt/Vue. Trên client, install cùng state **trước first paint** để hydration khớp. Ưu tiên `@pinia/nuxt` hơn `window.__PINIA__` tự roll. Có trong payload: profile public đã dùng trong HTML, flag đã gate SSR, **id** cart nếu header render count. Không: refresh token, full ACL matrix, list `useAsyncData` nhân đôi."
+              "en": "**How it works:** Create **one Pinia per SSR request**. Anything still in the store at the end of `renderToString` can land in the HTML payload.",
+              "vi": "**Cách hoạt động:** Tạo **một Pinia mỗi SSR request**. Mọi thứ còn trong store cuối `renderToString` có thể nằm trong payload HTML."
             },
             {
-              "en": "**Why.** Anything in the store at the end of SSR can be **in the HTML**. `const pinia = createPinia()` at module scope puts User A’s cart in User B’s response. Hydrating after `onMounted` is too late — Vue already hydrated the DOM with defaults. Client plugins that re-fetch auth before hydrate overwrite server state and mismatch.",
-              "vi": "**Vì sao.** Mọi thứ trong store cuối SSR có thể **nằm trong HTML**. `const pinia = createPinia()` ở module scope nhét cart user A vào response user B. Hydrate sau `onMounted` thì muộn — Vue đã hydrate DOM với default. Client plugin re-fetch auth trước hydrate sẽ đè server state và lệch."
+              "en": "On the client, install the same state **before first paint** so hydration matches. `@pinia/nuxt` does per-request creation plus payload. A hand-rolled `window.__PINIA__` is easy to get wrong.",
+              "vi": "Trên client, cài cùng state **trước first paint** để hydration khớp. `@pinia/nuxt` lo tạo theo request cộng payload. `window.__PINIA__` tự roll dễ sai."
             },
             {
-              "en": "**Trade-off.** Serialize everything: easy mismatch-free, huge HTML, secret-prone. Serialize nothing and refetch: simple, flashes, extra RTT, mismatch if HTML assumed data. Serialize a **minimal** session and let queries own the rest — the production default. Vite SPA has no hydrate story: `createPinia()` once in `main.ts`. Date objects become strings; class instances die or hydrate as plain objects (`markRaw` + do not SSR them). Client-only persist plugins must run **after** payload apply or they clobber.",
-              "vi": "**Đánh đổi / rủi ro.** Serialize hết: dễ khỏi mismatch, HTML khổng lồ, dễ dính secret. Serialize không gì rồi refetch: đơn giản, flash, thêm RTT, lệch nếu HTML đã giả định data. Serialize **session tối thiểu** và để query sở hữu phần còn lại — default production. Vite SPA không có chuyện hydrate: `createPinia()` một lần trong `main.ts`. Date object thành string; class instance chết hoặc hydrate thành plain object (`markRaw` + đừng SSR chúng). Plugin persist chỉ-client phải chạy **sau** apply payload không thì chúng đè."
+              "en": "Yes in the payload: the public profile already used in HTML, flags that gated SSR, cart **ids** if the header rendered a count. No: refresh tokens, full ACL matrices, duplicated `useAsyncData` lists.",
+              "vi": "Có trong payload: profile public đã dùng trong HTML, flag đã gate SSR, **id** cart nếu header render count. Không: refresh token, full ACL matrix, list `useAsyncData` nhân đôi."
             },
             {
-              "en": "**How to verify.** Two concurrent SSR requests with different sessions. Payload keys and size. Hydration warnings on pages that read the store in `setup`. `useState` vs Pinia for a single SSR flag (useState is lighter; Pinia if there is behavior). Test with a real payload round-trip, not only `createTestingPinia({ initialState })`.",
-              "vi": "**Cách kiểm chứng.** Hai SSR request song song session khác. Key và size payload. Warning hydration trên page đọc store trong `setup`. `useState` vs Pinia cho một flag SSR (useState nhẹ hơn; Pinia nếu có behavior). Test bằng round-trip payload thật, không chỉ `createTestingPinia({ initialState })`."
+              "en": "Nuxt `useState` is request-scoped reactive state for a single value. Use it for a light SSR flag. Use Pinia when there is behavior (actions, several fields, DevTools).",
+              "vi": "Nuxt `useState` là state reactive theo request cho một giá trị. Dùng cho flag SSR nhẹ. Dùng Pinia khi có behavior (action, nhiều field, DevTools)."
             }
           ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "// ❌ module-scope pinia — User A leaks into User B (pollution)\nexport const pinia = createPinia()\n\n// ✅ one pinia per request; serialise pinia.state.value into the payload\nexport async function renderOk(cookie: string) {\n  const pinia = createPinia()\n  const app = createSSRApp(Root)\n  app.use(pinia)\n  useAuthStore(pinia).hydrateFrom(cookie)\n  const html = await renderToString(app)\n  return { html, state: pinia.state.value }\n}",
+            "vi": "// ❌ pinia ở module scope — user A rò sang user B (ô nhiễm)\nexport const pinia = createPinia()\n\n// ✅ một pinia mỗi request; serialize pinia.state.value vào payload\nexport async function renderOk(cookie: string) {\n  const pinia = createPinia()\n  const app = createSSRApp(Root)\n  app.use(pinia)\n  useAuthStore(pinia).hydrateFrom(cookie)\n  const html = await renderToString(app)\n  return { html, state: pinia.state.value }\n}"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** The bad export is a process-wide singleton. Two overlapping SSR requests share `user`. The good path creates a fresh Pinia, hydrates from that request’s cookie, and sends `pinia.state.value` in the payload. Install that payload before first paint, not in `onMounted`.",
+            "vi": "**Điều gì xảy ra:** Export sai là singleton cả process. Hai SSR request chồng nhau chia sẻ `user`. Đường đúng tạo Pinia mới, hydrate từ cookie của request đó, và gửi `pinia.state.value` trong payload. Cài payload đó trước first paint, không trong `onMounted`."
+          }
         },
         {
           "type": "table",
@@ -1003,8 +1264,8 @@
               "vi": "Bạn làm gì"
             },
             {
-              "en": "Leak / mismatch risk",
-              "vi": "Rủi ro leak / lệch"
+              "en": "Leak / mismatch",
+              "vi": "Rò / lệch"
             }
           ],
           "rows": [
@@ -1025,15 +1286,15 @@
             [
               {
                 "en": "Custom SSR",
-                "vi": "SSR custom"
+                "vi": "SSR tự viết"
               },
               {
-                "en": "Fresh pinia per `renderToString`; send `pinia.state.value`",
-                "vi": "Pinia tươi mỗi `renderToString`; gửi `pinia.state.value`"
+                "en": "Fresh pinia per `renderToString`; send `state.value`",
+                "vi": "Pinia mới mỗi `renderToString`; gửi `state.value`"
               },
               {
                 "en": "Module-scope pinia shares users",
-                "vi": "Pinia module-scope share user"
+                "vi": "Pinia module-scope chia sẻ user"
               }
             ],
             [
@@ -1043,11 +1304,11 @@
               },
               {
                 "en": "Module does per-request + payload",
-                "vi": "Module lo per-request + payload"
+                "vi": "Module lo theo request + payload"
               },
               {
-                "en": "You still must not put tokens / 2 MB lists in state",
-                "vi": "Vẫn không được nhét token / list 2 MB vào state"
+                "en": "You still must not put tokens in state",
+                "vi": "Vẫn không được nhét token vào state"
               }
             ]
           ]
@@ -1055,52 +1316,75 @@
         {
           "type": "senior-answer",
           "label": {
-            "en": "Interview phrasing",
-            "vi": "Nói khi phỏng vấn"
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
           },
           "text": {
-            "en": "I create one Pinia per SSR request and let `@pinia/nuxt` put a minimal session into the payload before first paint. A module-scope `createPinia()` is how User A’s cart lands in User B’s HTML. I do not serialize tokens, ACL matrices, or lists that `useAsyncData` already owns. Persist plugins run after the payload applies, or they overwrite the server state and flash logged-out chrome.",
-            "vi": "Tôi tạo một Pinia mỗi SSR request và để `@pinia/nuxt` nhét session tối thiểu vào payload trước first paint. `createPinia()` ở module scope là cách cart user A vào HTML user B. Tôi không serialize token, ACL matrix, hoặc list mà `useAsyncData` đã sở hữu. Plugin persist chạy sau khi apply payload, không thì chúng đè server state và flash chrome logged-out."
+            "en": "- I create one Pinia per SSR request and let `@pinia/nuxt` put a minimal session into the payload before first paint.\n- Cross-request pollution is a shared singleton. `const pinia = createPinia()` at module scope is how User A’s cart lands in User B’s HTML.\n- Hydrating after `onMounted` is too late — Vue already hydrated the DOM with defaults. Persist plugins run after the payload applies.\n- Serialize a minimal session and let queries own lists. Serialize everything: huge HTML, secret-prone. Serialize nothing: flashes and extra RTT.\n- Date objects become strings; class instances die or hydrate as plain objects. `markRaw` plus do not SSR them. Test a real payload round-trip, not only `createTestingPinia`.",
+            "vi": "- Tôi tạo một Pinia mỗi SSR request và để `@pinia/nuxt` nhét session tối thiểu vào payload trước first paint.\n- Ô nhiễm giữa request là singleton dùng chung. `const pinia = createPinia()` ở module scope là cách cart user A vào HTML user B.\n- Hydrate sau `onMounted` thì muộn — Vue đã hydrate DOM với mặc định. Plugin persist chạy sau khi apply payload.\n- Serialize session tối thiểu và để query sở hữu list. Serialize hết: HTML khổng lồ, dễ dính secret. Serialize không gì: nháy và thêm RTT.\n- Date object thành string; class instance chết hoặc hydrate thành plain object. `markRaw` cộng đừng SSR chúng. Test round-trip payload thật, không chỉ `createTestingPinia`."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: User A’s cart in User B’s HTML. Cause: module-scope Pinia. Fix: `createPinia()` inside the request handler (or `@pinia/nuxt`).\n- Symptom: header flashes logged-out. Cause: a client persist plugin overwrote the payload. Fix: apply payload first; persist UI prefs only.\n- Symptom: hydration mismatch on the header. Cause: store installed in `onMounted`. Fix: install before first paint.\n- Symptom: 2 MB of HTML. Cause: serialising `useAsyncData` lists into Pinia. Fix: let the Nuxt payload own those keys.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: cart user A trong HTML user B. Nguyên nhân: Pinia ở module scope. Cách xử lý: `createPinia()` trong request handler (hoặc `@pinia/nuxt`).\n- Triệu chứng: header nháy logged-out. Nguyên nhân: plugin persist phía client đè payload. Cách xử lý: apply payload trước; persist chỉ UI preference.\n- Triệu chứng: lệch hydration ở header. Nguyên nhân: store cài trong `onMounted`. Cách xử lý: cài trước first paint.\n- Triệu chứng: HTML 2 MB. Nguyên nhân: serialize list `useAsyncData` vào Pinia. Cách xử lý: để payload Nuxt sở hữu các key đó."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+          },
+          "text": {
+            "en": "User A’s cart shows up in User B’s HTML. Or the header flashes logged-out after a correct SSR render. “How does Pinia get from the server to the client?” — they want per-request instances, the payload, and what you must not persist.",
+            "vi": "Cart user A hiện trong HTML user B. Hoặc header nháy logged-out sau khi SSR render đúng. “Pinia đi từ server sang client thế nào?” — họ muốn instance theo request, payload, và thứ bạn không được persist."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "I create one Pinia per SSR request and let @pinia/nuxt put a minimal session into the payload before first paint. Cross-request state pollution is a shared singleton: a module-scope createPinia is how User A’s cart lands in User B’s HTML. I prove it with two concurrent SSR requests with different cookies and grep the HTML for the other user’s cart ids. I do not serialize tokens, ACL matrices, or lists that useAsyncData already owns. Persist plugins run after the payload applies, or they overwrite the server state and flash logged-out chrome. For a single SSR flag I prefer Nuxt useState; Pinia if there is behavior.",
+            "vi": "Tôi tạo một Pinia mỗi SSR request và để @pinia/nuxt nhét session tối thiểu vào payload trước first paint. Ô nhiễm state giữa request là singleton dùng chung: createPinia ở module scope là cách cart user A vào HTML user B. Tôi chứng minh bằng hai SSR request song song cookie khác nhau rồi grep HTML tìm id cart của user kia. Tôi không serialize token, ACL matrix, hoặc list mà useAsyncData đã sở hữu. Plugin persist chạy sau khi apply payload, không thì chúng đè server state và nháy chrome logged-out. Với một flag SSR tôi ưu tiên Nuxt useState; Pinia nếu có behavior."
           }
         },
         {
           "type": "key-takeaways",
           "items": [
             {
-              "en": "One Pinia per SSR request. Module-scope pinia leaks users.",
-              "vi": "Một Pinia mỗi SSR request. Pinia module-scope leak user."
+              "en": "One Pinia per SSR request. Module-scope pinia leaks users (cross-request pollution).",
+              "vi": "Một Pinia mỗi SSR request. Pinia module-scope làm rò user (ô nhiễm giữa request)."
             },
             {
               "en": "Install serialized state before first paint, not in `onMounted`.",
-              "vi": "Install state đã serialize trước first paint, không trong `onMounted`."
+              "vi": "Cài state đã serialize trước first paint, không trong `onMounted`."
             },
             {
               "en": "Serialize a minimal session — not tokens, PII dumps, or 2 MB lists.",
               "vi": "Serialize session tối thiểu — không token, dump PII, hoặc list 2 MB."
+            },
+            {
+              "en": "Nuxt `useState` is lighter for one SSR flag; Pinia when there is behavior.",
+              "vi": "Nuxt `useState` nhẹ hơn cho một flag SSR; Pinia khi có behavior."
             }
           ]
         },
         {
-          "type": "list",
-          "style": "ol",
-          "items": [
-            {
-              "en": "`useState` vs Pinia for a single SSR flag — which is lighter?",
-              "vi": "`useState` vs Pinia cho một flag SSR — cái nào nhẹ hơn?"
-            },
-            {
-              "en": "How does Vuex `replaceState` map to Pinia `state.value =`?",
-              "vi": "Vuex `replaceState` map sang Pinia `state.value =` thế nào?"
-            },
-            {
-              "en": "Why do Date objects and class instances break hydration?",
-              "vi": "Vì sao Date object và class instance gãy hydration?"
-            },
-            {
-              "en": "When must a persist plugin run relative to payload apply?",
-              "vi": "Plugin persist phải chạy lúc nào so với apply payload?"
-            }
-          ]
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **`useState` versus Pinia for one SSR flag?** `useState` is lighter and already request-scoped. Pinia if you need actions or DevTools.\n- **How does Vuex `replaceState` map to Pinia?** Assign `pinia.state.value` from the payload before mount.\n- **Why do Date objects and class instances break hydration?** JSON turns dates into strings and drops class methods. Keep plain data.\n- **When must a persist plugin run relative to payload apply?** After. Before, it clobbers server state and flashes logged-out chrome.",
+            "vi": "- **`useState` khác Pinia cho một flag SSR?** `useState` nhẹ hơn và đã theo request. Pinia nếu cần action hoặc DevTools.\n- **Vuex `replaceState` map sang Pinia thế nào?** Gán `pinia.state.value` từ payload trước khi mount.\n- **Vì sao Date object và class instance gãy hydration?** JSON biến date thành string và bỏ method của class. Giữ data thuần.\n- **Plugin persist phải chạy lúc nào so với apply payload?** Sau. Trước thì nó đè server state và nháy chrome logged-out."
+          }
         },
         {
           "type": "thematic-break"
@@ -1110,7 +1394,7 @@
           "level": 3,
           "text": {
             "en": "7.7. Server cache vs client store",
-            "vi": "7.7. Server cache vs client store"
+            "vi": "7.7. Cache server khác store client"
           },
           "id": {
             "en": "77-server-cache-vs-client-store",
@@ -1118,48 +1402,55 @@
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "What they actually ask",
-            "vi": "Họ thực sự hỏi gì"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "An admin edits a price; the product page still shows yesterday because `fetchProducts` wrote Pinia on `onMounted` and nobody called `refreshNuxtData`. The punchline: **do not use Pinia as your HTTP cache.** They want a crisp split and a mutation story — including the cart.",
-            "vi": "Admin sửa giá; trang product vẫn hiện giá hôm qua vì `fetchProducts` ghi Pinia lúc `onMounted` và không ai gọi `refreshNuxtData`. Punchline: **đừng dùng Pinia làm HTTP cache.** Họ muốn tách sắc và câu chuyện mutation — kể cả cart."
+            "en": "**In short:** A server cache (`useAsyncData`, TanStack Query) owns refetchable entities with a key, staleness, and invalidation (making the cache miss on purpose). Pinia owns client-only meaning. Do not use Pinia as your HTTP cache.",
+            "vi": "**Tóm tắt:** Server cache (`useAsyncData`, TanStack Query) sở hữu entity refetch được với key, độ cũ, và làm mất hiệu lực cache (invalidation). Pinia sở hữu ý nghĩa chỉ-client. Đừng dùng Pinia làm HTTP cache."
           }
         },
         {
-          "type": "senior-answer",
-          "label": {
-            "en": "Takeaway",
-            "vi": "Ý chính"
-          },
+          "type": "paragraph",
           "text": {
-            "en": "Server cache owns refetchable entities; Pinia owns client-only meaning — after POST, invalidate, do not dual-write.",
-            "vi": "Server cache sở hữu entity refetch được; Pinia sở hữu ý nghĩa chỉ-client — sau POST thì invalidate, đừng dual-write."
+            "en": "**Why it matters:** An admin edits a price; the product page still shows yesterday because `fetchProducts` wrote Pinia on `onMounted` and nobody called `refreshNuxtData`. They want a crisp split and a mutation story — including the cart.",
+            "vi": "**Vì sao quan trọng:** Admin sửa giá; trang product vẫn hiện giá hôm qua vì `fetchProducts` ghi Pinia lúc `onMounted` và không ai gọi `refreshNuxtData`. Họ muốn tách sắc và câu chuyện mutation — kể cả cart."
           }
         },
         {
           "type": "list",
-          "style": "ul",
+          "style": "ol",
           "items": [
             {
-              "en": "**Decision.** Server cache (`useAsyncData` / `useFetch` / TanStack Query / SWR) owns data a server would recognize: entities, lists, permissions, with a **key**, **staleness**, and **invalidation**. Pinia owns client-only meaning: session UX, drafts, selection not in the URL yet, optimistic overlays. Cart: **id list** in Pinia (or a cookie) plus **product details** from the server cache. After a POST, invalidate; do not “keep Pinia in sync” as the architecture.",
-              "vi": "**Quyết định.** Server cache (`useAsyncData` / `useFetch` / TanStack Query / SWR) sở hữu data server nhận ra được: entity, list, permission, với **key**, **staleness**, và **invalidation**. Pinia sở hữu ý nghĩa chỉ-client: UX session, draft, selection chưa vào URL, overlay optimistic. Cart: **list id** trong Pinia (hoặc cookie) cộng **product detail** từ server cache. Sau POST, invalidate; đừng “giữ Pinia sync” làm kiến trúc."
+              "en": "**How it works:** Ask “can the backend return this?” If yes, it is server state: give it a cache key, a TTL (time to live), and an invalidation path.",
+              "vi": "**Cách hoạt động:** Hỏi “backend trả cái này được không?” Nếu có, đó là server state: cho nó cache key, TTL (time to live — thời gian còn hiệu lực), và đường làm mất hiệu lực cache."
             },
             {
-              "en": "**Why.** Two copies of `Product` will diverge. The SSR payload already is a server cache; stuffing the same blob into Pinia doubles memory and hydration cost. A Pinia cart that embeds full product objects is a stale-price machine.",
-              "vi": "**Vì sao.** Hai bản `Product` sẽ lệch. Payload SSR đã là server cache; nhét cùng blob vào Pinia nhân đôi memory và cost hydration. Cart Pinia nhúng full product object là máy giá stale."
+              "en": "Pinia owns client-only meaning: session UX, drafts, a selection not in the URL yet, optimistic overlays. Two copies of `Product` will diverge.",
+              "vi": "Pinia sở hữu ý nghĩa chỉ-client: UX session, draft, selection chưa vào URL, overlay optimistic. Hai bản `Product` sẽ lệch."
             },
             {
-              "en": "**Trade-off.** Query-only: excellent freshness, more loading UI, you must learn keys. Store-only: simple mental model, stale by default, SSR pain. Both, with a rule, scales. Optimistic Pinia update + failed POST + unused cache invents a third state — prefer optimistic updates in the cache library, or overlay flags in Pinia, not a second entity graph. `useFetch` with a colliding key is a cache bug, not a reason to move data into Pinia. Prefetch into Pinia in a navigation guard duplicates `useAsyncData` + payload on the next page.",
-              "vi": "**Đánh đổi / rủi ro.** Chỉ query: freshness xuất sắc, loading UI nhiều hơn, phải học key. Chỉ store: mental model đơn, stale mặc định, đau SSR. Cả hai, có rule, thì scale được. Optimistic update Pinia + POST fail + cache không dùng invent state thứ ba — ưu tiên optimistic trong cache library, hoặc overlay flag trong Pinia, không phải entity graph thứ hai. `useFetch` key đụng xuyên page là bug cache, không phải lý do chuyển data vào Pinia. Prefetch vào Pinia trong navigation guard nhân đôi việc `useAsyncData` + payload đã làm trên page sau."
+              "en": "Cart: an **id list** in Pinia (or a cookie) plus **product details** from the server cache. A Pinia cart that embeds full product objects is a stale-price machine.",
+              "vi": "Cart: **list id** trong Pinia (hoặc cookie) cộng **product detail** từ server cache. Cart Pinia nhúng full product object là máy giá cũ."
             },
             {
-              "en": "**How to verify.** After a mutation, time until every surface shows the new value — should be one invalidate, not three hand-synced arrays. Count of stores named `useXListStore`. TanStack Query in Nuxt: who wins first paint, client cache or payload?",
-              "vi": "**Cách kiểm chứng.** Sau mutation, thời gian mọi bề mặt hiện giá trị mới — nên một invalidate, không ba array sync tay. Đếm store tên `useXListStore`. TanStack Query trong Nuxt: first paint thắng ở client cache hay payload?"
+              "en": "After a POST or PATCH, invalidate. Do not “keep Pinia in sync” as the architecture. The SSR payload already is a server cache; stuffing the same blob into Pinia doubles memory and hydration cost.",
+              "vi": "Sau POST hoặc PATCH, làm mất hiệu lực cache. Đừng “giữ Pinia sync” làm kiến trúc. Payload SSR đã là server cache; nhét cùng blob vào Pinia nhân đôi memory và chi phí hydration."
             }
           ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "async function renameProduct(id: string, name: string) {\n  await $fetch(`/api/products/${id}`, {\n    method: 'PATCH',\n    body: { name },\n  })\n  // invalidate the server cache — do not store.items.push\n  await refreshNuxtData(`product:${id}`)\n  await refreshNuxtData('product-list')\n  useUiStore().lastSavedAt = Date.now() // client-only overlay\n}",
+            "vi": "async function renameProduct(id: string, name: string) {\n  await $fetch(`/api/products/${id}`, {\n    method: 'PATCH',\n    body: { name },\n  })\n  // làm mất hiệu lực cache server — đừng store.items.push\n  await refreshNuxtData(`product:${id}`)\n  await refreshNuxtData('product-list')\n  useUiStore().lastSavedAt = Date.now() // overlay chỉ-client\n}"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** The PATCH hits the API. Then both the detail key and the list key refresh. Pinia only stamps `lastSavedAt` — an overlay, not a second `Product`. One invalidate, every surface shows the new name.",
+            "vi": "**Điều gì xảy ra:** PATCH tới API. Rồi cả key detail và key list được refresh. Pinia chỉ đóng dấu `lastSavedAt` — overlay, không phải `Product` thứ hai. Một lần làm mất hiệu lực, mọi bề mặt hiện tên mới."
+          }
         },
         {
           "type": "table",
@@ -1189,7 +1480,7 @@
               },
               {
                 "en": "No (or not as source of truth)",
-                "vi": "Không (hoặc không phải source of truth)"
+                "vi": "Không (hoặc không phải nguồn sự thật)"
               }
             ],
             [
@@ -1237,22 +1528,44 @@
           ]
         },
         {
-          "type": "code",
-          "lang": "ts",
-          "code": {
-            "en": "async function renameProduct(id: string, name: string) {\n  await $fetch(`/api/products/${id}`, { method: 'PATCH', body: { name } })\n  await refreshNuxtData(`product:${id}`)\n  await refreshNuxtData('product-list')\n  // Pinia may set ui.lastSavedAt. It does not store the product.\n}",
-            "vi": "async function renameProduct(id: string, name: string) {\n  await $fetch(`/api/products/${id}`, { method: 'PATCH', body: { name } })\n  await refreshNuxtData(`product:${id}`)\n  await refreshNuxtData('product-list')\n  // Pinia có thể set ui.lastSavedAt. Nó không store product.\n}"
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- Query-only: excellent freshness, more loading UI, you must learn keys. Store-only: simple, stale by default, SSR pain. Both, with a rule, scales.\n- Optimistic updates belong in the cache library, or as overlay flags in Pinia — not a second entity graph. A failed POST plus unused cache invents a third state.\n- `useFetch` with a colliding key is a cache bug, not a reason to move data into Pinia.\n- Prefetch into Pinia in a navigation guard duplicates `useAsyncData` plus the payload on the next page.\n- TanStack Query in Nuxt: the payload still wins first paint. The client cache must not overwrite SSR HTML with a stale browser store.",
+            "vi": "- Chỉ query: độ tươi xuất sắc, loading UI nhiều hơn, phải học key. Chỉ store: đơn, cũ mặc định, đau SSR. Cả hai, có luật, thì scale được.\n- Optimistic update thuộc cache library, hoặc overlay flag trong Pinia — không phải entity graph thứ hai. POST fail cộng cache không dùng bịa state thứ ba.\n- `useFetch` key đụng xuyên trang là bug cache, không phải lý do chuyển data vào Pinia.\n- Prefetch vào Pinia trong navigation guard nhân đôi việc `useAsyncData` cộng payload đã làm trên trang sau.\n- TanStack Query trong Nuxt: payload vẫn thắng first paint. Client cache không được đè HTML SSR bằng store browser cũ."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: yesterday’s price after an admin PATCH. Cause: Pinia list filled once in `onMounted`. Fix: keyed `useAsyncData` plus `refreshNuxtData`.\n- Symptom: cart shows a deleted SKU. Cause: full product objects lived in Pinia. Fix: store ids; read details from the server cache.\n- Symptom: three arrays to keep in sync. Cause: dual-write Pinia plus the cache. Fix: one owner per fact; invalidate after POST.\n- Symptom: colliding `useFetch` keys across pages. Cause: a generic `'list'` key. Fix: include the route in the key, not a Pinia dump.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: giá hôm qua sau admin PATCH. Nguyên nhân: list Pinia đổ một lần trong `onMounted`. Cách xử lý: `useAsyncData` có key cộng `refreshNuxtData`.\n- Triệu chứng: cart hiện SKU đã xóa. Nguyên nhân: full product object sống trong Pinia. Cách xử lý: lưu id; đọc detail từ server cache.\n- Triệu chứng: ba array phải sync tay. Nguyên nhân: dual-write Pinia cộng cache. Cách xử lý: một sự thật, một owner; làm mất hiệu lực cache sau POST.\n- Triệu chứng: key `useFetch` đụng xuyên trang. Nguyên nhân: key generic `'list'`. Cách xử lý: nhét route vào key, không dump Pinia."
           }
         },
         {
           "type": "senior-answer",
           "label": {
-            "en": "Interview phrasing",
-            "vi": "Nói khi phỏng vấn"
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
           },
           "text": {
-            "en": "I do not use Pinia as an HTTP cache. Entities with a key and a TTL live in Query or `useAsyncData`; Pinia holds client-only meaning — drafts, selection, overlays. A cart is ids in Pinia plus details from the server cache; embedding full products is how prices go stale. After a PATCH I `refreshNuxtData` / `invalidateQueries`. Two copies of `Product` will diverge, and the SSR payload already is a cache.",
-            "vi": "Tôi không dùng Pinia làm HTTP cache. Entity có key và TTL sống trong Query hoặc `useAsyncData`; Pinia giữ ý nghĩa chỉ-client — draft, selection, overlay. Cart là id trong Pinia cộng detail từ server cache; nhúng full product là cách giá stale. Sau PATCH tôi `refreshNuxtData` / `invalidateQueries`. Hai bản `Product` sẽ lệch, và payload SSR đã là một cache."
+            "en": "An admin edits a price; the product page still shows yesterday because `fetchProducts` wrote Pinia on `onMounted` and nobody called `refreshNuxtData`. The punchline: do not use Pinia as your HTTP cache. They want a crisp split and a mutation story — including the cart.",
+            "vi": "Admin sửa giá; trang product vẫn hiện giá hôm qua vì `fetchProducts` ghi Pinia lúc `onMounted` và không ai gọi `refreshNuxtData`. Câu chốt: đừng dùng Pinia làm HTTP cache. Họ muốn tách sắc và câu chuyện mutation — kể cả cart."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "I do not use Pinia as an HTTP cache. Entities with a key and a TTL live in Query or useAsyncData; Pinia holds client-only meaning — drafts, selection, overlays. A cart is ids in Pinia plus details from the server cache; embedding full products is how prices go stale. When an admin patched a price I refreshed product:id and product-list — the cart still held ids only. After a PATCH I refreshNuxtData or invalidateQueries. Two copies of Product will diverge, and the SSR payload already is a cache. Optimistic flags live in Pinia; the entity graph stays in the cache library.",
+            "vi": "Tôi không dùng Pinia làm HTTP cache. Entity có key và TTL sống trong Query hoặc useAsyncData; Pinia giữ ý nghĩa chỉ-client — draft, selection, overlay. Cart là id trong Pinia cộng detail từ server cache; nhúng full product là cách giá trở nên cũ. Khi admin sửa giá tôi refresh product:id và product-list — cart vẫn chỉ giữ id. Sau PATCH tôi refreshNuxtData hoặc invalidateQueries. Hai bản Product sẽ lệch, và payload SSR đã là một cache. Overlay optimistic sống trong Pinia; entity graph ở lại cache library."
           }
         },
         {
@@ -1260,7 +1573,7 @@
           "items": [
             {
               "en": "Pinia is not your HTTP cache. Invalidate after POST.",
-              "vi": "Pinia không phải HTTP cache. Invalidate sau POST."
+              "vi": "Pinia không phải HTTP cache. Làm mất hiệu lực cache sau POST."
             },
             {
               "en": "Cart: ids in Pinia (or a cookie); product details from the server cache.",
@@ -1269,30 +1582,23 @@
             {
               "en": "Two copies of an entity will diverge — one owner per fact.",
               "vi": "Hai bản copy của một entity sẽ lệch — một sự thật, một owner."
+            },
+            {
+              "en": "The SSR payload already is a server cache; do not duplicate it in Pinia.",
+              "vi": "Payload SSR đã là server cache; đừng nhân đôi trong Pinia."
             }
           ]
         },
         {
-          "type": "list",
-          "style": "ol",
-          "items": [
-            {
-              "en": "TanStack Query in Nuxt: client cache vs payload — who wins first paint?",
-              "vi": "TanStack Query trong Nuxt: client cache vs payload — ai thắng first paint?"
-            },
-            {
-              "en": "Which cart fields would you still keep in Pinia on an e-commerce SSR site?",
-              "vi": "Field cart nào bạn vẫn giữ trong Pinia trên site e-commerce SSR?"
-            },
-            {
-              "en": "How does this map to the React twin ([Query vs Zustand](./state-management-react.md))?",
-              "vi": "Map sang bản đôi React thế nào ([Query vs Zustand](./state-management-react.md))?"
-            },
-            {
-              "en": "Optimistic update in Pinia vs in the cache library — which, and why?",
-              "vi": "Optimistic update trong Pinia vs trong cache library — cái nào, vì sao?"
-            }
-          ]
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **TanStack Query in Nuxt: client cache versus payload?** The payload wins first paint. Do not let a stale browser cache overwrite SSR HTML.\n- **Which cart fields stay in Pinia on SSR e-commerce?** Ids, quantities, coupon code. Product title and price come from the server cache.\n- **How does this map to the React twin?** TanStack Query versus Zustand — same split. See [State Management (React)](./state-management-react.md).\n- **Optimistic update in Pinia versus the cache library?** Overlay flags in Pinia. Entity patches in the cache, so rollback is one code path.",
+            "vi": "- **TanStack Query trong Nuxt: client cache khác payload?** Payload thắng first paint. Đừng để cache browser cũ đè HTML SSR.\n- **Field cart nào vẫn giữ trong Pinia trên site e-commerce SSR?** Id, số lượng, mã coupon. Title và giá product đến từ server cache.\n- **Map sang bản React thế nào?** TanStack Query khác Zustand — cùng tách. Xem [State Management (React)](./state-management-react.md).\n- **Optimistic update trong Pinia khác cache library?** Overlay flag trong Pinia. Patch entity trong cache, để rollback là một đường code."
+          }
         },
         {
           "type": "thematic-break"
