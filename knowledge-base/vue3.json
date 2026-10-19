@@ -7,7 +7,7 @@
   },
   "summary": {
     "en": "Senior Vue 3.5 is compiler-informed UI, reactivity edges, and architecture: hoist versus fetch, provide versus store, client-only. Start with 5.1; interviewers drill patch flags, lost tracking, and SSR fetch.",
-    "vi": "Vue 3.5 mức senior là UI được compiler thông tin, điểm mép reactivity, và kiến trúc: hoist so với fetch, provide so với store, client-only. Bắt đầu từ 5.1; người phỏng vấn đào patch flag, mất tracking, và fetch SSR."
+    "vi": "Vue 3.5 mức senior: UI có compiler gắn hint, góc cạnh reactivity, kiến trúc: hoist khác fetch, provide khác store, client-only. Bắt đầu từ 5.1; người phỏng vấn xoáy patch flag, mất tracking, và fetch SSR."
   },
   "category": "vue",
   "order": 5,
@@ -42,14 +42,14 @@
           "type": "paragraph",
           "text": {
             "en": "This doc is senior Vue 3.5 for interviews: compiler behaviour, reactivity edges, and architecture. It is for engineers who already know the API, and now need a decision under a constraint — what you hoist versus fetch, what you provide versus store, what you keep client-only.",
-            "vi": "Tài liệu này là Vue 3.5 mức senior cho phỏng vấn: hành vi compiler, điểm mép reactivity, và kiến trúc. Dành cho engineer đã thuộc API, và giờ cần một quyết định dưới ràng buộc — cái gì hoist so với fetch, cái gì provide so với store, cái gì giữ client-only."
+            "vi": "Bài này nói về Vue 3.5 ở góc nhìn senior cho phỏng vấn: compiler chạy thế nào, góc cạnh reactivity, và kiến trúc. Dành cho engineer đã thuộc API, giờ cần chọn theo ràng buộc: hoist hay fetch, provide hay store, cái gì giữ client-only."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "Study 5.1 first (VDOM compiler, Composition API, reactivity, when to fetch). Interviewers drill patch flags, lost tracking, and SSR fetch more than syntax. Then read 5.2 for teleport, suspense, and hydration. Prefer Vue 3.5 script setup; React is a mapping. For every topic, name the constraint, the failure you have seen, and how you would prove the fix.",
-            "vi": "Hãy học 5.1 trước (compiler VDOM, Composition API, reactivity, khi nào fetch). Người phỏng vấn đào patch flag, mất tracking, và fetch SSR nhiều hơn cú pháp. Rồi đọc 5.2 về teleport, suspense, và hydration. Ưu tiên Vue 3.5 script setup; React là ánh xạ. Với mỗi topic, hãy nêu ràng buộc, lỗi bạn đã gặp, và cách chứng minh fix."
+            "vi": "Đọc 5.1 trước (compiler VDOM, Composition API, reactivity, khi nào fetch). Người phỏng vấn xoáy patch flag, mất tracking, và fetch SSR nhiều hơn cú pháp. Rồi đọc 5.2 cho teleport, suspense, và hydration. Ưu tiên Vue 3.5 script setup; React là bản đối chiếu. Với mỗi topic, nêu rõ ràng buộc, lỗi bạn đã gặp, và cách chứng minh fix."
           }
         },
         {
@@ -107,14 +107,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** A virtual DOM (VDOM: a JS tree of what the UI should look like) lets Vue diff and patch the real DOM. Vue 3’s compiler hoists static nodes, stamps patch flags, and builds a block tree so the runtime skips static work.",
-            "vi": "**Tóm tắt:** Virtual DOM (VDOM: cây JS mô tả UI nên trông thế nào) để Vue diff rồi patch DOM thật. Compiler Vue 3 hoist node tĩnh, đóng patch flag, và dựng block tree để runtime bỏ việc tĩnh."
+            "vi": "**Tóm tắt:** Virtual DOM (VDOM: cây JS mô tả UI nên trông thế nào) để Vue diff rồi patch DOM thật. Compiler Vue 3 hoist node tĩnh, gắn patch flag, và dựng block tree để runtime bỏ qua phần tĩnh."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** A 100k-row Vue 3 table hitches on filter. Saying “diff the trees and patch the DOM” is the junior bar. Interviewers want patch flags, static hoisting, the block tree — and when VDOM is not the bottleneck.",
-            "vi": "**Vì sao quan trọng:** Bảng Vue 3 100k hàng giật lúc lọc. Nói “diff cây rồi patch DOM” là sàn junior. Người phỏng vấn muốn patch flag, static hoisting, block tree — và khi nào VDOM không phải bottleneck."
+            "vi": "**Vì sao quan trọng:** Bảng Vue 3 100k hàng giật lúc filter. Nói “diff cây rồi patch DOM” mới là mức junior. Người phỏng vấn muốn patch flag, static hoisting, block tree, và khi nào VDOM không phải bottleneck."
           }
         },
         {
@@ -123,19 +123,19 @@
           "items": [
             {
               "en": "**How it works:** The compiler turns a template into a render function. Static VNodes are hoisted. Dynamic nodes get patch flags (`TEXT`, `CLASS`, `STYLE`, `PROPS`, `NEED_HYDRATION`).",
-              "vi": "**Cách hoạt động:** Compiler biến template thành hàm render. VNode tĩnh được hoist. Node động nhận patch flag (`TEXT`, `CLASS`, `STYLE`, `PROPS`, `NEED_HYDRATION`)."
+              "vi": "**Cách hoạt động:** Compiler biến template thành một hàm render. VNode tĩnh được hoist. Node động thì nhận patch flag (`TEXT`, `CLASS`, `STYLE`, `PROPS`, `NEED_HYDRATION`)."
             },
             {
               "en": "`openBlock` snapshots a stable child structure so the runtime patches only flagged bindings. `NEED_HYDRATION` is the Vue 3.4 name for the old `HYDRATE_EVENTS` flag.",
-              "vi": "`openBlock` chụp cấu trúc con ổn định để runtime chỉ patch binding có flag. `NEED_HYDRATION` là tên Vue 3.4 của flag cũ `HYDRATE_EVENTS`."
+              "vi": "`openBlock` lấy snapshot cấu trúc con ổn định, để runtime chỉ patch binding đã gắn flag. `NEED_HYDRATION` là tên Vue 3.4 của flag cũ `HYDRATE_EVENTS`."
             },
             {
               "en": "`v-if` / `v-for` at a block root, `v-bind=\"obj\"`, and `v-html` force coarser flags. Render functions and JSX lose compiler hints.",
-              "vi": "`v-if` / `v-for` ở gốc block, `v-bind=\"obj\"`, và `v-html` buộc flag thô hơn. Render function và JSX mất gợi ý compiler."
+              "vi": "`v-if` / `v-for` ở gốc block, `v-bind=\"obj\"`, và `v-html` buộc flag kém chi tiết hơn. Render function và JSX mất hint của compiler."
             },
             {
               "en": "Unkeyed `v-for` after identity swap patches in place — inputs stick to the wrong row. Virtualize thousands of rows; do not “optimize the VDOM” when layout or network dominate.",
-              "vi": "`v-for` không key sau khi đổi identity patch tại chỗ — input dính sai hàng. Hãy ảo hóa hàng nghìn hàng; đừng “tối ưu VDOM” khi layout hoặc network chiếm."
+              "vi": "`v-for` không key, sau khi swap identity, sẽ patch tại chỗ: input dính sang hàng sai. Virtualize hàng nghìn hàng; đừng “tối ưu VDOM” khi layout hoặc network chiếm phần lớn thời gian."
             }
           ]
         },
@@ -144,14 +144,14 @@
           "lang": "ts",
           "code": {
             "en": "const _hoisted = { class: 'title' }\n\nexport function render(_ctx: { msg: string }) {\n  return (_openBlock(), _createElementBlock('div', null, [\n    _createElementVNode('p', _hoisted, 'Hello'),\n    _createElementVNode(\n      'p',\n      null,\n      _toDisplayString(_ctx.msg),\n      1 /* TEXT */,\n    ),\n  ]))\n}\n\n// v-for without :key patches in place after identity swap\n// NEED_HYDRATION (Vue 3.4) was HYDRATE_EVENTS",
-            "vi": "const _hoisted = { class: 'title' }\n\nexport function render(_ctx: { msg: string }) {\n  return (_openBlock(), _createElementBlock('div', null, [\n    _createElementVNode('p', _hoisted, 'Hello'),\n    _createElementVNode(\n      'p',\n      null,\n      _toDisplayString(_ctx.msg),\n      1 /* TEXT */,\n    ),\n  ]))\n}\n\n// v-for không :key patch tại chỗ sau khi đổi identity\n// NEED_HYDRATION (Vue 3.4) từng là HYDRATE_EVENTS"
+            "vi": "const _hoisted = { class: 'title' }\n\nexport function render(_ctx: { msg: string }) {\n  return (_openBlock(), _createElementBlock('div', null, [\n    _createElementVNode('p', _hoisted, 'Hello'),\n    _createElementVNode(\n      'p',\n      null,\n      _toDisplayString(_ctx.msg),\n      1 /* TEXT */,\n    ),\n  ]))\n}\n\n// v-for không :key sẽ patch tại chỗ khi identity bị swap\n// NEED_HYDRATION (Vue 3.4) từng là HYDRATE_EVENTS"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** The static title is hoisted and is not patched. `msg` is flagged `TEXT`, so only that binding is compared. `NEED_HYDRATION` marks nodes that must attach listeners on hydrate. Unkeyed lists are a different bug — identity, not VDOM cost.",
-            "vi": "**Điều gì xảy ra:** Title tĩnh được hoist và không bị patch. `msg` gắn flag `TEXT`, nên chỉ binding đó được so. `NEED_HYDRATION` đánh node phải gắn listener lúc hydrate. List không key là bug khác — identity, không phải chi phí VDOM."
+            "vi": "**Điều gì xảy ra:** Title tĩnh được hoist và không bị patch. `msg` gắn flag `TEXT`, nên chỉ binding đó được so. `NEED_HYDRATION` đánh dấu node phải gắn listener lúc hydrate. List không key là bug khác: chuyện identity, không phải chi phí VDOM."
           }
         },
         {
@@ -159,7 +159,7 @@
           "headers": [
             {
               "en": "Lever",
-              "vi": "Đòn bẩy"
+              "vi": "Cơ chế"
             },
             {
               "en": "Does",
@@ -178,11 +178,11 @@
               },
               {
                 "en": "Skip static work",
-                "vi": "Bỏ việc tĩnh"
+                "vi": "Bỏ qua phần tĩnh"
               },
               {
                 "en": "Layout or network bound",
-                "vi": "Bị layout hoặc network"
+                "vi": "Bottleneck là layout / network"
               }
             ],
             [
@@ -202,7 +202,7 @@
             [
               {
                 "en": "Virtualize",
-                "vi": "Ảo hóa"
+                "vi": "Virtualize"
               },
               {
                 "en": "Render visible rows",
@@ -223,7 +223,7 @@
           },
           "text": {
             "en": "- Treat Vue 3’s VDOM as compiler-informed. Patch flags and the block tree skip static work.\n- VDOM time is rarely the product bottleneck. Split JS (render + reactivity) vs Recalculate style / Layout vs network.\n- Unkeyed `v-for` after identity swap sticks inputs and transitions to the wrong row.\n- A new object literal as a prop every render (`:style=\"{}\"`) defeats flags. `v-bind=\"obj\"` forces `FULL_PROPS`.\n- Virtualize thousands of rows. `v-memo` is for a subtree you can prove is stable. On the admin product the filter hitch was layout, not VDOM.",
-            "vi": "- Hãy coi VDOM Vue 3 là được compiler thông tin. Patch flag và block tree bỏ việc tĩnh.\n- Thời gian VDOM hiếm khi là bottleneck sản phẩm. Hãy tách JS (render + reactivity) với Recalculate style / Layout với network.\n- `v-for` không key sau khi đổi identity làm input và transition dính sai hàng.\n- Object literal mới làm prop mỗi render (`:style=\"{}\"`) phá flag. `v-bind=\"obj\"` buộc `FULL_PROPS`.\n- Hãy ảo hóa hàng nghìn hàng. `v-memo` dành cho subtree bạn chứng minh được là ổn định. Ở sản phẩm admin, giật lúc lọc là layout, không phải VDOM."
+            "vi": "- VDOM Vue 3 là thứ compiler đã gắn hint. Patch flag và block tree bỏ qua phần tĩnh.\n- Thời gian VDOM hiếm khi là bottleneck của sản phẩm. Tách JS (render + reactivity) vs Recalculate style / Layout vs network.\n- `v-for` không key sau khi swap identity làm input và transition dính sang hàng sai.\n- Object literal mới làm prop mỗi lần render (`:style=\"{}\"`) phá flag. `v-bind=\"obj\"` buộc `FULL_PROPS`.\n- Virtualize hàng nghìn hàng. `v-memo` dành cho subtree bạn chứng minh được là ổn định. Ở sản phẩm admin, giật lúc filter là layout, không phải VDOM."
           }
         },
         {
@@ -231,18 +231,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: filter hitch on 100k rows. Cause: layout or deep reactive rows. Fix: virtualize + `shallowRef`, not “faster VDOM.”\n- Symptom: input state sticks after sort. Cause: unkeyed `v-for`. Fix: a stable `:key`.\n- Symptom: `v-memo` shows stale cells. Cause: the memo condition missed a field. Fix: list every reactive input.\n- Symptom: JSX table is slower than the template. Cause: lost compiler hints. Fix: templates for app UI.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: giật lúc lọc 100k hàng. Nguyên nhân: layout hoặc hàng reactive sâu. Cách xử lý: ảo hóa + `shallowRef`, không phải “VDOM nhanh hơn.”\n- Triệu chứng: state input dính sau sort. Nguyên nhân: `v-for` không key. Cách xử lý: `:key` ổn định.\n- Triệu chứng: `v-memo` hiện cell stale. Nguyên nhân: điều kiện memo sót field. Cách xử lý: liệt kê mọi input reactive.\n- Triệu chứng: bảng JSX chậm hơn template. Nguyên nhân: mất gợi ý compiler. Cách xử lý: template cho UI app."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: giật lúc filter 100k hàng. Nguyên nhân: layout hoặc hàng reactive sâu. Cách xử lý: virtualize + `shallowRef`, không phải “VDOM nhanh hơn”.\n- Triệu chứng: state của input dính sau sort. Nguyên nhân: `v-for` không key. Cách xử lý: `:key` ổn định.\n- Triệu chứng: `v-memo` hiện cell stale. Nguyên nhân: điều kiện memo sót một field. Cách xử lý: liệt kê mọi input reactive.\n- Triệu chứng: bảng JSX chậm hơn template. Nguyên nhân: mất hint compiler. Cách xử lý: template cho UI app."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "A 100k-row Vue 3 table hitches on filter. You say “diff the trees and patch the DOM.” They push: what does the compiler change about that story? They want patch flags, static hoisting, and the block tree — and when VDOM is not the bottleneck.",
-            "vi": "Bảng Vue 3 100k hàng giật lúc lọc. Bạn nói “diff cây rồi patch DOM.” Họ đẩy: compiler đổi gì trong câu chuyện đó? Họ muốn patch flag, static hoisting, và block tree — và khi nào VDOM không phải bottleneck."
+            "vi": "Bảng Vue 3 100k hàng giật lúc filter. Bạn nói “diff cây rồi patch DOM”. Họ đẩy tiếp: compiler đổi gì trong câu chuyện đó? Họ muốn patch flag, static hoisting, và block tree, và khi nào VDOM không phải bottleneck."
           }
         },
         {
@@ -253,7 +253,7 @@
           },
           "text": {
             "en": "I treat Vue 3’s VDOM as compiler-informed, not a full-tree walk. The compiler hoists static VNodes, stamps patch flags, and the block tree lets the runtime patch only flagged bindings. NEED_HYDRATION is the Vue 3.4 name for the old HYDRATE_EVENTS flag. I would not optimize the VDOM while layout, network, or thousands of reactive effects dominate. Unkeyed v-for on swapped identity patches in place and state sticks to the wrong row. For thousands of rows I virtualize; v-memo is for a subtree I can prove is stable. On the admin product the filter hitch was Recalculate style, not patch flags, and we proved it in the Performance panel.",
-            "vi": "Tôi coi VDOM Vue 3 là được compiler thông tin, không phải đi hết cây. Compiler hoist VNode tĩnh, đóng patch flag, và block tree để runtime chỉ patch binding có flag. NEED_HYDRATION là tên Vue 3.4 của flag cũ HYDRATE_EVENTS. Tôi sẽ không tối ưu VDOM khi layout, network, hoặc hàng nghìn effect reactive chiếm. v-for không key khi đổi identity patch tại chỗ và state dính sai hàng. Với hàng nghìn hàng tôi ảo hóa; v-memo dành cho subtree tôi chứng minh được là ổn định. Ở sản phẩm admin, giật lúc lọc là Recalculate style, không phải patch flag, và chúng tôi chứng minh trên panel Performance."
+            "vi": "Mình coi VDOM Vue 3 là thứ compiler đã gắn hint, không phải walk hết cây. Compiler hoist VNode tĩnh, gắn patch flag, và block tree để runtime chỉ patch binding có flag. NEED_HYDRATION là tên Vue 3.4 của flag cũ HYDRATE_EVENTS. Mình không tối ưu VDOM khi layout, network, hoặc hàng nghìn effect reactive đang chiếm thời gian. v-for không key khi identity bị swap sẽ patch tại chỗ và state dính sang hàng sai. Hàng nghìn hàng thì mình virtualize; v-memo dành cho subtree mình chứng minh được là ổn định. Ở sản phẩm admin, giật lúc filter là Recalculate style, không phải patch flag, và team mình chứng minh trên panel Performance."
           }
         },
         {
@@ -261,7 +261,7 @@
           "items": [
             {
               "en": "Compiler-informed VDOM: static hoist + patch flags + block tree.",
-              "vi": "VDOM được compiler thông tin: hoist tĩnh + patch flag + block tree."
+              "vi": "VDOM có compiler gắn hint: hoist tĩnh + patch flag + block tree."
             },
             {
               "en": "`NEED_HYDRATION` is the Vue 3.4 name for `HYDRATE_EVENTS`.",
@@ -269,11 +269,11 @@
             },
             {
               "en": "Unkeyed `v-for` after identity swap sticks inputs to the wrong row.",
-              "vi": "`v-for` không key sau đổi identity làm input dính sai hàng."
+              "vi": "`v-for` không key sau khi swap identity làm input dính sang hàng sai."
             },
             {
               "en": "Virtualize thousands of rows; do not optimize VDOM when layout dominates.",
-              "vi": "Ảo hóa hàng nghìn hàng; đừng tối ưu VDOM khi layout chiếm."
+              "vi": "Virtualize hàng nghìn hàng; đừng tối ưu VDOM khi layout chiếm thời gian."
             }
           ]
         },
@@ -285,7 +285,7 @@
           },
           "text": {
             "en": "- **What is a patch flag?** A bit on a dynamic VNode so the runtime compares only that binding.\n- **When is VDOM not the bottleneck?** Layout, network, or a deep reactive 50k-row array.\n- **Why does unkeyed `v-for` break inputs?** The runtime reuses the same DOM node after identity swap.\n- **JSX vs templates?** JSX loses hoist and flags. Keep app UI in templates.",
-            "vi": "- **Patch flag là gì?** Một bit trên VNode động để runtime chỉ so binding đó.\n- **Khi nào VDOM không phải bottleneck?** Layout, network, hoặc mảng reactive sâu 50k hàng.\n- **Vì sao `v-for` không key phá input?** Runtime tái sử dụng cùng node DOM sau khi đổi identity.\n- **JSX khác template thế nào?** JSX mất hoist và flag. Hãy giữ UI app trong template."
+            "vi": "- **Patch flag là gì?** Một bit trên VNode động để runtime chỉ so binding đó.\n- **Khi nào VDOM không phải bottleneck?** Layout, network, hoặc mảng reactive sâu 50k hàng.\n- **Vì sao `v-for` không key phá input?** Runtime tái sử dụng cùng node DOM sau khi swap identity.\n- **JSX khác template thế nào?** JSX mất hoist và flag. Giữ UI app trong template."
           }
         },
         {
@@ -296,7 +296,7 @@
           "level": 4,
           "text": {
             "en": "5.1.2. Options API vs Composition API",
-            "vi": "5.1.2. Options API và Composition API"
+            "vi": "5.1.2. Options API vs Composition API"
           },
           "id": {
             "en": "512-options-api-vs-composition-api",
@@ -307,14 +307,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Options API groups by option (`data`, `methods`). Composition API groups by feature in `setup`. Composition is the default for new and cross-cutting code; Options stays fine on tiny leaves you will not extract.",
-            "vi": "**Tóm tắt:** Options API nhóm theo option (`data`, `methods`). Composition API nhóm theo feature trong `setup`. Composition là mặc định cho code mới và cắt ngang; Options vẫn ổn trên leaf nhỏ bạn sẽ không extract."
+            "vi": "**Tóm tắt:** Options API nhóm theo option (`data`, `methods`). Composition API nhóm theo feature trong `setup`. Composition là mặc định cho code mới và logic cắt ngang; Options vẫn ổn trên leaf nhỏ bạn sẽ không extract."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** A 200-SFC Vue 2 app has mixins, filters, and Options-only teammates. Interviewers do not want “which is newer.” They want extraction of logic, TypeScript, and team risk — and whether you would ban Options API.",
-            "vi": "**Vì sao quan trọng:** App Vue 2 200 SFC có mixin, filter, và đồng nghiệp chỉ Options. Người phỏng vấn không muốn “cái nào mới hơn.” Họ muốn extract logic, TypeScript, và rủi ro team — và bạn có cấm Options API không."
+            "vi": "**Vì sao quan trọng:** App Vue 2 200 SFC có mixin, filter, và đồng nghiệp chỉ Options. Người phỏng vấn không muốn câu “cái nào mới hơn”. Họ muốn extract logic, TypeScript, và rủi ro team, cùng việc bạn có cấm Options API hay không."
           }
         },
         {
@@ -323,19 +323,19 @@
           "items": [
             {
               "en": "**How it works:** Mixins fail on namespace (two `data()` keys collide), origin (DevTools will not tell you which mixin injected `loading`), and lifecycle merge order. Composables return explicit bindings and tree-shake.",
-              "vi": "**Cách hoạt động:** Mixin thất bại ở namespace (hai key `data()` đụng), origin (DevTools không nói mixin nào inject `loading`), và thứ tự merge lifecycle. Composable trả binding tường minh và tree-shake."
+              "vi": "**Cách hoạt động:** Mixin gãy ở namespace (hai key `data()` đụng nhau), origin (DevTools không cho biết mixin nào inject `loading`), và thứ tự merge lifecycle. Composable trả binding tường minh và tree-shake."
             },
             {
               "en": "Composition + `<script setup>` for new code and anything that cuts across options. Options stays on icon wrappers and static chrome.",
-              "vi": "Composition + `<script setup>` cho code mới và mọi thứ cắt ngang options. Options giữ trên wrapper icon và chrome tĩnh."
+              "vi": "Composition + `<script setup>` cho code mới và mọi thứ cắt ngang options. Options giữ cho wrapper icon và chrome tĩnh."
             },
             {
               "en": "Migrate a Vue 2 monolith by feature: extract a composable next to the mixin, delete the mixin when call sites are gone. Mixing `setup()` and Options is the incremental path.",
-              "vi": "Migrate monolith Vue 2 theo feature: extract composable cạnh mixin, xóa mixin khi hết chỗ gọi. Trộn `setup()` và Options là đường tăng dần."
+              "vi": "Migrate một monolith Vue 2 theo từng feature: extract composable đặt cạnh mixin, xóa mixin khi hết chỗ gọi. Trộn `setup()` và Options là đường đi từng bước."
             },
             {
               "en": "A composable that grabs `getCurrentInstance()` is the new mixin. Filters are functions. Keep `this` out of new code.",
-              "vi": "Composable nắm `getCurrentInstance()` là mixin mới. Filter là hàm. Hãy để `this` khỏi code mới."
+              "vi": "Composable gọi `getCurrentInstance()` chính là mixin phiên bản mới. Filter là hàm. Đừng dùng `this` trong code mới."
             }
           ]
         },
@@ -351,7 +351,7 @@
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** The mixin’s `loading` collides with another mixin’s `loading` and DevTools cannot tell which file injected it. `useSearch` returns named bindings, tree-shakes, and types without `this`. Same UI, different extraction.",
-            "vi": "**Điều gì xảy ra:** `loading` của mixin đụng `loading` mixin khác và DevTools không biết file nào inject. `useSearch` trả binding có tên, tree-shake, và type không cần `this`. Cùng UI, khác cách extract."
+            "vi": "**Điều gì xảy ra:** `loading` của mixin đụng `loading` của mixin khác và DevTools không biết file nào inject. `useSearch` trả binding có tên, tree-shake, và type không cần `this`. Cùng UI, khác cách extract."
           }
         },
         {
@@ -359,7 +359,7 @@
           "headers": [
             {
               "en": "Need",
-              "vi": "Nhu cầu"
+              "vi": "Cần"
             },
             {
               "en": "Choose",
@@ -423,7 +423,7 @@
           },
           "text": {
             "en": "- Composition is the default for new code. Options only on leaves that stay leaves.\n- Mixins collide on namespace, origin, and lifecycle merge order.\n- Mixing `setup()` and Options is how you migrate incrementally, not a smell.\n- A composable that calls `getCurrentInstance()` is the new mixin. Pass what you need.\n- Time to add permissions or a feature flag without touching unrelated options is how you measure. On the admin product we extracted search beside the mixin, then deleted the mixin.",
-            "vi": "- Composition là mặc định cho code mới. Options chỉ trên leaf sẽ mãi là leaf.\n- Mixin đụng nhau ở namespace, origin, và thứ tự merge lifecycle.\n- Trộn `setup()` và Options là cách migrate tăng dần, không phải mùi.\n- Composable gọi `getCurrentInstance()` là mixin mới. Hãy truyền thứ bạn cần.\n- Thời gian thêm quyền hoặc feature flag mà không đụng option không liên quan là cách đo. Ở sản phẩm admin chúng tôi extract search cạnh mixin, rồi xóa mixin."
+            "vi": "- Composition là mặc định cho code mới. Options chỉ trên leaf sẽ mãi là leaf.\n- Mixin đụng nhau ở namespace, origin, và thứ tự merge lifecycle.\n- Trộn `setup()` và Options là cách migrate từng bước, không phải smell.\n- Composable gọi `getCurrentInstance()` là mixin mới. Truyền thứ bạn cần.\n- Cách đo là thời gian thêm quyền hoặc feature flag mà không đụng option không liên quan. Ở sản phẩm admin, team mình extract search cạnh mixin, rồi xóa mixin."
           }
         },
         {
@@ -431,18 +431,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: two mixins, one `loading`. Cause: namespace collision. Fix: a composable that returns `{ loading }`.\n- Symptom: a quarter rewrite stalled. Cause: big-bang migration. Fix: by-feature extract.\n- Symptom: `getCurrentInstance()` in a helper. Cause: the new mixin. Fix: pass the ref.\n- Symptom: banning Options in a 200-SFC Vue 2 app. Cause: team risk. Fix: default Composition, keep leaves.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: hai mixin, một `loading`. Nguyên nhân: đụng namespace. Cách xử lý: composable trả `{ loading }`.\n- Triệu chứng: viết lại cả quý đứng. Nguyên nhân: migrate big-bang. Cách xử lý: extract theo feature.\n- Triệu chứng: `getCurrentInstance()` trong helper. Nguyên nhân: mixin mới. Cách xử lý: truyền ref.\n- Triệu chứng: cấm Options trong app Vue 2 200 SFC. Nguyên nhân: rủi ro team. Cách xử lý: mặc định Composition, giữ leaf."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: hai mixin, một `loading`. Nguyên nhân: đụng namespace. Cách xử lý: composable trả `{ loading }`.\n- Triệu chứng: rewrite cả quý bị kẹt. Nguyên nhân: migrate big-bang. Cách xử lý: extract theo feature.\n- Triệu chứng: `getCurrentInstance()` trong helper. Nguyên nhân: mixin mới. Cách xử lý: truyền ref.\n- Triệu chứng: cấm Options trong app Vue 2 200 SFC. Nguyên nhân: rủi ro team. Cách xử lý: mặc định Composition, giữ leaf."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "Not “which is newer.” A 200-SFC Vue 2 app has mixins, filters, and Options-only teammates. How do you migrate, what do you do with mixins, and would you ban Options API? They want extraction of logic, TypeScript, and team risk.",
-            "vi": "Không phải “cái nào mới hơn.” App Vue 2 200 SFC có mixin, filter, và đồng nghiệp chỉ Options. Bạn migrate thế nào, làm gì với mixin, và có cấm Options API không? Họ muốn extract logic, TypeScript, và rủi ro team."
+            "vi": "Không phải “cái nào mới hơn”. App Vue 2 200 SFC có mixin, filter, và đồng nghiệp chỉ Options. Bạn migrate thế nào, làm gì với mixin, và có cấm Options API không? Họ muốn extract logic, TypeScript, và rủi ro team."
           }
         },
         {
@@ -453,7 +453,7 @@
           },
           "text": {
             "en": "Composition API is the default for new code and anything that cuts across options. I keep Options on tiny leaves I will not extract. Mixins collide on data keys and hide origin; composables return explicit bindings and tree-shake. I migrate a Vue 2 monolith by feature — extract the composable next to the mixin — not in a quarter rewrite. Mixing setup and Options is how you migrate incrementally. A composable that grabs getCurrentInstance is the new mixin. On the admin product we extracted search beside the mixin, then deleted the mixin when call sites were gone.",
-            "vi": "Composition API là mặc định cho code mới và mọi thứ cắt ngang options. Tôi giữ Options trên leaf nhỏ tôi sẽ không extract. Mixin đụng key data và giấu origin; composable trả binding tường minh và tree-shake. Tôi migrate monolith Vue 2 theo feature — extract composable cạnh mixin — không viết lại cả quý. Trộn setup và Options là cách migrate tăng dần. Composable nắm getCurrentInstance là mixin mới. Ở sản phẩm admin chúng tôi extract search cạnh mixin, rồi xóa mixin khi hết chỗ gọi."
+            "vi": "Composition API là mặc định cho code mới và mọi thứ cắt ngang options. Mình giữ Options trên leaf nhỏ, những cái mình sẽ không extract. Mixin đụng key data và giấu origin; composable trả binding tường minh và tree-shake. Mình migrate monolith Vue 2 theo feature: extract composable cạnh mixin, không viết lại cả quý. Trộn setup với Options là cách migrate từng bước. Composable gọi getCurrentInstance là mixin kiểu mới. Ở sản phẩm admin, bọn mình extract search cạnh mixin, rồi xóa mixin khi hết chỗ gọi."
           }
         },
         {
@@ -465,15 +465,15 @@
             },
             {
               "en": "Mixins collide on namespace, origin, and lifecycle merge order.",
-              "vi": "Mixin đụng nhau ở namespace, origin, và merge lifecycle."
+              "vi": "Mixin đụng nhau ở namespace, origin, và thứ tự merge lifecycle."
             },
             {
               "en": "Migrate by feature: composable beside the mixin, then delete it.",
-              "vi": "Migrate theo feature: composable cạnh mixin, rồi xóa."
+              "vi": "Migrate theo feature: composable cạnh mixin, rồi xóa nó."
             },
             {
               "en": "`getCurrentInstance()` in a helper is the new mixin.",
-              "vi": "`getCurrentInstance()` trong helper là mixin mới."
+              "vi": "`getCurrentInstance()` trong helper là mixin kiểu mới."
             }
           ]
         },
@@ -485,7 +485,7 @@
           },
           "text": {
             "en": "- **Would you ban Options API?** No. Default Composition; keep tiny leaves.\n- **How do filters migrate?** They are functions. Import them.\n- **TypeScript?** Composition infers without `this`. Options needs `defineComponent`.\n- **Can you mix in one SFC?** Yes. That is the incremental path.",
-            "vi": "- **Bạn có cấm Options API?** Không. Mặc định Composition; giữ leaf nhỏ.\n- **Filter migrate thế nào?** Chúng là hàm. Hãy import.\n- **TypeScript?** Composition suy type không cần `this`. Options cần `defineComponent`.\n- **Trộn trong một SFC được không?** Được. Đó là đường tăng dần."
+            "vi": "- **Bạn có cấm Options API?** Không. Mặc định Composition; giữ leaf nhỏ.\n- **Filter migrate thế nào?** Chúng là hàm. Import chúng.\n- **TypeScript?** Composition suy type không cần `this`. Options cần `defineComponent`.\n- **Trộn trong một SFC được không?** Được. Đó là đường migrate từng bước."
           }
         },
         {
@@ -507,14 +507,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Auto-import (`unplugin-vue-components` / Nuxt) hides local UI imports. Use it for app-local components. Explicitly import published packages, public APIs, and anything a greedy resolver must not pull.",
-            "vi": "**Tóm tắt:** Auto-import (`unplugin-vue-components` / Nuxt) giấu import UI local. Dùng cho component trong app. Import tường minh package xuất bản, public API, và mọi thứ resolver tham lam không được kéo."
+            "vi": "**Tóm tắt:** Auto-import (`unplugin-vue-components` / Nuxt) giấu import UI local. Dùng cho component trong app. Import tường minh package public, public API, và mọi thứ resolver tham lam không được kéo."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “Do you auto-import everything?” A design-system barrel re-exports every component from one `index`, and a route that never imports a chart still ships the chart chunk. Interviewers want DX versus explicit public API, circular deps, and tree-shaking.",
-            "vi": "**Vì sao quan trọng:** “Bạn có auto-import mọi thứ?” Barrel design system re-export mọi component từ một `index`, và route không import chart vẫn ship chunk chart. Người phỏng vấn muốn DX so với public API tường minh, circular dep, và tree-shaking."
+            "vi": "**Vì sao quan trọng:** “Bạn có auto-import mọi thứ?” Barrel của design system re-export mọi component từ một `index`, và route không import chart vẫn ship chunk chart. Người phỏng vấn muốn DX đối với public API tường minh, circular dep, và tree-shaking."
           }
         },
         {
@@ -523,19 +523,19 @@
           "items": [
             {
               "en": "**How it works:** The plugin scans `components/` and generates imports plus `components.d.ts`. Nuxt does the same for Vue APIs and composables. The resolver is greedy — a name match pulls a file.",
-              "vi": "**Cách hoạt động:** Plugin quét `components/` và sinh import cộng `components.d.ts`. Nuxt làm tương tự cho API Vue và composable. Resolver tham lam — khớp tên là kéo file."
+              "vi": "**Cách hoạt động:** Plugin quét `components/` và sinh import kèm `components.d.ts`. Nuxt làm tương tự cho API Vue và composable. Resolver tham lam: khớp tên là kéo file."
             },
             {
               "en": "Cycles (`useCart` → `useUser` → `useCart`) become `undefined` or a TDZ error on a cold load order. Auto-import hides them; it does not break them.",
-              "vi": "Cycle (`useCart` → `useUser` → `useCart`) thành `undefined` hoặc lỗi TDZ lúc load lạnh. Auto-import giấu chúng; không phá chúng."
+              "vi": "Cycle (`useCart` → `useUser` → `useCart`) thành `undefined` hoặc lỗi TDZ lúc load lần đầu. Auto-import giấu chúng; không phá được chúng."
             },
             {
               "en": "A barrel `index` that re-exports everything defeats tree-shaking. Global `app.component()` is always in the bundle and has no colocation.",
-              "vi": "Barrel `index` re-export mọi thứ phá tree-shaking. `app.component()` global luôn trong bundle và không colocation."
+              "vi": "Barrel `index` re-export hết thì tree-shaking mất tác dụng. `app.component()` global luôn nằm trong bundle và không colocation."
             },
             {
               "en": "For libraries you publish, do not rely on the consumer’s auto-import. Colliding names (`Modal` from two folders) need a directory prefix or an explicit import.",
-              "vi": "Với thư viện bạn xuất bản, đừng dựa auto-import của consumer. Tên đụng (`Modal` từ hai folder) cần prefix thư mục hoặc import tường minh."
+              "vi": "Với library bạn publish, đừng dựa auto-import của consumer. Tên đụng (`Modal` từ hai folder) cần prefix thư mục hoặc import tường minh."
             }
           ]
         },
@@ -544,14 +544,14 @@
           "lang": "ts",
           "code": {
             "en": "// nuxt.config.ts / vite.config.ts\nComponents({\n  dirs: ['app/components'],\n  directoryAsNamespace: true, // Modal vs ChartModal\n})\n\n// ❌ design-system barrel — pulls the chart into every route\nexport * from './Chart'\nexport * from './Table'\nexport * from './Modal'\n\n// ✅ explicit public API\nimport { UserTable } from '@acme/ui/UserTable'",
-            "vi": "// nuxt.config.ts / vite.config.ts\nComponents({\n  dirs: ['app/components'],\n  directoryAsNamespace: true, // Modal vs ChartModal\n})\n\n// ❌ barrel design system — kéo chart vào mọi route\nexport * from './Chart'\nexport * from './Table'\nexport * from './Modal'\n\n// ✅ public API tường minh\nimport { UserTable } from '@acme/ui/UserTable'"
+            "vi": "// nuxt.config.ts / vite.config.ts\nComponents({\n  dirs: ['app/components'],\n  directoryAsNamespace: true, // Modal vs ChartModal\n})\n\n// ❌ barrel design system, kéo chart vào mọi route\nexport * from './Chart'\nexport * from './Table'\nexport * from './Modal'\n\n// ✅ public API tường minh\nimport { UserTable } from '@acme/ui/UserTable'"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** App-local `UserTable` can auto-import. The barrel re-export means a settings route that never mentions Chart still ships the Chart chunk. `directoryAsNamespace` avoids two `Modal`s colliding. The package import is explicit so the resolver cannot pull it.",
-            "vi": "**Điều gì xảy ra:** `UserTable` trong app có thể auto-import. Barrel re-export khiến route settings không nhắc Chart vẫn ship chunk Chart. `directoryAsNamespace` tránh hai `Modal` đụng. Import package tường minh để resolver không kéo được."
+            "vi": "**Điều gì xảy ra:** `UserTable` trong app có thể auto-import. Barrel re-export khiến route settings không nhắc Chart vẫn ship chunk Chart. `directoryAsNamespace` tránh hai `Modal` đụng nhau. Import package tường minh nên resolver không kéo được."
           }
         },
         {
@@ -559,7 +559,7 @@
           "headers": [
             {
               "en": "Thing",
-              "vi": "Thứ"
+              "vi": "Loại"
             },
             {
               "en": "Import",
@@ -588,7 +588,7 @@
             [
               {
                 "en": "Published package",
-                "vi": "Package xuất bản"
+                "vi": "Package public"
               },
               {
                 "en": "Explicit",
@@ -623,7 +623,7 @@
           },
           "text": {
             "en": "- Auto-import app-local UI and Vue APIs. Explicit imports for public APIs, packages, and side-effectful plugins.\n- Auto-import hides cycles; it does not break them. `useCart` → `useUser` → `useCart` shows up as `undefined` or TDZ on a cold load.\n- A design-system barrel from one `index` defeats tree-shaking. Export named entry points.\n- Treat `components.d.ts` as a build artifact or commit it with a CI check so type generation cannot drift.\n- Check the route bundle (`vite-bundle-visualizer`) for surprise editor chunks. On the admin product a settings route shipped the chart via a barrel.",
-            "vi": "- Auto-import UI trong app và API Vue. Import tường minh cho public API, package, và plugin có side effect.\n- Auto-import giấu cycle; không phá chúng. `useCart` → `useUser` → `useCart` hiện `undefined` hoặc TDZ lúc load lạnh.\n- Barrel design system từ một `index` phá tree-shaking. Hãy export entry điểm tên.\n- Coi `components.d.ts` là artifact build hoặc commit kèm CI để type generation không lệch.\n- Kiểm bundle route (`vite-bundle-visualizer`) tìm chunk editor bất ngờ. Ở sản phẩm admin, route settings ship chart qua barrel."
+            "vi": "- Auto-import UI trong app và API Vue. Import tường minh cho public API, package, và plugin có side effect.\n- Auto-import giấu cycle; không phá được chúng. `useCart` → `useUser` → `useCart` hiện `undefined` hoặc TDZ lúc load lần đầu.\n- Barrel design system từ một `index` làm hỏng tree-shaking. Export từng entry có tên.\n- Coi `components.d.ts` là artifact build, hoặc commit kèm check CI để type generation không lệch.\n- Kiểm bundle theo route (`vite-bundle-visualizer`) tìm chunk editor bất ngờ. Ở sản phẩm admin, route settings ship chart qua barrel."
           }
         },
         {
@@ -631,18 +631,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: a settings route ships a chart. Cause: a barrel `index`. Fix: named entry points.\n- Symptom: `useCart` is undefined on cold load. Cause: a hidden cycle. Fix: break the cycle; auto-import will not.\n- Symptom: two `Modal`s collide. Cause: greedy name match. Fix: `directoryAsNamespace` or an explicit import.\n- Symptom: `components.d.ts` drifts in CI. Cause: uncommitted generation. Fix: generate in CI or commit with a check.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: route settings ship chart. Nguyên nhân: barrel `index`. Cách xử lý: entry điểm tên.\n- Triệu chứng: `useCart` undefined lúc load lạnh. Nguyên nhân: cycle ẩn. Cách xử lý: phá cycle; auto-import sẽ không.\n- Triệu chứng: hai `Modal` đụng. Nguyên nhân: khớp tên tham lam. Cách xử lý: `directoryAsNamespace` hoặc import tường minh.\n- Triệu chứng: `components.d.ts` lệch trong CI. Nguyên nhân: generate không commit. Cách xử lý: generate trong CI hoặc commit kèm check."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: route settings ship chart. Nguyên nhân: barrel `index`. Cách xử lý: entry có tên.\n- Triệu chứng: `useCart` undefined lúc load lần đầu. Nguyên nhân: cycle ẩn. Cách xử lý: phá cycle; auto-import sẽ không làm hộ.\n- Triệu chứng: hai `Modal` đụng. Nguyên nhân: khớp tên tham lam. Cách xử lý: `directoryAsNamespace` hoặc import tường minh.\n- Triệu chứng: `components.d.ts` lệch trong CI. Nguyên nhân: generate chưa commit. Cách xử lý: generate trong CI hoặc commit kèm check."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "Do you auto-import everything? A design-system barrel re-exports every component from one `index`, and a route that never imports a chart still ships the chart chunk. They want DX versus explicit public API, circular deps, and tree-shaking.",
-            "vi": "Bạn có auto-import mọi thứ? Barrel design system re-export mọi component từ một `index`, và route không import chart vẫn ship chunk chart. Họ muốn DX so với public API tường minh, circular dep, và tree-shaking."
+            "vi": "Bạn có auto-import mọi thứ? Barrel của design system re-export mọi component từ một `index`, và route không import chart vẫn ship chunk chart. Họ muốn DX đối với public API tường minh, circular dep, và tree-shaking."
           }
         },
         {
@@ -653,7 +653,7 @@
           },
           "text": {
             "en": "I auto-import app-local UI and Vue APIs. Anything that is a public API, a published package, or side-effectful I import by name — a greedy resolver must not pull it. Auto-import hides cycles; useCart to useUser to useCart shows up as undefined or TDZ on a cold load. I would not ship a design-system barrel that re-exports every component from one index. I check the route bundle for surprise editor chunks and keep components.d.ts honest in CI. On the admin product a settings route shipped the chart until we split the barrel.",
-            "vi": "Tôi auto-import UI trong app và API Vue. Mọi thứ là public API, package xuất bản, hoặc có side effect tôi import theo tên — resolver tham lam không được kéo. Auto-import giấu cycle; useCart tới useUser tới useCart hiện undefined hoặc TDZ lúc load lạnh. Tôi sẽ không ship barrel design system re-export mọi component từ một index. Tôi kiểm bundle route tìm chunk editor bất ngờ và giữ components.d.ts trung thực trong CI. Ở sản phẩm admin, route settings ship chart đến khi chúng tôi tách barrel."
+            "vi": "Mình auto-import UI trong app và API Vue. Thứ gì là public API, package public, hoặc có side effect thì mình import theo tên: resolver tham lam không được kéo. Auto-import giấu cycle; useCart tới useUser tới useCart hiện undefined hoặc TDZ lúc load lần đầu. Mình không ship barrel design system re-export mọi component từ một index. Mình kiểm bundle theo route tìm chunk editor bất ngờ và giữ components.d.ts khớp trong CI. Ở sản phẩm admin, route settings ship chart đến khi bọn mình tách barrel."
           }
         },
         {
@@ -665,15 +665,15 @@
             },
             {
               "en": "Auto-import hides cycles; it does not break them.",
-              "vi": "Auto-import giấu cycle; không phá chúng."
+              "vi": "Auto-import giấu cycle; không phá được chúng."
             },
             {
               "en": "A barrel `index` that re-exports everything defeats tree-shaking.",
-              "vi": "Barrel `index` re-export mọi thứ phá tree-shaking."
+              "vi": "Barrel `index` re-export hết thì tree-shaking mất tác dụng."
             },
             {
               "en": "Keep `components.d.ts` honest in CI.",
-              "vi": "Giữ `components.d.ts` trung thực trong CI."
+              "vi": "Giữ `components.d.ts` khớp trong CI."
             }
           ]
         },
@@ -685,7 +685,7 @@
           },
           "text": {
             "en": "- **Nuxt vs unplugin?** Same idea. Nuxt also auto-imports composables and Vue APIs.\n- **Libraries you publish?** Do not rely on the consumer’s auto-import. Export named files.\n- **Colliding names?** `directoryAsNamespace` or an explicit import.\n- **How do you prove a surprise chunk?** Route-level bundle analyzer.",
-            "vi": "- **Nuxt khác unplugin thế nào?** Cùng ý. Nuxt còn auto-import composable và API Vue.\n- **Thư viện bạn xuất bản?** Đừng dựa auto-import của consumer. Hãy export file có tên.\n- **Tên đụng?** `directoryAsNamespace` hoặc import tường minh.\n- **Chứng minh chunk bất ngờ thế nào?** Bundle analyzer theo route."
+            "vi": "- **Nuxt vs unplugin?** Cùng ý. Nuxt còn auto-import composable và API Vue.\n- **Library bạn publish?** Đừng dựa auto-import của consumer. Export file có tên.\n- **Tên đụng?** `directoryAsNamespace` hoặc import tường minh.\n- **Chứng minh chunk bất ngờ thế nào?** Bundle analyzer theo route."
           }
         },
         {
@@ -707,14 +707,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** `v-bind` is one-way. `v-model` is a parent-owned (or form-library) source of truth: `modelValue` plus `update:modelValue`. Never `v-model` a prop. `defineModel()` is Vue 3.4+ sugar.",
-            "vi": "**Tóm tắt:** `v-bind` một chiều. `v-model` là nguồn sự thật parent (hoặc thư viện form) sở hữu: `modelValue` cộng `update:modelValue`. Đừng `v-model` một prop. `defineModel()` là sugar Vue 3.4+."
+            "vi": "**Tóm tắt:** `v-bind` một chiều. `v-model` là nguồn sự thật do parent (hoặc thư viện form) chịu trách nhiệm: `modelValue` kèm `update:modelValue`. Đừng `v-model` một prop. `defineModel()` là sugar Vue 3.4+."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** A form child does `v-model=\"props.user\"`; the parent refetches and in-progress edits vanish. Interviewers already know the sugar. They want multiple v-models, modifiers, `defineModel`, and the rule do not v-model a prop.",
-            "vi": "**Vì sao quan trọng:** Child form làm `v-model=\"props.user\"`; parent refetch và bản nháp đang gõ biến mất. Người phỏng vấn đã biết sugar. Họ muốn nhiều v-model, modifier, `defineModel`, và quy tắc đừng v-model một prop."
+            "vi": "**Vì sao quan trọng:** Child form làm `v-model=\"props.user\"`; parent refetch thì bản đang gõ biến mất. Người phỏng vấn đã biết sugar. Họ muốn nhiều v-model, modifier, `defineModel`, và quy tắc đừng v-model một prop."
           }
         },
         {
@@ -723,19 +723,19 @@
           "items": [
             {
               "en": "**How it works:** Vue 3 dropped Vue 2’s default `value`/`input` except on native elements. Named `v-model:foo` is another model.",
-              "vi": "**Cách hoạt động:** Vue 3 bỏ mặc định `value`/`input` của Vue 2 trừ element native. `v-model:foo` có tên là model khác."
+              "vi": "**Cách hoạt động:** Vue 3 bỏ mặc định `value`/`input` của Vue 2 trừ element native. `v-model:foo` đặt tên cũng chỉ là một model khác."
             },
             {
               "en": "Inside the child, emit updates or use `defineModel()`. Never assign to the prop. Mutating a nested field on a prop object “works” until the parent refetch overwrites the draft.",
-              "vi": "Trong child, hãy emit hoặc dùng `defineModel()`. Đừng gán prop. Mutate field lồng trên object prop “chạy” đến khi parent refetch ghi đè bản nháp."
+              "vi": "Trong child, emit update hoặc dùng `defineModel()`. Đừng gán vào prop. Mutate field lồng trên object prop thì “chạy” đến khi parent refetch ghi đè bản nháp."
             },
             {
               "en": "Parent-owned `v-model` re-renders the parent on every keystroke unless you debounce the emit. Binding `v-model` straight to a Pinia field broadcasts every keystroke to every subscriber.",
-              "vi": "`v-model` parent sở hữu re-render parent mỗi lần gõ trừ khi bạn debounce emit. Gắn `v-model` thẳng vào field Pinia phát mọi lần gõ tới mọi subscriber."
+              "vi": "`v-model` do parent chịu trách nhiệm sẽ re-render parent mỗi lần gõ, trừ khi bạn debounce emit. Gắn `v-model` thẳng vào field Pinia thì mỗi lần gõ phát tới mọi subscriber."
             },
             {
               "en": "A local copy emitted on blur diverges from server truth. Pick one source of truth and document it.",
-              "vi": "Bản local emit lúc blur lệch sự thật server. Hãy chọn một nguồn sự thật và ghi rõ."
+              "vi": "Bản local emit lúc blur sẽ lệch sự thật phía server. Chọn một nguồn sự thật rồi ghi rõ."
             }
           ]
         },
@@ -744,14 +744,14 @@
           "lang": "ts",
           "code": {
             "en": "const model = defineModel<string>({ required: true })\nconst modifiers = model.modifiers // .trim / .number / .lazy\n\nfunction onInput(e: Event) {\n  let v = (e.target as HTMLInputElement).value\n  if (modifiers.trim) v = v.trim()\n  model.value = v // parent owns the source of truth\n}\n\n// ❌ v-model=\"props.user\" — parent refetch clobbers the draft\n// ❌ v-model=\"store.user.name\" from many inputs — every keystroke broadcasts",
-            "vi": "const model = defineModel<string>({ required: true })\nconst modifiers = model.modifiers // .trim / .number / .lazy\n\nfunction onInput(e: Event) {\n  let v = (e.target as HTMLInputElement).value\n  if (modifiers.trim) v = v.trim()\n  model.value = v // parent sở hữu nguồn sự thật\n}\n\n// ❌ v-model=\"props.user\" — parent refetch ghi đè bản nháp\n// ❌ v-model=\"store.user.name\" từ nhiều input — mọi lần gõ đều bị phát"
+            "vi": "const model = defineModel<string>({ required: true })\nconst modifiers = model.modifiers // .trim / .number / .lazy\n\nfunction onInput(e: Event) {\n  let v = (e.target as HTMLInputElement).value\n  if (modifiers.trim) v = v.trim()\n  model.value = v // parent chịu trách nhiệm nguồn sự thật\n}\n\n// ❌ v-model=\"props.user\", parent refetch ghi đè bản nháp\n// ❌ v-model=\"store.user.name\" từ nhiều input, mọi lần gõ đều bị phát"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** The child writes `model.value`; the parent still owns the field. `modelModifiers` is how `.trim` reaches a custom input. `v-model` on a prop or a store field from many inputs is the lost-keystroke ticket.",
-            "vi": "**Điều gì xảy ra:** Child ghi `model.value`; parent vẫn sở hữu field. `modelModifiers` là cách `.trim` tới custom input. `v-model` trên prop hoặc field store từ nhiều input là ticket mất lần gõ."
+            "vi": "**Điều gì xảy ra:** Child ghi `model.value`; parent vẫn chịu trách nhiệm field. `modelModifiers` là cách `.trim` tới custom input. `v-model` trên prop hoặc field store từ nhiều input là cách mất lần gõ."
           }
         },
         {
@@ -796,7 +796,7 @@
               },
               {
                 "en": "Parent (or form lib) owns it",
-                "vi": "Parent (hoặc lib form) sở hữu"
+                "vi": "Parent (hoặc lib form) chịu trách nhiệm"
               }
             ],
             [
@@ -810,7 +810,7 @@
               },
               {
                 "en": "Still `modelValue` on the wire",
-                "vi": "Trên dây vẫn `modelValue`"
+                "vi": "Ra ngoài vẫn `modelValue`"
               }
             ]
           ]
@@ -823,7 +823,7 @@
           },
           "text": {
             "en": "- Never v-model a prop. Emit or `defineModel()`.\n- Named `v-model:foo` is just another model. Document the name.\n- Native modifiers are not automatic on custom inputs — read `modelModifiers`.\n- Treat Vue “mutation of prop” warnings as a CI fail. Count watch bridges in form SFCs (should trend down).\n- A store and a prop both writing is how drafts vanish. On the admin product a refetch mid-edit clobbered the user form until the child used defineModel.",
-            "vi": "- Đừng v-model một prop. Hãy emit hoặc `defineModel()`.\n- `v-model:foo` có tên chỉ là model khác. Hãy ghi rõ tên.\n- Modifier native không tự động trên custom input — hãy đọc `modelModifiers`.\n- Coi cảnh báo Vue “mutation of prop” là fail CI. Đếm cầu watch trong SFC form (phải giảm).\n- Store và prop cùng ghi là cách bản nháp biến mất. Ở sản phẩm admin, refetch giữa lúc gõ ghi đè form user đến khi child dùng defineModel."
+            "vi": "- Đừng v-model một prop. Emit hoặc `defineModel()`.\n- `v-model:foo` đặt tên cũng chỉ là một model khác. Ghi rõ tên.\n- Modifier native không tự có trên custom input. Đọc `modelModifiers`.\n- Coi cảnh báo Vue “mutation of prop” là fail CI. Đếm cầu watch trong SFC form (phải giảm).\n- Store và prop cùng ghi là cách bản nháp biến mất. Ở sản phẩm admin, refetch giữa lúc gõ ghi đè form user đến khi child dùng defineModel."
           }
         },
         {
@@ -838,11 +838,11 @@
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "They already know `v-model` is `:modelValue` + `@update:modelValue`. A form child does `v-model=\"props.user\"`; the parent refetches and in-progress edits vanish. They want multiple v-models, modifiers, `defineModel`, and the rule do not v-model a prop.",
-            "vi": "Họ đã biết `v-model` là `:modelValue` + `@update:modelValue`. Child form làm `v-model=\"props.user\"`; parent refetch và bản đang gõ biến mất. Họ muốn nhiều v-model, modifier, `defineModel`, và quy tắc đừng v-model một prop."
+            "vi": "Họ đã biết `v-model` là `:modelValue` + `@update:modelValue`. Child form làm `v-model=\"props.user\"`; parent refetch thì bản đang gõ biến mất. Họ muốn nhiều v-model, modifier, `defineModel`, và quy tắc đừng v-model một prop."
           }
         },
         {
@@ -853,7 +853,7 @@
           },
           "text": {
             "en": "v-bind is one-way. v-model is a parent-owned source of truth — I emit or use defineModel, I never assign to the prop. Vue 3 dropped the Vue 2 value/input default on components, and native modifiers do not apply unless I read modelModifiers. v-model of props.user looks fine until the parent refetches and overwrites the draft, or a store and a prop both write. I would not bind v-model straight to a Pinia field from many inputs without a local draft. On the admin product a refetch mid-edit clobbered the user form until the child used defineModel.",
-            "vi": "v-bind một chiều. v-model là nguồn sự thật parent sở hữu — tôi emit hoặc dùng defineModel, tôi không gán prop. Vue 3 bỏ mặc định value/input của Vue 2 trên component, và modifier native không áp trừ khi tôi đọc modelModifiers. v-model của props.user trông ổn đến khi parent refetch ghi đè bản nháp, hoặc store và prop cùng ghi. Tôi sẽ không gắn v-model thẳng vào field Pinia từ nhiều input nếu không có bản nháp local. Ở sản phẩm admin, refetch giữa lúc gõ ghi đè form user đến khi child dùng defineModel."
+            "vi": "v-bind một chiều. v-model là nguồn sự thật do parent chịu trách nhiệm. Mình emit hoặc dùng defineModel, không gán vào prop. Vue 3 bỏ mặc định value/input của Vue 2 trên component, và modifier native không apply trừ khi mình đọc modelModifiers. v-model của props.user trông ổn đến khi parent refetch ghi đè bản nháp, hoặc store và prop cùng ghi. Mình không gắn v-model thẳng vào field Pinia từ nhiều input nếu không có bản nháp local. Ở sản phẩm admin, refetch giữa lúc gõ ghi đè form user đến khi child dùng defineModel."
           }
         },
         {
@@ -861,15 +861,15 @@
           "items": [
             {
               "en": "Never `v-model` a prop; emit or `defineModel()`.",
-              "vi": "Đừng `v-model` một prop; hãy emit hoặc `defineModel()`."
+              "vi": "Đừng `v-model` một prop; emit hoặc `defineModel()`."
             },
             {
               "en": "Named `v-model:foo` is just another model; document the name.",
-              "vi": "`v-model:foo` có tên chỉ là model khác; hãy ghi rõ tên."
+              "vi": "`v-model:foo` đặt tên chỉ là model khác; ghi rõ tên."
             },
             {
               "en": "Native modifiers are not automatic on custom inputs — read `modelModifiers`.",
-              "vi": "Modifier native không tự động trên custom input — hãy đọc `modelModifiers`."
+              "vi": "Modifier native không tự áp trên custom input. Đọc `modelModifiers`."
             },
             {
               "en": "Do not bind `v-model` straight to a Pinia field from many inputs.",
@@ -885,7 +885,7 @@
           },
           "text": {
             "en": "- **Multiple v-models?** `v-model:firstName` and `v-model:lastName` are two models.\n- **Vue 2 vs 3 default?** Vue 3 uses `modelValue` / `update:modelValue` on components.\n- **Local draft vs parent-owned?** Draft on blur when keystroke cost is high; parent-owned when the form is small.\n- **defineModel vs emit?** Sugar. Still `modelValue` on the wire.",
-            "vi": "- **Nhiều v-model?** `v-model:firstName` và `v-model:lastName` là hai model.\n- **Mặc định Vue 2 khác 3?** Vue 3 dùng `modelValue` / `update:modelValue` trên component.\n- **Bản nháp local khác parent sở hữu?** Bản nháp lúc blur khi chi phí gõ cao; parent sở hữu khi form nhỏ.\n- **defineModel khác emit?** Sugar. Trên dây vẫn `modelValue`."
+            "vi": "- **Nhiều v-model?** `v-model:firstName` và `v-model:lastName` là hai model.\n- **Mặc định Vue 2 khác 3?** Vue 3 dùng `modelValue` / `update:modelValue` trên component.\n- **Nháp local khác parent giữ?** Nháp lúc blur khi chi phí gõ cao; form nhỏ thì parent giữ.\n- **defineModel khác emit?** Sugar. Ra ngoài vẫn là `modelValue`."
           }
         },
         {
@@ -896,7 +896,7 @@
           "level": 4,
           "text": {
             "en": "5.1.5. Props: Parent → Child",
-            "vi": "5.1.5. Props: parent xuống child"
+            "vi": "5.1.5. Props: parent → child"
           },
           "id": {
             "en": "515-props-parent-child",
@@ -907,14 +907,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Props are a typed one-way contract. Objects pass by reference, so treat them as read-only snapshots. Provide/inject is tree-ambient; Pinia is app-wide.",
-            "vi": "**Tóm tắt:** Props là contract một chiều có type. Object truyền theo reference, nên hãy coi chúng là snapshot chỉ đọc. Provide/inject là ambient theo cây; Pinia là toàn app."
+            "vi": "**Tóm tắt:** Props là contract một chiều, có type. Object truyền theo reference, nên coi chúng là snapshot chỉ đọc. Provide/inject phủ theo cây; Pinia phủ cả app."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** A parent writes `:filters=\"{ ...filters, page }\"` and a child `watch(() => props.filters, { deep: true })` refires every keystroke. Three pages also do `props.filters.page++` and stay “mysteriously” in sync.",
-            "vi": "**Vì sao quan trọng:** Parent viết `:filters=\"{ ...filters, page }\"` và child `watch(() => props.filters, { deep: true })` chạy lại mỗi lần gõ. Ba trang còn `props.filters.page++` và “bí ẩn” đồng bộ."
+            "vi": "**Vì sao quan trọng:** Parent viết `:filters=\"{ ...filters, page }\"` còn child `watch(() => props.filters, { deep: true })` chạy lại mỗi lần gõ. Ba trang còn `props.filters.page++` rồi “bí ẩn” đồng bộ với nhau."
           }
         },
         {
@@ -923,19 +923,19 @@
           "items": [
             {
               "en": "**How it works:** Objects and arrays are passed by reference. Vue will not always warn on a nested mutate. A new object every render retriggers child watches even when values did not change.",
-              "vi": "**Cách hoạt động:** Object và array truyền theo reference. Vue không luôn cảnh báo khi mutate lồng. Object mới mỗi render kích watch của child dù value không đổi."
+              "vi": "**Cách hoạt động:** Object và array truyền theo reference. Vue không phải lúc nào cũng warn khi mutate lồng. Object mới mỗi render kích watch của child, dù value không đổi."
             },
             {
               "en": "Fallthrough attrs land on the root unless `inheritAttrs: false`. Undeclared props become attrs and bypass the typed contract.",
-              "vi": "Attr fallthrough rơi vào root trừ khi `inheritAttrs: false`. Prop không khai báo thành attr và bypass contract có type."
+              "vi": "Attr fallthrough áp vào root trừ khi `inheritAttrs: false`. Prop không khai báo thành attr và bypass contract có type."
             },
             {
               "en": "Props for a configured contract you own. Provide/inject for theme, form context, i18n. Pinia for app-wide client state with unrelated subtrees.",
-              "vi": "Props cho contract có cấu hình bạn sở hữu. Provide/inject cho theme, form context, i18n. Pinia cho state client toàn app với subtree không liên quan."
+              "vi": "Props cho contract đã cấu hình bạn phụ trách. Provide/inject cho theme, form context, i18n. Pinia cho state client toàn app với subtree không liên quan."
             },
             {
               "en": "Boolean props: `disabled` without a value is `true`. `withDefaults` belongs with `defineProps<T>()`. Validate at the boundary if non-TS consumers exist.",
-              "vi": "Prop boolean: `disabled` không value là `true`. `withDefaults` đi với `defineProps<T>()`. Validate ở biên nếu có consumer không TS."
+              "vi": "Prop boolean: `disabled` không có value thì là `true`. `withDefaults` đi cùng `defineProps<T>()`. Validate ở ranh giới nếu còn consumer không dùng TS."
             }
           ]
         },
@@ -944,14 +944,14 @@
           "lang": "ts",
           "code": {
             "en": "const props = defineProps<{ filters: Filters }>()\n\n// ❌ new object every keystroke — child deep watch refires\n// <Child :filters=\"{ ...filters, page }\" />\n\nconst filters = computed(() => props.filters)\n\nfunction nextPage() {\n  emit('update:page', props.filters.page + 1)\n  // not props.filters.page++\n}",
-            "vi": "const props = defineProps<{ filters: Filters }>()\n\n// ❌ object mới mỗi lần gõ — watch sâu của child chạy lại\n// <Child :filters=\"{ ...filters, page }\" />\n\nconst filters = computed(() => props.filters)\n\nfunction nextPage() {\n  emit('update:page', props.filters.page + 1)\n  // không phải props.filters.page++\n}"
+            "vi": "const props = defineProps<{ filters: Filters }>()\n\n// ❌ object mới mỗi lần gõ, deep watch của child chạy lại\n// <Child :filters=\"{ ...filters, page }\" />\n\nconst filters = computed(() => props.filters)\n\nfunction nextPage() {\n  emit('update:page', props.filters.page + 1)\n  // không phải props.filters.page++\n}"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** Spreading a new filters object every render makes the child’s deep watch think everything changed. Mutating `props.filters.page` syncs three pages because they share the reference. Emit a page update instead.",
-            "vi": "**Điều gì xảy ra:** Spread object filters mới mỗi render khiến watch sâu của child nghĩ mọi thứ đổi. Mutate `props.filters.page` đồng bộ ba trang vì chúng dùng chung reference. Hãy emit cập nhật `page`."
+            "vi": "**Điều gì xảy ra:** Spread object filters mới mỗi render khiến deep watch của child nghĩ mọi thứ đã đổi. Mutate `props.filters.page` thì ba trang đồng bộ vì chúng dùng chung reference. Emit cập nhật page."
           }
         },
         {
@@ -982,7 +982,7 @@
               },
               {
                 "en": "No — emit",
-                "vi": "Không — emit"
+                "vi": "Không, emit"
               }
             ],
             [
@@ -1023,7 +1023,7 @@
           },
           "text": {
             "en": "- Props are a typed one-way contract. Nested mutate is a runtime bug that often type-checks.\n- A new object every render (`:filters=\"{ ...filters, page }\"`) retriggers child watches. Pass a stable computed or a primitive.\n- Provide/inject is tree-ambient. Pinia is app-wide. Do not pick provide because “props are old.”\n- Fallthrough attrs bypass the typed contract. `inheritAttrs: false` plus explicit bind.\n- On the admin product three list pages stayed in sync because they mutated the same filters object.",
-            "vi": "- Props là contract một chiều có type. Mutate lồng là bug runtime thường vẫn type-check.\n- Object mới mỗi render (`:filters=\"{ ...filters, page }\"`) kích watch child. Hãy truyền computed ổn định hoặc primitive.\n- Provide/inject là ambient theo cây. Pinia là toàn app. Đừng chọn provide vì “props cũ.”\n- Attr fallthrough bypass contract có type. `inheritAttrs: false` cộng bind tường minh.\n- Ở sản phẩm admin, ba trang list đồng bộ vì chúng mutate cùng object filters."
+            "vi": "- Props là contract một chiều, có type. Mutate lồng là bug runtime, thường vẫn type-check.\n- Object mới mỗi render (`:filters=\"{ ...filters, page }\"`) kích watch của child. Truyền computed ổn định hoặc primitive.\n- Provide/inject phủ theo cây. Pinia phủ cả app. Đừng chọn provide vì “props cũ”.\n- Attr fallthrough bypass contract có type. `inheritAttrs: false` kèm bind tường minh.\n- Ở sản phẩm admin, ba trang list đồng bộ vì chúng mutate cùng một object filters."
           }
         },
         {
@@ -1031,18 +1031,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: three pages stay in sync. Cause: nested mutate of a shared object. Fix: emit primitives.\n- Symptom: child watch fires every keystroke. Cause: a new object literal prop. Fix: a stable computed.\n- Symptom: undeclared prop becomes an HTML attr. Cause: fallthrough. Fix: `inheritAttrs: false`.\n- Symptom: `disabled` is the string `\"false\"`. Cause: attr fallthrough vs boolean prop. Fix: declare the prop.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: ba trang đồng bộ. Nguyên nhân: mutate lồng object dùng chung. Cách xử lý: emit primitive.\n- Triệu chứng: watch child chạy mỗi lần gõ. Nguyên nhân: prop object literal mới. Cách xử lý: computed ổn định.\n- Triệu chứng: prop không khai thành HTML attr. Nguyên nhân: fallthrough. Cách xử lý: `inheritAttrs: false`.\n- Triệu chứng: `disabled` là chuỗi `\"false\"`. Nguyên nhân: attr fallthrough khác prop boolean. Cách xử lý: khai báo prop."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: ba trang đồng bộ. Nguyên nhân: mutate lồng object dùng chung. Cách xử lý: emit primitive.\n- Triệu chứng: watch của child chạy mỗi lần gõ. Nguyên nhân: prop là object literal mới. Cách xử lý: computed ổn định.\n- Triệu chứng: prop không khai báo thành HTML attr. Nguyên nhân: fallthrough. Cách xử lý: `inheritAttrs: false`.\n- Triệu chứng: `disabled` là chuỗi `\"false\"`. Nguyên nhân: attr fallthrough khác prop boolean. Cách xử lý: khai báo prop."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "One-way data flow is the junior bar. A parent writes `:filters=\"{ ...filters, page }\"` and a child deep-watches it every keystroke. Three pages also do `props.filters.page++` and stay in sync. They want identity, fallthrough attrs, and provide vs props vs store.",
-            "vi": "Luồng data một chiều là sàn junior. Parent viết `:filters=\"{ ...filters, page }\"` và child watch sâu mỗi lần gõ. Ba trang còn `props.filters.page++` và đồng bộ. Họ muốn identity, attr fallthrough, và provide so với props so với store."
+            "vi": "Data flow một chiều là mức junior. Parent viết `:filters=\"{ ...filters, page }\"` còn child deep-watch mỗi lần gõ. Ba trang còn `props.filters.page++` rồi đồng bộ với nhau. Họ muốn nghe identity, attr fallthrough, và provide khác props khác store."
           }
         },
         {
@@ -1053,7 +1053,7 @@
           },
           "text": {
             "en": "Props are a typed one-way contract. Objects pass by reference, so I treat them as read-only snapshots and I emit primitives instead of incrementing props.filters.page. A new object every render retriggers child watches even when values did not change — I pass a stable computed. Provide/inject is tree-ambient for theme and form context; Pinia is app-wide client state. Fallthrough attrs land on the root unless inheritAttrs is false, and undeclared props bypass the typed contract. On the admin product three list pages stayed in sync because they mutated the same filters object.",
-            "vi": "Props là contract một chiều có type. Object truyền theo reference, nên tôi coi chúng là snapshot chỉ đọc và emit primitive thay vì tăng `props.filters.page`. Object mới mỗi render kích watch child dù value không đổi — tôi truyền computed ổn định. Provide/inject là ambient theo cây cho theme và form context; Pinia là state client toàn app. Attr fallthrough rơi vào root trừ khi inheritAttrs false, và prop không khai bypass contract có type. Ở sản phẩm admin, ba trang list đồng bộ vì chúng mutate cùng object filters."
+            "vi": "Props là contract một chiều, có type. Object truyền theo reference, nên mình coi chúng là snapshot chỉ đọc và emit primitive, không tăng props.filters.page. Object mới mỗi render kích watch của child dù value không đổi, nên mình truyền computed ổn định. Provide/inject phủ theo cây cho theme và form context; Pinia là state client toàn app. Attr fallthrough áp vào root trừ khi inheritAttrs là false, và prop không khai báo thì bypass contract có type. Ở sản phẩm admin, ba trang list đồng bộ vì chúng mutate cùng một object filters."
           }
         },
         {
@@ -1061,15 +1061,15 @@
           "items": [
             {
               "en": "Props are one-way. Nested mutate is a runtime bug.",
-              "vi": "Props một chiều. Mutate lồng là bug runtime."
+              "vi": "Props là một chiều. Mutate lồng là bug runtime."
             },
             {
               "en": "A new object prop every render retriggers child watches.",
-              "vi": "Prop object mới mỗi render kích watch child."
+              "vi": "Prop object mới mỗi render kích watch của child."
             },
             {
               "en": "Provide/inject is tree-ambient; Pinia is app-wide.",
-              "vi": "Provide/inject ambient theo cây; Pinia toàn app."
+              "vi": "Provide/inject phủ theo cây; Pinia phủ cả app."
             },
             {
               "en": "Fallthrough attrs bypass the typed contract.",
@@ -1085,7 +1085,7 @@
           },
           "text": {
             "en": "- **Props vs provide vs Pinia?** Contract vs tree-ambient vs app-wide.\n- **Why no warn on nested mutate?** Vue cannot always see it. Treat objects as snapshots.\n- **Boolean attrs?** Declare the prop or `disabled` becomes a string.\n- **How do you pass a stable object?** A computed, not an inline spread.",
-            "vi": "- **Props khác provide khác Pinia?** Contract khác ambient theo cây khác toàn app.\n- **Vì sao không cảnh báo mutate lồng?** Vue không luôn thấy. Hãy coi object là snapshot.\n- **Attr boolean?** Hãy khai prop, không thì `disabled` thành chuỗi.\n- **Truyền object ổn định thế nào?** Một computed, không phải spread inline."
+            "vi": "- **Props khác provide khác Pinia?** Contract khác phủ theo cây khác toàn app.\n- **Vì sao không warn khi mutate lồng?** Vue không phải lúc nào cũng thấy. Coi object là snapshot.\n- **Attr boolean?** Khai báo prop, không thì `disabled` thành chuỗi.\n- **Truyền object ổn định thế nào?** Một computed, không phải spread inline."
           }
         },
         {
@@ -1114,7 +1114,7 @@
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** A template calls `heavy(item)` in a 10k-row `v-for`. Every unrelated keystroke re-runs it. Interviewers want caching by dependency, and a counter that shows the difference.",
-            "vi": "**Vì sao quan trọng:** Template gọi `heavy(item)` trong `v-for` 10k hàng. Mọi lần gõ không liên quan cũng chạy lại. Người phỏng vấn muốn cache theo dependency, và một counter cho thấy khác biệt."
+            "vi": "**Vì sao quan trọng:** Template gọi `heavy(item)` trong `v-for` 10k row. Mọi lần gõ không liên quan cũng chạy lại. Người phỏng vấn muốn cache theo dependency, và một counter cho thấy khác biệt."
           }
         },
         {
@@ -1123,19 +1123,19 @@
           "items": [
             {
               "en": "**How it works:** Vue tracks which refs a computed reads. The next access returns the cache until a dep changes. A method is a function call — no cache.",
-              "vi": "**Cách hoạt động:** Vue theo dõi ref nào computed đọc. Lần truy cập sau trả cache đến khi một dep đổi. Method là lời gọi hàm — không cache."
+              "vi": "**Cách hoạt động:** Vue theo dõi ref nào computed đọc. Lần access sau trả cache đến khi một dep đổi. Method là lời gọi hàm, không cache."
             },
             {
               "en": "Computed must be pure and synchronous. Side effects belong in `watch`. A computed that writes another ref is an infinite-loop candidate.",
-              "vi": "Computed phải thuần và đồng bộ. Side effect thuộc `watch`. Computed ghi ref khác là ứng viên vòng lặp vô hạn."
+              "vi": "Computed phải pure và synchronous. Side effect để trong `watch`. Computed ghi một ref khác thì dễ thành vòng lặp vô hạn."
             },
             {
               "en": "Passing an argument (`heavy(item)`) cannot be a computed. Precompute a `Map`/`Set` once, or a computed list of decorated rows.",
-              "vi": "Truyền đối số (`heavy(item)`) không thể là computed. Hãy tính trước `Map`/`Set` một lần, hoặc list hàng đã decorate bằng computed."
+              "vi": "Truyền đối số (`heavy(item)`) thì không thể là computed. Tính trước `Map`/`Set` một lần, hoặc list row đã decorate bằng computed."
             },
             {
               "en": "Write computed to cache a reverse index; do not `list.filter` in the template on every keystroke. Methods stay on click handlers.",
-              "vi": "Hãy viết computed để cache index đảo; đừng `list.filter` trong template mỗi lần gõ. Method giữ trên handler click."
+              "vi": "Viết computed để cache reverse index; đừng `list.filter` trong template mỗi lần gõ. Method giữ trên click handler."
             }
           ]
         },
@@ -1151,7 +1151,7 @@
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `doubled` re-runs only when `count` changes. `inc` is a method because it writes. `visible` caches the filtered list; an unrelated parent re-render does not refilter 10k rows.",
-            "vi": "**Điều gì xảy ra:** `doubled` chỉ chạy lại khi `count` đổi. `inc` là method vì nó ghi. `visible` cache list đã lọc; parent re-render không liên quan không lọc lại 10k hàng."
+            "vi": "**Điều gì xảy ra:** `doubled` chỉ chạy lại khi `count` đổi. `inc` là method vì nó ghi. `visible` cache list đã lọc; parent re-render không liên quan thì không lọc lại 10k row."
           }
         },
         {
@@ -1223,7 +1223,7 @@
           },
           "text": {
             "en": "- Computed for derived values. Methods for events. Watch for side effects.\n- A computed with an argument is a method in disguise. Precompute a Map.\n- Computed must be pure. A computed that writes is a loop waiting to happen.\n- Filter/sort in a computed, not in the template, for large lists.\n- On the admin product the user table filter is a computed over shallowRef rows, not a method in v-for.",
-            "vi": "- Computed cho giá trị suy ra. Method cho event. Watch cho side effect.\n- Computed có đối số là method giả trang. Hãy tính trước Map.\n- Computed phải thuần. Computed ghi là vòng lặp đang chờ.\n- Filter/sort trong computed, không trong template, với list lớn.\n- Ở sản phẩm admin, lọc bảng user là computed trên hàng shallowRef, không phải method trong v-for."
+            "vi": "- Computed cho giá trị suy ra. Method cho event. Watch cho side effect.\n- Computed có đối số là method đội lốt. Tính trước một Map.\n- Computed phải pure. Computed ghi thì sớm muộn cũng thành vòng lặp.\n- Filter/sort trong computed, không trong template, với list lớn.\n- Ở sản phẩm admin, lọc bảng user là computed trên row shallowRef, không phải method trong v-for."
           }
         },
         {
@@ -1231,18 +1231,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: typing elsewhere refilters 10k rows. Cause: a method in the template. Fix: a computed list.\n- Symptom: `heavy(item)` in `v-for`. Cause: computed cannot take an argument. Fix: a Map computed once.\n- Symptom: a computed writes `other.value`. Cause: a side effect. Fix: `watch`.\n- Symptom: computed never updates. Cause: you read a non-reactive copy. Fix: read the ref.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: gõ chỗ khác lọc lại 10k hàng. Nguyên nhân: method trong template. Cách xử lý: list computed.\n- Triệu chứng: `heavy(item)` trong `v-for`. Nguyên nhân: computed không nhận đối số. Cách xử lý: Map computed một lần.\n- Triệu chứng: computed ghi `other.value`. Nguyên nhân: side effect. Cách xử lý: `watch`.\n- Triệu chứng: computed không bao giờ cập nhật. Nguyên nhân: đọc bản không reactive. Cách xử lý: đọc ref."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: gõ chỗ khác lọc lại 10k row. Nguyên nhân: method trong template. Cách xử lý: list computed.\n- Triệu chứng: `heavy(item)` trong `v-for`. Nguyên nhân: computed không nhận đối số. Cách xử lý: Map computed một lần.\n- Triệu chứng: computed ghi `other.value`. Nguyên nhân: side effect. Cách xử lý: `watch`.\n- Triệu chứng: computed không bao giờ cập nhật. Nguyên nhân: đọc bản copy không reactive. Cách xử lý: đọc ref."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "A template calls `heavy(item)` in a 10k-row `v-for`. Every unrelated keystroke re-runs it. They want caching by dependency, and a counter that shows the difference.",
-            "vi": "Template gọi `heavy(item)` trong `v-for` 10k hàng. Mọi lần gõ không liên quan cũng chạy lại. Họ muốn cache theo dependency, và một counter cho thấy khác biệt."
+            "vi": "Template gọi `heavy(item)` trong `v-for` 10k row. Mọi lần gõ không liên quan cũng chạy lại. Họ muốn cache theo dependency, và một counter cho thấy khác biệt."
           }
         },
         {
@@ -1253,7 +1253,7 @@
           },
           "text": {
             "en": "A computed caches by dependency and only re-runs when those deps change. A method re-runs every render, so I keep methods on click handlers. Filtering 10k rows belongs in a computed, not a method in the template. A computed cannot take an argument like heavy(item) — I precompute a Map or a decorated list. Computed must be pure; a computed that writes another ref is a loop. On the admin product the user table filter is a computed over shallowRef rows, and doubled of a counter is the small example I would write on the whiteboard.",
-            "vi": "Computed cache theo dependency và chỉ chạy lại khi dep đổi. Method chạy lại mỗi render, nên tôi giữ method trên handler click. Lọc 10k hàng thuộc computed, không phải method trong template. Computed không nhận đối số như heavy(item) — tôi tính trước Map hoặc list đã decorate. Computed phải thuần; computed ghi ref khác là vòng lặp. Ở sản phẩm admin, lọc bảng user là computed trên hàng shallowRef, và doubled của counter là ví dụ nhỏ tôi viết trên bảng."
+            "vi": "Computed cache theo dependency và chỉ chạy lại khi dep đổi. Method chạy lại mỗi render, nên mình để method trên click handler. Lọc 10k row để trong computed, không phải method trong template. Computed không nhận đối số như heavy(item), nên mình tính trước Map hoặc list đã decorate. Computed phải pure; computed ghi một ref khác là vòng lặp. Ở sản phẩm admin, lọc bảng user là computed trên row shallowRef, và doubled của một counter là ví dụ nhỏ mình sẽ viết trên whiteboard."
           }
         },
         {
@@ -1269,11 +1269,11 @@
             },
             {
               "en": "A computed cannot take an argument. Precompute a Map.",
-              "vi": "Computed không nhận đối số. Hãy tính trước Map."
+              "vi": "Computed không nhận đối số. Tính trước một Map."
             },
             {
               "en": "Computed must be pure. Writes belong in watch.",
-              "vi": "Computed phải thuần. Phần ghi thuộc watch."
+              "vi": "Computed phải thuần. Ghi thì để trong watch."
             }
           ]
         },
@@ -1285,7 +1285,7 @@
           },
           "text": {
             "en": "- **Computed vs method in a template?** Computed if it is derived state. Method if it is an event.\n- **Why not `heavy(item)` as a computed?** Computed has no argument. Precompute.\n- **Writable computed?** A getter plus setter. Easy to overuse; prefer a named set function.\n- **Cost of a computed?** Cheap if deps are cheap. Do not deep-walk 50k rows inside one.",
-            "vi": "- **Computed khác method trong template?** Computed nếu là state suy ra. Method nếu là event.\n- **Vì sao không `heavy(item)` là computed?** Computed không có đối số. Hãy tính trước.\n- **Computed ghi được?** Getter cộng setter. Dễ lạm dụng; ưu tiên hàm `set` có tên.\n- **Chi phí computed?** Rẻ nếu dep rẻ. Đừng đi sâu 50k hàng trong một computed."
+            "vi": "- **Computed khác method trong template?** State suy ra thì computed. Event thì method.\n- **Vì sao không dùng `heavy(item)` làm computed?** Computed không nhận đối số. Tính trước.\n- **Computed ghi được?** Getter kèm setter. Dễ lạm dụng; nên dùng hàm set có tên.\n- **Chi phí của computed?** Rẻ nếu dep rẻ. Đừng duyệt sâu 50k hàng trong một computed."
           }
         },
         {
@@ -1296,7 +1296,7 @@
           "level": 4,
           "text": {
             "en": "5.1.7. Computed vs Watch",
-            "vi": "5.1.7. Computed và watch"
+            "vi": "5.1.7. Computed khác Watch"
           },
           "id": {
             "en": "517-computed-vs-watch",
@@ -1307,14 +1307,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Computed is a derived value. `watch` / `watchEffect` is a side effect (tác dụng phụ). Use computed when you can name the result; use watch when you must talk to the world.",
-            "vi": "**Tóm tắt:** Computed là giá trị suy ra. `watch` / `watchEffect` là side effect (tác dụng phụ). Dùng computed khi đặt tên được kết quả; dùng watch khi phải nói với thế giới."
+            "vi": "**Tóm tắt:** Computed là giá trị suy ra. `watch` / `watchEffect` là side effect (tác dụng phụ). Dùng computed khi nêu được tên kết quả; dùng watch khi phải nói chuyện với bên ngoài."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** A `watch` copies `first + last` into `fullName`, then another watch writes back. That is the infinite-loop pitfall. Interviewers want derived value versus side effect, `flush` options, and `watch` versus `watchEffect`.",
-            "vi": "**Vì sao quan trọng:** Một `watch` chép `first + last` vào `fullName`, rồi watch khác ghi ngược. Đó là bẫy vòng lặp vô hạn. Người phỏng vấn muốn giá trị suy ra so với side effect, option `flush`, và `watch` so với `watchEffect`."
+            "vi": "**Vì sao quan trọng:** Một `watch` chép `first + last` vào `fullName`, rồi watch khác ghi ngược lại. Đó là bẫy vòng lặp vô hạn. Người phỏng vấn muốn giá trị suy ra khác side effect, các option `flush`, và `watch` khác `watchEffect`."
           }
         },
         {
@@ -1323,19 +1323,19 @@
           "items": [
             {
               "en": "**How it works:** `watch(source, cb)` runs the callback when `source` changes. `watchEffect(cb)` tracks whatever the callback reads and re-runs. Computed caches a value; watch does not.",
-              "vi": "**Cách hoạt động:** `watch(source, cb)` chạy callback khi `source` đổi. `watchEffect(cb)` theo dõi thứ callback đọc và chạy lại. Computed cache một value; watch thì không."
+              "vi": "**Cách hoạt động:** `watch(source, cb)` chạy callback khi `source` đổi. `watchEffect(cb)` track những gì callback đọc rồi chạy lại. Computed cache một value; watch thì không."
             },
             {
               "en": "`flush: 'pre' | 'post' | 'sync'`. Default is pre before render. Post is after the DOM update — the recurring nextTick. Sync is rarely what you want.",
-              "vi": "`flush: 'pre' | 'post' | 'sync'`. Mặc định pre trước render. Post sau cập nhật DOM — nextTick lặp lại. Sync hiếm khi là thứ bạn muốn."
+              "vi": "`flush: 'pre' | 'post' | 'sync'`. Mặc định là pre, trước render. Post chạy sau khi DOM cập nhật: đó là nextTick lặp lại. Sync hiếm khi là thứ bạn muốn."
             },
             {
               "en": "A watch that writes a value the other watch reads is a loop. Prefer a computed for `fullName`. Abort in-flight work in the watch (search race).",
-              "vi": "Watch ghi value mà watch khác đọc là vòng lặp. Ưu tiên computed cho `fullName`. Hãy hủy việc đang bay trong watch (race search)."
+              "vi": "Watch ghi value mà watch khác đang đọc thì thành vòng lặp. `fullName` nên là computed. Hủy việc đang chạy trong watch (search race)."
             },
             {
               "en": "`watchEffect` is easy to over-subscribe. Prefer explicit `watch` in app code. Stop the watch on unmount — `watch` in `setup` is scoped automatically.",
-              "vi": "`watchEffect` dễ subscribe quá tay. Ưu tiên `watch` tường minh trong app. Dừng watch lúc unmount — `watch` trong `setup` được scope tự động."
+              "vi": "`watchEffect` dễ subscribe quá tay. Trong app nên dùng `watch` tường minh. Unmount thì stop watch: `watch` trong `setup` đã được scope sẵn."
             }
           ]
         },
@@ -1344,14 +1344,14 @@
           "lang": "ts",
           "code": {
             "en": "const first = ref('Ada')\nconst last = ref('Lovelace')\nconst fullName = computed(() => first.value + ' ' + last.value)\n\nwatch(q, async (value, _prev, onCleanup) => {\n  const ac = new AbortController()\n  onCleanup(() => ac.abort())\n  results.value = await search(value, { signal: ac.signal })\n}, { flush: 'post' })\n\n// ❌ watch(fullName) that writes first/last — loop",
-            "vi": "const first = ref('Ada')\nconst last = ref('Lovelace')\nconst fullName = computed(() => first.value + ' ' + last.value)\n\nwatch(q, async (value, _prev, onCleanup) => {\n  const ac = new AbortController()\n  onCleanup(() => ac.abort())\n  results.value = await search(value, { signal: ac.signal })\n}, { flush: 'post' })\n\n// ❌ watch(fullName) ghi first/last — vòng lặp"
+            "vi": "const first = ref('Ada')\nconst last = ref('Lovelace')\nconst fullName = computed(() => first.value + ' ' + last.value)\n\nwatch(q, async (value, _prev, onCleanup) => {\n  const ac = new AbortController()\n  onCleanup(() => ac.abort())\n  results.value = await search(value, { signal: ac.signal })\n}, { flush: 'post' })\n\n// ❌ watch(fullName) ghi first/last: vòng lặp"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `fullName` is derived, not copied by a watch. The search watch aborts the previous request so the slow response cannot win. `flush: 'post'` runs after this render’s DOM update.",
-            "vi": "**Điều gì xảy ra:** `fullName` được suy ra, không chép bằng watch. Watch search hủy request trước để response chậm không thắng. `flush: 'post'` chạy sau cập nhật DOM của render này."
+            "vi": "**Điều gì xảy ra:** `fullName` được suy ra, không phải watch chép. Watch search abort request trước để response chậm không thắng. `flush: 'post'` chạy sau khi DOM của render này cập nhật."
           }
         },
         {
@@ -1363,7 +1363,7 @@
             },
             {
               "en": "Returns a value",
-              "vi": "Trả value"
+              "vi": "Trả về value"
             },
             {
               "en": "Side effect",
@@ -1396,7 +1396,7 @@
               },
               {
                 "en": "Yes — fetch, DOM, log",
-                "vi": "Có — fetch, DOM, log"
+                "vi": "Có: fetch, DOM, log"
               }
             ],
             [
@@ -1423,7 +1423,7 @@
           },
           "text": {
             "en": "- If you can name the result, it is a computed. If you talk to the network or the DOM, it is a watch.\n- `watchEffect` hides deps. Prefer explicit `watch` in app code.\n- `flush: 'post'` is the recurring nextTick. `sync` couples you to the scheduler.\n- Always abort in-flight work in an async watch. That is the search race.\n- On the admin product fullName is a computed, and search uses watch plus AbortController.",
-            "vi": "- Nếu đặt tên được kết quả, đó là computed. Nếu nói với network hoặc DOM, đó là watch.\n- `watchEffect` giấu dep. Ưu tiên `watch` tường minh trong app.\n- `flush: 'post'` là nextTick lặp lại. `sync` buộc bạn vào scheduler.\n- Luôn hủy việc đang bay trong watch async. Đó là race search.\n- Ở sản phẩm admin, fullName là computed, và search dùng watch cộng AbortController."
+            "vi": "- Nêu được tên kết quả thì đó là computed. Nói chuyện với network hoặc DOM thì là watch.\n- `watchEffect` giấu dep. Trong app nên dùng `watch` tường minh.\n- `flush: 'post'` chính là nextTick lặp lại. `sync` gắn bạn vào scheduler.\n- Watch async thì luôn abort việc đang chạy. Đó là search race.\n- Trên sản phẩm admin, fullName là computed, search dùng watch kèm AbortController."
           }
         },
         {
@@ -1431,18 +1431,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: `fullName` and `first` fight. Cause: two watches copying. Fix: a computed.\n- Symptom: slow search paints the wrong q. Cause: no abort. Fix: `onCleanup` + `AbortController`.\n- Symptom: watch runs before the DOM exists. Cause: default `pre`. Fix: `flush: 'post'`.\n- Symptom: `watchEffect` re-runs too often. Cause: implicit extra reads. Fix: explicit `watch`.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `fullName` và `first` đánh nhau. Nguyên nhân: hai watch chép. Cách xử lý: computed.\n- Triệu chứng: search chậm sơn sai q. Nguyên nhân: không hủy. Cách xử lý: `onCleanup` + `AbortController`.\n- Triệu chứng: watch chạy trước khi DOM có. Nguyên nhân: mặc định `pre`. Cách xử lý: `flush: 'post'`.\n- Triệu chứng: `watchEffect` chạy quá thường. Nguyên nhân: đọc ẩn thêm. Cách xử lý: `watch` tường minh."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `fullName` và `first` đá nhau. Nguyên nhân: hai watch chép. Cách xử lý: computed.\n- Triệu chứng: search chậm hiện sai q. Nguyên nhân: không abort. Cách xử lý: `onCleanup` + `AbortController`.\n- Triệu chứng: watch chạy trước khi DOM có. Nguyên nhân: mặc định `pre`. Cách xử lý: `flush: 'post'`.\n- Triệu chứng: `watchEffect` chạy lại quá nhiều. Nguyên nhân: đọc ẩn thêm. Cách xử lý: `watch` tường minh."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hỏi gì"
           },
           "text": {
             "en": "A `watch` copies `first + last` into `fullName`, then another watch writes back. That is the infinite-loop pitfall. They want derived value versus side effect, `flush` options, and `watch` versus `watchEffect`.",
-            "vi": "Một `watch` chép `first + last` vào `fullName`, rồi watch khác ghi ngược. Đó là bẫy vòng lặp vô hạn. Họ muốn giá trị suy ra so với side effect, option `flush`, và `watch` so với `watchEffect`."
+            "vi": "Một `watch` chép `first + last` vào `fullName`, rồi watch khác ghi ngược lại. Đó là bẫy vòng lặp vô hạn. Họ muốn giá trị suy ra khác side effect, các option `flush`, và `watch` khác `watchEffect`."
           }
         },
         {
@@ -1453,7 +1453,7 @@
           },
           "text": {
             "en": "Computed is a derived value. Watch is a side effect. If I can name the result, it is a computed — fullName is first plus last, not a watch that copies. Watch and watchEffect talk to the world: fetch, DOM, logging. I prefer explicit watch in app code because watchEffect hides deps. Flush post is the recurring nextTick; sync is rarely what I want. An async watch must abort the previous run so the slow search cannot win. On the admin product fullName is a computed, and search uses watch plus AbortController.",
-            "vi": "Computed là giá trị suy ra. Watch là side effect. Nếu tôi đặt tên được kết quả, đó là computed — fullName là first cộng last, không phải watch chép. Watch và watchEffect nói với thế giới: fetch, DOM, log. Tôi ưu tiên watch tường minh trong app vì watchEffect giấu dep. Flush post là nextTick lặp lại; sync hiếm khi là thứ tôi muốn. Watch async phải hủy lần chạy trước để search chậm không thắng. Ở sản phẩm admin, fullName là computed, và search dùng watch cộng AbortController."
+            "vi": "Computed là giá trị suy ra. Watch là side effect. Nếu mình nêu được tên kết quả thì đó là computed: fullName là first với last, không phải watch chép. Watch và watchEffect nói chuyện với bên ngoài: fetch, DOM, log. Trong app mình ưu tiên watch tường minh vì watchEffect giấu dep. Flush post chính là nextTick lặp lại; sync thì mình hiếm khi muốn. Watch async phải abort lần chạy trước để search chậm không thắng. Trên sản phẩm admin, fullName là computed, search dùng watch kèm AbortController."
           }
         },
         {
@@ -1461,19 +1461,19 @@
           "items": [
             {
               "en": "Computed derives a value. Watch runs a side effect.",
-              "vi": "Computed suy ra value. Watch chạy side effect."
+              "vi": "Computed suy ra một value. Watch chạy side effect."
             },
             {
               "en": "`flush: 'post'` is the recurring nextTick.",
-              "vi": "`flush: 'post'` là nextTick lặp lại."
+              "vi": "`flush: 'post'` chính là nextTick lặp lại."
             },
             {
               "en": "Abort in-flight work in an async watch.",
-              "vi": "Hãy hủy việc đang bay trong watch async."
+              "vi": "Watch async thì abort việc đang chạy."
             },
             {
               "en": "Prefer explicit `watch` over `watchEffect` in app code.",
-              "vi": "Ưu tiên `watch` tường minh hơn `watchEffect` trong app."
+              "vi": "Trong app, ưu tiên `watch` tường minh hơn `watchEffect`."
             }
           ]
         },
@@ -1485,7 +1485,7 @@
           },
           "text": {
             "en": "- **watch vs watchEffect?** Explicit source vs implicit reads.\n- **When is flush post required?** When you need the updated DOM.\n- **Infinite loop?** A watch that writes a source another watch reads.\n- **Does watch in setup auto-stop?** Yes, on the component scope.",
-            "vi": "- **watch khác watchEffect?** Nguồn tường minh khác lần đọc ẩn.\n- **Khi nào bắt buộc flush post?** Khi bạn cần DOM đã cập nhật.\n- **Vòng lặp vô hạn?** Watch ghi nguồn mà watch khác đọc.\n- **Watch trong setup tự dừng?** Có, theo scope component."
+            "vi": "- **watch khác watchEffect?** Source tường minh khác lần đọc ẩn.\n- **Khi nào bắt buộc flush post?** Khi bạn cần DOM đã cập nhật.\n- **Vòng lặp vô hạn?** Watch ghi một source mà watch khác đang đọc.\n- **Watch trong setup tự stop?** Có, theo scope của component."
           }
         },
         {
@@ -1507,14 +1507,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Vue batches DOM updates. `nextTick` runs after this flush, not “wait a bit.” Use it to focus, measure, or read layout that the current tick has not painted yet.",
-            "vi": "**Tóm tắt:** Vue gộp cập nhật DOM. `nextTick` chạy sau flush này, không phải “đợi một chút.” Dùng để focus, đo, hoặc đọc layout mà tick hiện tại chưa vẽ."
+            "vi": "**Tóm tắt:** Vue gộp các lần cập nhật DOM. `nextTick` chạy sau flush này, không phải “đợi một chút”. Dùng để focus, đo, hoặc đọc layout mà tick hiện tại chưa vẽ."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** You set `show = true` and immediately `input.focus()`, but the input is not in the DOM yet. Interviewers want batching, a focus-after-render example, and a tie to the event loop.",
-            "vi": "**Vì sao quan trọng:** Bạn gán `show = true` rồi `input.focus()` ngay, nhưng input chưa có trên DOM. Người phỏng vấn muốn batching, ví dụ focus sau render, và nối với event loop."
+            "vi": "**Vì sao quan trọng:** Bạn gán `show = true` rồi gọi `input.focus()` ngay, nhưng input chưa có trên DOM. Người phỏng vấn muốn batching, ví dụ focus sau render, và nối với event loop."
           }
         },
         {
@@ -1523,19 +1523,19 @@
           "items": [
             {
               "en": "**How it works:** State writes are queued. Vue flushes the component tree, then DOM. `nextTick(fn)` queues `fn` as a microtask after that flush — the same queue as promises, after the current call stack.",
-              "vi": "**Cách hoạt động:** Ghi state được xếp hàng. Vue flush cây component, rồi DOM. `nextTick(fn)` xếp `fn` như microtask sau flush đó — cùng hàng với promise, sau call stack hiện tại."
+              "vi": "**Cách hoạt động:** Ghi state được xếp hàng. Vue flush cây component, rồi mới DOM. `nextTick(fn)` xếp `fn` thành microtask sau flush đó, cùng hàng với promise, sau call stack hiện tại."
             },
             {
               "en": "A disappearing bug inside `nextTick` is a timing dependency. Replace the bandage with `onMounted` or `watch(..., { flush: 'post' })` and a test that flushes Vue.",
-              "vi": "Bug biến mất trong `nextTick` là phụ thuộc timing. Hãy thay băng bằng `onMounted` hoặc `watch(..., { flush: 'post' })` và test flush Vue."
+              "vi": "Bug biến mất trong `nextTick` là phụ thuộc timing. Thay cách vá tạm bằng `onMounted` hoặc `watch(..., { flush: 'post' })` và một test flush Vue."
             },
             {
               "en": "`flush: 'post'` is the recurring nextTick. `requestAnimationFrame` / `ResizeObserver` are for non-Vue layout. SSR has `nextTick` and no browser DOM.",
-              "vi": "`flush: 'post'` là nextTick lặp lại. `requestAnimationFrame` / `ResizeObserver` dành cho layout không phải Vue. SSR có `nextTick` và không có DOM trình duyệt."
+              "vi": "`flush: 'post'` chính là nextTick lặp lại. `requestAnimationFrame` / `ResizeObserver` dành cho layout không phải Vue. SSR có `nextTick` nhưng không có DOM trình duyệt."
             },
             {
               "en": "Do not `await nextTick()` in a loop to “let the UI catch up.” That hides a long task (tác vụ chạy > 50 ms) on the main thread (luồng chính).",
-              "vi": "Đừng `await nextTick()` trong vòng lặp để “UI bắt kịp.” Cái đó giấu long task (tác vụ chạy > 50 ms) trên luồng chính (main thread)."
+              "vi": "Đừng `await nextTick()` trong vòng lặp để “UI bắt kịp”. Việc đó giấu một long task (tác vụ chạy > 50 ms) trên main thread (luồng chính)."
             }
           ]
         },
@@ -1551,7 +1551,7 @@
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `open = true` queues a render. `focus()` in the same tick fails because the input is not mounted. `nextTick` (a microtask after Vue’s flush) is when the element exists. Recurring focus belongs in `flush: 'post'`.",
-            "vi": "**Điều gì xảy ra:** `open = true` xếp một render. `focus()` trong cùng tick fail vì input chưa mount. `nextTick` (microtask sau flush Vue) là lúc element tồn tại. Focus lặp lại thuộc `flush: 'post'`."
+            "vi": "**Điều gì xảy ra:** `open = true` xếp một render. `focus()` trong cùng tick fail vì input chưa mount. `nextTick` (microtask sau flush của Vue) là lúc element đã có. Focus lặp lại thì để trong `flush: 'post'`."
           }
         },
         {
@@ -1559,7 +1559,7 @@
           "headers": [
             {
               "en": "Need",
-              "vi": "Nhu cầu"
+              "vi": "Cần"
             },
             {
               "en": "Tool",
@@ -1588,7 +1588,7 @@
             [
               {
                 "en": "Every time a source changes",
-                "vi": "Mỗi khi nguồn đổi"
+                "vi": "Mỗi khi source đổi"
               },
               {
                 "en": "`watch` + `flush: 'post'`",
@@ -1596,7 +1596,7 @@
               },
               {
                 "en": "A nextTick bandage in the watcher",
-                "vi": "Băng nextTick trong watcher"
+                "vi": "Vá tạm nextTick trong watcher"
               }
             ],
             [
@@ -1623,7 +1623,7 @@
           },
           "text": {
             "en": "- `nextTick` = after Vue’s flush, not “wait a bit.” It is a microtask, same queue as promises — see the Event Loop topic in the JavaScript doc.\n- A disappearing bug inside `nextTick` is a timing dependency. Replace it with `onMounted` or `flush: 'post'`.\n- SSR has `nextTick` and no browser DOM. Do not focus on the server.\n- Do not await `nextTick` in a loop. That hides a long task.\n- On the admin product the create-user dialog focuses the name field in nextTick after open, with a test that flushes Vue.",
-            "vi": "- `nextTick` = sau flush Vue, không phải “đợi một chút.” Nó là microtask, cùng hàng với promise — xem topic Event Loop trong tài liệu JavaScript.\n- Bug biến mất trong `nextTick` là phụ thuộc timing. Hãy thay bằng `onMounted` hoặc `flush: 'post'`.\n- SSR có `nextTick` và không có DOM trình duyệt. Đừng focus trên server.\n- Đừng await `nextTick` trong vòng lặp. Cái đó giấu long task.\n- Ở sản phẩm admin, dialog tạo user focus field tên trong nextTick sau khi mở, kèm test flush Vue."
+            "vi": "- `nextTick` = sau flush của Vue, không phải “đợi một chút”. Nó là microtask, cùng hàng với promise. Xem topic Event Loop trong tài liệu JavaScript.\n- Bug biến mất trong `nextTick` là phụ thuộc timing. Thay bằng `onMounted` hoặc `flush: 'post'`.\n- SSR có `nextTick` nhưng không có DOM trình duyệt. Đừng focus trên server.\n- Đừng await `nextTick` trong vòng lặp. Cách đó giấu long task.\n- Trên sản phẩm admin, dialog tạo user focus field tên trong nextTick sau khi mở, kèm test flush Vue."
           }
         },
         {
@@ -1631,18 +1631,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: `focus()` does nothing. Cause: DOM not flushed. Fix: `nextTick` or `onMounted`.\n- Symptom: a bug vanishes inside `nextTick`. Cause: timing dependency. Fix: `flush: 'post'` + a test.\n- Symptom: `await nextTick()` in a loop. Cause: hoping the UI catches up. Fix: chunk work; do not hide a long task.\n- Symptom: focus during SSR. Cause: no browser DOM. Fix: client-only.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `focus()` không làm gì. Nguyên nhân: DOM chưa flush. Cách xử lý: `nextTick` hoặc `onMounted`.\n- Triệu chứng: bug biến mất trong `nextTick`. Nguyên nhân: phụ thuộc timing. Cách xử lý: `flush: 'post'` + test.\n- Triệu chứng: `await nextTick()` trong vòng lặp. Nguyên nhân: mong UI bắt kịp. Cách xử lý: chia việc; đừng giấu long task.\n- Triệu chứng: focus lúc SSR. Nguyên nhân: không có DOM trình duyệt. Cách xử lý: chỉ client."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `focus()` không làm gì. Nguyên nhân: DOM chưa flush. Cách xử lý: `nextTick` hoặc `onMounted`.\n- Triệu chứng: bug biến mất trong `nextTick`. Nguyên nhân: phụ thuộc timing. Cách xử lý: `flush: 'post'` + test.\n- Triệu chứng: `await nextTick()` trong vòng lặp. Nguyên nhân: mong UI bắt kịp. Cách xử lý: chia chunk; đừng giấu long task.\n- Triệu chứng: focus lúc SSR. Nguyên nhân: không có DOM trình duyệt. Cách xử lý: chỉ client."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hỏi gì"
           },
           "text": {
             "en": "You set `show = true` and immediately `input.focus()`, but the input is not in the DOM yet. They want batching, a focus-after-render example, and a tie to the event loop.",
-            "vi": "Bạn gán `show = true` rồi `input.focus()` ngay, nhưng input chưa có trên DOM. Họ muốn batching, ví dụ focus sau render, và nối với event loop."
+            "vi": "Bạn gán `show = true` rồi gọi `input.focus()` ngay, nhưng input chưa có trên DOM. Họ muốn batching, ví dụ focus sau render, và nối với event loop."
           }
         },
         {
@@ -1653,7 +1653,7 @@
           },
           "text": {
             "en": "Vue batches DOM updates. nextTick runs after this flush as a microtask, same queue as promises, not wait a bit. I use it to focus or measure layout that this tick has not painted. A disappearing bug inside nextTick is a timing dependency — I replace the bandage with onMounted or watch flush post, and a test that flushes Vue. Recurring after-render work is flush post, not a nextTick in every watcher. SSR has nextTick and no browser DOM. On the admin product the create-user dialog focuses the name field after open, and we proved it with a test that flushes Vue.",
-            "vi": "Vue gộp cập nhật DOM. nextTick chạy sau flush này như microtask, cùng hàng với promise, không phải đợi một chút. Tôi dùng để focus hoặc đo layout mà tick này chưa vẽ. Bug biến mất trong nextTick là phụ thuộc timing — tôi thay băng bằng onMounted hoặc watch flush post, và test flush Vue. Việc sau render lặp lại là flush post, không phải nextTick trong mọi watcher. SSR có nextTick và không có DOM trình duyệt. Ở sản phẩm admin, dialog tạo user focus field tên sau khi mở, và chúng tôi chứng minh bằng test flush Vue."
+            "vi": "Vue gộp các lần cập nhật DOM. nextTick chạy sau flush này như một microtask, cùng hàng với promise, không phải đợi một chút. Mình dùng để focus hoặc đo layout mà tick này chưa vẽ. Bug biến mất trong nextTick là phụ thuộc timing: mình thay cách vá tạm bằng onMounted hoặc watch flush post, kèm test flush Vue. Việc sau render lặp lại thì dùng flush post, không nhét nextTick vào mọi watcher. SSR có nextTick nhưng không có DOM trình duyệt. Trên sản phẩm admin, dialog tạo user focus field tên sau khi mở, và bọn mình chứng minh bằng test flush Vue."
           }
         },
         {
@@ -1661,7 +1661,7 @@
           "items": [
             {
               "en": "`nextTick` = after Vue’s flush, not “wait a bit.”",
-              "vi": "`nextTick` = sau flush Vue, không phải “đợi một chút.”"
+              "vi": "`nextTick` = sau flush của Vue, không phải “đợi một chút”."
             },
             {
               "en": "A disappearing bug inside `nextTick` is a timing dependency.",
@@ -1669,7 +1669,7 @@
             },
             {
               "en": "`flush: 'post'` for recurring after-render; rAF for non-Vue layout.",
-              "vi": "`flush: 'post'` cho sau render lặp lại; rAF cho layout không phải Vue."
+              "vi": "`flush: 'post'` cho việc sau render lặp lại; rAF cho layout không phải Vue."
             },
             {
               "en": "It is a microtask, same queue as promises.",
@@ -1685,7 +1685,7 @@
           },
           "text": {
             "en": "- **nextTick vs setTimeout(0)?** Microtask after Vue’s flush vs a later macrotask.\n- **SSR?** nextTick exists; the browser DOM does not. Do not focus.\n- **Recurring focus?** watch + flush post, not nextTick in every path.\n- **Event loop?** After the current stack, with other microtasks — see the Event Loop topic.",
-            "vi": "- **nextTick khác setTimeout(0)?** Microtask sau flush Vue khác macrotask sau đó.\n- **SSR?** nextTick có; DOM trình duyệt thì không. Đừng focus.\n- **Focus lặp lại?** watch + flush post, không phải nextTick mọi đường.\n- **Event loop?** Sau stack hiện tại, cùng microtask khác — xem topic Event Loop."
+            "vi": "- **nextTick vs setTimeout(0)?** Microtask sau flush của Vue, khác macrotask chạy sau.\n- **SSR?** nextTick vẫn có; DOM trình duyệt thì không. Đừng focus.\n- **Focus lặp lại?** watch + flush post, đừng nhét nextTick vào mọi nhánh.\n- **Event loop?** Sau stack hiện tại, cùng microtask khác. Xem topic Event Loop."
           }
         },
         {
@@ -1707,14 +1707,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Classify the bug — lost reactivity, stale cache, race, identity, SSR mismatch — and fix the class, not the instance. Reproduce the minimal path: props → computed → DOM.",
-            "vi": "**Tóm tắt:** Hãy phân loại bug — mất reactivity, cache stale, race, identity, lệch SSR — và sửa class, không phải instance. Tái hiện đường tối thiểu: props → computed → DOM."
+            "vi": "**Tóm tắt:** Phân loại bug: mất reactivity, cache stale, race, identity, lệch SSR. Sửa loại bug, không phải từng instance. Tái hiện đường đi tối thiểu: props → computed → DOM."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** A component “randomly” does not update, or keep-alive shows the previous customer. Interviewers want a method, not “I console.log.”",
-            "vi": "**Vì sao quan trọng:** Component “ngẫu nhiên” không cập nhật, hoặc keep-alive hiện khách trước. Người phỏng vấn muốn một phương pháp, không phải “tôi console.log.”"
+            "vi": "**Vì sao quan trọng:** Component “ngẫu nhiên” không cập nhật, hoặc keep-alive hiện khách cũ. Người phỏng vấn muốn một phương pháp, không phải “mình console.log”."
           }
         },
         {
@@ -1723,19 +1723,19 @@
           "items": [
             {
               "en": "**How it works:** Destructure of `reactive` is a number, not tracked — `toRefs`. `watch(toRaw(store.item))` will not see store updates. Vue 3 Proxies mean `===` with a raw object fails.",
-              "vi": "**Cách hoạt động:** Destructure `reactive` ra number, không được track — `toRefs`. `watch(toRaw(store.item))` sẽ không thấy store cập nhật. Proxy Vue 3 khiến `===` với object raw fail."
+              "vi": "**Cách hoạt động:** Destructure `reactive` ra number thì không được track: dùng `toRefs`. `watch(toRaw(store.item))` sẽ không thấy store cập nhật. Proxy Vue 3 khiến `===` với object raw fail."
             },
             {
               "en": "keep-alive does not destroy the instance; `onMounted` will not re-run — fetch in `onActivated` or `watch` the id. `:key=\"userId\"` is valid when entity identity changed, not a generic reset.",
-              "vi": "keep-alive không destroy instance; `onMounted` sẽ không chạy lại — hãy fetch trong `onActivated` hoặc `watch` id. `:key=\"userId\"` hợp lệ khi identity thực thể đổi, không phải reset chung."
+              "vi": "keep-alive không destroy instance; `onMounted` sẽ không chạy lại. Fetch trong `onActivated` hoặc `watch` id. `:key=\"userId\"` hợp lệ khi identity của entity đổi, không phải reset đại trà."
             },
             {
               "en": "Map/Set or a class instance should be `markRaw` or you proxy internals and break them. Hunt updates that happen every frame — usually a watcher writing a value that invalidates itself.",
-              "vi": "`Map`/`Set` hoặc instance class nên `markRaw` không thì bạn proxy nội bộ và phá chúng. Hãy săn cập nhật mỗi frame — thường là watcher ghi value tự làm mất hiệu lực."
+              "vi": "Map/Set hoặc instance class nên `markRaw`, không thì bạn proxy nội bộ và phá chúng. Đi tìm những update chạy mỗi frame: thường là watcher ghi một value rồi tự invalidate."
             },
             {
               "en": "DevTools first vs adding logs: DevTools are less wrong about which dependency triggered; logs in computed/watch change timing. Binary-search git when the class is unclear.",
-              "vi": "DevTools trước vs thêm log: DevTools ít sai hơn về dependency nào kích; log trong computed/watch đổi timing. Binary-search git khi class chưa rõ."
+              "vi": "DevTools trước, đừng vội thêm log: DevTools ít sai hơn về dependency nào trigger; log trong computed/watch làm lệch timing. Binary-search git khi chưa rõ loại bug."
             }
           ]
         },
@@ -1751,7 +1751,7 @@
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** Destructuring `reactive` drops tracking, so the template that reads `count` never updates. `toRefs` keeps a ref. keep-alive skipped `onMounted`, so the previous customer stays until `onActivated` reloads.",
-            "vi": "**Điều gì xảy ra:** Destructure `reactive` làm mất tracking, nên template đọc `count` không bao giờ cập nhật. `toRefs` giữ ref. keep-alive bỏ `onMounted`, nên khách trước còn đến khi `onActivated` reload."
+            "vi": "**Điều gì xảy ra:** Destructure `reactive` làm mất tracking, nên template đọc `count` không bao giờ cập nhật. `toRefs` giữ ref. keep-alive bỏ `onMounted`, nên khách cũ còn đó đến khi `onActivated` reload."
           }
         },
         {
@@ -1792,7 +1792,7 @@
               },
               {
                 "en": "Previous customer",
-                "vi": "Khách trước"
+                "vi": "Khách cũ"
               },
               {
                 "en": "`onActivated` / `:key`",
@@ -1806,7 +1806,7 @@
               },
               {
                 "en": "Wrong user paints",
-                "vi": "Sơn sai user"
+                "vi": "Hiện sai user"
               },
               {
                 "en": "AbortController",
@@ -1837,7 +1837,7 @@
           },
           "text": {
             "en": "- Fix the class of bug, not the instance. Reproduce props → computed → DOM.\n- DevTools inspector + timeline, then `onRenderTracked` locally. Trust DevTools about which dep triggered.\n- `key=\"Date.now()\"` is not a fix. `max` + LRU on keep-alive if memory grows.\n- A watcher that writes a value that invalidates itself is the every-frame hitch.\n- On the admin product keep-alive showed the previous customer until we fetched in onActivated.",
-            "vi": "- Sửa class bug, không phải instance. Tái hiện props → computed → DOM.\n- DevTools inspector + timeline, rồi `onRenderTracked` local. Hãy tin DevTools về dep nào kích.\n- `key=\"Date.now()\"` không phải fix. `max` + LRU trên keep-alive nếu bộ nhớ tăng.\n- Watcher ghi value tự làm mất hiệu lực là giật mỗi frame.\n- Ở sản phẩm admin, keep-alive hiện khách trước đến khi chúng tôi fetch trong onActivated."
+            "vi": "- Sửa loại bug, không phải từng instance. Tái hiện props → computed → DOM.\n- DevTools inspector + timeline, rồi `onRenderTracked` local. Tin DevTools về dep nào trigger.\n- `key=\"Date.now()\"` không phải fix. `max` + LRU trên keep-alive nếu memory tăng.\n- Watcher ghi value rồi tự invalidate chính là giật mỗi frame.\n- Trên admin nội bộ, keep-alive hiện khách cũ đến khi bọn mình fetch trong onActivated."
           }
         },
         {
@@ -1845,18 +1845,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: UI never updates after destructure. Cause: lost tracking. Fix: `toRefs`.\n- Symptom: previous customer in a drawer. Cause: keep-alive + `onMounted`. Fix: `onActivated`.\n- Symptom: `key={Date.now()}`. Cause: panic reset. Fix: entity id, or none.\n- Symptom: every-frame hitch. Cause: a watch that writes itself. Fix: a computed, or guard the write.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: UI không cập nhật sau destructure. Nguyên nhân: mất tracking. Cách xử lý: `toRefs`.\n- Triệu chứng: khách trước trong drawer. Nguyên nhân: keep-alive + `onMounted`. Cách xử lý: `onActivated`.\n- Triệu chứng: `key={Date.now()}`. Nguyên nhân: reset hoảng. Cách xử lý: id thực thể, hoặc không.\n- Triệu chứng: giật mỗi frame. Nguyên nhân: watch tự ghi. Cách xử lý: computed, hoặc canh lần ghi."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: UI không cập nhật sau destructure. Nguyên nhân: mất tracking. Cách xử lý: `toRefs`.\n- Triệu chứng: khách cũ trong drawer. Nguyên nhân: keep-alive + `onMounted`. Cách xử lý: `onActivated`.\n- Triệu chứng: `key={Date.now()}`. Nguyên nhân: reset vì hoảng. Cách xử lý: id của entity, hoặc không dùng.\n- Triệu chứng: giật mỗi frame. Nguyên nhân: watch tự ghi. Cách xử lý: computed, hoặc guard lần ghi."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "A component “randomly” does not update, or keep-alive shows the previous customer. They want a method — lost reactivity, stale cache, race, identity, SSR mismatch — not “I console.log.”",
-            "vi": "Component “ngẫu nhiên” không cập nhật, hoặc keep-alive hiện khách trước. Họ muốn một phương pháp — mất reactivity, cache stale, race, identity, lệch SSR — không phải “tôi console.log.”"
+            "vi": "Component “ngẫu nhiên” không cập nhật, hoặc keep-alive hiện khách cũ. Họ muốn một phương pháp: mất reactivity, cache stale, race, identity, lệch SSR. Không phải “mình console.log”."
           }
         },
         {
@@ -1867,7 +1867,7 @@
           },
           "text": {
             "en": "I reproduce the minimal path — props to computed to DOM — and classify: lost reactivity, stale cache, race, identity, or SSR mismatch. Destructuring reactive drops tracking; I use toRefs. watch of toRaw store item will not see store updates. keep-alive skips onMounted; I fetch in onActivated. key of Date.now is not a fix. If DevTools and a log disagree, I trust DevTools about which dependency triggered. On the admin product keep-alive showed the previous customer until we fetched in onActivated.",
-            "vi": "Tôi tái hiện đường tối thiểu — props tới computed tới DOM — và phân loại: mất reactivity, cache stale, race, identity, hoặc lệch SSR. Destructure reactive làm mất tracking; tôi dùng toRefs. watch của toRaw store item sẽ không thấy store cập nhật. keep-alive bỏ onMounted; tôi fetch trong onActivated. key của Date.now không phải fix. Nếu DevTools và log bất đồng, tôi tin DevTools về dependency nào kích. Ở sản phẩm admin, keep-alive hiện khách trước đến khi chúng tôi fetch trong onActivated."
+            "vi": "Mình tái hiện đường đi tối thiểu, props tới computed tới DOM, rồi phân loại: mất reactivity, cache stale, race, identity, hay lệch SSR. Destructure reactive làm mất tracking; mình dùng toRefs. watch toRaw store item sẽ không thấy store cập nhật. keep-alive bỏ onMounted; mình fetch trong onActivated. key Date.now không phải fix. DevTools và log lệch thì mình tin DevTools về dependency nào trigger. Trên admin nội bộ, keep-alive hiện khách cũ đến khi bọn mình fetch trong onActivated."
           }
         },
         {
@@ -1875,19 +1875,19 @@
           "items": [
             {
               "en": "Fix the class of bug, not the instance.",
-              "vi": "Sửa class bug, không phải instance."
+              "vi": "Sửa loại bug, không phải từng instance."
             },
             {
               "en": "Destructure of `reactive` drops tracking; use `toRefs`.",
-              "vi": "Destructure `reactive` làm mất tracking; hãy dùng `toRefs`."
+              "vi": "Destructure `reactive` làm mất tracking; dùng `toRefs`."
             },
             {
               "en": "keep-alive: `onMounted` will not re-run — use `onActivated`.",
-              "vi": "keep-alive: `onMounted` sẽ không chạy lại — hãy dùng `onActivated`."
+              "vi": "keep-alive: `onMounted` sẽ không chạy lại. Dùng `onActivated`."
             },
             {
               "en": "Trust DevTools about which dependency triggered.",
-              "vi": "Hãy tin DevTools về dependency nào kích."
+              "vi": "Tin DevTools về dependency nào trigger."
             }
           ]
         },
@@ -1899,7 +1899,7 @@
           },
           "text": {
             "en": "- **toRaw in a watch?** You will miss store updates. Watch the proxy or a getter.\n- **When is :key valid?** When entity identity changed, not as a generic reset.\n- **Every-frame hitch?** A watch that writes a value that invalidates itself.\n- **SSR mismatch class?** Date.now / window in setup. Move to onMounted or useId.",
-            "vi": "- **toRaw trong watch?** Bạn sẽ miss cập nhật store. Hãy watch proxy hoặc getter.\n- **Khi nào :key hợp lệ?** Khi identity thực thể đổi, không phải reset chung.\n- **Giật mỗi frame?** Watch ghi value tự làm mất hiệu lực.\n- **Class lệch SSR?** Date.now / window trong setup. Chuyển onMounted hoặc useId."
+            "vi": "- **toRaw trong watch?** Bạn sẽ không thấy store cập nhật. Watch proxy hoặc getter.\n- **Khi nào :key hợp lệ?** Khi identity của entity đổi, không phải reset đại trà.\n- **Giật mỗi frame?** Watch ghi value rồi tự invalidate.\n- **Class lệch SSR?** Date.now / window trong setup. Chuyển sang onMounted hoặc useId."
           }
         },
         {
@@ -1921,14 +1921,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Vue 3 tracks with a Proxy (`track` / `trigger`). `ref` for values you replace; `reactive` for a small bag you mutate; `shallowRef` / `markRaw` when a deep Proxy is the cost or will break a third-party instance.",
-            "vi": "**Tóm tắt:** Vue 3 track bằng Proxy (`track` / `trigger`). `ref` cho value bạn thay nguyên; `reactive` cho túi nhỏ bạn mutate; `shallowRef` / `markRaw` khi Proxy sâu là chi phí hoặc sẽ phá instance third-party."
+            "vi": "**Tóm tắt:** Vue 3 track bằng Proxy (`track` / `trigger`). `ref` khi bạn thay nguyên value; `reactive` cho object nhỏ bạn mutate; `shallowRef` / `markRaw` khi Proxy sâu là chi phí, hoặc sẽ phá instance third-party."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** Vue 2 `Object.defineProperty` vs Vue 3 Proxy, then the production knobs: `markRaw`, `shallowRef`, `triggerRef`. A 50k-row table wrapped in deep `reactive()` hitching is the prompt.",
-            "vi": "**Vì sao quan trọng:** Vue 2 `Object.defineProperty` so với Proxy Vue 3, rồi các nút production: `markRaw`, `shallowRef`, `triggerRef`. Bảng 50k hàng bọc `reactive()` sâu bị giật là đề bài."
+            "vi": "**Vì sao quan trọng:** Vue 2 `Object.defineProperty` khác Proxy Vue 3, rồi các cơ chế production: `markRaw`, `shallowRef`, `triggerRef`. Bảng 50k hàng bọc `reactive()` sâu bị giật: đó là đề bài."
           }
         },
         {
@@ -1937,19 +1937,19 @@
           "items": [
             {
               "en": "**How it works:** A Proxy intercepts get (track) and set (trigger). It tracks new keys and index writes — Vue 2 could not. It cannot wrap primitives, and it cannot see mutations inside `markRaw` / shallow targets.",
-              "vi": "**Cách hoạt động:** Proxy chặn get (track) và `set` (trigger). Nó track key mới và ghi index — Vue 2 không làm được. Nó không bọc primitive, và không thấy mutate trong `markRaw` / target nông."
+              "vi": "**Cách hoạt động:** Proxy chặn get (track) và set (trigger). Nó track key mới và ghi index, Vue 2 không làm được. Không bọc được primitive, và không thấy mutate trong `markRaw` / target shallow."
             },
             {
               "en": "A module-level `reactive` is shared across SSR requests unless you create it per app. `reactive` unwraps nested refs; `ref` of a reactive object double-wraps.",
-              "vi": "`reactive` mức module dùng chung giữa các request SSR trừ khi bạn tạo per app. `reactive` unwrap ref lồng; `ref` của object reactive bọc hai lần."
+              "vi": "`reactive` ở mức module dùng chung giữa các request SSR, trừ khi bạn tạo per app. `reactive` unwrap ref lồng nhau; `ref` của object reactive thì bọc hai lần."
             },
             {
               "en": "In-place writes on `shallowRef` do nothing until `triggerRef`. Putting a reactive object in a `Set`/`Map` as a key uses Proxy identity — `toRaw` for interop.",
-              "vi": "Ghi tại chỗ trên `shallowRef` không làm gì đến khi `triggerRef`. Đặt object reactive làm key `Set`/`Map` dùng identity Proxy — `toRaw` để tương thích."
+              "vi": "Ghi tại chỗ trên `shallowRef` không làm gì đến khi `triggerRef`. Đặt object reactive làm key trong `Set`/`Map` thì dùng identity Proxy: `toRaw` để interop."
             },
             {
               "en": "`onScopeDispose` is why composables stop tracking on unmount. Deep `reactive()` on a 50k-row table is a heap tax.",
-              "vi": "`onScopeDispose` là lý do composable dừng track lúc unmount. `reactive()` sâu trên bảng 50k hàng là thuế heap."
+              "vi": "`onScopeDispose` là lý do composable dừng track lúc unmount. `reactive()` sâu trên bảng 50k hàng là gánh nặng heap."
             }
           ]
         },
@@ -1958,14 +1958,14 @@
           "lang": "ts",
           "code": {
             "en": "const rows = shallowRef<Row[]>([])\nfunction setPage(next: Row[]) {\n  rows.value = next // one trigger\n}\nfunction patchHidden(i: number, row: Row) {\n  rows.value[i] = row // NOT tracked (shallow)\n  triggerRef(rows) // explicit signal when you must mutate in place\n}\nconst map = markRaw(new MapboxMap(el))\n\nfunction useRows() {\n  onScopeDispose(() => { /* stop */ })\n  return rows\n}",
-            "vi": "const rows = shallowRef<Row[]>([])\nfunction setPage(next: Row[]) {\n  rows.value = next // một lần trigger\n}\nfunction patchHidden(i: number, row: Row) {\n  rows.value[i] = row // KHÔNG được track (nông)\n  triggerRef(rows) // tín hiệu tường minh khi phải mutate tại chỗ\n}\nconst map = markRaw(new MapboxMap(el))\n\nfunction useRows() {\n  onScopeDispose(() => { /* dừng */ })\n  return rows\n}"
+            "vi": "const rows = shallowRef<Row[]>([])\nfunction setPage(next: Row[]) {\n  rows.value = next // một lần trigger\n}\nfunction patchHidden(i: number, row: Row) {\n  rows.value[i] = row // KHÔNG được track (shallow)\n  triggerRef(rows) // tín hiệu tường minh khi phải mutate tại chỗ\n}\nconst map = markRaw(new MapboxMap(el))\n\nfunction useRows() {\n  onScopeDispose(() => { /* dừng */ })\n  return rows\n}"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** Swapping the page is one trigger. An in-place row write is invisible until `triggerRef`. Mapbox stays raw so Vue does not proxy its internals. `onScopeDispose` stops the composable when the owner unmounts.",
-            "vi": "**Điều gì xảy ra:** Đổi trang là một lần trigger. Ghi hàng tại chỗ vô hình đến khi `triggerRef`. Mapbox giữ raw để Vue không proxy nội bộ. `onScopeDispose` dừng composable khi owner unmount."
+            "vi": "**Điều gì xảy ra:** Đổi trang là một lần trigger. Ghi row tại chỗ thì vô hình đến khi `triggerRef`. Mapbox giữ raw để Vue không proxy nội bộ. `onScopeDispose` dừng composable khi owner unmount."
           }
         },
         {
@@ -2006,7 +2006,7 @@
               },
               {
                 "en": "Small bag you mutate",
-                "vi": "Túi nhỏ bạn mutate"
+                "vi": "Object nhỏ hay mutate"
               },
               {
                 "en": "SSR module singleton",
@@ -2020,7 +2020,7 @@
               },
               {
                 "en": "Large page you swap",
-                "vi": "Trang lớn bạn thay"
+                "vi": "Trang lớn bạn swap"
               },
               {
                 "en": "In-place writes are silent",
@@ -2051,7 +2051,7 @@
           },
           "text": {
             "en": "- `ref` replace; `reactive` mutate small; `shallowRef` / `markRaw` when deep Proxy hurts.\n- In-place writes on `shallowRef` do nothing until `triggerRef`.\n- Module-level `reactive` is a cross-request SSR leak. Create per app.\n- Proxy identity in Map/Set keys surprises people. `toRaw` for interop.\n- On the admin product the 50k-row table is shallowRef; Mapbox is markRaw.",
-            "vi": "- `ref` thay nguyên; `reactive` mutate túi nhỏ; `shallowRef` / `markRaw` khi Proxy sâu đau.\n- Ghi tại chỗ trên `shallowRef` không làm gì đến khi `triggerRef`.\n- `reactive` mức module là rò SSR giữa request. Hãy tạo per app.\n- Identity Proxy trong key `Map`/`Set` làm bất ngờ. `toRaw` để tương thích.\n- Ở sản phẩm admin, bảng 50k hàng là shallowRef; Mapbox là markRaw."
+            "vi": "- `ref` thay nguyên; `reactive` mutate object nhỏ; `shallowRef` / `markRaw` khi Proxy sâu gây hại.\n- Ghi tại chỗ trên `shallowRef` không làm gì đến khi `triggerRef`.\n- `reactive` mức module là leak SSR xuyên request. Tạo per app.\n- Identity Proxy trong key Map/Set hay làm bất ngờ. `toRaw` để interop.\n- Trên admin nội bộ, bảng 50k hàng là shallowRef; Mapbox là markRaw."
           }
         },
         {
@@ -2059,18 +2059,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: 50k-row table hitches. Cause: deep `reactive()`. Fix: `shallowRef`.\n- Symptom: Mapbox breaks after wrap. Cause: proxied internals. Fix: `markRaw`.\n- Symptom: in-place row write does nothing. Cause: shallow. Fix: replace the array or `triggerRef`.\n- Symptom: SSR users share state. Cause: module-level `reactive`. Fix: create per app.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: bảng 50k hàng giật. Nguyên nhân: `reactive()` sâu. Cách xử lý: `shallowRef`.\n- Triệu chứng: Mapbox hỏng sau khi bọc. Nguyên nhân: nội bộ bị proxy. Cách xử lý: `markRaw`.\n- Triệu chứng: ghi hàng tại chỗ không làm gì. Nguyên nhân: nông. Cách xử lý: thay mảng hoặc `triggerRef`.\n- Triệu chứng: user SSR dùng chung state. Nguyên nhân: `reactive` mức module. Cách xử lý: tạo per app."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: bảng 50k hàng giật. Nguyên nhân: `reactive()` sâu. Cách xử lý: `shallowRef`.\n- Triệu chứng: Mapbox hỏng sau khi bọc. Nguyên nhân: nội bộ bị proxy. Cách xử lý: `markRaw`.\n- Triệu chứng: ghi row tại chỗ không làm gì. Nguyên nhân: shallow. Cách xử lý: thay mảng hoặc `triggerRef`.\n- Triệu chứng: user SSR dùng chung state. Nguyên nhân: `reactive` mức module. Cách xử lý: tạo per app."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "Vue 2 `Object.defineProperty` vs Vue 3 `Proxy`, ref vs reactive, then the production knobs: `markRaw`, `shallowRef`, `triggerRef`. A 50k-row table wrapped in deep `reactive()` hitching is the prompt.",
-            "vi": "Vue 2 `Object.defineProperty` so với Proxy Vue 3, ref so với reactive, rồi các nút production: `markRaw`, `shallowRef`, `triggerRef`. Bảng 50k hàng bọc `reactive()` sâu bị giật là đề bài."
+            "vi": "Vue 2 `Object.defineProperty` khác Vue 3 `Proxy`, ref khác reactive, rồi các cơ chế production: `markRaw`, `shallowRef`, `triggerRef`. Bảng 50k hàng bọc `reactive()` sâu bị giật: đó là đề bài."
           }
         },
         {
@@ -2081,7 +2081,7 @@
           },
           "text": {
             "en": "ref when I replace the value; reactive for a small bag I mutate; shallowRef for a large API page I swap in one assignment; markRaw for Mapbox, Chart, or a class with its own identity. Proxy tracks new keys and index writes — Vue 2 could not — but it cannot see markRaw or shallow internals. Module-scope reactive in Nuxt is a cross-request leak. In-place writes on shallowRef do nothing until triggerRef. onScopeDispose is why composables stop tracking on unmount. On the admin product the 50k-row table is shallowRef, and Mapbox is markRaw.",
-            "vi": "ref khi tôi thay nguyên value; reactive cho túi nhỏ tôi mutate; shallowRef cho trang API lớn tôi thay một lần gán; markRaw cho Mapbox, Chart, hoặc class có identity riêng. Proxy track key mới và ghi index — Vue 2 không làm được — nhưng không thấy nội bộ markRaw hoặc nông. reactive phạm vi module trong Nuxt là rò giữa request. Ghi tại chỗ trên shallowRef không làm gì đến khi triggerRef. onScopeDispose là lý do composable dừng track lúc unmount. Ở sản phẩm admin, bảng 50k hàng là shallowRef, và Mapbox là markRaw."
+            "vi": "ref khi mình thay nguyên value; reactive cho object nhỏ mình mutate; shallowRef cho trang API lớn mình swap bằng một lần gán; markRaw cho Mapbox, Chart, hoặc class có identity riêng. Proxy track key mới và ghi index, Vue 2 không làm được, nhưng không thấy nội bộ markRaw hay shallow. reactive ở scope module trong Nuxt là leak xuyên request. Ghi tại chỗ trên shallowRef không làm gì đến khi triggerRef. onScopeDispose là lý do composable dừng track lúc unmount. Trên admin nội bộ, bảng 50k hàng là shallowRef, Mapbox là markRaw."
           }
         },
         {
@@ -2089,19 +2089,19 @@
           "items": [
             {
               "en": "`ref` replace; `reactive` mutate small; `shallowRef` / `markRaw` when deep Proxy hurts.",
-              "vi": "`ref` thay nguyên; `reactive` mutate túi nhỏ; `shallowRef` / `markRaw` khi Proxy sâu đau."
+              "vi": "`ref` thay nguyên; `reactive` mutate object nhỏ; `shallowRef` / `markRaw` khi Proxy sâu gây hại."
             },
             {
               "en": "In-place writes on `shallowRef` do nothing until `triggerRef`.",
-              "vi": "Ghi tại chỗ trên `shallowRef` không làm gì đến khi `triggerRef`."
+              "vi": "Ghi tại chỗ trên `shallowRef` không trigger gì cho đến khi gọi `triggerRef`."
             },
             {
               "en": "Module-level `reactive` is a cross-request SSR leak.",
-              "vi": "`reactive` mức module là rò SSR giữa request."
+              "vi": "`reactive` khai báo ở mức module sẽ rò sang request khác lúc SSR."
             },
             {
               "en": "Proxy tracks new keys; Vue 2 `defineProperty` could not.",
-              "vi": "Proxy track key mới; `defineProperty` Vue 2 không làm được."
+              "vi": "Proxy track được key mới; `defineProperty` của Vue 2 thì không."
             }
           ]
         },
@@ -2113,7 +2113,7 @@
           },
           "text": {
             "en": "- **ref vs reactive?** Replace vs mutate a small bag. Do not mix without a reason.\n- **Why triggerRef?** Shallow in-place writes are silent otherwise.\n- **SSR singleton?** Module-level reactive is shared. Create per app.\n- **Set/Map keys?** Proxy identity ≠ raw identity. toRaw for interop.",
-            "vi": "- **ref khác reactive?** Thay nguyên khác mutate túi nhỏ. Đừng trộn không lý do.\n- **Vì sao triggerRef?** Ghi tại chỗ nông im lặng nếu không.\n- **Singleton SSR?** reactive mức module dùng chung. Hãy tạo per app.\n- **Key `Set`/`Map`?** Identity Proxy ≠ identity raw. toRaw để tương thích."
+            "vi": "- **ref vs reactive?** Thay cả cục, hay mutate một object nhỏ. Đừng mix nếu không có lý do.\n- **Vì sao triggerRef?** Ghi tại chỗ trên shallow thì im lặng nếu không gọi.\n- **Singleton SSR?** reactive ở module là dùng chung. Tạo mới cho từng app.\n- **Key Set/Map?** Identity Proxy ≠ identity raw. Dùng toRaw khi interop."
           }
         },
         {
@@ -2124,7 +2124,7 @@
           "level": 4,
           "text": {
             "en": "5.1.11. Lifecycle Hooks",
-            "vi": "5.1.11. Vòng đời (lifecycle)"
+            "vi": "5.1.11. Hook vòng đời"
           },
           "id": {
             "en": "5111-lifecycle-hooks",
@@ -2135,14 +2135,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** `setup` creates state. `onMounted` touches DOM and `window`. `onMounted` does not run on the server. That sentence is the interview.",
-            "vi": "**Tóm tắt:** `setup` tạo state. `onMounted` chạm DOM và `window`. `onMounted` không chạy trên server. Câu đó là bài phỏng vấn."
+            "vi": "**Tóm tắt:** `setup` tạo state. `onMounted` mới đụng DOM và `window`. `onMounted` không chạy trên server. Câu đó là cả bài phỏng vấn."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** They sketch Vue 2 vs Vue 3 names, then jump to `setup` vs `onMounted` vs SSR and `onScopeDispose`. A listener registered in `setup` crashes the server — or runs twice with no cleanup.",
-            "vi": "**Vì sao quan trọng:** Họ phác tên Vue 2 so với Vue 3, rồi nhảy tới `setup` so với `onMounted` so với SSR và `onScopeDispose`. Listener đăng ký trong `setup` crash server — hoặc chạy hai lần không cleanup."
+            "vi": "**Vì sao quan trọng:** Họ so tên Vue 2 với Vue 3, rồi nhảy sang `setup` vs `onMounted` vs SSR và `onScopeDispose`. Listener đăng ký trong `setup` thì crash server, hoặc chạy hai lần vì không cleanup."
           }
         },
         {
@@ -2151,11 +2151,11 @@
           "items": [
             {
               "en": "**How it works:** SSR render runs `setup` + `onServerPrefetch` (and Nuxt async data). It does not run `onMounted` / `onUpdated`. Client hydration re-runs `setup` then `onBeforeMount` / `onMounted`.",
-              "vi": "**Cách hoạt động:** Render SSR chạy `setup` + `onServerPrefetch` (và async data Nuxt). Nó không chạy `onMounted` / `onUpdated`. Hydration client chạy lại `setup` rồi `onBeforeMount` / `onMounted`."
+              "vi": "**Cách hoạt động:** SSR render chạy `setup` + `onServerPrefetch` (và async data của Nuxt). Không chạy `onMounted` / `onUpdated`. Hydration phía client chạy lại `setup` rồi `onBeforeMount` / `onMounted`."
             },
             {
               "en": "Stop listeners in `onBeforeUnmount`, or `onScopeDispose` if the composable may run outside a component. Composables must be called sync and unconditionally in `setup`.",
-              "vi": "Hãy dừng listener trong `onBeforeUnmount`, hoặc `onScopeDispose` nếu composable có thể chạy ngoài component. Composable phải gọi sync và không điều kiện trong `setup`."
+              "vi": "Dừng listener trong `onBeforeUnmount`, hoặc `onScopeDispose` nếu composable có thể chạy ngoài component. Composable phải gọi sync và không điều kiện trong `setup`."
             },
             {
               "en": "`onMounted` inside a `v-if` child runs when the child is created, not when the parent mounts. keep-alive uses `onActivated`, not a second `onMounted`.",
@@ -2163,7 +2163,7 @@
             },
             {
               "en": "Async `setup` without `<Suspense>` never appears. Doing prefetch and mounted fetch without a key is a double fetch.",
-              "vi": "`setup` async không có `<Suspense>` không bao giờ hiện. Prefetch và fetch mounted không key là fetch đôi."
+              "vi": "`setup` async mà không có `<Suspense>` thì component không hiện. Prefetch rồi fetch lúc mounted, không có key, là fetch hai lần."
             }
           ]
         },
@@ -2179,7 +2179,7 @@
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** ResizeObserver belongs in `onMounted` because there is no `window` on the server. The composable that adds a listener in its body crashes SSR; move the listener into `onMounted` and dispose with `onScopeDispose`.",
-            "vi": "**Điều gì xảy ra:** ResizeObserver thuộc `onMounted` vì server không có `window`. Composable thêm listener trong thân crash SSR; hãy chuyển listener vào `onMounted` và dispose bằng `onScopeDispose`."
+            "vi": "**Điều gì xảy ra:** ResizeObserver phải nằm trong `onMounted` vì server không có `window`. Composable gắn listener ngay trong thân hàm sẽ crash SSR; chuyển listener vào `onMounted` và dispose bằng `onScopeDispose`."
           }
         },
         {
@@ -2265,7 +2265,7 @@
           },
           "text": {
             "en": "- `onMounted` does not run on the server. That sentence is the interview.\n- DOM / window / widgets in `onMounted`; dispose in `onBeforeUnmount` / `onScopeDispose`.\n- Composables: sync, unconditional, in `setup`. `if (flag) useFoo()` is the wrong instance.\n- Parent setup → child setup → child mount → parent mount. SSR has no mount.\n- On the admin product a resize listener in setup crashed SSR until we moved it to onMounted.",
-            "vi": "- `onMounted` không chạy trên server. Câu đó là bài phỏng vấn.\n- DOM / window / widget trong `onMounted`; dispose trong `onBeforeUnmount` / `onScopeDispose`.\n- Composable: sync, không điều kiện, trong `setup`. `if (flag) useFoo()` là instance sai.\n- Parent setup → child setup → child mount → parent mount. SSR không có mount.\n- Ở sản phẩm admin, listener resize trong setup crash SSR đến khi chúng tôi chuyển onMounted."
+            "vi": "- `onMounted` không chạy trên server. Câu đó là cả bài phỏng vấn.\n- DOM / window / widget để trong `onMounted`; dispose trong `onBeforeUnmount` / `onScopeDispose`.\n- Composable: sync, không điều kiện, trong `setup`. `if (flag) useFoo()` ra instance sai.\n- Parent setup → child setup → child mount → parent mount. SSR không có mount.\n- Ở admin nội bộ, listener resize trong setup làm crash SSR đến khi bọn mình chuyển sang onMounted."
           }
         },
         {
@@ -2280,11 +2280,11 @@
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "They sketch Vue 2 vs Vue 3 names, then jump to `setup` vs `onMounted` vs SSR and `onScopeDispose`. A listener registered in `setup` crashes the server — or runs twice with no cleanup. `onMounted` does not run on the server.",
-            "vi": "Họ phác tên Vue 2 so với Vue 3, rồi nhảy tới `setup` so với `onMounted` so với SSR và `onScopeDispose`. Listener đăng ký trong `setup` crash server — hoặc chạy hai lần không cleanup. `onMounted` không chạy trên server."
+            "vi": "Họ so tên Vue 2 với Vue 3, rồi nhảy sang `setup` vs `onMounted` vs SSR và `onScopeDispose`. Listener đăng ký trong `setup` thì crash server, hoặc chạy hai lần vì không cleanup. `onMounted` không chạy trên server."
           }
         },
         {
@@ -2295,7 +2295,7 @@
           },
           "text": {
             "en": "setup creates state. onMounted touches DOM and window. onMounted does not run on the server — that sentence is the interview. I stop listeners in onBeforeUnmount, or onScopeDispose when the composable may live in a store. Composables are called sync and unconditionally in setup; if flag useFoo is the wrong instance. Async setup without Suspense never appears. keep-alive uses onActivated, not a second onMounted. On the admin product a resize listener in setup crashed SSR until we moved it to onMounted.",
-            "vi": "setup tạo state. onMounted chạm DOM và window. onMounted không chạy trên server — câu đó là bài phỏng vấn. Tôi dừng listener trong onBeforeUnmount, hoặc onScopeDispose khi composable có thể sống trong store. Composable được gọi sync và không điều kiện trong setup; if flag useFoo là instance sai. setup async không có Suspense không bao giờ hiện. keep-alive dùng onActivated, không phải onMounted lần hai. Ở sản phẩm admin, listener resize trong setup crash SSR đến khi chúng tôi chuyển onMounted."
+            "vi": "setup tạo state. onMounted mới đụng DOM và window. onMounted không chạy trên server: câu đó là cả bài phỏng vấn. Mình gỡ listener trong onBeforeUnmount, hoặc onScopeDispose khi composable có thể sống trong store. Composable gọi sync và không điều kiện trong setup; if flag useFoo ra instance sai. setup async không có Suspense thì không hiện. keep-alive dùng onActivated, không phải onMounted lần hai. Ở admin nội bộ, listener resize trong setup làm crash SSR đến khi bọn mình chuyển sang onMounted."
           }
         },
         {
@@ -2327,7 +2327,7 @@
           },
           "text": {
             "en": "- **Vue 2 created vs setup?** Both run on SSR. created is Options; setup is Composition.\n- **onServerPrefetch vs onMounted fetch?** Prefetch for HTML completeness; mounted for client-only widgets.\n- **SPA order?** Parent setup → child setup → child mount → parent mount.\n- **Conditional composable?** Always call it; branch inside.",
-            "vi": "- **created Vue 2 khác setup?** Cả hai chạy trên SSR. created là Options; setup là Composition.\n- **onServerPrefetch khác fetch onMounted?** Prefetch cho HTML đủ; mounted cho widget chỉ client.\n- **Thứ tự SPA?** Parent setup → child setup → child mount → parent mount.\n- **Composable có điều kiện?** Luôn gọi; rẽ nhánh bên trong."
+            "vi": "- **Vue 2 created vs setup?** Cả hai đều chạy lúc SSR. created là Options; setup là Composition.\n- **onServerPrefetch vs fetch lúc onMounted?** Prefetch để HTML đủ nội dung; mounted cho widget chỉ client.\n- **Thứ tự SPA?** Parent setup → child setup → child mount → parent mount.\n- **Composable có điều kiện?** Luôn gọi; rẽ nhánh bên trong."
           }
         },
         {
@@ -2338,7 +2338,7 @@
           "level": 4,
           "text": {
             "en": "5.1.12. created vs mounted: When to Call API?",
-            "vi": "5.1.12. created vs mounted: khi nào gọi API?"
+            "vi": "5.1.12. created vs mounted: gọi API lúc nào?"
           },
           "id": {
             "en": "5112-created-vs-mounted-when-to-call-api",
@@ -2349,14 +2349,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Fetch first-paint / SEO / SSR data in `setup` or Nuxt `useAsyncData`. Do DOM-only work in `onMounted`. Never both “to be safe.” Abort on unmount and on id change.",
-            "vi": "**Tóm tắt:** Fetch data first-paint / SEO / SSR trong `setup` hoặc Nuxt `useAsyncData`. Việc chỉ DOM trong `onMounted`. Đừng cả hai “cho chắc.” Hãy hủy lúc unmount và lúc id đổi."
+            "vi": "**Tóm tắt:** Data first-paint / SEO / SSR thì fetch trong `setup` hoặc `useAsyncData` của Nuxt. Việc chỉ DOM để trong `onMounted`. Đừng làm cả hai “cho chắc”. Hủy lúc unmount và lúc id đổi."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** Vue 2: `created` vs `mounted`. Vue 3: top-level `await` in `setup` + Suspense vs `onMounted`. `userId` changes faster than the network; the slower response paints the wrong user. SSR: mounted never runs so you will not have data in the HTML.",
-            "vi": "**Vì sao quan trọng:** Vue 2: `created` so với `mounted`. Vue 3: `await` top-level trong `setup` + Suspense so với `onMounted`. `userId` đổi nhanh hơn network; response chậm sơn sai user. SSR: mounted không chạy nên HTML không có data."
+            "vi": "**Vì sao quan trọng:** Vue 2: `created` vs `mounted`. Vue 3: `await` top-level trong `setup` + Suspense vs `onMounted`. `userId` đổi nhanh hơn network; response chậm thì hiện nhầm user. SSR: mounted không chạy nên HTML không có data."
           }
         },
         {
@@ -2365,19 +2365,19 @@
           "items": [
             {
               "en": "**How it works:** Top-level `await` in `<script setup>` makes the component async; the parent must wrap `<Suspense>` (or Nuxt must handle it). Without that, you get an empty hole or a warning.",
-              "vi": "**Cách hoạt động:** `await` top-level trong `<script setup>` biến component thành async; parent phải bọc `<Suspense>` (hoặc Nuxt phải xử lý). Không thì bạn có lỗ trống hoặc cảnh báo."
+              "vi": "**Cách hoạt động:** `await` top-level trong `<script setup>` biến component thành async; parent phải bọc `<Suspense>` (hoặc Nuxt phải xử lý). Không có thì ra chỗ trống hoặc warning."
             },
             {
               "en": "`onMounted` never runs on the server — HTML will have no data. Vue 2 `created` does run on SSR, which is why a naive port of `mounted` fetch to Nuxt drops the payload.",
-              "vi": "`onMounted` không bao giờ chạy trên server — HTML sẽ không có data. `created` Vue 2 thì chạy trên SSR, đó là lý do port ngây thơ fetch `mounted` sang Nuxt làm mất payload."
+              "vi": "`onMounted` không bao giờ chạy trên server, nên HTML sẽ không có data. `created` của Vue 2 thì chạy lúc SSR, nên port máy móc fetch lúc `mounted` sang Nuxt sẽ làm mất payload."
             },
             {
               "en": "A 500 in async setup kills the whole Suspense boundary, not just a field. Fetching in `setup` without a cache key repeats GET on route reuse.",
-              "vi": "500 trong setup async giết cả boundary Suspense, không chỉ một field. Fetch trong `setup` không cache key lặp GET khi tái sử dụng route."
+              "vi": "Lỗi 500 trong setup async kéo sập cả boundary Suspense, không chỉ một field. Fetch trong `setup` mà không có cache key thì GET lại khi reuse route."
             },
             {
               "en": "SPA-only apps often skip Suspense and fetch in `onMounted`, accepting a spinner and worse SEO. In Nuxt, keyed `useAsyncData` so the payload dedupes the client replay.",
-              "vi": "App chỉ SPA thường bỏ Suspense và fetch trong `onMounted`, chấp nhận spinner và SEO kém hơn. Trong Nuxt, `useAsyncData` có key để payload khử trùng lặp lúc client replay."
+              "vi": "App chỉ SPA thường bỏ Suspense và fetch trong `onMounted`, chấp nhận spinner và SEO kém hơn. Với Nuxt, `useAsyncData` có key để payload dedupe lúc client replay."
             }
           ]
         },
@@ -2393,7 +2393,7 @@
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** Immediate watch fetches on setup (SSR + client) and again when `id` changes. Cleanup aborts the previous run so the slow user cannot paint over the new one. DOM-only widgets still belong in `onMounted`.",
-            "vi": "**Điều gì xảy ra:** Watch immediate fetch lúc setup (SSR + client) và lại khi `id` đổi. Cleanup hủy lần trước để user chậm không sơn đè user mới. Widget chỉ DOM vẫn thuộc `onMounted`."
+            "vi": "**Điều gì xảy ra:** watch immediate fetch lúc setup (SSR + client) và fetch lại khi `id` đổi. Cleanup abort lần trước để user chậm không đè lên user mới. Widget chỉ DOM vẫn để trong `onMounted`."
           }
         },
         {
@@ -2401,7 +2401,7 @@
           "headers": [
             {
               "en": "Need",
-              "vi": "Nhu cầu"
+              "vi": "Cần"
             },
             {
               "en": "Where",
@@ -2465,7 +2465,7 @@
           },
           "text": {
             "en": "- First-paint / SSR data in `setup` or `useAsyncData`; DOM work in `onMounted`. Never both “to be safe.”\n- Abort on unmount and on id change. A 500 in async setup kills the whole Suspense boundary.\n- Vue 2 `created` runs on SSR; Vue 3 `onMounted` does not. A naive port drops the HTML payload.\n- Keyed `useAsyncData` dedupes the client replay in Nuxt.\n- On the admin product the user page fetches in useAsyncData, and id change aborts the previous getUser.",
-            "vi": "- Data first-paint / SSR trong `setup` hoặc `useAsyncData`; việc DOM trong `onMounted`. Đừng cả hai “cho chắc.”\n- Hủy lúc unmount và lúc id đổi. 500 trong setup async giết cả boundary Suspense.\n- `created` Vue 2 chạy trên SSR; `onMounted` Vue 3 thì không. Port ngây thơ làm mất payload HTML.\n- `useAsyncData` có key khử trùng lặp lúc client replay trong Nuxt.\n- Ở sản phẩm admin, trang user fetch trong useAsyncData, và đổi id hủy getUser trước."
+            "vi": "- Data first-paint / SSR trong `setup` hoặc `useAsyncData`; việc DOM trong `onMounted`. Đừng làm cả hai “cho chắc”.\n- Hủy lúc unmount và lúc id đổi. Lỗi 500 trong setup async kéo sập cả boundary Suspense.\n- `created` Vue 2 chạy lúc SSR; `onMounted` Vue 3 thì không. Port máy móc làm mất payload HTML.\n- `useAsyncData` có key thì payload dedupe lúc client replay trong Nuxt.\n- Ở admin nội bộ, trang user fetch trong useAsyncData, đổi id thì abort getUser trước."
           }
         },
         {
@@ -2473,18 +2473,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: HTML has no user. Cause: fetch in `onMounted` on Nuxt. Fix: `useAsyncData` / `setup`.\n- Symptom: slow user paints over the new one. Cause: no abort. Fix: `AbortController`.\n- Symptom: empty hole in the parent. Cause: async setup without Suspense. Fix: wrap or use Nuxt.\n- Symptom: double GET on first load. Cause: fetch in both setup and mounted. Fix: one place, keyed.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: HTML không có user. Nguyên nhân: fetch trong `onMounted` trên Nuxt. Cách xử lý: `useAsyncData` / `setup`.\n- Triệu chứng: user chậm sơn đè user mới. Nguyên nhân: không hủy. Cách xử lý: `AbortController`.\n- Triệu chứng: lỗ trống ở parent. Nguyên nhân: setup async không Suspense. Cách xử lý: bọc hoặc dùng Nuxt.\n- Triệu chứng: GET đôi lúc load đầu. Nguyên nhân: fetch cả setup lẫn mounted. Cách xử lý: một chỗ, có key."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: HTML không có user. Nguyên nhân: fetch trong `onMounted` trên Nuxt. Cách xử lý: `useAsyncData` / `setup`.\n- Triệu chứng: user chậm đè lên user mới. Nguyên nhân: không abort. Cách xử lý: `AbortController`.\n- Triệu chứng: chỗ trống ở parent. Nguyên nhân: setup async không Suspense. Cách xử lý: bọc hoặc dùng Nuxt.\n- Triệu chứng: GET hai lần lúc load đầu. Nguyên nhân: fetch cả setup lẫn mounted. Cách xử lý: một chỗ, có key."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "Vue 2: `created` vs `mounted`. Vue 3: top-level `await` in `setup` + Suspense vs `onMounted`. `userId` changes faster than the network; the slower response paints the wrong user. SSR: mounted never runs so you will not have data in the HTML.",
-            "vi": "Vue 2: `created` so với `mounted`. Vue 3: `await` top-level trong `setup` + Suspense so với `onMounted`. `userId` đổi nhanh hơn network; response chậm sơn sai user. SSR: mounted không chạy nên HTML không có data."
+            "vi": "Vue 2: `created` vs `mounted`. Vue 3: `await` top-level trong `setup` + Suspense vs `onMounted`. `userId` đổi nhanh hơn network; response chậm thì hiện nhầm user. SSR: mounted không chạy nên HTML không có data."
           }
         },
         {
@@ -2495,7 +2495,7 @@
           },
           "text": {
             "en": "Data for first paint and SSR is fetched in setup or useAsyncData. DOM-only work is onMounted. I never call both to be safe. Top-level await makes the component async — the parent needs Suspense. I abort on unmount and on id change so the slow response cannot win. onMounted does not run on the server, so a Vue 2 mounted fetch ported to Nuxt drops the HTML payload. A 500 in async setup kills the whole Suspense boundary. On the admin product the user page fetches in useAsyncData, and id change aborts the previous getUser.",
-            "vi": "Data cho first paint và SSR được fetch trong setup hoặc useAsyncData. Việc chỉ DOM là onMounted. Tôi không gọi cả hai cho chắc. await top-level biến component thành async — parent cần Suspense. Tôi hủy lúc unmount và lúc id đổi để response chậm không thắng. onMounted không chạy trên server, nên fetch mounted Vue 2 port sang Nuxt làm mất payload HTML. 500 trong setup async giết cả boundary Suspense. Ở sản phẩm admin, trang user fetch trong useAsyncData, và đổi id hủy getUser trước."
+            "vi": "Data first paint và SSR thì fetch trong setup hoặc useAsyncData. Việc chỉ DOM để trong onMounted. Mình không gọi cả hai cho chắc. await top-level biến component thành async, parent cần Suspense. Mình abort lúc unmount và lúc id đổi để response chậm không thắng. onMounted không chạy trên server, nên fetch mounted của Vue 2 port sang Nuxt sẽ làm mất payload HTML. Lỗi 500 trong setup async kéo sập cả boundary Suspense. Ở admin nội bộ, trang user fetch trong useAsyncData, đổi id thì abort getUser trước."
           }
         },
         {
@@ -2503,19 +2503,19 @@
           "items": [
             {
               "en": "First-paint / SSR data in `setup` or `useAsyncData`; DOM work in `onMounted`.",
-              "vi": "Data first-paint / SSR trong `setup` hoặc `useAsyncData`; việc DOM trong `onMounted`."
+              "vi": "Data first-paint / SSR thì fetch trong `setup` hoặc `useAsyncData`; việc DOM thì để `onMounted`."
             },
             {
               "en": "Never fetch in both “to be safe.”",
-              "vi": "Đừng fetch cả hai “cho chắc.”"
+              "vi": "Đừng fetch cả hai chỗ “cho chắc”."
             },
             {
               "en": "Abort on unmount and on id change.",
-              "vi": "Hãy hủy lúc unmount và lúc id đổi."
+              "vi": "Abort khi unmount và khi id đổi."
             },
             {
               "en": "A 500 in async setup kills the whole Suspense boundary.",
-              "vi": "500 trong setup async giết cả boundary Suspense."
+              "vi": "Một 500 trong setup async làm sập cả boundary Suspense."
             }
           ]
         },
@@ -2527,7 +2527,7 @@
           },
           "text": {
             "en": "- **Vue 2 created on SSR?** Yes. Vue 3 onMounted does not run on the server.\n- **Suspense vs Nuxt?** Nuxt handles async setup. SPA parents must wrap Suspense.\n- **Double fetch?** Keyed useAsyncData, or one place only.\n- **Race on id change?** AbortController in the watch cleanup.",
-            "vi": "- **created Vue 2 trên SSR?** Có. onMounted Vue 3 không chạy trên server.\n- **Suspense khác Nuxt?** Nuxt xử lý setup async. Parent SPA phải bọc Suspense.\n- **Fetch đôi?** useAsyncData có key, hoặc chỉ một chỗ.\n- **Race lúc đổi id?** AbortController trong cleanup của watch."
+            "vi": "- **Vue 2 created chạy trên SSR?** Có. onMounted Vue 3 không chạy trên server.\n- **Suspense vs Nuxt?** Nuxt xử lý setup async. Parent trong SPA phải bọc Suspense.\n- **Double fetch?** useAsyncData có key, hoặc chỉ một chỗ.\n- **Race khi đổi id?** AbortController trong cleanup của watch."
           }
         },
         {
