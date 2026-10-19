@@ -89,6 +89,42 @@ if (existsSync(path.join(resolvedRoot, 'plan/days')) && days.length !== 30) {
   fail('plan/days', `expected 30 day files, found ${days.length}`)
 }
 
+const practiceStepsDir = path.join(resolvedRoot, 'practice/steps')
+if (existsSync(practiceStepsDir)) {
+  const practiceMetaPath = path.join(resolvedRoot, 'practice/meta.json')
+  const practiceMeta = existsSync(practiceMetaPath) ? readJson(practiceMetaPath) : null
+  if (!practiceMeta) {
+    fail('practice/meta.json', 'missing practice meta')
+  } else {
+    const listedIds = (practiceMeta.milestones || []).flatMap((m) => m.steps || [])
+    const stepFiles = listJsonFiles(practiceStepsDir).filter((file) =>
+      /^p\d{2}\.json$/.test(path.basename(file)),
+    )
+    const fileIds = stepFiles.map((file) => path.basename(file, '.json')).sort()
+    const listedSet = new Set(listedIds)
+    for (const id of fileIds) {
+      if (!listedSet.has(id)) {
+        fail('practice/steps', `${id}.json is not listed in meta.milestones[].steps`)
+      }
+    }
+    if (practiceMeta.draft === true) {
+      const isPrefix =
+        fileIds.length <= listedIds.length && fileIds.every((id, i) => id === listedIds[i])
+      if (!isPrefix) {
+        fail(
+          'practice/steps',
+          `draft:true allows a missing suffix only; found ${fileIds.length} file(s), meta lists ${listedIds.length}`,
+        )
+      }
+    } else if (stepFiles.length !== listedIds.length) {
+      fail(
+        'practice/steps',
+        `expected ${listedIds.length} step files, found ${stepFiles.length}`,
+      )
+    }
+  }
+}
+
 const qnaPath = path.join(resolvedRoot, 'qna/questions.json')
 const MIN_QUESTION_COUNT = 142
 const MIN_CATEGORY_COUNTS = { soft: 29, technical: 86, situational: 27 }

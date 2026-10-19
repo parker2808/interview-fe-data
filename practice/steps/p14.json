@@ -1,0 +1,159 @@
+{
+  "kind": "practice-step",
+  "id": "p14",
+  "milestone": "m2",
+  "order": 14,
+  "title": {
+    "en": "Public pages",
+    "vi": "Trang public"
+  },
+  "summary": {
+    "en": "The visitor-facing site is now fully driven by data.",
+    "vi": "Site dành cho khách giờ được data dẫn dắt hoàn toàn."
+  },
+  "estimateMin": 240,
+  "prereqs": ["p09", "p13"],
+  "tags": ["nextjs", "a11y", "motion"],
+  "concepts": [
+    {
+      "term": {
+        "en": "BlockRenderer",
+        "vi": "BlockRenderer"
+      },
+      "explain": {
+        "en": "A component that switches on block `type` and renders tokens-only UI. Case study sections and posts both pass their `blocks` through it.",
+        "vi": "Component switch theo `type` của block và render UI chỉ dùng token. Section case study và post đều đẩy `blocks` qua nó."
+      }
+    },
+    {
+      "term": {
+        "en": "useInfiniteQuery",
+        "vi": "useInfiniteQuery"
+      },
+      "explain": {
+        "en": "TanStack Query helper for `{ items, nextCursor }`. `getNextPageParam` returns `nextCursor`. Pair it with a \"Load more\" button that is a real `<button>`.",
+        "vi": "Helper TanStack Query cho `{ items, nextCursor }`. `getNextPageParam` trả `nextCursor`. Ghép với nút \"Load more\" là `<button>` thật."
+      }
+    },
+    {
+      "term": {
+        "en": "v2 rich layer",
+        "vi": "Lớp giàu v2"
+      },
+      "explain": {
+        "en": "Spec §3.4 / §6 v2: section reveal, card hover lift, reduced-motion fallback (content visible, no transform). Atmosphere only on home hero/CTA, not behind prose.",
+        "vi": "Spec §3.4 / §6 v2: reveal section, hover lift trên card, fallback reduced-motion (nội dung hiện, không transform). Atmosphere chỉ ở hero/CTA trang chủ, không nằm sau đoạn prose."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "nextjs",
+      "label": {
+        "en": "Next.js",
+        "vi": "Next.js"
+      }
+    },
+    {
+      "slug": "accessibility",
+      "label": {
+        "en": "Accessibility",
+        "vi": "Khả năng truy cập"
+      }
+    },
+    {
+      "slug": "performance",
+      "label": {
+        "en": "Performance",
+        "vi": "Hiệu năng"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "next-app-router-rsc",
+      "label": {
+        "en": "React Server Components and the App Router",
+        "vi": "React Server Components và App Router"
+      }
+    },
+    {
+      "id": "accessibility-forms-keyboard",
+      "label": {
+        "en": "Accessibility basics for forms and interactive UI",
+        "vi": "Accessibility cơ bản cho form và interactive UI"
+      }
+    },
+    {
+      "id": "core-web-vitals",
+      "label": {
+        "en": "Core Web Vitals",
+        "vi": "Core Web Vitals"
+      }
+    }
+  ],
+  "specRefs": ["§5", "§5.2", "§5.3", "§5.4", "§5.5", "§3.4", "§6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "About, projects list, project case study",
+        "vi": "About, list project, case study"
+      },
+      "detail": {
+        "en": "Build `/about`, `/projects`, `/projects/[slug]` from the API (spec §5.2–§5.4). Case study uses BlockRenderer plus key-facts / fact chips when those fields exist. 404 via `notFound()` for unknown slugs.",
+        "vi": "Làm `/about`, `/projects`, `/projects/[slug]` từ API (spec §5.2–§5.4). Case study dùng BlockRenderer kèm key-facts / fact chips khi có field. Slug lạ đi `notFound()`."
+      }
+    },
+    {
+      "title": {
+        "en": "Blog list and post",
+        "vi": "List blog và bài post"
+      },
+      "detail": {
+        "en": "Build `/blog` and `/blog/[slug]` with BlockRenderer. Lists use `useInfiniteQuery` against the ListQuery contract. Section headings come from SiteSettings / PageSection, not string literals.",
+        "vi": "Làm `/blog` và `/blog/[slug]` với BlockRenderer. List dùng `useInfiniteQuery` theo contract ListQuery. Heading section lấy từ SiteSettings / PageSection, không hard-code."
+      }
+    },
+    {
+      "title": {
+        "en": "v2 motion + reduced-motion fallback",
+        "vi": "Motion v2 + fallback reduced-motion"
+      },
+      "detail": {
+        "en": "Add the spec §3.4 reveal (opacity + translateY, once) on home/about sections and card hover lift. Under `prefers-reduced-motion`, content is visible immediately and hover does not lift.",
+        "vi": "Thêm reveal spec §3.4 (opacity + translateY, một lần) cho section home/about và hover lift trên card. Khi `prefers-reduced-motion`, nội dung hiện ngay và hover không lift."
+      }
+    },
+    {
+      "title": {
+        "en": "Keyboard pass and content grep",
+        "vi": "Đi bàn phím và grep nội dung"
+      },
+      "detail": {
+        "en": "Tab through header, cards, and post. Focus rings from tokens. Grep apps/web for CV strings (Particula, LitGroup, Samsung SDS, Parker Vu): 0 hits in component files.",
+        "vi": "Tab qua header, card và post. Focus ring lấy từ token. Grep apps/web tìm chuỗi CV (Particula, LitGroup, Samsung SDS, Parker Vu): 0 hits trong file component."
+      },
+      "code": {
+        "lang": "bash",
+        "text": "rg -n \"Particula|LitGroup|Samsung SDS|Parker Vu\" apps/web --glob '!*.md'"
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "Every text on these pages traces to an API field (grep the web app for CV strings: 0 hits).",
+      "vi": "Mọi chữ trên các trang này đều tới từ field API (grep web app tìm chuỗi CV: 0 hits)."
+    },
+    {
+      "en": "Keyboard-only navigation works (Tab order, visible focus, cards activatable with Enter).",
+      "vi": "Điều hướng chỉ bằng bàn phím hoạt động (thứ tự Tab, focus nhìn thấy, card bấm Enter được)."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Hard-coding section headings. They also come from `SiteSettings` / `PageSection`.",
+      "vi": "Hard-code heading của section. Chúng cũng phải tới từ `SiteSettings` / `PageSection`."
+    }
+  ],
+  "commit": "feat(web): public pages from api"
+}

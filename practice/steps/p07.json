@@ -1,0 +1,128 @@
+{
+  "kind": "practice-step",
+  "id": "p07",
+  "milestone": "m1",
+  "order": 7,
+  "title": {
+    "en": "Read API",
+    "vi": "API đọc"
+  },
+  "summary": {
+    "en": "The public site only needs GET endpoints first, which keeps risk low.",
+    "vi": "Site public lúc đầu chỉ cần GET, nên rủi ro thấp."
+  },
+  "estimateMin": 120,
+  "prereqs": ["p06"],
+  "tags": ["api", "dto", "locale"],
+  "concepts": [
+    {
+      "term": {
+        "en": "DTO",
+        "vi": "DTO"
+      },
+      "explain": {
+        "en": "The JSON shape you actually return. Map Prisma rows to DTOs so `passwordHash` and other internals never leak.",
+        "vi": "Hình dạng JSON bạn thật sự trả về. Map hàng Prisma sang DTO để `passwordHash` và field nội bộ không bị lộ."
+      }
+    },
+    {
+      "term": {
+        "en": "Public vs admin shape",
+        "vi": "Shape public vs admin"
+      },
+      "explain": {
+        "en": "Spec §1.5: public GET with `?locale=vi` returns flat `title` (server picks the language, fallback to en). Admin later returns both `titleEn` and `titleVi`.",
+        "vi": "Spec §1.5: GET public với `?locale=vi` trả `title` phẳng (server chọn ngôn ngữ, fallback en). Admin sau này trả cả `titleEn` và `titleVi`."
+      }
+    },
+    {
+      "term": {
+        "en": "404",
+        "vi": "404"
+      },
+      "explain": {
+        "en": "A missing singleton or id is not an empty `{}`. Return 404 with the shared error shape you will lock in p08.",
+        "vi": "Thiếu singleton hoặc id không phải `{}` rỗng. Trả 404 với error shape chung, sẽ chốt ở p08."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "networking",
+      "label": {
+        "en": "Networking",
+        "vi": "Mạng và giao thức"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "http-basics-status-codes",
+      "label": {
+        "en": "HTTP basics and status codes",
+        "vi": "HTTP basics và status code"
+      }
+    },
+    {
+      "id": "cors-basics",
+      "label": {
+        "en": "CORS at a practical level",
+        "vi": "CORS ở mức thực tế"
+      }
+    }
+  ],
+  "specRefs": ["§1.5"],
+  "tasks": [
+    {
+      "title": {
+        "en": "GET /settings and GET /profile",
+        "vi": "GET /settings và GET /profile"
+      },
+      "detail": {
+        "en": "Add modules that load the singleton rows (`id = 1`). Return DTOs, not the Prisma model. Honor `?locale=en|vi` by picking `*En` / `*Vi` fields on the server.",
+        "vi": "Thêm module đọc hàng singleton (`id = 1`). Trả DTO, không trả model Prisma. Tôn trọng `?locale=en|vi` bằng cách server chọn field `*En` / `*Vi`."
+      }
+    },
+    {
+      "title": {
+        "en": "GET /experiences ordered",
+        "vi": "GET /experiences theo thứ tự"
+      },
+      "detail": {
+        "en": "List experiences with `orderBy: { sortOrder: 'asc' }` (then startDate). Hide rows with `isVisible = false`. Locale pick is the same as settings.",
+        "vi": "List experience với `orderBy: { sortOrder: 'asc' }` (rồi startDate). Ẩn hàng `isVisible = false`. Cách chọn locale giống settings."
+      }
+    },
+    {
+      "title": {
+        "en": "Map to DTOs and 404",
+        "vi": "Map sang DTO và 404"
+      },
+      "detail": {
+        "en": "If the profile row is missing, return 404. Do not send `createdAt` internals unless the DTO needs them. Curl each route and paste the JSON next to the seed so you can see the mapping.",
+        "vi": "Nếu thiếu hàng profile, trả 404. Đừng gửi field nội bộ như `createdAt` trừ khi DTO cần. Curl từng route và dán JSON cạnh seed để thấy mapping."
+      },
+      "code": {
+        "lang": "bash",
+        "text": "curl 'localhost:4000/api/settings?locale=en'\ncurl 'localhost:4000/api/profile?locale=vi'\ncurl 'localhost:4000/api/experiences?locale=en'"
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "Each endpoint returns the seeded JSON (locale fields already picked).",
+      "vi": "Mỗi endpoint trả JSON đã seed (field locale đã được chọn sẵn)."
+    },
+    {
+      "en": "A missing row returns 404 with the shared error shape (code + message).",
+      "vi": "Thiếu hàng trả 404 với error shape chung (code + message)."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Returning Prisma models directly, which leaks internal fields. Map them to DTOs.",
+      "vi": "Trả thẳng model Prisma, làm lộ field nội bộ. Hãy map sang DTO."
+    }
+  ],
+  "commit": "feat(api): public read endpoints"
+}

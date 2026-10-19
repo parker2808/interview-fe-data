@@ -1,0 +1,145 @@
+{
+  "kind": "practice-step",
+  "id": "p09",
+  "milestone": "m1",
+  "order": 9,
+  "title": {
+    "en": "Web reads the API",
+    "vi": "Web đọc API"
+  },
+  "summary": {
+    "en": "This is the first end-to-end slice, where the DB row appears on screen.",
+    "vi": "Đây là lát cắt end-to-end đầu tiên: hàng trong DB hiện lên màn hình."
+  },
+  "estimateMin": 180,
+  "prereqs": ["p04", "p07"],
+  "tags": ["tanstack-query", "rsc", "states"],
+  "concepts": [
+    {
+      "term": {
+        "en": "apiClient",
+        "vi": "apiClient"
+      },
+      "explain": {
+        "en": "One typed fetch helper that talks to `/api`, parses JSON, and throws on the shared error shape. Pages do not call `fetch` ad hoc.",
+        "vi": "Một helper fetch có type, nói chuyện với `/api`, parse JSON, và ném lỗi theo error shape chung. Page không tự `fetch` lung tung."
+      }
+    },
+    {
+      "term": {
+        "en": "TanStack Query",
+        "vi": "TanStack Query"
+      },
+      "explain": {
+        "en": "Client cache for server data: loading, error, refetch. Use it in Client Components. Server Components can `fetch` with `next.tags` instead (spec §0).",
+        "vi": "Cache phía client cho data server: loading, error, refetch. Dùng trong Client Component. Server Component có thể `fetch` với `next.tags` (spec §0)."
+      }
+    },
+    {
+      "term": {
+        "en": "Skeleton / Empty / Error",
+        "vi": "Skeleton / Empty / Error"
+      },
+      "explain": {
+        "en": "Spec §4 and §5.0: every screen names these three states. Home is a seeded singleton so Empty is rare; Error must still render when the API is down.",
+        "vi": "Spec §4 và §5.0: mọi màn phải có ba state này. Home là singleton đã seed nên Empty hiếm; Error vẫn phải hiện khi API chết."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "react",
+      "label": {
+        "en": "React",
+        "vi": "React"
+      }
+    },
+    {
+      "slug": "state-management-react",
+      "label": {
+        "en": "State Management (React)",
+        "vi": "Quản lý state (React)"
+      }
+    },
+    {
+      "slug": "performance",
+      "label": {
+        "en": "Performance",
+        "vi": "Hiệu năng"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "tanstack-query-vs-global-store",
+      "label": {
+        "en": "TanStack Query vs a global store",
+        "vi": "TanStack Query vs global store"
+      }
+    },
+    {
+      "id": "useeffect",
+      "label": {
+        "en": "What is useEffect?",
+        "vi": "useEffect là gì?"
+      }
+    },
+    {
+      "id": "next-data-fetching-cache-revalidation",
+      "label": {
+        "en": "Data fetching, caching, and revalidation in App Router",
+        "vi": "Data fetching, caching và revalidation trong App Router"
+      }
+    }
+  ],
+  "specRefs": ["§4", "§5.0", "§5.1"],
+  "tasks": [
+    {
+      "title": {
+        "en": "Typed apiClient + QueryClientProvider",
+        "vi": "apiClient có type + QueryClientProvider"
+      },
+      "detail": {
+        "en": "Wrap the app with QueryClientProvider. apiClient uses the shared types from packages/shared. Point it at localhost:4000/api in dev (or a Next rewrite).",
+        "vi": "Bọc app bằng QueryClientProvider. apiClient dùng type từ packages/shared. Dev trỏ tới localhost:4000/api (hoặc rewrite của Next)."
+      }
+    },
+    {
+      "title": {
+        "en": "Home hero and nav from the API",
+        "vi": "Hero và nav trang chủ từ API"
+      },
+      "detail": {
+        "en": "Render display name, headline, and nav labels from GET /profile and GET /settings. No CV strings in the component file. Changing seed data must be enough to change the page.",
+        "vi": "Render display name, headline và nhãn nav từ GET /profile và GET /settings. Không ghi chuỗi CV trong file component. Đổi seed là đủ để trang đổi."
+      }
+    },
+    {
+      "title": {
+        "en": "Skeleton, Empty, Error",
+        "vi": "Skeleton, Empty, Error"
+      },
+      "detail": {
+        "en": "Build the three spec §4 states and use them on home. Skeleton while loading, Error with retry when the request fails, Empty if a list is missing (nav with 0 items shows the logo only).",
+        "vi": "Làm ba state spec §4 và dùng trên trang chủ. Skeleton khi loading, Error có retry khi request fail, Empty nếu list trống (nav 0 item chỉ hiện logo)."
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "Changing a seed value and re-seeding changes the home page.",
+      "vi": "Sửa một giá trị seed rồi seed lại thì trang chủ đổi."
+    },
+    {
+      "en": "A stopped API shows the Error state (not a crash or a blank white screen).",
+      "vi": "API tắt thì hiện Error (không crash, không màn hình trắng)."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Fetching in `useEffect`. Use RSC `fetch` or `useQuery`.",
+      "vi": "Fetch trong `useEffect`. Hãy dùng RSC `fetch` hoặc `useQuery`."
+    }
+  ],
+  "commit": "feat(web): home from api + states"
+}
