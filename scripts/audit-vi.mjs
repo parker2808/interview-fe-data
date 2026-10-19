@@ -272,7 +272,11 @@ for (const rel of selected) {
   walkLoc(data, (loc, jsonPath) => {
     if (filters && !filters.some((item) => item.match(jsonPath))) return
     const { en, vi } = loc
-    if (!LAB_TITLE.test(vi) && (vi.includes('—') || vi.includes(' – '))) {
+    if (
+      !/\.code$/.test(jsonPath) &&
+      !LAB_TITLE.test(vi) &&
+      (vi.includes('—') || vi.includes(' – '))
+    ) {
       flag('error', 'EM_DASH', rel, jsonPath, vi)
     }
     for (const term of avoidTerms) {
