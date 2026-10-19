@@ -4,6 +4,7 @@ Design and planning only. This doc feeds the LAB tab of the 30-day plan (`plans/
 
 - Stack: Next.js App Router + TypeScript (`apps/web`) with **shadcn/ui** (Radix + Tailwind v4) and **TanStack** Query, Table, Form and Virtual; NestJS (`apps/api`); MySQL 8 in Docker Compose; **Prisma** as the one ORM; server-side sessions for auth; shared zod schemas, types and query keys in `packages/contracts`; components in `packages/ui`.
 - Principles: typography first (3.2); no hard-coded content, everything visible comes from the API/CMS (1.5, 4.5); backend decisions are explained for a backend beginner and built bottom-up (1.6, 6).
+- v2 revision: after reviewing the v1 mockups ("too bare"), the visual layer was enriched using [longpham.tech](https://www.longpham.tech/) as a reference: analysis in 2.1–2.2, new tokens in 3.1–3.1b, motion in 3.4, components in 4.7, wireframes in 5.1–5.6, admin additions in 5.11, rebuild brief in 7.
 - Source: Parker's CV (dated, says "4+ years"; he now has ~5 years with Vue/Nuxt/TypeScript).
 - Privacy: contact details are `<email>` / `<phone>` everywhere, including seeds and fixtures. The CV file itself is not committed.
 

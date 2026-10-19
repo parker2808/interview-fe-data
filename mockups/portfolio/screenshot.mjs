@@ -28,30 +28,37 @@ const browser = await chromium.launch({
 });
 const base = 'http://127.0.0.1:4177';
 
-async function shot({ name, path, width = 1440, height = 900, dark = false, extraCss = '' }) {
+async function shot({ name, path, width = 1440, height = 900, dark = false, checkOverflow = false }) {
   const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 2 });
-  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto(`${base}/${path}`, { waitUntil: 'networkidle', timeout: 60000 });
+  await page.evaluate(() => document.documentElement.classList.add('capture'));
   if (dark) await page.evaluate(() => document.documentElement.classList.add('dark'));
-  if (extraCss) await page.addStyleTag({ content: extraCss });
   await page.evaluate(() => document.fonts.ready);
-  await page.waitForTimeout(400);
+  await page.waitForTimeout(300);
+  if (checkOverflow) {
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
+    console.log('overflow', name, overflow);
+  }
   await page.screenshot({ path: join(out, name), fullPage: true, type: 'png' });
   await page.close();
   console.log('wrote', name);
 }
 
-const freezeSk = '.sk::after{animation:none}';
-
 await shot({ name: '01-home-light.png', path: 'home.html' });
 await shot({ name: '02-home-dark.png', path: 'home.html?dark=1', dark: true });
 await shot({ name: '03-case-study-light.png', path: 'case-study.html' });
+await shot({ name: '03b-case-study-dark.png', path: 'case-study.html?dark=1', dark: true });
 await shot({ name: '04-blog-post-light.png', path: 'post.html' });
-await shot({ name: '05-home-mobile-light.png', path: 'home.html', width: 390, height: 844 });
+await shot({ name: '04b-blog-list-light.png', path: 'notes.html' });
+await shot({ name: '05-home-mobile-light.png', path: 'home.html', width: 390, height: 844, checkOverflow: true });
 await shot({ name: '06-admin-dashboard.png', path: 'admin-dashboard.html' });
 await shot({ name: '07-admin-projects-table.png', path: 'admin-table.html' });
 await shot({ name: '08-admin-project-editor.png', path: 'admin-editor.html' });
-await shot({ name: '09-home-skeletons.png', path: 'home-skeleton.html', extraCss: freezeSk });
+await shot({ name: '09-home-skeletons.png', path: 'home-skeleton.html' });
+await shot({ name: '10-about-light.png', path: 'about.html' });
+await shot({ name: '11-projects-light.png', path: 'projects.html' });
+await shot({ name: '12-contact-light.png', path: 'contact.html' });
 
 await browser.close();
 server.close();
