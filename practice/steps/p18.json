@@ -96,12 +96,12 @@
         "vi": "login, logout, me"
       },
       "detail": {
-        "en": "`POST /auth/login` verifies argon2id, inserts a Session, sets the cookie. `GET /auth/me` reads the cookie and returns the user DTO (never `passwordHash`). `POST /auth/logout` deletes the session row and clears the cookie.",
-        "vi": "`POST /auth/login` kiểm argon2id, insert Session, set cookie. `GET /auth/me` đọc cookie và trả DTO user (không `passwordHash`). `POST /auth/logout` xóa hàng session và xóa cookie."
+        "en": "`POST /auth/login` verifies argon2id, inserts a Session, sets the cookie. POST a gitignored `login.json` built from `ADMIN_PASSWORD` in `.env` (never commit that file). `GET /auth/me` returns the user DTO (never `passwordHash`); `POST /auth/logout` deletes the session row and clears the cookie.",
+        "vi": "`POST /auth/login` kiểm argon2id, insert Session, set cookie. POST file `login.json` (gitignore, dựng từ `ADMIN_PASSWORD` trong `.env`, không commit). `GET /auth/me` trả DTO user (không `passwordHash`); `POST /auth/logout` xóa hàng session và xóa cookie."
       },
       "code": {
         "lang": "bash",
-        "text": "curl -i -c cookies.txt -X POST localhost:4000/api/auth/login \\\n  -H 'content-type: application/json' \\\n  -d '{\"login\":\"admin\",\"password\":\"from-env\"}'\ncurl -b cookies.txt localhost:4000/api/auth/me"
+        "text": "curl -i -c cookies.txt -X POST localhost:4000/api/auth/login \\\n  -H 'content-type: application/json' \\\n  -d @login.json\ncurl -b cookies.txt localhost:4000/api/auth/me"
       }
     },
     {

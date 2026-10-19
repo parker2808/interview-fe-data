@@ -106,12 +106,12 @@
         "vi": "Throttle login"
       },
       "detail": {
-        "en": "Add `@nestjs/throttler` on `POST /auth/login`. Five failures in a minute are allowed; the sixth returns 429.",
-        "vi": "Thêm `@nestjs/throttler` trên `POST /auth/login`. Năm lần fail trong một phút còn được; lần thứ sáu trả 429."
+        "en": "Add `@nestjs/throttler` on `POST /auth/login`. Five failures in a minute are allowed; the sixth returns 429. POST a gitignored `login-bad.json` whose password does not match `ADMIN_PASSWORD` (never commit that file).",
+        "vi": "Thêm `@nestjs/throttler` trên `POST /auth/login`. Năm lần fail trong một phút còn được; lần thứ sáu trả 429. POST file `login-bad.json` (gitignore, mật khẩu không khớp `ADMIN_PASSWORD`, không commit)."
       },
       "code": {
         "lang": "bash",
-        "text": "for i in 1 2 3 4 5 6; do curl -s -o /dev/null -w \"%{http_code}\\n\" \\\n  -X POST localhost:4000/api/auth/login \\\n  -H 'content-type: application/json' \\\n  -d '{\"login\":\"admin\",\"password\":\"wrong\"}'; done"
+        "text": "for i in 1 2 3 4 5 6; do curl -s -o /dev/null -w \"%{http_code}\\n\" \\\n  -X POST localhost:4000/api/auth/login \\\n  -H 'content-type: application/json' \\\n  -d @login-bad.json; done"
       }
     }
   ],
