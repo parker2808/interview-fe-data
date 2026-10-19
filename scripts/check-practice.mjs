@@ -34,6 +34,9 @@ const SPEC_REF_RE = /^§\d+(?:\.\d+[a-z]?)*$/
 const SPEC_HEADING_RE = /^(#{2,3}) (\d+(?:\.\d+[a-z]?)*)\b/
 const EXPECTED_STEP_COUNT = 33
 const EXPECTED_SPEC_PATH = 'plans/portfolio-design-system.md'
+const FIGMA_URL_RE = /^https:\/\/www\.figma\.com\//
+const DESIGN_INDEX_KEYS = new Set(['version', 'specPath', 'title', 'intro', 'figma', 'screens'])
+const DESIGN_FIGMA_KEYS = new Set(['url', 'label', 'note'])
 const DESIGN_SCREEN_KEYS = new Set([
   'id',
   'file',
@@ -559,6 +562,21 @@ walkStrings(meta, (text, pathHint) => {
   if (PHONE_RE.test(text)) fail(`practice/meta.json.${pathHint}`, 'phone-shaped string (PII)')
 }, 'meta')
 
+function checkDesignFigma(figma, hint) {
+  if (figma == null) return
+  if (!figma || typeof figma !== 'object' || Array.isArray(figma)) {
+    fail(hint, 'expected an object')
+    return
+  }
+  const extra = Object.keys(figma).filter((key) => !DESIGN_FIGMA_KEYS.has(key))
+  if (extra.length) fail(hint, `unexpected keys: ${extra.join(', ')}`)
+  if (typeof figma.url !== 'string' || !FIGMA_URL_RE.test(figma.url)) {
+    fail(`${hint}.url`, `expected an https://www.figma.com/… URL, got "${figma.url}"`)
+  }
+  assertLocalized(figma.label, `${hint}.label`)
+  assertLocalized(figma.note, `${hint}.note`)
+}
+
 function checkDesignGallery() {
   const rel = 'practice/design/index.json'
   const file = path.join(root, rel)
@@ -573,8 +591,11 @@ function checkDesignGallery() {
   if (gallery.specPath !== EXPECTED_SPEC_PATH) {
     fail(`${rel}.specPath`, `expected ${EXPECTED_SPEC_PATH}, got "${gallery.specPath}"`)
   }
+  const extraIndex = Object.keys(gallery).filter((key) => !DESIGN_INDEX_KEYS.has(key))
+  if (extraIndex.length) fail(rel, `unexpected keys: ${extraIndex.join(', ')}`)
   assertLocalized(gallery.title, `${rel}.title`)
   assertLocalized(gallery.intro, `${rel}.intro`)
+  checkDesignFigma(gallery.figma, `${rel}.figma`)
 
   walkStrings(gallery, (text, pathHint) => {
     if (EMAIL_RE.test(text)) fail(`${rel}.${pathHint}`, 'email-shaped string (PII)')
