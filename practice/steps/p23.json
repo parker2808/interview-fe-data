@@ -1,0 +1,131 @@
+{
+  "kind": "practice-step",
+  "id": "p23",
+  "milestone": "m5",
+  "order": 23,
+  "title": {
+    "en": "Contact form + SSE inbox",
+    "vi": "Form liên hệ + inbox SSE"
+  },
+  "summary": {
+    "en": "SSE is one-way server push over plain HTTP, so it is simpler than WebSockets for notifications.",
+    "vi": "SSE là đẩy một chiều trên HTTP thường, nên đơn giản hơn WebSocket cho thông báo."
+  },
+  "estimateMin": 180,
+  "prereqs": ["p19", "p21"],
+  "tags": ["sse", "contact", "realtime"],
+  "concepts": [
+    {
+      "term": {
+        "en": "SSE",
+        "vi": "SSE"
+      },
+      "explain": {
+        "en": "`GET /events` stays open. The server writes `event: message.created\\ndata: …\\n\\n`. The browser reconnects by itself. No second auth handshake like WebSockets.",
+        "vi": "`GET /events` giữ kết nối. Server ghi `event: message.created\\ndata: …\\n\\n`. Browser tự reconnect. Không bắt tay auth thứ hai như WebSocket."
+      }
+    },
+    {
+      "term": {
+        "en": "Honeypot",
+        "vi": "Honeypot"
+      },
+      "explain": {
+        "en": "A hidden field humans leave empty. If it is filled, treat the submit as spam (204, no row) instead of creating a Message.",
+        "vi": "Field ẩn người thật để trống. Nếu bị điền, coi submit là spam (204, không tạo hàng) thay vì tạo Message."
+      }
+    },
+    {
+      "term": {
+        "en": "Heartbeat",
+        "vi": "Heartbeat"
+      },
+      "explain": {
+        "en": "SSE comment lines (`: ping`) every ~15s so proxies do not buffer or drop the stream. Also set `Cache-Control: no-cache`.",
+        "vi": "Dòng comment SSE (`: ping`) mỗi ~15s để proxy không buffer hoặc cắt stream. Đồng thời set `Cache-Control: no-cache`."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "web-apis",
+      "label": {
+        "en": "Browser & Web APIs",
+        "vi": "Browser & Web APIs"
+      }
+    },
+    {
+      "slug": "networking",
+      "label": {
+        "en": "Networking",
+        "vi": "Mạng và giao thức"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "design-realtime-chat",
+      "label": {
+        "en": "Approaching a realtime chat UI",
+        "vi": "Tiếp cận UI realtime chat"
+      }
+    },
+    {
+      "id": "cors-basics",
+      "label": {
+        "en": "CORS at a practical level",
+        "vi": "CORS ở mức thực tế"
+      }
+    }
+  ],
+  "specRefs": ["§1.5", "§1.6", "§5.6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "POST /contact + Message model",
+        "vi": "POST /contact + model Message"
+      },
+      "detail": {
+        "en": "Zod body: name, a contact-address field, topic, message, locale, honeypot. Throttle. Insert a Message row (never public). Do not log the address field.",
+        "vi": "Body zod: tên, field địa chỉ liên hệ, topic, message, locale, honeypot. Throttle. Insert hàng Message (không public). Không log field địa chỉ."
+      }
+    },
+    {
+      "title": {
+        "en": "GET /events (SSE, session-guarded)",
+        "vi": "GET /events (SSE, có session)"
+      },
+      "detail": {
+        "en": "Nest `@Sse()`. Only logged-in admin. Emit `message.created` after a successful contact insert. Heartbeat comments + `Cache-Control: no-cache`.",
+        "vi": "Nest `@Sse()`. Chỉ admin đã login. Emit `message.created` sau khi contact insert thành công. Comment heartbeat + `Cache-Control: no-cache`."
+      }
+    },
+    {
+      "title": {
+        "en": "Admin inbox subscribes",
+        "vi": "Inbox admin subscribe"
+      },
+      "detail": {
+        "en": "EventSource in the admin layout. On `message.created`, invalidate the messages query. Cleanup on unmount. Public form is spec §5.6 (no address shown as visible text — a copy button if needed).",
+        "vi": "EventSource trong layout admin. Khi `message.created`, invalidate query messages. Cleanup lúc unmount. Form public theo spec §5.6 (không hiện địa chỉ dạng chữ — nếu cần thì nút copy)."
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "Submitting the public form shows the new row in the inbox without a reload within 2 s.",
+      "vi": "Gửi form public thì inbox hiện hàng mới không cần reload trong 2 giây."
+    },
+    {
+      "en": "Reconnecting after an API restart works (`EventSource` opens again and heartbeats resume).",
+      "vi": "Reconnect sau khi restart API vẫn được (`EventSource` mở lại và heartbeat chạy tiếp)."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Proxies buffering SSE. Set `Cache-Control: no-cache` and send heartbeat comments.",
+      "vi": "Proxy buffer SSE. Set `Cache-Control: no-cache` và gửi comment heartbeat."
+    }
+  ],
+  "commit": "feat: contact + sse inbox"
+}

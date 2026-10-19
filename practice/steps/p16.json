@@ -1,0 +1,117 @@
+{
+  "kind": "practice-step",
+  "id": "p16",
+  "milestone": "m3",
+  "order": 16,
+  "title": {
+    "en": "Transactions + ordering",
+    "vi": "Transaction + thứ tự"
+  },
+  "summary": {
+    "en": "Multi-row changes such as reordering or replacing tags must succeed or fail together.",
+    "vi": "Thay đổi nhiều hàng như reorder hoặc thay tag phải thành công hoặc thất bại cùng nhau."
+  },
+  "estimateMin": 120,
+  "prereqs": ["p15"],
+  "tags": ["transactions", "prisma", "ordering"],
+  "concepts": [
+    {
+      "term": {
+        "en": "Transaction",
+        "vi": "Transaction"
+      },
+      "explain": {
+        "en": "Several writes that commit as one. If any write throws, none of them stay. Use `prisma.$transaction`.",
+        "vi": "Nhiều lệnh ghi commit như một. Nếu một lệnh ném lỗi, không lệnh nào được giữ. Dùng `prisma.$transaction`."
+      }
+    },
+    {
+      "term": {
+        "en": "tx client",
+        "vi": "tx client"
+      },
+      "explain": {
+        "en": "The callback receives `tx`. Every query inside must use `tx`, not the outer `prisma`. Awaiting `prisma.*` inside the callback is outside the transaction.",
+        "vi": "Callback nhận `tx`. Mọi query bên trong phải dùng `tx`, không dùng `prisma` bên ngoài. Await `prisma.*` trong callback là nằm ngoài transaction."
+      }
+    },
+    {
+      "term": {
+        "en": "Tag replacement",
+        "vi": "Thay tag"
+      },
+      "explain": {
+        "en": "Delete old join rows and insert the new set in the same transaction so you never persist a half-updated tag list.",
+        "vi": "Xóa hàng join cũ và insert bộ mới trong cùng transaction để không bao giờ lưu list tag dở."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "system-design",
+      "label": {
+        "en": "System Design",
+        "vi": "Thiết kế hệ thống"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "debug-production-fe-be",
+      "label": {
+        "en": "Debugging a production issue (FE vs BE)",
+        "vi": "Debug production issue (FE vs BE)"
+      }
+    }
+  ],
+  "specRefs": ["§1.6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "PATCH /projects/order",
+        "vi": "PATCH /projects/order"
+      },
+      "detail": {
+        "en": "Accept an ordered list of ids. Inside `$transaction`, write `sortOrder` 0..n-1 for each. Reject unknown ids before writing.",
+        "vi": "Nhận list id đã sắp xếp. Trong `$transaction`, ghi `sortOrder` 0..n-1 cho từng id. Từ chối id lạ trước khi ghi."
+      },
+      "code": {
+        "lang": "ts",
+        "text": "await prisma.$transaction(async (tx) => {\n  for (const [index, id] of ids.entries()) {\n    await tx.project.update({ where: { id }, data: { sortOrder: index } });\n  }\n});"
+      }
+    },
+    {
+      "title": {
+        "en": "Replace tags in a transaction",
+        "vi": "Thay tag trong transaction"
+      },
+      "detail": {
+        "en": "On PATCH project/post tags: delete join rows, insert the new set, using `tx`. One failure rolls both steps back.",
+        "vi": "Khi PATCH tag của project/post: xóa hàng join, insert bộ mới, dùng `tx`. Một bước fail thì cả hai rollback."
+      }
+    },
+    {
+      "title": {
+        "en": "Forced-failure test",
+        "vi": "Test cố ý fail"
+      },
+      "detail": {
+        "en": "Write a test that throws after the first update inside the transaction. Assert sortOrder values are unchanged. This is the proof, not a comment.",
+        "vi": "Viết test ném lỗi sau update đầu trong transaction. Assert sortOrder không đổi. Đây là bằng chứng, không phải comment."
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "`pnpm test` for the forced-failure case leaves sortOrder and tags unchanged.",
+      "vi": "`pnpm test` cho case cố ý fail để sortOrder và tag không đổi."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Running awaits outside the transaction client (`tx`). Those writes commit even if the transaction rolls back.",
+      "vi": "Await nằm ngoài transaction client (`tx`). Những lệnh ghi đó vẫn commit dù transaction rollback."
+    }
+  ],
+  "commit": "feat(api): transactional reorder"
+}

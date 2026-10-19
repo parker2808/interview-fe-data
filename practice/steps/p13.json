@@ -1,0 +1,132 @@
+{
+  "kind": "practice-step",
+  "id": "p13",
+  "milestone": "m2",
+  "order": 13,
+  "title": {
+    "en": "Query params: pagination, sort, search",
+    "vi": "Query param: pagination, sort, search"
+  },
+  "summary": {
+    "en": "Lists grow, and cursor pagination keeps them fast and stable.",
+    "vi": "List sẽ dài, và cursor pagination giữ chúng nhanh và ổn định."
+  },
+  "estimateMin": 120,
+  "prereqs": ["p12"],
+  "tags": ["pagination", "cursor", "zod"],
+  "concepts": [
+    {
+      "term": {
+        "en": "Cursor pagination",
+        "vi": "Cursor pagination"
+      },
+      "explain": {
+        "en": "Each page returns `nextCursor`. The next request says \"give me rows after this id/date\". New inserts do not shift page 2 like offset pagination does.",
+        "vi": "Mỗi trang trả `nextCursor`. Request sau nói \"cho hàng sau id/date này\". Hàng mới insert không làm lệch trang 2 như offset."
+      }
+    },
+    {
+      "term": {
+        "en": "ListQuery",
+        "vi": "ListQuery"
+      },
+      "explain": {
+        "en": "One zod object in packages/shared: `cursor`, `limit` (default 20, max 50), `sort`, `q`, `tag`. Both posts and projects parse with it.",
+        "vi": "Một object zod trong packages/shared: `cursor`, `limit` (mặc định 20, tối đa 50), `sort`, `q`, `tag`. Cả posts và projects đều parse bằng nó."
+      }
+    },
+    {
+      "term": {
+        "en": "Offset pagination",
+        "vi": "Offset pagination"
+      },
+      "explain": {
+        "en": "`LIMIT 20 OFFSET 40` looks simple and breaks when rows are inserted above the window (duplicates/gaps). Skip it for these lists.",
+        "vi": "`LIMIT 20 OFFSET 40` trông đơn giản và gãy khi có hàng insert phía trên cửa sổ (trùng/hổng). Đừng dùng cho các list này."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "networking",
+      "label": {
+        "en": "Networking",
+        "vi": "Mạng và giao thức"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "http-basics-status-codes",
+      "label": {
+        "en": "HTTP basics and status codes",
+        "vi": "HTTP basics và status code"
+      }
+    },
+    {
+      "id": "api-caching",
+      "label": {
+        "en": "API caching trade-offs",
+        "vi": "Trade-off khi cache API"
+      }
+    }
+  ],
+  "specRefs": ["§1.6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "Shared ListQuery zod",
+        "vi": "ListQuery zod dùng chung"
+      },
+      "detail": {
+        "en": "In packages/shared, define `cursor` (string optional), `limit` (int, 1–50), `sort` (allowlist), `q`, `tag`. Wire it through ZodValidationPipe.",
+        "vi": "Trong packages/shared, định nghĩa `cursor` (string tùy chọn), `limit` (int, 1–50), `sort` (allowlist), `q`, `tag`. Gắn qua ZodValidationPipe."
+      }
+    },
+    {
+      "title": {
+        "en": "Apply to posts and projects",
+        "vi": "Áp dụng cho posts và projects"
+      },
+      "detail": {
+        "en": "Response shape `{ items, nextCursor }`. `nextCursor` is null on the last page. Search `q` matches title/excerpt; `tag` filters by tag slug.",
+        "vi": "Shape response `{ items, nextCursor }`. `nextCursor` là null ở trang cuối. Search `q` khớp title/excerpt; `tag` lọc theo slug tag."
+      },
+      "code": {
+        "lang": "json",
+        "text": "{ \"items\": [], \"nextCursor\": null }"
+      }
+    },
+    {
+      "title": {
+        "en": "Prove paging and the limit cap",
+        "vi": "Chứng minh paging và trần limit"
+      },
+      "detail": {
+        "en": "Seed enough posts to fill two pages. Walk cursors: no duplicate ids, no gaps. `limit=500` must 400 via zod, not silently cap.",
+        "vi": "Seed đủ post cho hai trang. Đi theo cursor: không trùng id, không hổng. `limit=500` phải 400 nhờ zod, không lặng lẽ cắt."
+      },
+      "code": {
+        "lang": "bash",
+        "text": "curl 'localhost:4000/api/posts?limit=2'\ncurl 'localhost:4000/api/posts?limit=500'"
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "Paging through all posts returns no duplicates or gaps.",
+      "vi": "Lướt hết posts không trùng và không hổng hàng."
+    },
+    {
+      "en": "`limit=500` gives a 400 with a field error on `limit`.",
+      "vi": "`limit=500` trả 400 với field error trên `limit`."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Offset pagination on changing data (duplicates and skipped rows).",
+      "vi": "Offset pagination trên data đang đổi (trùng hàng và bỏ sót hàng)."
+    }
+  ],
+  "commit": "feat(api): list query contract"
+}

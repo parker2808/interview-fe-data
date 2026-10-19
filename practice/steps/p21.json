@@ -1,0 +1,124 @@
+{
+  "kind": "practice-step",
+  "id": "p21",
+  "milestone": "m4",
+  "order": 21,
+  "title": {
+    "en": "Admin tables",
+    "vi": "Table admin"
+  },
+  "summary": {
+    "en": "TanStack Table plus the list contract gives sorting, filtering and paging in one pattern.",
+    "vi": "TanStack Table cộng contract list cho sort, filter và paging trong một pattern."
+  },
+  "estimateMin": 180,
+  "prereqs": ["p20", "p13"],
+  "tags": ["tanstack-table", "admin", "optimistic"],
+  "concepts": [
+    {
+      "term": {
+        "en": "Server pagination",
+        "vi": "Pagination phía server"
+      },
+      "explain": {
+        "en": "The table sends `cursor`, `limit`, `sort`, `q` to the API. It does not sort the current page in the browser and pretend that is the full list.",
+        "vi": "Table gửi `cursor`, `limit`, `sort`, `q` lên API. Không sort trang hiện tại trên browser rồi coi như cả list."
+      }
+    },
+    {
+      "term": {
+        "en": "Optimistic delete",
+        "vi": "Xóa optimistic"
+      },
+      "explain": {
+        "en": "Remove the row in the UI, fire DELETE, roll back if the request fails. Use Query cache + `onError` to put the row back.",
+        "vi": "Gỡ hàng trên UI, bắn DELETE, rollback nếu request fail. Dùng Query cache + `onError` để trả hàng về."
+      }
+    },
+    {
+      "term": {
+        "en": "Generic DataTable",
+        "vi": "DataTable generic"
+      },
+      "explain": {
+        "en": "One component parameterized by columns and a query key. Posts, projects, and messages are configs, not three copy-pasted tables.",
+        "vi": "Một component nhận columns và query key. Posts, projects và messages là config, không phải ba table copy-paste."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "react",
+      "label": {
+        "en": "React",
+        "vi": "React"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "table-50k-rows",
+      "label": {
+        "en": "Designing a table with 50,000 records",
+        "vi": "Thiết kế table 50.000 records"
+      }
+    },
+    {
+      "id": "dashboard-15-apis",
+      "label": {
+        "en": "Dashboard loading from many APIs",
+        "vi": "Dashboard load từ nhiều API"
+      }
+    }
+  ],
+  "specRefs": ["§5.8", "§5.11"],
+  "tasks": [
+    {
+      "title": {
+        "en": "Build generic DataTable",
+        "vi": "Làm DataTable generic"
+      },
+      "detail": {
+        "en": "TanStack Table + shadcn `table`. Props: columns, query fn using ListQuery, row actions. Sticky header, compact density, empty and error states from spec §5.8.",
+        "vi": "TanStack Table + shadcn `table`. Props: columns, hàm query dùng ListQuery, row actions. Sticky header, density compact, empty và error theo spec §5.8."
+      }
+    },
+    {
+      "title": {
+        "en": "Posts, projects, messages lists",
+        "vi": "List posts, projects, messages"
+      },
+      "detail": {
+        "en": "Three routes share DataTable. Sort, search `q`, and paging must show new Network requests (not only client filtering). Projects get a domain pill column (spec §5.11).",
+        "vi": "Ba route dùng chung DataTable. Sort, search `q` và paging phải hiện request Network mới (không chỉ filter client). Projects có cột domain pill (spec §5.11)."
+      }
+    },
+    {
+      "title": {
+        "en": "Optimistic delete with rollback",
+        "vi": "Xóa optimistic kèm rollback"
+      },
+      "detail": {
+        "en": "Row action Delete → confirm dialog → row disappears. Force the API to 500 (or unplug it) and confirm the row returns with a toast.",
+        "vi": "Row action Delete → dialog xác nhận → hàng biến mất. Cố tình cho API 500 (hoặc tắt API) và xác nhận hàng trở lại kèm toast."
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "Sort, search and paging hit the API (visible as new requests in the Network tab).",
+      "vi": "Sort, search và paging gọi API (thấy request mới trong tab Network)."
+    },
+    {
+      "en": "A failed delete restores the row (optimistic rollback).",
+      "vi": "Delete fail thì hàng trở lại (rollback optimistic)."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Client-side sorting over a single page of data. Sort is a query param.",
+      "vi": "Sort phía client trên một trang data. Sort là query param."
+    }
+  ],
+  "commit": "feat(web): admin data table"
+}

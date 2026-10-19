@@ -1,0 +1,121 @@
+{
+  "kind": "practice-step",
+  "id": "p05",
+  "milestone": "m1",
+  "order": 5,
+  "title": {
+    "en": "NestJS basics",
+    "vi": "NestJS cơ bản"
+  },
+  "summary": {
+    "en": "Nest gives the backend a fixed structure (module, controller, service), so you don't have to invent one.",
+    "vi": "Nest cho backend một cấu trúc cố định (module, controller, service), nên bạn không phải tự nghĩ ra."
+  },
+  "estimateMin": 120,
+  "prereqs": ["p01"],
+  "tags": ["nestjs", "api", "health"],
+  "concepts": [
+    {
+      "term": {
+        "en": "Module / controller / service",
+        "vi": "Module / controller / service"
+      },
+      "explain": {
+        "en": "A feature folder / the class that maps URLs to methods / the class with the actual logic. Controllers stay thin.",
+        "vi": "Thư mục của một feature / class map URL sang method / class chứa logic thật. Controller giữ mỏng."
+      }
+    },
+    {
+      "term": {
+        "en": "Global prefix",
+        "vi": "Global prefix"
+      },
+      "explain": {
+        "en": "`app.setGlobalPrefix('api')` means every route starts with `/api`. The web app will later rewrite `/api/*` here.",
+        "vi": "`app.setGlobalPrefix('api')` nghĩa là mọi route bắt đầu bằng `/api`. Web app sau này sẽ rewrite `/api/*` tới đây."
+      }
+    },
+    {
+      "term": {
+        "en": "ConfigModule",
+        "vi": "ConfigModule"
+      },
+      "explain": {
+        "en": "Reads `.env` once and injects values (`PORT`, `DATABASE_URL`, `WEB_ORIGIN`). Do not `process.env` in random files.",
+        "vi": "Đọc `.env` một lần và inject giá trị (`PORT`, `DATABASE_URL`, `WEB_ORIGIN`). Đừng gọi `process.env` rải rác."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "architecture",
+      "label": {
+        "en": "Architecture",
+        "vi": "Kiến trúc"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "bff-when",
+      "label": {
+        "en": "When would you introduce a BFF?",
+        "vi": "Khi nào bạn giới thiệu một BFF?"
+      }
+    }
+  ],
+  "specRefs": ["§1.6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "Scaffold Nest into apps/api",
+        "vi": "Tạo Nest trong apps/api"
+      },
+      "detail": {
+        "en": "From the workspace root, create a Nest app at apps/api (TypeScript). Add it to the pnpm workspace if create-nest-app did not. The API listens on port 4000.",
+        "vi": "Từ root workspace, tạo Nest app tại apps/api (TypeScript). Thêm vào pnpm workspace nếu lệnh tạo app chưa làm. API lắng nghe cổng 4000."
+      },
+      "code": {
+        "lang": "bash",
+        "text": "pnpm dlx @nestjs/cli new apps/api --package-manager pnpm"
+      }
+    },
+    {
+      "title": {
+        "en": "Add HealthModule",
+        "vi": "Thêm HealthModule"
+      },
+      "detail": {
+        "en": "Create a HealthModule with a controller and a service. `GET /health` (after the prefix: `/api/health`) returns `{ status: \"ok\" }`. The service owns that object; the controller only calls it.",
+        "vi": "Tạo HealthModule với controller và service. `GET /health` (sau prefix: `/api/health`) trả `{ status: \"ok\" }`. Service giữ object đó; controller chỉ gọi service."
+      }
+    },
+    {
+      "title": {
+        "en": "Global prefix, CORS, ConfigModule",
+        "vi": "Global prefix, CORS, ConfigModule"
+      },
+      "detail": {
+        "en": "Set global prefix `api`. Enable CORS for the web origin (http://localhost:3000). Load ConfigModule globally so later modules can read `.env`.",
+        "vi": "Set global prefix `api`. Bật CORS cho origin của web (http://localhost:3000). Load ConfigModule global để module sau đọc được `.env`."
+      },
+      "code": {
+        "lang": "ts",
+        "text": "app.setGlobalPrefix('api');\napp.enableCors({ origin: process.env.WEB_ORIGIN || 'http://localhost:3000' });"
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "`curl localhost:4000/api/health` returns `{status:\"ok\"}`.",
+      "vi": "`curl localhost:4000/api/health` trả `{status:\"ok\"}`."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Putting logic in controllers. Controllers only map HTTP to a service call.",
+      "vi": "Nhét logic vào controller. Controller chỉ map HTTP sang một lời gọi service."
+    }
+  ],
+  "commit": "feat(api): nest app + health"
+}

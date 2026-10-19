@@ -1,0 +1,121 @@
+{
+  "kind": "practice-step",
+  "id": "p25",
+  "milestone": "m5",
+  "order": 25,
+  "title": {
+    "en": "Drafts, publish, revalidate",
+    "vi": "Draft, publish, revalidate"
+  },
+  "summary": {
+    "en": "Public pages are cached for speed, so publishing must explicitly refresh them.",
+    "vi": "Trang public được cache để nhanh, nên lúc publish phải refresh chủ động."
+  },
+  "estimateMin": 120,
+  "prereqs": ["p22", "p14"],
+  "tags": ["publish", "revalidate", "preview"],
+  "concepts": [
+    {
+      "term": {
+        "en": "revalidateTag",
+        "vi": "revalidateTag"
+      },
+      "explain": {
+        "en": "Next cache key per entity (`post:<slug>`). Publishing one post should not flush the whole site.",
+        "vi": "Key cache Next theo từng entity (`post:<slug>`). Publish một post không được xóa cache cả site."
+      }
+    },
+    {
+      "term": {
+        "en": "Preview mode",
+        "vi": "Preview mode"
+      },
+      "explain": {
+        "en": "A signed cookie that lets the owner see DRAFT rows on the public template. Logged-out visitors still get 404.",
+        "vi": "Cookie đã ký cho phép owner xem hàng DRAFT trên template public. Khách chưa login vẫn nhận 404."
+      }
+    },
+    {
+      "term": {
+        "en": "Publish webhook",
+        "vi": "Webhook publish"
+      },
+      "explain": {
+        "en": "API `POST /posts/:id/publish` sets `publishedAt`, then calls web `POST /api/revalidate` with a secret header. Same for unpublish.",
+        "vi": "API `POST /posts/:id/publish` set `publishedAt`, rồi gọi web `POST /api/revalidate` với header secret. Unpublish cũng vậy."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "nextjs",
+      "label": {
+        "en": "Next.js",
+        "vi": "Next.js"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "next-data-fetching-cache-revalidation",
+      "label": {
+        "en": "Data fetching, caching, and revalidation in App Router",
+        "vi": "Data fetching, caching và revalidation trong App Router"
+      }
+    }
+  ],
+  "specRefs": ["§1.5", "§5.5"],
+  "tasks": [
+    {
+      "title": {
+        "en": "publish and unpublish routes",
+        "vi": "Route publish và unpublish"
+      },
+      "detail": {
+        "en": "`POST /posts/:id/publish` and `/unpublish` (same for projects). Set/clear `publishedAt`. Reject publish when EN required fields are empty or contain `TODO` / `lorem` (spec §5.11).",
+        "vi": "`POST /posts/:id/publish` và `/unpublish` (project tương tự). Set/xóa `publishedAt`. Từ chối publish khi field EN bắt buộc trống hoặc chứa `TODO` / `lorem` (spec §5.11)."
+      }
+    },
+    {
+      "title": {
+        "en": "On-demand revalidate",
+        "vi": "Revalidate theo nhu cầu"
+      },
+      "detail": {
+        "en": "Web route `POST /api/revalidate` checks a secret header and runs `revalidateTag('post:<slug>')` (and `project:<slug>`). API calls it after a successful publish.",
+        "vi": "Route web `POST /api/revalidate` kiểm header secret và chạy `revalidateTag('post:<slug>')` (và `project:<slug>`). API gọi nó sau khi publish thành công."
+      },
+      "code": {
+        "lang": "ts",
+        "text": "revalidateTag(`post:${slug}`);"
+      }
+    },
+    {
+      "title": {
+        "en": "Preview for drafts",
+        "vi": "Preview cho draft"
+      },
+      "detail": {
+        "en": "An admin-only preview cookie shows the draft on the public template. Without it, `GET /posts/:slug` stays 404 for DRAFT.",
+        "vi": "Cookie preview chỉ dành admin hiện draft trên template public. Không có cookie thì `GET /posts/:slug` vẫn 404 với DRAFT."
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "Publishing shows the change on the public page in under 5 s without a redeploy.",
+      "vi": "Publish hiện thay đổi trên trang public dưới 5 giây, không cần redeploy."
+    },
+    {
+      "en": "A draft is visible only in preview (public URL still 404).",
+      "vi": "Draft chỉ thấy trong preview (URL public vẫn 404)."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Revalidating the whole site. Tag per entity.",
+      "vi": "Revalidate cả site. Hãy tag theo từng entity."
+    }
+  ],
+  "commit": "feat: publish + on-demand revalidate"
+}

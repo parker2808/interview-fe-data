@@ -1,0 +1,117 @@
+{
+  "kind": "practice-step",
+  "id": "p24",
+  "milestone": "m5",
+  "order": 24,
+  "title": {
+    "en": "Uploads",
+    "vi": "Upload"
+  },
+  "summary": {
+    "en": "Images are content too, so they are stored with metadata and alt text.",
+    "vi": "Ảnh cũng là nội dung, nên được lưu kèm metadata và alt text."
+  },
+  "estimateMin": 180,
+  "prereqs": ["p19"],
+  "tags": ["uploads", "media", "sharp"],
+  "concepts": [
+    {
+      "term": {
+        "en": "Magic bytes",
+        "vi": "Magic bytes"
+      },
+      "explain": {
+        "en": "The first bytes of a file say its real type. A renamed `.exe` is not a JPEG. Trust sharp / file signatures, not the extension.",
+        "vi": "Những byte đầu của file nói type thật. File đổi tên `.exe` không phải JPEG. Tin sharp / chữ ký file, không tin extension."
+      }
+    },
+    {
+      "term": {
+        "en": "Media row",
+        "vi": "Hàng Media"
+      },
+      "explain": {
+        "en": "Files live on a Compose volume; MySQL stores `fileName`, mime, size, width/height, `altEn`/`altVi`. Alt is required before anything using the image can publish.",
+        "vi": "File nằm trên volume Compose; MySQL lưu `fileName`, mime, size, width/height, `altEn`/`altVi`. Alt bắt buộc trước khi thứ gì dùng ảnh đó được publish."
+      }
+    },
+    {
+      "term": {
+        "en": "srcset / webp variants",
+        "vi": "srcset / bản webp"
+      },
+      "explain": {
+        "en": "sharp writes a few widths as webp. `<img>` uses `srcset` so the browser picks one. One original on disk is not enough.",
+        "vi": "sharp ghi vài chiều rộng dạng webp. `<img>` dùng `srcset` để browser chọn. Chỉ một file gốc trên đĩa là không đủ."
+      }
+    }
+  ],
+  "kbLinks": [
+    {
+      "slug": "security",
+      "label": {
+        "en": "Security",
+        "vi": "Bảo mật"
+      }
+    }
+  ],
+  "questionLinks": [
+    {
+      "id": "security-xss-csrf-csp",
+      "label": {
+        "en": "XSS, CSRF, and CSP in frontend terms",
+        "vi": "XSS, CSRF và CSP theo góc nhìn frontend"
+      }
+    }
+  ],
+  "specRefs": ["§1.5", "§1.6"],
+  "tasks": [
+    {
+      "title": {
+        "en": "POST /media with limits",
+        "vi": "POST /media với giới hạn"
+      },
+      "detail": {
+        "en": "multer + session guard. Allow jpeg/png/webp only, size cap well under 20 MB. Reject `.exe` and a 20 MB file with 400. Check magic bytes or sharp metadata, not the filename.",
+        "vi": "multer + session guard. Chỉ jpeg/png/webp, trần size dưới 20 MB. Từ chối `.exe` và file 20 MB bằng 400. Kiểm magic bytes hoặc metadata sharp, không tin tên file."
+      }
+    },
+    {
+      "title": {
+        "en": "sharp variants + Media model",
+        "vi": "Bản sharp + model Media"
+      },
+      "detail": {
+        "en": "Resize to webp variants, store on a Compose volume served at `/media/*`. Media columns: alt en/vi, w/h, mime, size. Seed nothing personal.",
+        "vi": "Resize thành bản webp, lưu trên volume Compose phục vụ tại `/media/*`. Cột Media: alt en/vi, w/h, mime, size. Không seed thông tin cá nhân."
+      }
+    },
+    {
+      "title": {
+        "en": "Picker in the editor",
+        "vi": "Picker trong editor"
+      },
+      "detail": {
+        "en": "From the p22 editors, pick an existing Media row or upload. Public `<img>` must have alt and srcset. Progress bar from spec §4.0.",
+        "vi": "Từ editor p22, chọn hàng Media có sẵn hoặc upload. `<img>` public phải có alt và srcset. Progress bar theo spec §4.0."
+      }
+    }
+  ],
+  "doneWhen": [
+    {
+      "en": "Uploading a JPG creates the webp variants, and `<img>` uses `srcset` plus alt.",
+      "vi": "Upload một JPG tạo các bản webp, và `<img>` dùng `srcset` kèm alt."
+    },
+    {
+      "en": "A 20 MB upload or a `.exe` is rejected with 400.",
+      "vi": "Upload 20 MB hoặc file `.exe` bị từ chối với 400."
+    }
+  ],
+  "pitfalls": [
+    {
+      "en": "Trusting the file extension. Check magic bytes or the sharp metadata.",
+      "vi": "Tin extension. Hãy kiểm magic bytes hoặc metadata của sharp."
+    }
+  ],
+  "commit": "feat: media uploads"
+}
