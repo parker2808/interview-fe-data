@@ -6,8 +6,8 @@
     "vi": "Browser & Web APIs"
   },
   "summary": {
-    "en": "Senior Web API interviews are architecture conversations with a price tag. IndexedDB, workers, and service workers are not “advanced HTML5.” They are where you put work and data so the UI thread stays interactive, with costs: quota, serialization, cache poisoning, multi-tab races, and an update UX you have to product-manage.",
-    "vi": "Phỏng vấn Web API senior là cuộc nói chuyện kiến trúc có giá. IndexedDB, worker, và service worker không phải “HTML5 nâng cao.” Chúng là chỗ đặt work và data để UI thread còn interactive, kèm cost: quota, serialization, cache poisoning, race multi-tab, và UX update bạn phải product-manage."
+    "en": "Where to put work and data in the browser so the UI stays interactive: IndexedDB, workers, service workers, observers, and multi-tab session sync. Quota, serialization, cache poisoning, and update UX are the real interview.",
+    "vi": "Chỗ đặt việc và dữ liệu trong browser để UI còn tương tác: IndexedDB, worker, service worker, observer, và đồng bộ session đa tab. Quota, serialization, cache poisoning, và UX update mới là phần phỏng vấn thật."
   },
   "category": "core",
   "order": 4,
@@ -41,15 +41,15 @@
         {
           "type": "paragraph",
           "text": {
-            "en": "Senior Web API interviews are architecture conversations with a price tag. IndexedDB, workers, and service workers are not “advanced HTML5.” They are **where you put work and data** so the UI thread stays interactive, with costs: quota, serialization, cache poisoning, multi-tab races, and an update UX you have to product-manage. If you recite a `indexedDB.open` snippet and cannot talk about version upgrades or abort, you are still mid.",
-            "vi": "Phỏng vấn Web API senior là cuộc nói chuyện kiến trúc có giá. IndexedDB, worker, và service worker không phải “HTML5 nâng cao.” Chúng là **chỗ đặt work và data** để UI thread còn interactive, kèm cost: quota, serialization, cache poisoning, race multi-tab, và UX update bạn phải product-manage. Nếu bạn thuộc snippet `indexedDB.open` mà không nói version upgrade hoặc abort, bạn vẫn mid."
+            "en": "This doc is senior Browser APIs for Vue interviews: IndexedDB, workers, service workers, Intersection Observer, a short modern-API set, and multi-tab session sync. It is for engineers who already ship UI and now need to place work and data so the main thread (luồng chính) stays interactive.",
+            "vi": "Tài liệu này là Browser API mức senior cho phỏng vấn Vue: IndexedDB, worker, service worker, Intersection Observer, một nhóm API hiện đại ngắn, và đồng bộ session đa tab. Dành cho engineer đã ship UI và giờ cần đặt việc và dữ liệu để luồng chính (main thread) vẫn tương tác được."
           }
         },
         {
           "type": "paragraph",
           "text": {
-            "en": "Prefer Vue 3 + TS when wiring observers and abort signals. Mention React only when the same primitive shows up as a hook vs a composable. Offline, prefetch, and multi-tab logout are product decisions first.",
-            "vi": "Ưu tiên Vue 3 + TS khi nối observer và abort signal. Nhắc React chỉ khi cùng primitive hiện như hook vs composable. Offline, prefetch, và logout multi-tab là quyết định product trước."
+            "en": "Study 4.1–4.3 first (where data lives, where CPU runs, how a network proxy caches). Interviewers ask version upgrades, `postMessage` cost, and cache poisoning more than `indexedDB.open` snippets. Then read 4.4–4.6 for observers, newer platform APIs, and logout across tabs. For every topic, name the cost, the failure, and how you would prove the fix.",
+            "vi": "Hãy học 4.1–4.3 trước (data sống ở đâu, CPU chạy ở đâu, proxy mạng cache thế nào). Người phỏng vấn hỏi version upgrade, chi phí `postMessage`, và cache poisoning nhiều hơn snippet `indexedDB.open`. Rồi đọc 4.4–4.6 về observer, API nền tảng mới hơn, và logout giữa các tab. Với mỗi topic, hãy nêu chi phí, kịch bản lỗi, và cách bạn chứng minh phần sửa."
           }
         },
         {
@@ -78,6 +78,1314 @@
             "en": "4-browser-web-apis",
             "vi": "4-browser-web-apis"
           }
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "4.1. IndexedDB",
+            "vi": "4.1. IndexedDB"
+          },
+          "id": {
+            "en": "41-indexeddb",
+            "vi": "41-indexeddb"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**In short:** IndexedDB is the browser’s structured, asynchronous, origin-quota database. It stores large or indexed records (drafts, catalogs, an outbox). It is not a bigger `localStorage`.",
+            "vi": "**Tóm tắt:** IndexedDB là cơ sở dữ liệu có cấu trúc, bất đồng bộ, theo quota origin của browser. Nó lưu bản ghi lớn hoặc có index (bản nháp, catalog, outbox). Nó không phải `localStorage` phóng to."
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**Why it matters:** A field-sales PWA must work in a basement, then sync. An editor autosaves huge documents. `localStorage` is sync, string-only, and about 5MB — parsing 4MB JSON on the main thread (luồng chính) freezes the tab. Quota, version 12 meeting a v11 tab, and two tabs plus the server disagreeing are the real questions.",
+            "vi": "**Vì sao quan trọng:** PWA bán hàng phải chạy dưới tầng hầm, rồi sync. Editor tự lưu tài liệu lớn. `localStorage` là đồng bộ, chỉ chuỗi, khoảng 5MB — parse JSON 4MB trên luồng chính (main thread) làm treo tab. Quota, version 12 gặp tab v11, và hai tab cộng server bất đồng mới là câu hỏi thật."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "**How it works:** Data lives in an origin-scoped DB of object stores and indexes. Reads and writes run in transactions. Schema changes happen in `onupgradeneeded` when you bump the version.",
+              "vi": "**Cách hoạt động:** Data sống trong DB theo origin, gồm object store và index. Đọc và ghi chạy trong transaction. Đổi schema xảy ra ở `onupgradeneeded` khi bạn tăng version."
+            },
+            {
+              "en": "Pick the store by job: IndexedDB for megabytes and indexes; `localStorage` for tiny sync flags; the Cache API for HTTP responses; cookies when the server must see the value.",
+              "vi": "Chọn store theo việc: IndexedDB cho megabyte và index; `localStorage` cho cờ sync nhỏ; Cache API cho HTTP response; cookie khi server phải thấy giá trị."
+            },
+            {
+              "en": "In 2026 I would not hand-roll IDB. **Dexie** (or similar) for schema, live queries, and transactions. Raw IDB is a tiny wrapper you fully own, not a seniority badge.",
+              "vi": "Năm 2026 tôi sẽ không tự viết IDB. **Dexie** (hoặc tương tự) cho schema, live query, và transaction. IDB trần là wrapper nhỏ bạn sở hữu hết, không phải huy hiệu senior."
+            },
+            {
+              "en": "IDB is async but not free. A giant scan on the main thread still janks. Do heavy reads in a worker. Never block first paint: show the shell, hydrate from IDB, then network.",
+              "vi": "IDB bất đồng bộ nhưng không miễn phí. Scan lớn trên luồng chính vẫn giật. Hãy đọc nặng trong worker. Đừng chặn first paint: hiện shell, hydrate từ IDB, rồi network."
+            },
+            {
+              "en": "When tab A opens v13, other tabs get `versionchange` and **must close** or the upgrade blocks (`onblocked`). A long-lived Dexie instance must listen and reload.",
+              "vi": "Khi tab A mở v13, các tab khác nhận `versionchange` và **phải đóng** nếu không upgrade bị chặn (`onblocked`). Instance Dexie sống lâu phải lắng nghe và reload."
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "import Dexie, { type Table } from 'dexie'\n\nclass AppDB extends Dexie {\n  drafts!: Table<{ id: string; body: string; updatedAt: number }>\n  constructor() {\n    super('app')\n    this.version(1).stores({ drafts: 'id, updatedAt' })\n  }\n}\nconst db = new AppDB()\n\ndb.on('versionchange', () => {\n  db.close()\n  location.reload() // another tab upgraded the schema\n})\n\nawait db.drafts.put({ id: 'doc-1', body, updatedAt: Date.now() })",
+            "vi": "import Dexie, { type Table } from 'dexie'\n\nclass AppDB extends Dexie {\n  drafts!: Table<{ id: string; body: string; updatedAt: number }>\n  constructor() {\n    super('app')\n    this.version(1).stores({ drafts: 'id, updatedAt' })\n  }\n}\nconst db = new AppDB()\n\ndb.on('versionchange', () => {\n  db.close()\n  location.reload() // tab khác đã upgrade schema\n})\n\nawait db.drafts.put({ id: 'doc-1', body, updatedAt: Date.now() })"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** Dexie names the store and the index. `put` is one transaction. If another tab bumps the version, `versionchange` closes this connection and reloads so the upgrade is not blocked. Without that listener, the new tab sits on `onblocked` and the user thinks the app is frozen.",
+            "vi": "**Điều gì xảy ra:** Dexie đặt tên store và index. `put` là một transaction. Nếu tab khác tăng version, `versionchange` đóng kết nối này và reload để upgrade không bị chặn. Không có listener đó, tab mới ngồi ở `onblocked` và user tưởng app bị treo."
+          }
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Need",
+              "vi": "Nhu cầu"
+            },
+            {
+              "en": "Store",
+              "vi": "Store"
+            },
+            {
+              "en": "Why",
+              "vi": "Vì sao"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Theme / “seen splash”",
+                "vi": "Theme / “đã xem splash”"
+              },
+              {
+                "en": "`localStorage`",
+                "vi": "`localStorage`"
+              },
+              {
+                "en": "Tiny, sync, inspectable",
+                "vi": "Nhỏ, đồng bộ, soi được"
+              }
+            ],
+            [
+              {
+                "en": "30MB catalog / drafts",
+                "vi": "Catalog 30MB / bản nháp"
+              },
+              {
+                "en": "IndexedDB (Dexie)",
+                "vi": "IndexedDB (Dexie)"
+              },
+              {
+                "en": "Async, indexed, quota-aware",
+                "vi": "Bất đồng bộ, có index, biết quota"
+              }
+            ],
+            [
+              {
+                "en": "Session cookie",
+                "vi": "Cookie session"
+              },
+              {
+                "en": "httpOnly cookie",
+                "vi": "Cookie httpOnly"
+              },
+              {
+                "en": "Server must see it",
+                "vi": "Server phải thấy"
+              }
+            ],
+            [
+              {
+                "en": "Hashed JS / images",
+                "vi": "JS / ảnh đã hash"
+              },
+              {
+                "en": "Cache API / HTTP cache",
+                "vi": "Cache API / HTTP cache"
+              },
+              {
+                "en": "HTTP responses, not records",
+                "vi": "HTTP response, không phải bản ghi"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- Don’t IDB a 20-item preferences object. Don’t `localStorage` a 4MB JSON dump.\n- `navigator.storage.persist()` is “please don’t evict me,” not a guarantee. Treat eviction as normal on mobile Safari.\n- Sync: last-write-wins with `updatedAt` is honest. CRDTs are for collaborative editors, not a todo list. If you cannot describe the conflict UI, you are not ready to sync.\n- Catch `QuotaExceededError`, delete LRU, tell the user. Never hard-code 50MB — Chrome and Safari differ.\n- SSR/Nuxt: IDB is browser-only. Guard `window`; do not import Dexie at module scope on the server. Prove quota with `navigator.storage.estimate()` and a migration test from vN−1.",
+            "vi": "- Đừng IDB object preference 20 mục. Đừng `localStorage` dump JSON 4MB.\n- `navigator.storage.persist()` là “xin đừng đuổi tôi,” không phải bảo đảm. Coi eviction là bình thường trên Safari mobile.\n- Sync: last-write-wins với `updatedAt` là trung thực. CRDT dành cho editor cộng tác, không phải todo. Nếu không tả được UI xung đột, bạn chưa sẵn sàng sync.\n- Bắt `QuotaExceededError`, xóa LRU, nói với user. Đừng hard-code 50MB — Chrome và Safari khác nhau.\n- SSR/Nuxt: IDB chỉ có trên browser. Guard `window`; đừng import Dexie ở module scope phía server. Kiểm chứng quota bằng `navigator.storage.estimate()` và test migrate từ vN−1."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: tab freezes on open. Cause: parsing a 4MB `localStorage` JSON on the main thread. Fix: IndexedDB + hydrate after first paint.\n- Symptom: deploy of v12 hangs. Cause: a v11 tab never closed. Fix: `versionchange` → `db.close()` + reload.\n- Symptom: `onupgradeneeded` wiped production data. Cause: `deleteObjectStore` in a migration. Fix: additive migrations and a test from vN−1.\n- Symptom: Dexie `liveQuery` leaks after leave. Cause: no unsubscribe. Fix: stop it in `onUnmounted` / `onScopeDispose`.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: tab treo lúc mở. Nguyên nhân: parse JSON `localStorage` 4MB trên luồng chính. Cách xử lý: IndexedDB + hydrate sau first paint.\n- Triệu chứng: deploy v12 treo. Nguyên nhân: tab v11 không đóng. Cách xử lý: `versionchange` → `db.close()` + reload.\n- Triệu chứng: `onupgradeneeded` xóa data production. Nguyên nhân: `deleteObjectStore` trong migration. Cách xử lý: migration chỉ thêm và test từ vN−1.\n- Triệu chứng: Dexie `liveQuery` leak sau khi rời. Nguyên nhân: không unsubscribe. Cách xử lý: stop trong `onUnmounted` / `onScopeDispose`."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+          },
+          "text": {
+            "en": "A field-sales PWA must work in a basement, then sync. Or an editor autosaves huge documents. Why not `localStorage`? What happens when quota is exceeded, when version 12 meets a v11 tab still open, and when two tabs and the server disagree?",
+            "vi": "PWA bán hàng phải chạy dưới tầng hầm, rồi sync. Hoặc editor tự lưu tài liệu lớn. Vì sao không `localStorage`? Điều gì xảy ra khi vượt quota, khi version 12 gặp tab v11 còn mở, và khi hai tab cùng server bất đồng?"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "IndexedDB is the structured async store for large or indexed data — drafts, catalogs, an outbox. I would not use localStorage for megabytes: it is sync, string-only, and will freeze the tab on parse. In 2026 I ship Dexie, not a hand-rolled IDB wrapper. Heavy reads go in a worker, and I never block first paint on the database. The production trap is a version bump: the other tabs must close on versionchange or the upgrade blocks. I listen, close, and reload. QuotaExceededError means delete LRU and tell the user, not a hardcoded 50MB. For sync I ship last-write-wins with updatedAt until the product can describe a conflict UI.",
+            "vi": "IndexedDB là store có cấu trúc, bất đồng bộ cho data lớn hoặc có index — bản nháp, catalog, outbox. Tôi không dùng localStorage cho megabyte: nó đồng bộ, chỉ chuỗi, và sẽ treo tab lúc parse. Năm 2026 tôi ship Dexie, không phải wrapper IDB tự viết. Đọc nặng đưa vào worker, và tôi không chặn first paint vì database. Bẫy ở môi trường production là tăng version: các tab khác phải đóng khi versionchange nếu không upgrade bị chặn. Tôi lắng nghe, đóng, và reload. QuotaExceededError nghĩa là xóa LRU và nói với user, không phải hard-code 50MB. Với sync tôi ship last-write-wins với updatedAt đến khi product tả được UI xung đột."
+          }
+        },
+        {
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "IndexedDB is async, indexed, origin-quota. `localStorage` is tiny, sync, strings.",
+              "vi": "IndexedDB bất đồng bộ, có index, quota theo origin. `localStorage` nhỏ, đồng bộ, chuỗi."
+            },
+            {
+              "en": "Ship Dexie. Listen for `versionchange`, close, and reload or the upgrade blocks.",
+              "vi": "Hãy ship Dexie. Lắng `versionchange`, đóng, và reload nếu không upgrade bị chặn."
+            },
+            {
+              "en": "Never block first paint. Hydrate from IDB, then network. Heavy scans go in a worker.",
+              "vi": "Đừng chặn first paint. Hydrate từ IDB, rồi network. Scan nặng đưa vào worker."
+            },
+            {
+              "en": "Catch quota errors. Eviction is normal on mobile Safari.",
+              "vi": "Bắt lỗi quota. Eviction là bình thường trên Safari mobile."
+            }
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **Theme vs 30MB catalog vs session vs hashed assets?** `localStorage`, IndexedDB, httpOnly cookie, Cache API / HTTP cache.\n- **v11 tab still open while you deploy v12?** `versionchange` fires; the old tab must close or `onblocked` hangs the new one.\n- **Offline outbox without double-POST?** Idempotency key, server 409, and a conflict UI — not “fire and hope.”\n- **Should IDB hold PII?** Only with an eviction and XSS story. It is origin-readable JS.",
+            "vi": "- **Theme vs catalog 30MB vs session vs asset đã hash?** `localStorage`, IndexedDB, cookie httpOnly, Cache API / HTTP cache.\n- **Tab v11 còn mở khi bạn deploy v12?** `versionchange` chạy; tab cũ phải đóng nếu không `onblocked` treo tab mới.\n- **Outbox offline không double-POST?** Idempotency key, server 409, và UI xung đột — không phải “bắn rồi hy vọng.”\n- **IDB có nên giữ PII?** Chỉ khi có chuyện eviction và XSS. JS trên origin đọc được."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "4.2. Web Workers",
+            "vi": "4.2. Web Worker"
+          },
+          "id": {
+            "en": "42-web-workers",
+            "vi": "42-web-workers"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**In short:** A web worker is a background thread with no DOM. You send data with `postMessage` (structured clone, or transfer of an `ArrayBuffer`). Use it for CPU that would become a long task (tác vụ chạy > 50 ms) on the main thread.",
+            "vi": "**Tóm tắt:** Web worker là luồng nền không có DOM. Bạn gửi data bằng `postMessage` (structured clone, hoặc transfer `ArrayBuffer`). Dùng cho CPU sẽ thành long task (tác vụ chạy > 50 ms) trên luồng chính."
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**Why it matters:** An 8MB JSON parse, CSV, or image resize freezes input. A teammate spins a worker for a 3ms sort, and the clone costs more than the work. Interviewers want **when the worker pays for itself**, transferables vs structured clone, SharedWorker, and Comlink.",
+            "vi": "**Vì sao quan trọng:** Parse JSON 8MB, CSV, hoặc resize ảnh làm đơ input. Đồng nghiệp bật worker cho sort 3ms, và bản clone tốn hơn phần việc. Người phỏng vấn muốn **khi nào worker tự trả giá**, transferable vs structured clone, SharedWorker, và Comlink."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "**How it works:** `new Worker(url, { type: 'module' })` starts a thread. `postMessage` copies the payload (structured clone) unless you **transfer** an `ArrayBuffer`, which zeros the sender’s copy.",
+              "vi": "**Cách hoạt động:** `new Worker(url, { type: 'module' })` mở một luồng. `postMessage` copy payload (structured clone) trừ khi bạn **transfer** `ArrayBuffer`, lúc đó bản gửi bị zero."
+            },
+            {
+              "en": "Workers have no DOM and no Vue instance. Send DTOs. Functions, class prototypes, and Vue proxies do not clone — `toRaw` first.",
+              "vi": "Worker không có DOM và không có instance Vue. Hãy gửi DTO. Function, prototype class, và Vue proxy không clone được — `toRaw` trước."
+            },
+            {
+              "en": "Profile first. If the work is ~5ms, keep it on the main thread. Measure long tasks **and** total duration (clone + worker + clone back).",
+              "vi": "Hãy đo trước. Nếu việc ~5ms, giữ trên luồng chính. Đo long task **và** tổng thời lượng (clone + worker + clone về)."
+            },
+            {
+              "en": "Vite: `new URL('./parse.ts', import.meta.url)` or `?worker`. Get the bundler story right or you ship a 404 in production. Terminate on unmount.",
+              "vi": "Vite: `new URL('./parse.ts', import.meta.url)` hoặc `?worker`. Làm đúng chuyện bundler nếu không bạn ship 404 ở môi trường production. `terminate` lúc unmount."
+            },
+            {
+              "en": "Comlink is RPC over `postMessage`. Great DX for a fat module; chatty APIs and hidden transfers are the cost. Raw `postMessage` for one job / one result.",
+              "vi": "Comlink là RPC trên `postMessage`. DX tốt cho module nặng; API nói nhiều và transfer bị giấu là giá. `postMessage` trần cho một việc / một kết quả."
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "// parse.worker.ts\nself.onmessage = (e: MessageEvent<{ text: string }>) => {\n  const rows = JSON.parse(e.data.text) as unknown[]\n  self.postMessage({ count: rows.length }) // logs: { count: 20000 }\n}\n\nconst worker = new Worker(new URL('./parse.worker.ts', import.meta.url), {\n  type: 'module',\n})\nworker.onmessage = (e: MessageEvent<{ count: number }>) => {\n  total.value = e.data.count\n}\nworker.postMessage({ text: rawJson })\nonScopeDispose(() => worker.terminate())",
+            "vi": "// parse.worker.ts\nself.onmessage = (e: MessageEvent<{ text: string }>) => {\n  const rows = JSON.parse(e.data.text) as unknown[]\n  self.postMessage({ count: rows.length }) // logs: { count: 20000 }\n}\n\nconst worker = new Worker(new URL('./parse.worker.ts', import.meta.url), {\n  type: 'module',\n})\nworker.onmessage = (e: MessageEvent<{ count: number }>) => {\n  total.value = e.data.count\n}\nworker.postMessage({ text: rawJson })\nonScopeDispose(() => worker.terminate())"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** The 20k-row parse runs off the main thread, so input can still paint. The result is a small DTO (`count`), not the Vue proxy. `terminate` on scope dispose avoids a leaked thread after a route change. Posting `rawJson` still clones the string — for a decoded `ArrayBuffer`, transfer it.",
+            "vi": "**Điều gì xảy ra:** Parse 20k hàng chạy ngoài luồng chính, nên input vẫn vẽ được. Kết quả là DTO nhỏ (`count`), không phải Vue proxy. `terminate` lúc dispose scope tránh leak luồng sau đổi route. Gửi `rawJson` vẫn clone chuỗi — với `ArrayBuffer` đã decode, hãy transfer."
+          }
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Move",
+              "vi": "Cách chuyển"
+            },
+            {
+              "en": "Cost",
+              "vi": "Chi phí"
+            },
+            {
+              "en": "Drops",
+              "vi": "Bỏ"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Structured clone",
+                "vi": "Structured clone"
+              },
+              {
+                "en": "Copy; Dates survive",
+                "vi": "Copy; Date còn"
+              },
+              {
+                "en": "Functions, DOM, Vue proxies",
+                "vi": "Function, DOM, Vue proxy"
+              }
+            ],
+            [
+              {
+                "en": "Transfer `ArrayBuffer`",
+                "vi": "Transfer `ArrayBuffer`"
+              },
+              {
+                "en": "Cheap; sender length → 0",
+                "vi": "Rẻ; length bên gửi → 0"
+              },
+              {
+                "en": "The sender can no longer read it",
+                "vi": "Bên gửi không đọc lại được"
+              }
+            ],
+            [
+              {
+                "en": "JSON.stringify",
+                "vi": "JSON.stringify"
+              },
+              {
+                "en": "Cheap-ish; main-thread parse",
+                "vi": "Tạm rẻ; parse trên luồng chính"
+              },
+              {
+                "en": "`Date` as Date, `undefined`, cycles",
+                "vi": "`Date` như Date, `undefined`, cycle"
+              }
+            ],
+            [
+              {
+                "en": "No worker (~5ms work)",
+                "vi": "Không worker (việc ~5ms)"
+              },
+              {
+                "en": "Zero clone",
+                "vi": "Không clone"
+              },
+              {
+                "en": "Nothing — do not pay for a thread",
+                "vi": "Không — đừng trả giá một luồng"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- Don’t worker tiny work. Don’t main-thread a 200ms parse because “workers are complicated.”\n- `SharedWorker` (one worker, many tabs) is right for a shared connection or IDB helper. Safari history is why many teams still use a dedicated worker + BroadcastChannel.\n- `SharedArrayBuffer` needs COOP/COEP headers. That is a product/security conversation, not a one-line flag.\n- One worker per component instance is how a dashboard grows 40 threads. Share a pool. Handle `worker.onerror` or the UI hangs on “loading.”\n- Abort in-flight work on route change: `terminate`, or a job id the worker checks. SSR: no workers on the server.",
+            "vi": "- Đừng worker việc nhỏ. Đừng parse 200ms trên luồng chính vì “worker phức tạp.”\n- `SharedWorker` (một worker, nhiều tab) đúng cho connection dùng chung hoặc helper IDB. Lịch sử Safari là lý do nhiều team vẫn dùng worker riêng + BroadcastChannel.\n- `SharedArrayBuffer` cần header COOP/COEP. Đó là chuyện product/bảo mật, không phải cờ một dòng.\n- Một worker mỗi instance component là cách dashboard có 40 luồng. Hãy share pool. Bắt `worker.onerror` nếu không UI treo ở “loading.”\n- Hủy việc đang chạy khi đổi route: `terminate`, hoặc job id worker kiểm. SSR: không có worker trên server."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: `postMessage(vueState)` throws. Cause: a Proxy is not structured-cloneable. Fix: `toRaw` + a DTO.\n- Symptom: next render reads an empty buffer. Cause: you transferred the `ArrayBuffer` and `byteLength` is 0. Fix: do not read the sender copy.\n- Symptom: production 404 for the worker file. Cause: wrong Vite `?worker` / `new URL`. Fix: the bundler recipe in a prod build.\n- Symptom: 40 workers on a dashboard. Cause: one worker per widget. Fix: a shared pool; terminate on unmount.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `postMessage(vueState)` throw. Nguyên nhân: Proxy không structured-clone được. Cách xử lý: `toRaw` + DTO.\n- Triệu chứng: lần render sau đọc buffer rỗng. Nguyên nhân: bạn đã transfer `ArrayBuffer` và `byteLength` là 0. Cách xử lý: đừng đọc bản bên gửi.\n- Triệu chứng: production 404 file worker. Nguyên nhân: sai Vite `?worker` / `new URL`. Cách xử lý: công thức bundler trong bản prod.\n- Triệu chứng: 40 worker trên dashboard. Nguyên nhân: một worker mỗi widget. Cách xử lý: pool dùng chung; terminate lúc unmount."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+          },
+          "text": {
+            "en": "An 8MB JSON parse / CSV / image resize freezes input. A teammate spins a worker for a 3ms sort. They want when the worker pays for itself, what `postMessage` costs, transferables vs structured clone, SharedWorker, and Comlink — not a hello-world worker.",
+            "vi": "Parse JSON 8MB / CSV / resize ảnh làm đơ input. Đồng nghiệp bật worker cho sort 3ms. Họ muốn khi nào worker tự trả giá, `postMessage` tốn gì, transferable vs structured clone, SharedWorker, và Comlink — không phải worker hello-world."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "A worker is a thread with no DOM. I use it for CPU that would blow a 50ms long task: parse, codecs, resize — not for “async.” I profile first; if the work is about 5ms I keep it on the main thread because structured clone can cost more than the work. I send DTOs, never a Vue proxy, and I transfer ArrayBuffers when I am moving a decoded frame. Comlink is fine for a fat module; for one job I use raw postMessage. I terminate on unmount and I share a pool so a dashboard does not grow 40 threads. Vite must emit the worker URL in production or I ship a 404. On the admin import I would parse the 8MB catalog in a module worker and post back a count DTO, then terminate on leave.",
+            "vi": "Worker là một luồng không có DOM. Tôi dùng cho CPU sẽ phá long task 50ms: parse, codec, resize — không phải cho “async.” Tôi đo trước; nếu việc khoảng 5ms tôi giữ trên luồng chính vì structured clone có thể tốn hơn phần việc. Tôi gửi DTO, không bao giờ Vue proxy, và tôi transfer ArrayBuffer khi chuyển frame đã decode. Comlink ổn cho module nặng; với một việc tôi dùng postMessage trần. Tôi terminate lúc unmount và share pool để dashboard không mọc 40 luồng. Vite phải emit URL worker ở môi trường production nếu không tôi ship 404. Ở import admin tôi sẽ parse catalog 8MB trong module worker và post về DTO count, rồi terminate khi rời."
+          }
+        },
+        {
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "Workers are for CPU that would become a long task, not for “make it async.”",
+              "vi": "Worker dành cho CPU sẽ thành long task, không phải để “biến thành async.”"
+            },
+            {
+              "en": "Structured clone copies. Transfer zeros the sender. Vue proxies do not clone.",
+              "vi": "Structured clone copy. Transfer làm zero bên gửi. Vue proxy không clone được."
+            },
+            {
+              "en": "Terminate on unmount. Share a pool. Handle `onerror`.",
+              "vi": "`terminate` lúc unmount. Share pool. Bắt `onerror`."
+            },
+            {
+              "en": "Get the Vite worker URL right in production. Comlink is DX, not free.",
+              "vi": "Làm đúng URL worker Vite ở production. Comlink là DX, không miễn phí."
+            }
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **Worker vs `scheduler.yield()` vs `requestIdleCallback`?** Worker for real CPU; yield/idle to keep the main thread responsive for smaller chunks.\n- **When is Comlink a mistake?** Chatty APIs, or you needed a transfer list the RPC hid.\n- **Dedicated vs SharedWorker vs service worker for a WebSocket?** Dedicated per tab is simple; SharedWorker can own one socket; the SW is a network proxy, not your socket owner by default.\n- **How do you abort in-flight worker work on route change?** `terminate`, or a generation id the worker checks before `postMessage` back.",
+            "vi": "- **Worker vs `scheduler.yield()` vs `requestIdleCallback`?** Worker cho CPU thật; yield/idle để luồng chính còn đáp ứng với chunk nhỏ hơn.\n- **Khi nào Comlink là sai?** API nói nhiều, hoặc bạn cần transfer list mà RPC đã giấu.\n- **Dedicated vs SharedWorker vs service worker cho WebSocket?** Dedicated mỗi tab thì đơn giản; SharedWorker có thể giữ một socket; SW là proxy mạng, mặc định không phải chủ socket.\n- **Hủy việc worker đang chạy khi đổi route thế nào?** `terminate`, hoặc generation id worker kiểm trước khi `postMessage` về."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "4.3. Service Workers & PWA",
+            "vi": "4.3. Service Worker và PWA"
+          },
+          "id": {
+            "en": "43-service-workers-pwa",
+            "vi": "43-service-workers-pwa"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**In short:** A service worker is a network proxy with a cache. It can intercept `fetch`, precache hashed assets, and keep a shell offline. Offline is a product decision, not a strategy table.",
+            "vi": "**Tóm tắt:** Service worker là proxy mạng có cache. Nó chặn `fetch`, precache asset đã hash, và giữ shell offline. Offline là quyết định sản phẩm, không phải bảng strategy."
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**Why it matters:** The SW can outlive the tab and serve **old JS** that talks to a new API, or cache an HTML 200 from a captive portal. `skipWaiting` mid-form puts two tabs on two bundles. Interviewers want cache poisoning, the update UX, Workbox vs a hand-rolled `fetch` handler — not the PWA checklist.",
+            "vi": "**Vì sao quan trọng:** SW sống lâu hơn tab và có thể phục vụ **JS cũ** nói chuyện với API mới, hoặc cache HTML 200 từ captive portal. `skipWaiting` giữa form khiến hai tab chạy hai bundle. Người phỏng vấn muốn cache poisoning, UX update, Workbox vs `fetch` handler tự viết — không phải checklist PWA."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "**How it works:** Lifecycle is install → waiting → activate. The waiting worker does not take pages until `skipWaiting` + `clients.claim()`, or the user reloads.",
+              "vi": "**Cách hoạt động:** Vòng đời là install → waiting → activate. Worker đang chờ không lấy trang cho đến `skipWaiting` + `clients.claim()`, hoặc user reload."
+            },
+            {
+              "en": "Cache hashed static assets Cache First (Workbox precache). API GETs only with a policy the product understands. Never cache mutating APIs.",
+              "vi": "Cache asset tĩnh đã hash theo Cache First (Workbox precache). GET API chỉ khi product hiểu policy. Không bao giờ cache API mutation."
+            },
+            {
+              "en": "Stale-while-revalidate fits a news feed. Network First fits a balance. `GET /api/me` by URL is how you leak the wrong user.",
+              "vi": "Stale-while-revalidate hợp news feed. Network First hợp số dư. `GET /api/me` theo URL là cách rò user sai."
+            },
+            {
+              "en": "Revision `index.html` (or CDN `no-cache` on the document) so users receive the new hashed bundle. Caching the document forever is a silent stuck-old-app.",
+              "vi": "Revision `index.html` (hoặc CDN `no-cache` trên document) để user nhận bundle hash mới. Cache document mãi là app cũ bị kẹt thầm lặng."
+            },
+            {
+              "en": "Workbox is what I ship. Hand-rolling is how you forget `ignoreVary`, range requests, and opaque responses. Disable the SW in Vite dev or it fights HMR.",
+              "vi": "Workbox là thứ tôi ship. Tự viết là cách quên `ignoreVary`, range request, và opaque response. Tắt SW trong Vite dev nếu không nó đánh nhau với HMR."
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "// Register, then ask the user before skipWaiting.\nnavigator.serviceWorker.addEventListener('controllerchange', () => {\n  // a new SW now controls this page — reload once\n})\n\nasync function promptUpdate(reg: ServiceWorkerRegistration) {\n  const waiting = reg.waiting\n  if (!waiting) return\n  showBanner('A new version is ready', () => {\n    waiting.postMessage({ type: 'SKIP_WAITING' })\n  })\n}\n\nreg.addEventListener('updatefound', () => promptUpdate(reg))",
+            "vi": "// Đăng ký, rồi hỏi user trước skipWaiting.\nnavigator.serviceWorker.addEventListener('controllerchange', () => {\n  // SW mới đang control page này — reload một lần\n})\n\nasync function promptUpdate(reg: ServiceWorkerRegistration) {\n  const waiting = reg.waiting\n  if (!waiting) return\n  showBanner('Đã có phiên bản mới', () => {\n    waiting.postMessage({ type: 'SKIP_WAITING' })\n  })\n}\n\nreg.addEventListener('updatefound', () => promptUpdate(reg))"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** A new worker installs and waits. The banner is the product UX: the user finishes the form, then skips waiting. `controllerchange` reloads so every tab runs one bundle. Immediate `skipWaiting()` in `install` skips that conversation and is how you corrupt in-flight POSTs.",
+            "vi": "**Điều gì xảy ra:** Worker mới install rồi chờ. Banner là UX sản phẩm: user xong form, rồi skip waiting. `controllerchange` reload để mọi tab chạy một bundle. `skipWaiting()` ngay trong `install` bỏ cuộc nói chuyện đó và là cách làm hỏng POST đang bay."
+          }
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Resource",
+              "vi": "Resource"
+            },
+            {
+              "en": "Strategy",
+              "vi": "Strategy"
+            },
+            {
+              "en": "Why",
+              "vi": "Vì sao"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Hashed JS / CSS",
+                "vi": "JS / CSS đã hash"
+              },
+              {
+                "en": "Cache First / precache",
+                "vi": "Cache First / precache"
+              },
+              {
+                "en": "Immutable filename",
+                "vi": "Tên file bất biến"
+              }
+            ],
+            [
+              {
+                "en": "Product images",
+                "vi": "Ảnh sản phẩm"
+              },
+              {
+                "en": "Cache First, capped",
+                "vi": "Cache First, có trần"
+              },
+              {
+                "en": "Quota; LRU eviction",
+                "vi": "Quota; eviction LRU"
+              }
+            ],
+            [
+              {
+                "en": "`GET /api/account`",
+                "vi": "`GET /api/account`"
+              },
+              {
+                "en": "Network First",
+                "vi": "Network First"
+              },
+              {
+                "en": "Balance / auth must be fresh",
+                "vi": "Số dư / auth phải mới"
+              }
+            ],
+            [
+              {
+                "en": "Checkout POST",
+                "vi": "POST checkout"
+              },
+              {
+                "en": "Network only — never cache",
+                "vi": "Chỉ network — không cache"
+              },
+              {
+                "en": "Not idempotent",
+                "vi": "Không idempotent"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- Offline-first is a product: which writes queue, what the user sees when sync fails, how you explain “saved on device.” If PM did not ask, cache the shell — do not fake a local-first app.\n- `skipWaiting` immediately is snappy and dangerous. A Vue banner “Refresh to update” is the senior default when forms are in flight.\n- Installability without offline is a store listing, not architecture. Don’t SW a marketing site that A/B tests HTML.\n- Kill switch: a header or a tiny file that unregisters the SW. Ship it before you need it. Canary that logged-in `/api/me` is **not** in Cache Storage.\n- Background Sync / periodic sync are platform-limited. Do not promise outbox delivery the OS will not give you.",
+            "vi": "- Offline-first là sản phẩm: write nào vào hàng đợi, user thấy gì khi sync fail, bạn giải thích “đã lưu trên máy” thế nào. Nếu PM không hỏi, hãy cache shell — đừng giả app local-first.\n- `skipWaiting` ngay thì nhanh và nguy hiểm. Banner Vue “Refresh to update” là mặc định senior khi form đang bay.\n- Cài được mà không offline là listing store, không phải kiến trúc. Đừng SW site marketing A/B HTML.\n- Kill switch: header hoặc file nhỏ unregister SW. Hãy ship trước khi cần. Canary `/api/me` đã login **không** nằm Cache Storage.\n- Background Sync / periodic sync bị nền tảng giới hạn. Đừng hứa giao outbox OS không cho."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: users never get the new bundle. Cause: `index.html` cached forever. Fix: revision the document or CDN `no-cache`.\n- Symptom: two tabs, two bundles, a half-saved form. Cause: `skipWaiting` + `clients.claim()` in `install`. Fix: banner + reload.\n- Symptom: `/api/me` shows the previous user. Cause: cached GET by URL. Fix: Network First or `no-store` for auth.\n- Symptom: Vite HMR broken locally. Cause: SW registered in development. Fix: register only in production builds.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: user không bao giờ nhận bundle mới. Nguyên nhân: `index.html` cache mãi. Cách xử lý: revision document hoặc CDN `no-cache`.\n- Triệu chứng: hai tab, hai bundle, form lưu dở. Nguyên nhân: `skipWaiting` + `clients.claim()` trong `install`. Cách xử lý: banner + reload.\n- Triệu chứng: `/api/me` hiện user trước. Nguyên nhân: GET cache theo URL. Cách xử lý: Network First hoặc `no-store` cho auth.\n- Triệu chứng: Vite HMR gãy local. Nguyên nhân: SW đăng ký lúc development. Cách xử lý: chỉ đăng ký ở bản production."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+          },
+          "text": {
+            "en": "Not the PWA checklist. They want cache poisoning, `skipWaiting`, how users get an update, Workbox vs a hand-rolled `fetch` handler, and the sentence: offline is a product decision, not a strategy table.",
+            "vi": "Không phải checklist PWA. Họ muốn cache poisoning, `skipWaiting`, user nhận update thế nào, Workbox vs `fetch` handler tự viết, và câu: offline là quyết định sản phẩm, không phải bảng strategy."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "A service worker is a network proxy with a cache. I precache hashed statics Cache First, I pick Network First for balances and auth, and I never cache a POST. Offline is a product decision — if we do not have an update banner and a kill switch, I will not add an SW just to look like a PWA. skipWaiting in install is a support incident because two tabs then run two bundles mid-form. I wait, show Refresh to update, and reload on controllerchange. I revision index.html so users are not stuck on old JS talking to a new API, and I canary that /api/me is not in Cache Storage. Workbox is what I ship; hand-rolling is how I forget opaque responses.",
+            "vi": "Service worker là proxy mạng có cache. Tôi precache static đã hash theo Cache First, chọn Network First cho số dư và auth, và không bao giờ cache POST. Offline là quyết định sản phẩm — nếu chưa có banner update và kill switch, tôi không thêm SW chỉ để trông như PWA. skipWaiting trong install là sự cố support vì hai tab chạy hai bundle giữa form. Tôi chờ, hiện Refresh to update, và reload lúc controllerchange. Tôi revision index.html để user không kẹt JS cũ nói chuyện với API mới, và canary /api/me không nằm Cache Storage. Workbox là thứ tôi ship; tự viết là cách quên opaque response."
+          }
+        },
+        {
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "A service worker is a network proxy. Offline is a product decision.",
+              "vi": "Service worker là proxy mạng. Offline là quyết định sản phẩm."
+            },
+            {
+              "en": "Cache hashed statics. Never cache mutating APIs or personalized HTML.",
+              "vi": "Cache static đã hash. Đừng cache API mutation hoặc HTML cá nhân."
+            },
+            {
+              "en": "Wait + “Refresh to update”, not `skipWaiting` in `install`.",
+              "vi": "Chờ + “Refresh to update”, không `skipWaiting` trong `install`."
+            },
+            {
+              "en": "Ship a kill switch. Disable the SW in Vite development.",
+              "vi": "Hãy ship kill switch. Tắt SW lúc development Vite."
+            }
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **What is cache poisoning here?** Caching `GET /api/user` by URL, an HTML 200 from a captive portal, or `index.html` forever.\n- **Why is `skipWaiting` in `install` a support incident?** Open pages swap bundles mid-session; in-flight POSTs complete against code that no longer matches.\n- **How do you unregister a bad SW?** A kill-switch header or file; `registration.unregister()` plus Cache Storage delete.\n- **Hashed `index.html` vs CDN `no-cache`?** Either way the document must not be cached forever, or precached JS never updates.",
+            "vi": "- **Cache poisoning ở đây là gì?** Cache `GET /api/user` theo URL, HTML 200 từ captive portal, hoặc `index.html` mãi.\n- **Vì sao `skipWaiting` trong `install` là sự cố support?** Trang đang mở đổi bundle giữa session; POST đang bay chạy với code không còn khớp.\n- **Unregister SW xấu thế nào?** Header hoặc file kill-switch; `registration.unregister()` cộng xóa Cache Storage.\n- **`index.html` đã hash vs CDN `no-cache`?** Cách nào thì document cũng không được cache mãi, nếu không JS precache không bao giờ cập nhật."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "4.4. Intersection Observer",
+            "vi": "4.4. Intersection Observer"
+          },
+          "id": {
+            "en": "44-intersection-observer",
+            "vi": "44-intersection-observer"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**In short:** Intersection Observer tells you when a target crosses a **root + margin + threshold**. It is the API for lazy images, infinite-list sentinels, impression analytics, and route prefetch — not a `scroll` listener.",
+            "vi": "**Tóm tắt:** Intersection Observer cho biết khi target cắt **root + margin + threshold**. Đó là API cho ảnh lazy, sentinel list vô hạn, analytics impression, và prefetch route — không phải listener `scroll`."
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**Why it matters:** A `scroll` handler on `window` that toggles classes layout-thrashes. IO is async and batched. It is **not** virtualization: you can still mount 10k Vue nodes and only lazy the images. Who `unobserve`s is the leak question.",
+            "vi": "**Vì sao quan trọng:** Handler `scroll` trên `window` để gạt class làm giật layout. IO bất đồng bộ và được gộp. Nó **không** phải virtualization: bạn vẫn mount 10k node Vue và chỉ lazy ảnh. Ai `unobserve` mới là câu hỏi leak."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "**How it works:** You observe a target against a root (viewport if `null`). `rootMargin` grows or shrinks the root. `threshold` is the visible ratio that fires the callback.",
+              "vi": "**Cách hoạt động:** Bạn observe target so với root (viewport nếu `null`). `rootMargin` nới hoặc thu root. `threshold` là tỉ lệ nhìn thấy để callback chạy."
+            },
+            {
+              "en": "Use it for lazy images, a sentinel at the end of a list, viewability, and prefetch (`rootMargin: '200px'`). Cap prefetch — you will fetch links the user never opens.",
+              "vi": "Dùng cho ảnh lazy, sentinel cuối list, viewability, và prefetch (`rootMargin: '200px'`). Hãy đặt trần prefetch — bạn sẽ fetch link user không bao giờ mở."
+            },
+            {
+              "en": "Always `unobserve` after the image loaded, or `disconnect()` on unmount. A still-observed node is a retainer.",
+              "vi": "Luôn `unobserve` sau khi ảnh load, hoặc `disconnect()` lúc unmount. Node còn được observe là retainer."
+            },
+            {
+              "en": "A scrollable `div` must be passed as `root` or IO looks “broken.” SSR: observe in `onMounted`; keep `width`/`height` on images for CLS.",
+              "vi": "`div` cuộn được phải truyền làm `root` nếu không IO trông như “hỏng.” SSR: observe trong `onMounted`; giữ `width`/`height` trên ảnh cho CLS."
+            },
+            {
+              "en": "When the list is large, use a virtualization library (TanStack Virtual, `vue-virtual-scroller`). IO alone does not unmount rows.",
+              "vi": "Khi list lớn, dùng thư viện virtualization (TanStack Virtual, `vue-virtual-scroller`). Một mình IO không unmount hàng."
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "vue",
+          "code": {
+            "en": "<script setup lang=\"ts\">\nimport { onMounted, onUnmounted, ref } from 'vue'\nconst el = ref<HTMLElement | null>(null)\nconst show = ref(false)\nonMounted(() => {\n  const io = new IntersectionObserver(([e]) => {\n    if (!e?.isIntersecting) return\n    show.value = true\n    io.unobserve(e.target) // stop once visible\n  }, { rootMargin: '200px' })\n  if (el.value) io.observe(el.value)\n  onUnmounted(() => io.disconnect())\n})\n</script>\n<template>\n  <img v-if=\"show\" :src=\"src\" width=\"400\" height=\"300\" alt=\"\" />\n  <div v-else ref=\"el\" class=\"ph\" />\n</template>",
+            "vi": "<script setup lang=\"ts\">\nimport { onMounted, onUnmounted, ref } from 'vue'\nconst el = ref<HTMLElement | null>(null)\nconst show = ref(false)\nonMounted(() => {\n  const io = new IntersectionObserver(([e]) => {\n    if (!e?.isIntersecting) return\n    show.value = true\n    io.unobserve(e.target) // dừng khi đã hiện\n  }, { rootMargin: '200px' })\n  if (el.value) io.observe(el.value)\n  onUnmounted(() => io.disconnect())\n})\n</script>\n<template>\n  <img v-if=\"show\" :src=\"src\" width=\"400\" height=\"300\" alt=\"\" />\n  <div v-else ref=\"el\" class=\"ph\" />\n</template>"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** The placeholder is observed with a 200px margin, so the image starts loading just before it is on screen. Once it intersects, `unobserve` drops the retainer. `width`/`height` reserve layout so CLS (Cumulative Layout Shift) stays low. This is lazy-load, not a 10k-row virtualizer.",
+            "vi": "**Điều gì xảy ra:** Placeholder được observe với margin 200px, nên ảnh bắt đầu load ngay trước khi vào màn hình. Khi đã cắt, `unobserve` bỏ retainer. `width`/`height` giữ chỗ layout để CLS (Cumulative Layout Shift) thấp. Đây là lazy-load, không phải virtualizer 10k hàng."
+          }
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Job",
+              "vi": "Việc"
+            },
+            {
+              "en": "IO?",
+              "vi": "IO?"
+            },
+            {
+              "en": "Not enough when…",
+              "vi": "Không đủ khi…"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "Lazy image below the fold",
+                "vi": "Ảnh lazy dưới fold"
+              },
+              {
+                "en": "Yes",
+                "vi": "Có"
+              },
+              {
+                "en": "The LCP image — load it eagerly",
+                "vi": "Ảnh LCP — load sớm"
+              }
+            ],
+            [
+              {
+                "en": "Infinite-list sentinel",
+                "vi": "Sentinel list vô hạn"
+              },
+              {
+                "en": "Yes",
+                "vi": "Có"
+              },
+              {
+                "en": "You still mounted every row",
+                "vi": "Bạn vẫn mount mọi hàng"
+              }
+            ],
+            [
+              {
+                "en": "Ad viewability 50% for 1s",
+                "vi": "Viewability ads 50% trong 1s"
+              },
+              {
+                "en": "Partial",
+                "vi": "Một phần"
+              },
+              {
+                "en": "You still need a timer",
+                "vi": "Vẫn cần timer"
+              }
+            ],
+            [
+              {
+                "en": "10k-row table",
+                "vi": "Bảng 10k hàng"
+              },
+              {
+                "en": "No — virtualize",
+                "vi": "Không — hãy virtualize"
+              },
+              {
+                "en": "IO does not unmount cells",
+                "vi": "IO không unmount ô"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- `rootMargin` prefetch is a network bet. Cap it (first N links, visible nav only).\n- Thresholds `[0, 0.25, 0.5, 1]` for ads are a business contract. Document them.\n- `scroll` with `passive: true` still runs JS on every frame. It does not fix “is this in view.”\n- Hydration: do not `v-if` content only after intersect if SEO needed it in HTML. Lazy **below** the fold, not the LCP image.\n- A new `IntersectionObserver` every render (careless `watch` / React effect deps) is a leak. Create once, observe/unobserve the nodes.\n- iframe / overflow / CSS `contain` can mean the target never intersects. Check the actual scrollport before blaming IO.",
+            "vi": "- Prefetch `rootMargin` là cược network. Hãy đặt trần (N link đầu, nav đang hiện).\n- Threshold `[0, 0.25, 0.5, 1]` cho ads là contract nghiệp vụ. Hãy ghi ra.\n- `scroll` với `passive: true` vẫn chạy JS mỗi frame. Nó không sửa “cái này có trong view không.”\n- Hydration: đừng `v-if` nội dung chỉ sau intersect nếu SEO cần nó trong HTML. Lazy **dưới** fold, không phải ảnh LCP.\n- `IntersectionObserver` mới mỗi lần render (`watch` / dep React ẩu) là leak. Tạo một lần, observe/unobserve node.\n- iframe / overflow / CSS `contain` có thể khiến target không bao giờ cắt. Hãy kiểm đúng scrollport trước khi đổ lỗi IO."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: heap grows as you scroll. Cause: never `unobserve`. Fix: unobserve on load; `disconnect` on unmount.\n- Symptom: IO never fires in a modal. Cause: `root: null` while the scroller is an inner `div`. Fix: pass that element as `root`.\n- Symptom: 50k rows still hitch. Cause: `v-for` everything, IO only on images. Fix: virtualize the list.\n- Symptom: LCP image is late. Cause: lazy-loading the hero. Fix: eager + `width`/`height` for the LCP image.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: heap phình khi cuộn. Nguyên nhân: không `unobserve`. Cách xử lý: unobserve lúc load; `disconnect` lúc unmount.\n- Triệu chứng: IO không bao giờ chạy trong modal. Nguyên nhân: `root: null` trong khi scroller là `div` trong. Cách xử lý: truyền element đó làm `root`.\n- Triệu chứng: 50k hàng vẫn giật. Nguyên nhân: `v-for` tất cả, IO chỉ trên ảnh. Cách xử lý: virtualize list.\n- Triệu chứng: ảnh LCP muộn. Nguyên nhân: lazy hero. Cách xử lý: eager + `width`/`height` cho ảnh LCP."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+          },
+          "text": {
+            "en": "Infinite scroll, ad viewability, or “prefetch the next route when the link is 200px away.” Why not `scroll` listeners? When is Intersection Observer **not** virtualization? Who `unobserve`s?",
+            "vi": "Infinite scroll, viewability ads, hoặc “prefetch route kế khi link còn 200px.” Vì sao không listener `scroll`? Khi nào Intersection Observer **không** phải virtualization? Ai `unobserve`?"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "Intersection Observer tells me when a target crosses a root, a margin, and a threshold. I use it for lazy images, a list sentinel, impressions, and capped prefetch — not for a window scroll listener that toggles classes. It is async and batched, so it is the wrong tool for a 16ms game loop, and it is not virtualization: if I v-for 10k rows I still paid for 10k Vue nodes. I unobserve after load and disconnect on unmount. A modal with an inner scroller must pass that element as root. For a large table I reach for TanStack Virtual or vue-virtual-scroller, and I never lazy-load the LCP image. Viewability that needs one second still needs a timer once the threshold is met.",
+            "vi": "Intersection Observer cho tôi biết khi target cắt root, margin, và threshold. Tôi dùng cho ảnh lazy, sentinel list, impression, và prefetch có trần — không phải listener scroll trên window để gạt class. Nó bất đồng bộ và được gộp, nên sai cho game loop 16ms, và không phải virtualization: nếu tôi v-for 10k hàng tôi vẫn trả giá 10k node Vue. Tôi unobserve sau khi load và disconnect lúc unmount. Modal có scroller trong phải truyền element đó làm root. Với bảng lớn tôi dùng TanStack Virtual hoặc vue-virtual-scroller, và không bao giờ lazy ảnh LCP. Viewability cần một giây vẫn cần timer khi đã đạt threshold."
+          }
+        },
+        {
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "IO is root + margin + threshold. It beats `scroll` for “is this in view.”",
+              "vi": "IO là root + margin + threshold. Nó hơn `scroll` cho “cái này có trong view không.”"
+            },
+            {
+              "en": "Always `unobserve` / `disconnect`. A still-observed node is a retainer.",
+              "vi": "Luôn `unobserve` / `disconnect`. Node còn được observe là retainer."
+            },
+            {
+              "en": "IO is not virtualization. Large lists still need a virtualizer.",
+              "vi": "IO không phải virtualization. List lớn vẫn cần virtualizer."
+            },
+            {
+              "en": "Pass the real scrollport as `root`. Do not lazy-load the LCP image.",
+              "vi": "Truyền đúng scrollport làm `root`. Đừng lazy ảnh LCP."
+            }
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **Why is a window `scroll` listener a performance bug here?** It runs on the main thread every frame and can force layout. `passive` does not fix “is this in view.”\n- **How does `rootMargin: '400px'` hit mobile data?** You prefetch work the user may never open. Cap it.\n- **Can IO alone do “50% visible for 1s”?** No. You still need a timer once the threshold is met.\n- **How do you test IO?** Drive `boundingClientRect` in a fixture, or put the sentinel in a small scrollport.",
+            "vi": "- **Vì sao listener `scroll` trên window là bug hiệu năng ở đây?** Nó chạy trên luồng chính mỗi frame và có thể buộc layout. `passive` không sửa “có trong view không.”\n- **`rootMargin: '400px'` ảnh hưởng data mobile thế nào?** Bạn prefetch việc user có thể không bao giờ mở. Hãy đặt trần.\n- **Một mình IO làm được “50% hiện trong 1s” không?** Không. Bạn vẫn cần timer khi đã đạt threshold.\n- **Test IO thế nào?** Điều khiển `boundingClientRect` trong fixture, hoặc đặt sentinel trong scrollport nhỏ."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "4.5. Modern APIs",
+            "vi": "4.5. Các API hiện đại khác"
+          },
+          "id": {
+            "en": "45-modern-apis",
+            "vi": "45-cac-api-hien-ai-khac"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**In short:** Treat modern platform APIs as **capability + permission + lifetime**. The ones that show up in senior Vue interviews are `ResizeObserver`, `structuredClone`, `BroadcastChannel`, View Transitions, and `scheduler.yield` — each with a scar, not a hello-world.",
+            "vi": "**Tóm tắt:** Hãy coi API nền tảng hiện đại là **capability + quyền + vòng đời**. Những cái xuất hiện khi phỏng vấn Vue senior là `ResizeObserver`, `structuredClone`, `BroadcastChannel`, View Transitions, và `scheduler.yield` — mỗi cái có một vết sẹo, không phải hello-world."
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**Why it matters:** Clipboard write often works in a click and fails in a `watch` without user activation. `ResizeObserver` loops when you write styles that resize the observed node. `scheduler.yield` is how you chunk a long task (tác vụ chạy > 50 ms) without a worker. Blindly turning on View Transitions in Vue Router is a promise the virtual DOM may not keep.",
+            "vi": "**Vì sao quan trọng:** Clipboard write thường chạy trong click và fail trong `watch` không có user activation. `ResizeObserver` lặp khi bạn ghi style làm resize node đang observe. `scheduler.yield` là cách chia long task (tác vụ chạy > 50 ms) mà không cần worker. Bật View Transitions trong Vue Router một cách mù quáng là lời hứa virtual DOM có thể không giữ."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "**How it works:** `ResizeObserver` notifies when an element’s box changes. Prefer it over `window` `resize` for a chart that follows a container. If CSS container queries can do it, prefer CSS.",
+              "vi": "**Cách hoạt động:** `ResizeObserver` báo khi box của element đổi. Nên dùng hơn `resize` trên `window` cho chart theo container. Nếu CSS container query làm được, hãy ưu tiên CSS."
+            },
+            {
+              "en": "`structuredClone` copies `Date`/`Map` (see JavaScript 1.2.4). `toRaw` first on a Vue proxy. This topic does not repeat that clone table.",
+              "vi": "`structuredClone` copy `Date`/`Map` (xem JavaScript 1.2.4). `toRaw` trước trên Vue proxy. Topic này không lặp bảng clone đó."
+            },
+            {
+              "en": "`BroadcastChannel` is a same-origin bus across tabs. Multi-tab logout lives in 4.6. Here: it exists, it is not a server push, any script on the origin can hear it.",
+              "vi": "`BroadcastChannel` là bus cùng origin giữa các tab. Logout đa tab nằm ở 4.6. Ở đây: nó tồn tại, không phải server push, mọi script trên origin đều nghe được."
+            },
+            {
+              "en": "`scheduler.yield()` (where supported) returns a promise that yields to the browser so input can paint. Fallback: `setTimeout(0)` / `scheduler.postTask`. Check support before you promise INP wins.",
+              "vi": "`scheduler.yield()` (nơi được hỗ trợ) trả promise nhường browser để input kịp vẽ. Fallback: `setTimeout(0)` / `scheduler.postTask`. Kiểm hỗ trợ trước khi hứa thắng INP."
+            },
+            {
+              "en": "View Transitions: progressive enhancement, not a design-system foundation. Support is Chromium-led.",
+              "vi": "View Transitions: progressive enhancement, không phải nền design system. Hỗ trợ do Chromium dẫn."
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "const box = ref<HTMLElement | null>(null)\nonMounted(() => {\n  const ro = new ResizeObserver((entries) => {\n    const { width } = entries[0]!.contentRect\n    chart.value?.resize(width) // do not set height on box here\n  })\n  if (box.value) ro.observe(box.value)\n  onUnmounted(() => ro.disconnect())\n})\n\nasync function parseAll(chunks: string[]) {\n  for (const chunk of chunks) {\n    consume(chunk)\n    if ('scheduler' in window && 'yield' in scheduler) await scheduler.yield()\n    else await new Promise((r) => setTimeout(r, 0))\n  }\n}",
+            "vi": "const box = ref<HTMLElement | null>(null)\nonMounted(() => {\n  const ro = new ResizeObserver((entries) => {\n    const { width } = entries[0]!.contentRect\n    chart.value?.resize(width) // do not assign height on box here\n  })\n  if (box.value) ro.observe(box.value)\n  onUnmounted(() => ro.disconnect())\n})\n\nasync function parseAll(chunks: string[]) {\n  for (const chunk of chunks) {\n    consume(chunk)\n    if ('scheduler' in window && 'yield' in scheduler) await scheduler.yield()\n    else await new Promise((r) => setTimeout(r, 0))\n  }\n}"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** The observer measures a dedicated box and resizes the chart. Writing height back onto `box` would loop (`ResizeObserver loop completed with undelivered notifications`). `scheduler.yield` (or `setTimeout(0)`) returns to the renderer between chunks so a long parse does not become one 200ms long task.",
+            "vi": "**Điều gì xảy ra:** Observer đo một box riêng và resize chart. Ghi height ngược lên `box` sẽ lặp (`ResizeObserver loop completed with undelivered notifications`). `scheduler.yield` (hoặc `setTimeout(0)`) trả renderer giữa các chunk để parse dài không thành một long task 200ms."
+          }
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "API",
+              "vi": "API"
+            },
+            {
+              "en": "Use when",
+              "vi": "Dùng khi"
+            },
+            {
+              "en": "Support / scar",
+              "vi": "Hỗ trợ / sẹo"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "`ResizeObserver`",
+                "vi": "`ResizeObserver`"
+              },
+              {
+                "en": "JS layout (canvas, virtual lists)",
+                "vi": "Layout JS (canvas, list ảo)"
+              },
+              {
+                "en": "Loop if you resize the observed node",
+                "vi": "Lặp nếu bạn resize node đang observe"
+              }
+            ],
+            [
+              {
+                "en": "`scheduler.yield`",
+                "vi": "`scheduler.yield`"
+              },
+              {
+                "en": "Chunk a long task on the main thread",
+                "vi": "Chia long task trên luồng chính"
+              },
+              {
+                "en": "Chromium; fallback `setTimeout(0)`",
+                "vi": "Chromium; fallback `setTimeout(0)`"
+              }
+            ],
+            [
+              {
+                "en": "View Transitions",
+                "vi": "View Transitions"
+              },
+              {
+                "en": "Same-document nav enhancement",
+                "vi": "Tăng cường nav cùng document"
+              },
+              {
+                "en": "Chromium-led; Vue VDOM still owns UI",
+                "vi": "Chromium dẫn; VDOM Vue vẫn giữ UI"
+              }
+            ],
+            [
+              {
+                "en": "Clipboard",
+                "vi": "Clipboard"
+              },
+              {
+                "en": "Copy in a click handler",
+                "vi": "Copy trong click handler"
+              },
+              {
+                "en": "Needs transient user activation",
+                "vi": "Cần user activation tức thời"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- Clipboard: `writeText` in a click is the default; `readText` is a privacy prompt. Fail visibly. Never copy secrets without telling the user. Old `execCommand('copy')` is intranet leftover.\n- Permissions-Policy / iframe: geolocation, clipboard, camera fail without `allow=`. Ask for Notification permission in context, not on first visit.\n- `AbortSignal` on `fetch`, `addEventListener({ signal })`, streams, `AbortSignal.timeout` / `.any` — see JavaScript 1.2.7. Do not re-teach it here.\n- MutationObserver is for integrating non-Vue DOM (a legacy widget). Do not use it to mimic Vue reactivity.\n- View Transitions: awareness is enough unless the team has a spike. Do not sell it as the animation system.",
+            "vi": "- Clipboard: `writeText` trong click là mặc định; `readText` là prompt quyền riêng tư. Hãy fail lộ. Đừng copy bí mật mà không nói với user. `execCommand('copy')` cũ là dư địa intranet.\n- Permissions-Policy / iframe: geolocation, clipboard, camera fail nếu thiếu `allow=`. Xin quyền Notification trong ngữ cảnh, không phải lần visit đầu.\n- `AbortSignal` trên `fetch`, `addEventListener({ signal })`, stream, `AbortSignal.timeout` / `.any` — xem JavaScript 1.2.7. Đừng dạy lại ở đây.\n- MutationObserver dành cho DOM không-Vue (widget cũ). Đừng dùng để bắt chước reactivity Vue.\n- View Transitions: biết là đủ trừ khi team có spike. Đừng bán nó làm hệ animation."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: clipboard rejects in a `watch`. Cause: no transient user activation. Fix: copy in the click handler; show failed state.\n- Symptom: `ResizeObserver loop completed with undelivered notifications`. Cause: you wrote styles that resize the observed node. Fix: observe an inner el; write on `rAF`.\n- Symptom: View Transitions flash in Vue Router. Cause: VDOM and the platform both morph the same tree. Fix: keep Vue `<Transition>`; treat VT as optional.\n- Symptom: geolocation works on the main app, fails in an embed. Cause: Permissions-Policy. Fix: `allow` on the iframe, or do not promise it.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: clipboard reject trong `watch`. Nguyên nhân: không có user activation tức thời. Cách xử lý: copy trong click handler; hiện trạng thái fail.\n- Triệu chứng: `ResizeObserver loop completed with undelivered notifications`. Nguyên nhân: bạn ghi style làm resize node đang observe. Cách xử lý: observe el trong; ghi trên `rAF`.\n- Triệu chứng: View Transitions nháy trong Vue Router. Nguyên nhân: VDOM và nền tảng cùng morph một cây. Cách xử lý: giữ Vue `<Transition>`; coi VT là tùy chọn.\n- Triệu chứng: geolocation chạy ở app chính, fail trong embed. Nguyên nhân: Permissions-Policy. Cách xử lý: `allow` trên iframe, hoặc đừng hứa."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+          },
+          "text": {
+            "en": "Awareness with production scars: Clipboard permissions and transient user activation, ResizeObserver loops, AbortSignal on more than `fetch`, View Transitions as something you have heard of and would not blindly turn on in Vue Router. They do not want a Geolocation hello-world.",
+            "vi": "Sự hiểu biết kèm sẹo ở môi trường production: quyền Clipboard và user activation tức thời, vòng lặp ResizeObserver, AbortSignal ngoài `fetch`, View Transitions như thứ bạn đã nghe và sẽ không bật mù trong Vue Router. Họ không muốn hello-world Geolocation."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "I treat modern platform APIs as capability, permission, and lifetime. ResizeObserver is how a Vue chart sizes to a container — better than window resize — and the failure is a loop when I write styles that resize the observed node. structuredClone and BroadcastChannel are covered in the JavaScript and multi-tab topics; here I only name them. scheduler.yield, where it exists, is how I chunk a long parse so INP survives, with setTimeout zero as the fallback. View Transitions are a progressive enhancement I would not promise as Vue Router’s animation strategy. Clipboard write belongs in a click handler, not a watch.",
+            "vi": "Tôi coi API nền tảng hiện đại là capability, quyền, và vòng đời. ResizeObserver là cách chart Vue fit container — hơn resize trên window — và kịch bản lỗi là vòng lặp khi tôi ghi style làm resize node đang observe. structuredClone và BroadcastChannel nằm ở topic JavaScript và đa tab; ở đây tôi chỉ gọi tên. scheduler.yield, nơi nó tồn tại, là cách tôi chia parse dài để INP sống, với setTimeout zero làm fallback. View Transitions là progressive enhancement tôi sẽ không hứa làm strategy animation của Vue Router. Clipboard write thuộc click handler, không phải watch."
+          }
+        },
+        {
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "`ResizeObserver` for JS layout. Do not write sizes that resize the observed node.",
+              "vi": "`ResizeObserver` cho layout JS. Đừng ghi size làm resize node đang observe."
+            },
+            {
+              "en": "`scheduler.yield` chunks long tasks where supported; fallback `setTimeout(0)`.",
+              "vi": "`scheduler.yield` chia long task nơi được hỗ trợ; fallback `setTimeout(0)`."
+            },
+            {
+              "en": "Clipboard needs a user gesture. View Transitions are optional, not Vue Router.",
+              "vi": "Clipboard cần gesture của user. View Transitions là tùy chọn, không phải Vue Router."
+            },
+            {
+              "en": "`BroadcastChannel` and `structuredClone` have their own topics — name them, do not retell them.",
+              "vi": "`BroadcastChannel` và `structuredClone` có topic riêng — gọi tên, đừng kể lại."
+            }
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **Why did clipboard fail in a `watch` but work in a click?** Transient user activation is required. The watch is not a gesture.\n- **What causes a ResizeObserver loop?** Observing a node, then setting a class that changes its size. Observe an inner element.\n- **Which APIs take `AbortSignal` besides `fetch`?** `addEventListener`, streams, `AbortSignal.timeout` / `.any`. See JavaScript 1.2.7.\n- **View Transitions vs Vue `<Transition>`?** Vue owns in-app UI. The platform API is same-document enhancement, Chromium-led.",
+            "vi": "- **Vì sao clipboard fail trong `watch` nhưng chạy trong click?** Cần user activation tức thời. Watch không phải gesture.\n- **Vì sao ResizeObserver lặp?** Observe một node, rồi gán class làm đổi size. Hãy observe element trong.\n- **API nào nhận `AbortSignal` ngoài `fetch`?** `addEventListener`, stream, `AbortSignal.timeout` / `.any`. Xem JavaScript 1.2.7.\n- **View Transitions vs Vue `<Transition>`?** Vue giữ UI trong app. API nền tảng là tăng cường cùng document, Chromium dẫn."
+          }
+        },
+        {
+          "type": "thematic-break"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": {
+            "en": "4.6. BroadcastChannel and Storage Events (multi-tab auth)",
+            "vi": "4.6. BroadcastChannel và Storage Events (multi-tab auth)"
+          },
+          "id": {
+            "en": "46-broadcastchannel-and-storage-events-multi-tab-auth",
+            "vi": "46-broadcastchannel-va-storage-events-multi-tab-auth"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**In short:** `BroadcastChannel` is a same-origin message bus across tabs, windows, and dedicated workers. Use it to tell every tab that the session ended. The older `storage` event on `localStorage` is a weaker, XSS-readable cousin.",
+            "vi": "**Tóm tắt:** `BroadcastChannel` là bus tin nhắn cùng origin giữa tab, window, và dedicated worker. Dùng để báo mọi tab rằng session đã kết thúc. Event `storage` cũ trên `localStorage` là họ hàng yếu hơn, XSS đọc được."
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**Why it matters:** The user logs out in tab A; tab B still shows the dashboard and keeps PATCHing as that user. Or login in A should refresh B. This is **multi-tab session** design. Cookies do not emit to JavaScript when they change, so you still need a bus for in-memory Pinia / Vue Query state.",
+            "vi": "**Vì sao quan trọng:** User logout ở tab A; tab B vẫn hiện dashboard và tiếp tục PATCH với user đó. Hoặc login ở A phải refresh B. Đây là thiết kế **session đa tab**. Cookie không emit cho JavaScript khi chúng đổi, nên bạn vẫn cần bus cho state Pinia / Vue Query trong bộ nhớ."
+          }
+        },
+        {
+          "type": "list",
+          "style": "ol",
+          "items": [
+            {
+              "en": "**How it works:** `new BroadcastChannel('session')` then `postMessage({ type: 'session:end' })`. Every tab on the origin that subscribed receives it. It does **not** fire across browsers, devices, or profiles.",
+              "vi": "**Cách hoạt động:** `new BroadcastChannel('session')` rồi `postMessage({ type: 'session:end' })`. Mọi tab trên origin đã subscribe đều nhận. Nó **không** chạy qua browser, thiết bị, hoặc profile khác."
+            },
+            {
+              "en": "On logout: broadcast `session:end`, clear in-memory state, abort in-flight requests, route to login. Best auth is still an httpOnly cookie plus server invalidation.",
+              "vi": "Lúc logout: broadcast `session:end`, xóa state trong bộ nhớ, abort request đang bay, về login. Auth tốt nhất vẫn là cookie httpOnly cộng invalidation phía server."
+            },
+            {
+              "en": "The `storage` event fires in **other** tabs only, and only if the value **changes**. It does not fire in the tab that wrote. Do not `JSON.parse(null)` on `removeItem`.",
+              "vi": "Event `storage` chỉ chạy ở tab **khác**, và chỉ khi giá trị **đổi**. Nó không chạy ở tab vừa ghi. Đừng `JSON.parse(null)` khi `removeItem`."
+            },
+            {
+              "en": "A channel name is not a secret. Any script on the origin can listen. Do not broadcast tokens or the user object — send “refetch `/me`” or “session ended.”",
+              "vi": "Tên channel không phải bí mật. Mọi script trên origin đều nghe được. Đừng broadcast token hoặc object user — hãy gửi “refetch `/me`” hoặc “session ended.”"
+            },
+            {
+              "en": "One app-level composable `useSessionBus()`. A per-component channel you never close leaks. Closing the app-level channel on teardown is enough.",
+              "vi": "Một composable mức app `useSessionBus()`. Channel theo component mà không đóng sẽ leak. Đóng channel mức app lúc teardown là đủ."
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "ts",
+          "code": {
+            "en": "const bus = new BroadcastChannel('session')\n\nexport function useSessionBus() {\n  function endSession() {\n    userStore.clear()\n    queryClient.clear()\n    bus.postMessage({ type: 'session:end' })\n    router.push('/login')\n  }\n  function onMessage(e: MessageEvent<{ type: string }>) {\n    if (e.data.type === 'session:end') {\n      inflight.abort()\n      userStore.clear()\n      router.push('/login')\n    }\n  }\n  bus.addEventListener('message', onMessage)\n  onScopeDispose(() => bus.removeEventListener('message', onMessage))\n  return { endSession }\n}",
+            "vi": "const bus = new BroadcastChannel('session')\n\nexport function useSessionBus() {\n  function endSession() {\n    userStore.clear()\n    queryClient.clear()\n    bus.postMessage({ type: 'session:end' })\n    router.push('/login')\n  }\n  function onMessage(e: MessageEvent<{ type: string }>) {\n    if (e.data.type === 'session:end') {\n      inflight.abort()\n      userStore.clear()\n      router.push('/login')\n    }\n  }\n  bus.addEventListener('message', onMessage)\n  onScopeDispose(() => bus.removeEventListener('message', onMessage))\n  return { endSession }\n}"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "**What happens here:** Logout in this tab clears memory, tells every other tab, and routes to login. A sibling tab aborts in-flight PATCHes so it cannot write as the old user. The channel carries a type, not a token. The listener is removed with the scope so a test or a second mount does not double-handle.",
+            "vi": "**Điều gì xảy ra:** Logout ở tab này xóa bộ nhớ, báo mọi tab khác, và về login. Tab anh em abort PATCH đang bay để không ghi với user cũ. Channel mang một type, không phải token. Listener được gỡ theo scope nên test hoặc mount lần hai không xử lý kép."
+          }
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "en": "Bus",
+              "vi": "Bus"
+            },
+            {
+              "en": "Fires in writer tab?",
+              "vi": "Chạy ở tab ghi?"
+            },
+            {
+              "en": "Use for auth?",
+              "vi": "Dùng cho auth?"
+            }
+          ],
+          "rows": [
+            [
+              {
+                "en": "`BroadcastChannel`",
+                "vi": "`BroadcastChannel`"
+              },
+              {
+                "en": "Yes, if you also handle locally",
+                "vi": "Có, nếu bạn cũng xử lý local"
+              },
+              {
+                "en": "Yes — message types, not tokens",
+                "vi": "Có — type tin, không phải token"
+              }
+            ],
+            [
+              {
+                "en": "`storage` event",
+                "vi": "Event `storage`"
+              },
+              {
+                "en": "No — other tabs only",
+                "vi": "Không — chỉ tab khác"
+              },
+              {
+                "en": "Legacy, if the token is already in `localStorage`",
+                "vi": "Cũ, nếu token đã nằm `localStorage`"
+              }
+            ],
+            [
+              {
+                "en": "`SharedWorker`",
+                "vi": "`SharedWorker`"
+              },
+              {
+                "en": "N/A — one worker, many tabs",
+                "vi": "N/A — một worker, nhiều tab"
+              },
+              {
+                "en": "Possible for one socket; more moving parts",
+                "vi": "Được cho một socket; nhiều phần chuyển"
+              }
+            ],
+            [
+              {
+                "en": "Cookies changing",
+                "vi": "Cookie đổi"
+              },
+              {
+                "en": "No JS event",
+                "vi": "Không có event JS"
+              },
+              {
+                "en": "Still need a bus for Pinia memory",
+                "vi": "Vẫn cần bus cho bộ nhớ Pinia"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Senior perspective",
+            "vi": "Góc nhìn senior"
+          },
+          "text": {
+            "en": "- Best auth: httpOnly cookie + server invalidation + BroadcastChannel to drop **memory**. You still need the broadcast because cookies do not emit to JS.\n- Token in `localStorage` is XSS-complete. If you inherited it, `storage` can sync logout, but wrap a `BroadcastChannel` so the payload is not “parse this JSON from a storage key.”\n- Do not use `storage` events for same-tab pub/sub. That is Pinia, `mitt`, or a tiny emitter.\n- Race: tab B has an in-flight POST after logout. Abort (`AbortController` per Vue scope) and ignore 401s after `session:end`.\n- Two devices, or Chrome + Firefox on one machine, are **not** solved. That is server session revoke.",
+            "vi": "- Auth tốt nhất: cookie httpOnly + invalidation server + BroadcastChannel để bỏ **bộ nhớ**. Bạn vẫn cần broadcast vì cookie không emit cho JS.\n- Token trong `localStorage` là XSS trọn. Nếu bạn thừa kế, `storage` có thể sync logout, nhưng hãy bọc `BroadcastChannel` để payload không phải “parse JSON từ storage key.”\n- Đừng dùng event `storage` cho pub/sub cùng tab. Đó là Pinia, `mitt`, hoặc emitter nhỏ.\n- Race: tab B còn POST đang bay sau logout. Abort (`AbortController` theo scope Vue) và bỏ 401 sau `session:end`.\n- Hai thiết bị, hoặc Chrome + Firefox trên một máy, **không** được giải. Đó là revoke session phía server."
+          }
+        },
+        {
+          "type": "callout",
+          "kind": "warning",
+          "text": {
+            "en": "**Common pitfalls**\n- Symptom: tab B still PATCHes after logout in A. Cause: no bus, or you only cleared cookies. Fix: broadcast `session:end` and abort in-flight.\n- Symptom: `storage` handler never runs in the tab that logged out. Cause: the event does not fire in the writer. Fix: handle the local path yourself.\n- Symptom: `JSON.parse` throws on logout. Cause: `event.newValue === null` on `removeItem`. Fix: null-check before parse.\n- Symptom: you broadcast the user object. Cause: treating the channel as a private pipe. Fix: send a type; refetch `/me`.",
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: tab B vẫn PATCH sau logout ở A. Nguyên nhân: không có bus, hoặc chỉ xóa cookie. Cách xử lý: broadcast `session:end` và abort request đang bay.\n- Triệu chứng: handler `storage` không chạy ở tab vừa logout. Nguyên nhân: event không chạy ở tab ghi. Cách xử lý: tự xử lý nhánh local.\n- Triệu chứng: `JSON.parse` throw lúc logout. Nguyên nhân: `event.newValue === null` khi `removeItem`. Cách xử lý: kiểm null trước khi parse.\n- Triệu chứng: bạn broadcast object user. Nguyên nhân: coi channel như ống riêng. Cách xử lý: gửi type; refetch `/me`."
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "What interviewers really ask",
+            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+          },
+          "text": {
+            "en": "User logs out in tab A; tab B still shows the dashboard and keeps PATCHing as that user. Or login in A should refresh B. This is multi-tab session design, not a trivia API. What, exactly, does BroadcastChannel still do when auth is an httpOnly cookie?",
+            "vi": "User logout ở tab A; tab B vẫn hiện dashboard và tiếp tục PATCH với user đó. Hoặc login ở A phải refresh B. Đây là thiết kế session đa tab, không phải API đố vui. BroadcastChannel vẫn làm gì đúng khi auth là cookie httpOnly?"
+          }
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "How to answer in the interview",
+            "vi": "Trả lời khi phỏng vấn"
+          },
+          "text": {
+            "en": "BroadcastChannel is a same-origin bus across tabs. On logout I broadcast session end, clear Pinia and the query cache, abort in-flight requests, and route to login. Even with an httpOnly cookie I still need that bus, because cookies do not emit to JavaScript when the server invalidates them. I do not put tokens on the channel — I send a type and refetch /me. The storage event only fires in other tabs and only when the value changes, so it is a poor auth bus and it will not notify the tab that wrote. Two devices are a server revoke, not a browser bus. Where BroadcastChannel exists I prefer it over storage events, including Safari private mode quirks.",
+            "vi": "BroadcastChannel là bus cùng origin giữa các tab. Lúc logout tôi broadcast session end, xóa Pinia và query cache, abort request đang bay, và về login. Kể cả khi cookie httpOnly tôi vẫn cần bus đó, vì cookie không emit cho JavaScript khi server vô hiệu chúng. Tôi không để token trên channel — tôi gửi một type và refetch /me. Event storage chỉ chạy ở tab khác và chỉ khi giá trị đổi, nên nó là bus auth kém và sẽ không báo tab vừa ghi. Hai thiết bị là revoke phía server, không phải bus browser. Nơi BroadcastChannel tồn tại tôi ưu tiên nó hơn event storage, kể cả quirk Safari private mode."
+          }
+        },
+        {
+          "type": "key-takeaways",
+          "items": [
+            {
+              "en": "`BroadcastChannel` syncs memory across same-origin tabs. It is not a server push.",
+              "vi": "`BroadcastChannel` đồng bộ bộ nhớ giữa tab cùng origin. Nó không phải server push."
+            },
+            {
+              "en": "httpOnly cookies still need a bus: they do not emit to JS on change.",
+              "vi": "Cookie httpOnly vẫn cần bus: chúng không emit cho JS khi đổi."
+            },
+            {
+              "en": "Broadcast a type, not a token. Abort in-flight writes after `session:end`.",
+              "vi": "Broadcast một type, không phải token. Abort ghi đang bay sau `session:end`."
+            },
+            {
+              "en": "`storage` fires in other tabs only. Two devices need server revoke.",
+              "vi": "`storage` chỉ chạy ở tab khác. Hai thiết bị cần revoke phía server."
+            }
+          ]
+        },
+        {
+          "type": "senior-answer",
+          "label": {
+            "en": "Likely follow-up questions",
+            "vi": "Câu hỏi nối tiếp thường gặp"
+          },
+          "text": {
+            "en": "- **Why doesn’t `storage` fire in the tab that called `removeItem`?** The spec only notifies other documents. Handle the writer path yourself.\n- **Cookie-based auth: what does BroadcastChannel still do?** Drop Pinia / Vue Query memory and abort in-flight requests. The cookie change is silent to JS.\n- **Do you broadcast the user object on login?** No. Send “session started” and refetch `/me`.\n- **BroadcastChannel vs SharedWorker vs `localStorage` ping?** Channel for a 3-tab admin; SharedWorker if you need one socket; storage only if you already store there.",
+            "vi": "- **Vì sao `storage` không chạy ở tab gọi `removeItem`?** Spec chỉ báo document khác. Hãy tự xử lý nhánh ghi.\n- **Auth cookie: BroadcastChannel vẫn làm gì?** Bỏ bộ nhớ Pinia / Vue Query và abort request đang bay. Cookie đổi thì JS không nghe.\n- **Có broadcast object user lúc login không?** Không. Gửi “session started” và refetch `/me`.\n- **BroadcastChannel vs SharedWorker vs ping `localStorage`?** Channel cho admin 3 tab; SharedWorker nếu cần một socket; storage chỉ khi bạn đã lưu ở đó."
+          }
+        },
+        {
+          "type": "thematic-break"
         }
       ]
     }
