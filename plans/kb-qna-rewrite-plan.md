@@ -1,5 +1,7 @@
 # KB + Q&A readability rewrite plan
 
+**Status (B31, 2026-10-19):** done. `node scripts/check-content.mjs --strict` passes. KB migrated **193/192** leaves (one extra leaf remains after all K8 merges; warn-only) and Q&A migrated **142/142**. Glossary vi grep (`set|freeze|page|decision|measure|warmup`) is clean outside backticks and `code` blocks. KB in-content links resolve in the same locale; Q&A has no relative links. `manifest.json` `generatedAt` updated.
+
 Scope: every knowledge-base doc (`knowledge-base/*.json`, 22 docs, 192 leaf topics) and every Q&A item (`qna/questions.json`, 142 items).
 Audience of this file: the agent(s) executing the rewrite. Read sections 0–2 once, then work batch by batch from section 4.
 Nothing in this plan changes the plan/ (study calendar) tree.
@@ -763,7 +765,7 @@ Sizing rule: ≤ 13 KB topics, or ≤ 20 Q&A items, or a mix of about 12 "units"
 | B28 | P3 | KB `build-tools` (3, K8 merge) + `devops` (5) | 8 |
 | B29 | P3 | KB `monitoring` (6) + `practical-questions` (8; shorter targets) | 14 (short) |
 | B30 | P3 | KB `leadership` (7) | 7 |
-| B31 | – | **Final pass.** Run `check-content.mjs --strict` (every topic and Q&A migrated). Glossary consistency grep (section 5, step 6). Re-check cross-references between KB topics. Update `manifest.json` `generatedAt`. Mark this plan done | – |
+| B31 | – | **Final pass.** Run `check-content.mjs --strict` (every topic and Q&A migrated). Glossary consistency grep (section 5, step 6). Re-check cross-references between KB topics. Update `manifest.json` `generatedAt`. Mark this plan done. **Outcome:** `--strict` OK; glossary remaining hits wrapped or rephrased; 90 KB markdown links all `#` / `./slug.md#`; 0 Q&A relative links; leaf count 193 vs 192 kept as a documented deviation | – |
 
 Items done in the B01 pilot (`self-intro`, `design-autocomplete`) are skipped when B15 and B26 come around. Only re-touch them if the post-pilot style changes require it.
 
