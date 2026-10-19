@@ -961,7 +961,7 @@
           "items": [
             {
               "en": "**Decision.** Primary axis is `features/orders/`, `features/auth/` — not `components/`, `helpers/`, `services/` dumping grounds. Each feature exposes a **small public API** (`index.ts`: routes, a couple of components, composables). Shared kernel stays thin: design-system primitives, `lib/http`, `lib/dates`. Enforce with ESLint `import/no-restricted-paths` or Nx tags. Nuxt **layers** (or pnpm packages) for white-label brands, “admin vs public,” or extracting the design system — not for every feature. See [16.1](./system-design.md#161-frontend-architecture-decisions).",
-              "vi": "**Quyết định.** Trục chính là `features/orders/`, `features/auth/` — không phải bãi rác `components/`, `helpers/`, `services/`. Mỗi feature expose **public API nhỏ** (`index.ts`: route, vài component, composable). Shared kernel mỏng: primitive design-system, `lib/http`, `lib/dates`. Enforce bằng ESLint `import/no-restricted-paths` hoặc Nx tag. Nuxt **layer** (hoặc pnpm package) cho white-label brand, “admin vs public,” hoặc extract design system — không phải cho mọi feature. Xem [16.1](./system-design.md#161-quyết-định-kiến-trúc-frontend)."
+              "vi": "**Quyết định.** Trục chính là `features/orders/`, `features/auth/` — không phải bãi rác `components/`, `helpers/`, `services/`. Mỗi feature expose **public API nhỏ** (`index.ts`: route, vài component, composable). Shared kernel mỏng: primitive design-system, `lib/http`, `lib/dates`. Enforce bằng ESLint `import/no-restricted-paths` hoặc Nx tag. Nuxt **layer** (hoặc pnpm package) cho white-label brand, “admin vs public,” hoặc extract design system — không phải cho mọi feature. Xem [16.1](./system-design.md#161-quyet-inh-kien-truc-frontend)."
             },
             {
               "en": "**Why.** Folder structure is a **discoverability** tool. Architecture is **who can import whom, what can deploy independently, what fails alone**. `components/common/utils` imported by everything is a cycle magnet. Features importing **deep internals** of other features, Nuxt `auto-import` of 200 composables with name clashes, and “layers” that are just more folders are the failure mode.",
@@ -1040,7 +1040,7 @@
         },
         {
           "type": "code",
-          "lang": "txt",
+          "lang": "text",
           "code": {
             "en": "app/\n  features/\n    orders/\n      components/          # OrderTable, not Button\n      composables/useOrders.ts\n      api/orders.api.ts\n      types.ts\n      index.ts             # public API\n    checkout/\n  shared/\n    ui/                    # app-level composites, not the DS package\n    lib/http.ts\n  pages/                   # thin: compose features\npackages/ui/               # design system (15.6)",
             "vi": "app/\n  features/\n    orders/\n      components/          # OrderTable, không phải Button\n      composables/useOrders.ts\n      api/orders.api.ts\n      types.ts\n      index.ts             # public API\n    checkout/\n  shared/\n    ui/                    # composite cấp app, không phải package DS\n    lib/http.ts\n  pages/                   # mỏng: compose feature\npackages/ui/               # design system (15.6)"
@@ -1143,7 +1143,7 @@
           "items": [
             {
               "en": "**Decision.** **DS** = tokens + accessible primitives + patterns with **no product domain** (`Button`, `TextField`, `Dialog`, `DataTable` shell). **App components** = domain (`OrderTable`, `VatField`, `CheckoutStepper`). Multiple apps consume **one versioned package**. Ownership: a platform or DS team (or a rotating guild) with RFC, visual tests, semver, changelog. Consuming apps pin versions; they don’t edit `node_modules`. **Dark launch** a `Button` v2 behind a class/flag inside the DS, migrate apps, then delete v1. Details of versioning, tokens, and a11y belong in [16.3](./system-design.md#163-component-library-design); here the interview point is the **boundary**.",
-              "vi": "**Quyết định.** **DS** = token + primitive accessible + pattern **không có product domain** (`Button`, `TextField`, `Dialog`, vỏ `DataTable`). **App component** = domain (`OrderTable`, `VatField`, `CheckoutStepper`). Nhiều app consume **một package có version**. Ownership: platform hoặc DS team (hoặc guild luân phiên) với RFC, visual test, semver, changelog. App consume pin version; họ không sửa `node_modules`. **Dark launch** `Button` v2 sau class/flag trong DS, migrate app, rồi xóa v1. Chi tiết versioning, token, và a11y thuộc [16.3](./system-design.md#163-thiết-kế-component-library); ở đây điểm phỏng vấn là **boundary**."
+              "vi": "**Quyết định.** **DS** = token + primitive accessible + pattern **không có product domain** (`Button`, `TextField`, `Dialog`, vỏ `DataTable`). **App component** = domain (`OrderTable`, `VatField`, `CheckoutStepper`). Nhiều app consume **một package có version**. Ownership: platform hoặc DS team (hoặc guild luân phiên) với RFC, visual test, semver, changelog. App consume pin version; họ không sửa `node_modules`. **Dark launch** `Button` v2 sau class/flag trong DS, migrate app, rồi xóa v1. Chi tiết versioning, token, và a11y thuộc [16.3](./system-design.md#163-thiet-ke-component-library); ở đây điểm phỏng vấn là **boundary**."
             },
             {
               "en": "**Why.** The DS is slower to change on purpose. Failure mode: publishing the whole app as a “library”; DS pulling Pinia or `$fetch`; breaking Button padding in a patch; theming via deep selectors into internals. App wrapper components that freeze DS props prevent upgrades. Duplicate Vue in the DS bundle — `vue` is a peerDependency, don’t bundle it.",
@@ -1260,13 +1260,6 @@
         },
         {
           "type": "thematic-break"
-        },
-        {
-          "type": "paragraph",
-          "text": {
-            "en": "[← Back to Overview](../../README-en.md)",
-            "vi": "[← Back to Overview](../../README.md)"
-          }
         }
       ]
     }

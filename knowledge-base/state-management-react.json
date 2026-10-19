@@ -323,7 +323,7 @@
             },
             {
               "en": "Next-specific placement: see [22.6](#226-nextjs-state-patterns).",
-              "vi": "Đặt chỗ riêng Next: xem [22.6](#226-nextjs-state-patterns)."
+              "vi": "Đặt chỗ riêng Next: xem [22.6](#226-pattern-state-tren-nextjs)."
             }
           ]
         },
@@ -378,7 +378,7 @@
             },
             {
               "en": "**Trade-off.** RTK: more files, fewer arguments in code review. Zustand: less boilerplate, entropy without lint/review; `useStore()` of the whole store is Context-class thrash. Jotai: fine-grained updates closer to Vue, harder to see the data model in one file; atom soup with no ownership recreates a global store. Introducing RTK for a 6-component SPA is ceremony. Persist middleware + Next SSR mismatches ([22.8](#228-interview-pitfalls)). Missing Jotai Provider in tests/SSR yields wrong values with no throw.",
-              "vi": "**Đánh đổi / rủi ro.** RTK: nhiều file hơn, ít cãi trong code review. Zustand: ít boilerplate, entropy nếu không lint/review; `useStore()` cả store là thrash hạng Context. Jotai: update fine-grained gần Vue, khó nhìn data model trong một file; soup atom không ownership tái tạo global store. Đưa RTK cho SPA 6 component là nghi lễ. Persist middleware + Next SSR thì lệch ([22.8](#228-interview-pitfalls)). Thiếu Jotai Provider trong test/SSR thì value sai mà không throw."
+              "vi": "**Đánh đổi / rủi ro.** RTK: nhiều file hơn, ít cãi trong code review. Zustand: ít boilerplate, entropy nếu không lint/review; `useStore()` cả store là thrash hạng Context. Jotai: update fine-grained gần Vue, khó nhìn data model trong một file; soup atom không ownership tái tạo global store. Đưa RTK cho SPA 6 component là nghi lễ. Persist middleware + Next SSR thì lệch ([22.8](#228-bay-phong-van)). Thiếu Jotai Provider trong test/SSR thì value sai mà không throw."
             },
             {
               "en": "**How to verify.** Time for a new engineer to add a field + DevTools story. Profiler on a typed input: who re-renders. Count of duplicated lists in Query **and** a slice (should be 0). RTK `useSelector` that returns a new object every time is a render storm.",
@@ -797,12 +797,12 @@
               "vi": "**Quyết định.** Một component / cây ngắn, ephemeral → `useState` / `useReducer`. Share được / back-button / bookmark → URL. Identity / session được tin → cookie + server. Data remote có thể stale → TanStack Query / SWR (hoặc RSC cho document). DI ít churn (theme, locale, flag, QueryClient) → Context, tách provider. Workflow client tần suất cao hoặc phức tạp → Zustand / RTK / Jotai kèm selector. Đẩy state xuống đến khi sibling cần."
             },
             {
-              "en": "**Why.** Context broadcasts to all consumers on `value` change — `memo` does not skip it ([react.md §20.2.1](./react.md#2021-context-vs-vue-provide--inject)). “State locality” means do not lift to Redux for convenience. URL for filters is slightly more plumbing than Zustand and wins share/reload/analytics.",
-              "vi": "**Vì sao.** Context broadcast tới mọi consumer khi `value` đổi — `memo` không skip ([react.md §20.2.1](./react.md#2021-context-vs-vue-provide--inject)). “State locality” nghĩa là đừng lift lên Redux cho tiện. URL cho filter plumbing hơi nhiều hơn Zustand và thắng share/reload/analytics."
+              "en": "**Why.** Context broadcasts to all consumers on `value` change — `memo` does not skip it ([react.md §20.2.1](./react.md#2021-context-vs-vue-provide-inject)). “State locality” means do not lift to Redux for convenience. URL for filters is slightly more plumbing than Zustand and wins share/reload/analytics.",
+              "vi": "**Vì sao.** Context broadcast tới mọi consumer khi `value` đổi — `memo` không skip ([react.md §20.2.1](./react.md#2021-context-vs-provide-inject)). “State locality” nghĩa là đừng lift lên Redux cho tiện. URL cho filter plumbing hơi nhiều hơn Zustand và thắng share/reload/analytics."
             },
             {
               "en": "**Trade-off.** Keystrokes in Context. Theme + cart + user in one Provider. Query result copied into Context “so I don’t import Query.” Store as a mirror of `searchParams`. `value={{ user, setUser }}` is a new object every render. A giant `user` Context updated when a profile form types — session vs draft must be split ([22.8](#228-interview-pitfalls)). Stores are explicit about client-only — dangerous on Next if you persist them blindly.",
-              "vi": "**Đánh đổi / rủi ro.** Keystroke trong Context. Theme + cart + user một Provider. Copy kết quả Query vào Context “để khỏi import Query.” Store soi gương `searchParams`. `value={{ user, setUser }}` là object mới mỗi render. Context `user` khổng lồ update khi form profile gõ — session vs draft phải tách ([22.8](#228-interview-pitfalls)). Store nói rõ client-only — nguy hiểm trên Next nếu persist mù."
+              "vi": "**Đánh đổi / rủi ro.** Keystroke trong Context. Theme + cart + user một Provider. Copy kết quả Query vào Context “để khỏi import Query.” Store soi gương `searchParams`. `value={{ user, setUser }}` là object mới mỗi render. Context `user` khổng lồ update khi form profile gõ — session vs draft phải tách ([22.8](#228-bay-phong-van)). Store nói rõ client-only — nguy hiểm trên Next nếu persist mù."
             },
             {
               "en": "**How to verify.** Profiler while typing. If the app shell highlights, the layer is wrong. Split **state** vs **dispatch** Context if the value would otherwise be a new object every render.",
@@ -981,8 +981,8 @@
               "vi": "**Quyết định.** Dùng TanStack Query / SWR cho list, detail, và mutation → `invalidateQueries`. Trên Next, cặp `revalidateTag` khi cây RSC cũng hiện data đó. Pattern: RSC cho document, Query cho tương tác client trên data đó (pagination không được drop shell, polling, hàng optimistic). Đừng chạy SWR và Query cùng lúc. Chỉ lý do mạnh mới nhét list API vào store: replication offline-first, CRDT cộng tác — bạn không phải cache."
             },
             {
-              "en": "**Why.** Query already implements loading/error, races, dedupe, retries, focus refetch, `queryKey` identity. `useEffect` fetch recreates a worse version ([react.md §20.1.7](./react.md#2017-effects-useeffect-vs-vue-watch--lifecycle)). A Redux list recreates a worse version without stale-while-revalidate. The `queryKey` is the cache identity (`['users', { page, q }]`) — same idea as Nuxt’s key string.",
-              "vi": "**Vì sao.** Query đã implement loading/error, race, dedupe, retry, focus refetch, identity `queryKey`. Fetch `useEffect` tái tạo bản tệ hơn ([react.md §20.1.7](./react.md#2017-effects-useeffect-vs-vue-watch--lifecycle)). List Redux tái tạo bản tệ hơn không stale-while-revalidate. `queryKey` là identity cache (`['users', { page, q }]`) — cùng ý với key string Nuxt."
+              "en": "**Why.** Query already implements loading/error, races, dedupe, retries, focus refetch, `queryKey` identity. `useEffect` fetch recreates a worse version ([react.md §20.1.7](./react.md#2017-effects-useeffect-vs-vue-watch-lifecycle)). A Redux list recreates a worse version without stale-while-revalidate. The `queryKey` is the cache identity (`['users', { page, q }]`) — same idea as Nuxt’s key string.",
+              "vi": "**Vì sao.** Query đã implement loading/error, race, dedupe, retry, focus refetch, identity `queryKey`. Fetch `useEffect` tái tạo bản tệ hơn ([react.md §20.1.7](./react.md#2017-effects-useeffect-vs-watch-lifecycle-vue)). List Redux tái tạo bản tệ hơn không stale-while-revalidate. `queryKey` là identity cache (`['users', { page, q }]`) — cùng ý với key string Nuxt."
             },
             {
               "en": "**Trade-off.** Query is a **client** cache: after a full reload, RSC can be faster for first paint. `queryKey: ['users']` for every filter is a cache bug. Putting `data` into Zustand in `onSuccess` “for convenience” dual-writes. Fetching in both RSC and Query with different keys/shapes and no `initialData` contract diverges. `staleTime: Infinity` as a substitute for understanding invalidation. Hydrating user-specific rows into a shared cache key. Query errors are not render throws unless you opt into Suspense.",
@@ -1110,8 +1110,8 @@
           "style": "ol",
           "items": [
             {
-              "en": "Optimistic updates vs `useOptimistic` + Server Actions ([nextjs.md §21.9](./nextjs.md#219-server-actions--mutations)).",
-              "vi": "Optimistic update vs `useOptimistic` + Server Action ([nextjs.md §21.9](./nextjs.md#219-server-actions--mutations))."
+              "en": "Optimistic updates vs `useOptimistic` + Server Actions ([nextjs.md §21.9](./nextjs.md#219-server-actions-mutations)).",
+              "vi": "Optimistic update vs `useOptimistic` + Server Action ([nextjs.md §21.9](./nextjs.md#219-server-actions-mutation))."
             },
             {
               "en": "Abort / race: Query cancels; your effect must use `AbortController`.",
@@ -1170,11 +1170,11 @@
           "items": [
             {
               "en": "**Decision.** Server Components fetch and render server data — no `useState`, no Zustand inside them. `'use client'` islands hold interactive state — smallest island that needs hooks ([nextjs.md §21.5](./nextjs.md#215-app-router-fundamentals)). URL (`searchParams`) for shareable UI. Cookies / server session for auth — Zustand cannot be trusted as login truth. After mutations: `revalidatePath` / `revalidateTag` and/or Query invalidation — often **both** if both trees show the data. Pass DTOs across the RSC boundary, not class instances or secrets. Theme: prefer a cookie so the server can class `<html>`.",
-              "vi": "**Quyết định.** Server Component fetch và render server data — không `useState`, không Zustand bên trong chúng. Island `'use client'` giữ state tương tác — island nhỏ nhất cần hook ([nextjs.md §21.5](./nextjs.md#215-app-router-fundamentals)). URL (`searchParams`) cho UI share được. Cookie / server session cho auth — Zustand không được tin làm sự thật login. Sau mutation: `revalidatePath` / `revalidateTag` và/hoặc invalidate Query — thường **cả hai** nếu cả hai cây hiện data. Truyền DTO qua biên RSC, không class instance hay secret. Theme: ưu tiên cookie để server class được `<html>`."
+              "vi": "**Quyết định.** Server Component fetch và render server data — không `useState`, không Zustand bên trong chúng. Island `'use client'` giữ state tương tác — island nhỏ nhất cần hook ([nextjs.md §21.5](./nextjs.md#215-nen-tang-app-router)). URL (`searchParams`) cho UI share được. Cookie / server session cho auth — Zustand không được tin làm sự thật login. Sau mutation: `revalidatePath` / `revalidateTag` và/hoặc invalidate Query — thường **cả hai** nếu cả hai cây hiện data. Truyền DTO qua biên RSC, không class instance hay secret. Theme: ưu tiên cookie để server class được `<html>`."
             },
             {
-              "en": "**Why.** The cookie is what middleware and RSC can see. `cookies()` in a layout dynamizes rendering ([nextjs.md §21.10](./nextjs.md#2110-rendering--caching-cheat-sheet)). `localStorage` is not available during SSR — persist middleware that reads it in `create` will mismatch. A client user blob is cache-friendly and **wrong**.",
-              "vi": "**Vì sao.** Cookie là thứ middleware và RSC thấy được. `cookies()` trong layout dynamize render ([nextjs.md §21.10](./nextjs.md#2110-rendering--caching-cheat-sheet)). `localStorage` không có lúc SSR — persist middleware đọc nó trong `create` sẽ lệch. Blob user phía client thân thiện cache và **sai**."
+              "en": "**Why.** The cookie is what middleware and RSC can see. `cookies()` in a layout dynamizes rendering ([nextjs.md §21.10](./nextjs.md#2110-rendering-caching-cheat-sheet)). `localStorage` is not available during SSR — persist middleware that reads it in `create` will mismatch. A client user blob is cache-friendly and **wrong**.",
+              "vi": "**Vì sao.** Cookie là thứ middleware và RSC thấy được. `cookies()` trong layout dynamize render ([nextjs.md §21.10](./nextjs.md#2110-cheat-sheet-render-cache)). `localStorage` không có lúc SSR — persist middleware đọc nó trong `create` sẽ lệch. Blob user phía client thân thiện cache và **sai**."
             },
             {
               "en": "**Trade-off.** Server session is secure and cache-hostile (dynamic). PPR/partial: static shell + session in the hole. `useUserStore.getState().setUser(localStorage)` in a module body. Root `'use client'` + Redux Provider wrapping RSC children incorrectly — Providers are client; compose children from the server. Session in Query without `staleTime` refetch-flashes logged-out chrome. Duplicating the cookie into Zustand and using only Zustand in UI while RSC used cookies — two truths. Don’t `JSON.stringify` a session into a Client Component prop if it includes tokens.",
@@ -1693,7 +1693,7 @@
             },
             {
               "en": "Compiler / `memo` vs store choice — [react.md §20.2.8](./react.md#2028-performance-checklist-for-seniors).",
-              "vi": "Compiler / `memo` vs chọn store — [react.md §20.2.8](./react.md#2028-performance-checklist-for-seniors)."
+              "vi": "Compiler / `memo` vs chọn store — [react.md §20.2.8](./react.md#2028-checklist-performance-cho-senior)."
             },
             {
               "en": "How do you talk about a hydration incident without blaming React?",
@@ -1711,13 +1711,6 @@
         },
         {
           "type": "thematic-break"
-        },
-        {
-          "type": "paragraph",
-          "text": {
-            "en": "[← Back to Overview](../../README-en.md)",
-            "vi": "[← Back to Overview](../../README.md)"
-          }
         }
       ]
     }
