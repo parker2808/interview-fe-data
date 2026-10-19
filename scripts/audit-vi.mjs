@@ -166,6 +166,18 @@ function linkTargets(text) {
   return out
 }
 
+function linkFingerprint(text) {
+  return linkTargets(text)
+    .map((href) => {
+      if (href.startsWith('#')) return '#local'
+      if (/^https?:\/\//i.test(href) || href.startsWith('mailto:')) return href
+      const hash = href.indexOf('#')
+      if (hash >= 0) return `${href.slice(0, hash)}#local`
+      return href
+    })
+    .join('\n')
+}
+
 function mdShape(text) {
   const lines = String(text || '').split('\n')
   return [
@@ -291,7 +303,7 @@ for (const rel of selected) {
     if (sortedJoin(inlineCodes(en)) !== sortedJoin(inlineCodes(vi))) {
       flag('error', 'CODE_DRIFT', rel, jsonPath, vi)
     }
-    if (linkTargets(en).join('\n') !== linkTargets(vi).join('\n')) {
+    if (linkFingerprint(en) !== linkFingerprint(vi)) {
       flag('error', 'LINK_DRIFT', rel, jsonPath, vi)
     }
     if (mdShape(en) !== mdShape(vi)) flag('error', 'MD_DRIFT', rel, jsonPath, vi)
