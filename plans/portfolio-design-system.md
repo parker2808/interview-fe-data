@@ -65,7 +65,7 @@ The portfolio itself is act 4 and the answer to the CV's weakest line ("React/Ne
 | `createdAt`, `updatedAt` on every table | Prisma fills them in | Free history for sorting and "Updated 2d ago" |
 | Two columns per translated text: `titleEn`, `titleVi` | English is required to publish, Vietnamese is optional | Only 2 languages, so no extra translation tables or joins. You see both values side by side in Adminer. A 3rd language would need one migration, which is fine |
 | `sortOrder Int`, `isVisible Boolean` | Admin can reorder and hide rows | One pattern for every list (nav, skills, sections, projects) |
-| `status` enum `DRAFT | PUBLISHED | ARCHIVED` + `publishedAt` | Only on projects and posts | Public API returns `PUBLISHED` only; "delete" in the UI means archive, so nothing is lost |
+| `status` enum `DRAFT \| PUBLISHED \| ARCHIVED` + `publishedAt` | Only on projects and posts | Public API returns `PUBLISHED` only; "delete" in the UI means archive, so nothing is lost |
 | Foreign key `projectId Int` + `@relation` | One project has many metrics (1-to-many) | The DB refuses metrics that point at a missing project |
 | `skills Skill[]` on both sides | Many-to-many; Prisma creates the hidden join table | No join table to write by hand |
 | `slug String @unique` | URL name like `particula-v2` | The DB guarantees two projects cannot share a URL |
@@ -76,16 +76,16 @@ Field shorthand below: `title{En,Vi}` means two columns `titleEn` and `titleVi`.
 
 | Group | Entity | Fields | Notes |
 | --- | --- | --- | --- |
-| Site | `SiteSettings` (1 row) | `siteName`, `domain`, `defaultLocale`, `seoTitle{En,Vi}`, `seoDescription{En,Vi}`, `ogImageId?`, `footerNote{En,Vi}`, `contactIntro{En,Vi}`, `replyTimeNote{En,Vi}`, `contactEmail` (`<email>`), `availability` (`OPEN | NOT_LOOKING | FREELANCE`), `availabilityNote{En,Vi}`, `analyticsEnabled` | Default SEO for any page without its own |
-| Site | `NavItem` | `location` (`HEADER | FOOTER`), `label{En,Vi}`, `href` (internal route like `/projects`, or a full URL), `sortOrder`, `isVisible` | Admin picks `href` from the list of real routes, or types a URL |
-| Site | `SocialLink` | `kind` (`GITHUB | LINKEDIN | EMAIL | RSS | OTHER`), `label{En,Vi}`, `url`, `showInHeader`, `sortOrder`, `isVisible` | GitHub `parker2808`; email is `mailto:<email>` |
-| Site | `PageSection` | `page` (`HOME | ABOUT | PROJECTS | NOTES | CONTACT`), `key` (e.g. `hero`, `featured`, `work`, `skills`, `notes`, `cta`), `title{En,Vi}?`, `intro{En,Vi}?`, `ctaLabel{En,Vi}?`, `sortOrder`, `isVisible`; unique on (`page`, `key`) | Seeded. Admin can reorder, hide and retitle sections; each `key` maps to one component in code, so admins cannot invent new section types |
+| Site | `SiteSettings` (1 row) | `siteName`, `domain`, `defaultLocale`, `seoTitle{En,Vi}`, `seoDescription{En,Vi}`, `ogImageId?`, `footerNote{En,Vi}`, `contactIntro{En,Vi}`, `replyTimeNote{En,Vi}`, `contactEmail` (`<email>`), `availability` (`OPEN \| NOT_LOOKING \| FREELANCE`), `availabilityNote{En,Vi}`, `analyticsEnabled` | Default SEO for any page without its own |
+| Site | `NavItem` | `location` (`HEADER \| FOOTER`), `label{En,Vi}`, `href` (internal route like `/projects`, or a full URL), `sortOrder`, `isVisible` | Admin picks `href` from the list of real routes, or types a URL |
+| Site | `SocialLink` | `kind` (`GITHUB \| LINKEDIN \| EMAIL \| RSS \| OTHER`), `label{En,Vi}`, `url`, `showInHeader`, `sortOrder`, `isVisible` | GitHub `parker2808`; email is `mailto:<email>` |
+| Site | `PageSection` | `page` (`HOME \| ABOUT \| PROJECTS \| NOTES \| CONTACT`), `key` (e.g. `hero`, `featured`, `work`, `skills`, `notes`, `cta`), `title{En,Vi}?`, `intro{En,Vi}?`, `ctaLabel{En,Vi}?`, `sortOrder`, `isVisible`; unique on (`page`, `key`) | Seeded. Admin can reorder, hide and retitle sections; each `key` maps to one component in code, so admins cannot invent new section types |
 | About | `Profile` (1 row) | `displayName`, `legalName`, `city`, `country`, `timezone`, `careerStartDate`, `headline{En,Vi}`, `subheadline{En,Vi}`, `bio{En,Vi}` (md), `languages{En,Vi}`, `avatarId?`, `resumeEnId?`, `resumeViId?`, `phone?` (`<phone>`, private) | "Years of experience" is computed from `careerStartDate`, so it never goes stale like the CV's "4+". The public API never returns `phone` |
-| About | `Experience` | `company`, `companyUrl?`, `location`, `employmentType` (`FULL_TIME | CONTRACT | FREELANCE`), `role{En,Vi}`, `summary{En,Vi}`, `highlights{En,Vi}` (md bullet list), `startDate`, `endDate?` (empty = now), `sortOrder`, `isVisible`, `skills Skill[]` | LitGroup is 2 rows (Backend 2021, Frontend 2022); the timeline groups rows by `company` |
+| About | `Experience` | `company`, `companyUrl?`, `location`, `employmentType` (`FULL_TIME \| CONTRACT \| FREELANCE`), `role{En,Vi}`, `summary{En,Vi}`, `highlights{En,Vi}` (md bullet list), `startDate`, `endDate?` (empty = now), `sortOrder`, `isVisible`, `skills Skill[]` | LitGroup is 2 rows (Backend 2021, Frontend 2022); the timeline groups rows by `company` |
 | About | `Education` | `school`, `degree{En,Vi}`, `major{En,Vi}`, `startDate`, `endDate`, `isVisible` | No GPA column |
 | About | `Principle` | `title{En,Vi}`, `body{En,Vi}`, `sortOrder`, `isVisible` | "How I work" cards |
 | About | `SkillCategory` | `name{En,Vi}`, `sortOrder` | Frontend, Testing, Backend, Data, Workflow |
-| About | `Skill` | `name`, `slug @unique`, `categoryId`, `depth` (`DAILY | SHIPPED | GROWING`), `sortOrder`, `isVisible` | Linked to projects and experiences |
+| About | `Skill` | `name`, `slug @unique`, `categoryId`, `depth` (`DAILY \| SHIPPED \| GROWING`), `sortOrder`, `isVisible` | Linked to projects and experiences |
 | Work | `Project` | `slug @unique`, `title{En,Vi}`, `tagline{En,Vi}`, `client`, `role{En,Vi}`, `teamSize?`, `startDate`, `endDate?`, `versionFrom?`, `versionTo?` (e.g. `v1`, `v2` for the version tag), `isFeatured`, `isConfidential`, `liveUrl?`, `repoUrl?`, `coverId?`, `problem{En,Vi}`, `constraints{En,Vi}`, `approach{En,Vi}`, `decisions{En,Vi}`, `outcome{En,Vi}`, `lessons{En,Vi}` (all md), `seoTitle{En,Vi}?`, `seoDescription{En,Vi}?`, `status`, `publishedAt?`, `sortOrder`, `experienceId?`, `skills Skill[]` | One column per case-study section keeps the editor a simple form |
 | Work | `ProjectMetric` | `projectId`, `label{En,Vi}`, `before?`, `after?`, `value`, `sortOrder` | Drives the before → after stat |
 | Work | `ProjectImage` | `projectId`, `mediaId`, `caption{En,Vi}?`, `sortOrder` | Hidden when `isConfidential` |
@@ -93,10 +93,10 @@ Field shorthand below: `title{En,Vi}` means two columns `titleEn` and `titleVi`.
 | Writing | `Tag` | `slug @unique`, `name{En,Vi}` | |
 | System | `Media` | `fileName` (stored name), `originalName`, `mimeType`, `sizeBytes`, `width?`, `height?`, `alt{En,Vi}`, `uploadedById` | Files on disk, metadata in DB. Alt text is required before anything using the image can publish |
 | System | `ContactTopic` | `label{En,Vi}`, `sortOrder`, `isVisible` | Options of the contact form's Topic select |
-| System | `ContactMessage` | `name`, `email`, `topicId?`, `message` (Text), `locale`, `status` (`NEW | READ | REPLIED | SPAM`), `ipHash` | Never public |
-| System | `User` | `email @unique`, `name`, `passwordHash`, `role` (`OWNER | EDITOR | VIEWER`), `isActive`, `lastLoginAt?` | Seed creates the owner from env vars |
+| System | `ContactMessage` | `name`, `email`, `topicId?`, `message` (Text), `locale`, `status` (`NEW \| READ \| REPLIED \| SPAM`), `ipHash` | Never public |
+| System | `User` | `email @unique`, `name`, `passwordHash`, `role` (`OWNER \| EDITOR \| VIEWER`), `isActive`, `lastLoginAt?` | Seed creates the owner from env vars |
 | System | `Session` | `tokenHash @unique`, `userId`, `expiresAt`, `userAgent?` | One row per logged-in browser; logout deletes the row |
-| System | `AuditLog` | `userId`, `action` (`CREATE | UPDATE | PUBLISH | ARCHIVE | LOGIN`), `entityType`, `entityId`, `summary` | Append-only, written by the API |
+| System | `AuditLog` | `userId`, `action` (`CREATE \| UPDATE \| PUBLISH \| ARCHIVE \| LOGIN`), `entityType`, `entityId`, `summary` | Append-only, written by the API |
 | System | `PageView` | `path`, `locale`, `referrerHost?`, `device`, `visitorHash` | Cookieless; hash uses a salt that changes daily |
 
 Relationships at a glance:
