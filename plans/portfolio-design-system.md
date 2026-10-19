@@ -99,11 +99,32 @@ Field shorthand below: `title{En,Vi}` means two columns `titleEn` and `titleVi`.
 | System | `AuditLog` | `userId`, `action` (`CREATE \| UPDATE \| PUBLISH \| ARCHIVE \| LOGIN`), `entityType`, `entityId`, `summary` | Append-only, written by the API |
 | System | `PageView` | `path`, `locale`, `referrerHost?`, `device`, `visitorHash` | Cookieless; hash uses a salt that changes daily |
 
+**v2 additions (rich layer).** Everything the new sections show is still a row; nothing decorative carries content. New tables follow the same conventions (`sortOrder`, `isVisible`, `En`/`Vi` pairs).
+
+| Group | Entity / field | Fields | Notes |
+| --- | --- | --- | --- |
+| About | `ProfileStat` (new) | `label{En,Vi}`, `value String?`, `suffix?` (e.g. `+`, `%`), `source` (`MANUAL \| YEARS_COMPUTED \| PROJECT_COUNT`), `iconKey`, `sortOrder`, `isVisible` | Home stats band. `YEARS_COMPUTED` reads `Profile.careerStartDate`, `PROJECT_COUNT` counts published projects, so the numbers never go stale. Seed: years, 4 shipped products, 2 framework migrations, 1 enterprise (Samsung SDS) |
+| Work | `Domain` (new) | `slug @unique`, `name{En,Vi}`, `description{En,Vi}`, `hue` (`JADE \| AMBER \| BLUE \| VIOLET \| ROSE`), `iconKey`, `sortOrder`, `isVisible` | Home "Domains" cards, projects-list filter pills, case-study pill. Seed: Fintech / Web3 ReFi (amber), Enterprise platforms (blue), E-commerce tooling (violet), Developer experience & testing (jade) |
+| Work | `Project.domainId?` (new FK) | `Domain 1──* Project` | One domain per project keeps filtering simple |
+| Work | `Project.keyFacts{En,Vi}` | Text, one fact per line, 2–4 lines | Case-study `KeyFacts` 2×2 grid |
+| Work | `Project.factChips{En,Vi}` | Text, comma-separated, ≤ 6 | Case-study `FactChips` (e.g. "Vue 2 → Nuxt 3, 0 downtime, 6 months") |
+| About | `ProcessStep` (new) | `title{En,Vi}`, `caption{En,Vi}`, `iconKey`, `sortOrder`, `isVisible` | Home "How I migrate a frontend" flow. Seed (5): Audit → Tokens & primitives → Strangler routes → Contract tests → Cut over |
+| About | `Profile.heroKicker{En,Vi}?`, `Profile.headlineAccent{En,Vi}?` | Short strings | Kicker pill above the H1; the accent must be a substring of `headline` (validated on save) |
+| About | `Principle.iconKey?` | | Icon tile on principle cards |
+| About | `Skill.showInMarquee` | Boolean, default `false` | Tech marquee on home |
+| Writing | `Post.takeaways{En,Vi}?` | Text, one per line, ≤ 5 | "Key takeaways" card at the end of a post |
+| Site | `SocialLink.showInCta` | Boolean | Outline buttons in the CTA band (max 2) |
+| Site | `SiteSettings.ambientEffects`, `SiteSettings.marqueeEnabled` | Boolean, default `true` | Kill switches for the grid/orbs/glow and the marquee animation (the marquee then renders as a static row) |
+| Site | `PageSection.key` (new values) | `stats`, `marquee`, `domains`, `process`, `principles` | Seeded with titles; still one component per key |
+| Site | `iconKey` (all of the above) | String from a fixed allowlist of ~40 lucide names in `packages/contracts/icons.ts` | zod rejects unknown keys; the admin shows an icon picker. No uploaded SVGs, so icons always match the theme |
+
 Relationships at a glance:
 
 ```
 SiteSettings(1)   Profile(1)   NavItem*   SocialLink*   PageSection*   Principle*   Education*
+ProfileStat*   ProcessStep*   (v2)
 SkillCategory 1──* Skill *──* Project 1──* ProjectMetric
+                   Domain 1──* Project   (v2)
                          *──* Experience 1──* Project (optional link)
                                           Project 1──* ProjectImage *──1 Media
 Post *──* Tag          ContactTopic 1──* ContactMessage
@@ -136,7 +157,7 @@ model Project {
 
 **Two API shapes.** Public endpoints (`GET /public/...?locale=vi`) pick the language on the server and return flat fields (`title`, not `titleEn`/`titleVi`), falling back to English with `lang: "en"` on the field group so the UI can set `lang` on that element. Admin endpoints return both columns for editing. Components therefore never contain locale logic.
 
-Seed (`prisma/seed.ts`) loads the CV content: site settings, profile (placeholders for `<email>` / `<phone>`), nav, social links, page sections, 4 experience rows, education, ~25 skills in 5 categories, 4 projects in `DRAFT`, 3 principles, contact topics, the owner user. 0 posts.
+Seed (`prisma/seed.ts`) loads the CV content: site settings, profile (placeholders for `<email>` / `<phone>`), nav, social links, page sections, 4 experience rows, education, ~25 skills in 5 categories, 4 projects in `DRAFT`, 3 principles, contact topics, the owner user. 0 posts. v2 adds 4 domains (each project linked), 4 profile stats, 5 process steps, `showInMarquee` on ~10 skills, `keyFacts`/`factChips` drafted for Particula, and the new `PageSection` keys.
 
 ### 1.6 Backend path for a backend beginner (one way to do each thing)
 
@@ -194,13 +215,55 @@ The backend ladder (each rung needs only the ones below it; day numbers in secti
 
 ## 2. Design direction
 
-**Concept: "Readable release notes."** A typography-first, Linear-calm interface where each project reads like a well-edited changelog entry: clear type, generous space, version tags and before → after diffs, on a quiet neutral canvas with one jade signal color.
+**Concept (v2): "Readable release notes, with atmosphere."** A typography-first, Linear-calm interface where each project reads like a well-edited changelog entry: version tags, before → after diffs and mono metadata. v2 adds a quiet *atmosphere layer* (jade-tinted surfaces, a masked grid, soft glow, scroll reveals) and richer section types (stats, tech marquee, domain cards, a migration-flow diagram) so the page feels alive without hurting reading.
 
-- **Typography is the design.** There are no illustrations, gradients or 3D. Hierarchy comes from a few sizes, weight and space, so the content (case studies, notes) carries the site. A recruiter skims headings and numbers in 10 seconds; an engineer reads 2,000 words of case study without strain. Both need the same thing: a strict, legible type system (section 3.2).
-- **Why release notes:** the CV's through-line is migrations (v1 → v2). Version and diff motifs turn that into a visual language without decoration, and the same restraint scales to a dense admin.
-- **Accent:** jade/teal. A nod to Vue green (his roots) and to Particula's ReFi/carbon domain; distinct from the indigo most Linear clones use. Used sparingly: links, primary action, focus, one highlight per screen.
-- **References:** Linear (admin density, command palette, keyboard-first, status pills), Vercel Geist docs and Stripe docs (type hierarchy, prose and code blocks), Practical Typography by Matthew Butterick (measure, line-height), Raycast and Linear changelogs (versioned entries), GitHub diff view (before/after rows), Brittany Chiang and Paco Coursey portfolios (single-column clarity, sticky section nav).
-- **Tone:** confident, specific, quiet. Short sentences, real numbers, no "passionate developer". Motion is functional (reveal, state change), never decorative. Dark mode is first-class, not an inversion.
+- **Typography is still the design.** The atmosphere sits *behind* content and never under body text; long-form pages (case study, post) keep a plain background behind the 66ch measure. A recruiter skims headings and numbers in 10 seconds; an engineer reads 2,000 words of case study without strain (section 3.2).
+- **Why release notes:** the CV's through-line is migrations (v1 → v2). Version and diff motifs turn that into a visual language, and the same restraint scales to a dense admin.
+- **Accent:** jade/teal. A nod to Vue green (his roots) and to Particula's ReFi/carbon domain. v2 uses it more boldly in three places only: the hero accent phrase, stat numbers and the primary CTA (with glow in dark mode). Everywhere else it stays sparing: links, focus, one highlight per card.
+- **References:** [longpham.tech](https://www.longpham.tech/) (atmosphere, section rhythm, stats + marquee, domain cards, case-study card and page structure; see 2.1), Linear (admin density, command palette, status pills), Vercel Geist and Stripe docs (type hierarchy, prose, code blocks), Practical Typography (measure, line-height), Raycast and Linear changelogs (versioned entries), GitHub diff view.
+- **Tone:** confident, specific, quiet. Short sentences, real numbers, no "passionate developer". Motion is functional or ambient-and-slow, never attention-grabbing, and always off under `prefers-reduced-motion`. Light and dark are both first-class; the atmosphere layer has a light variant (2.2).
+
+### 2.1 Reference analysis: longpham.tech (captured 1440 and 390, Oct 2026)
+
+**What it is.** A Next.js + Tailwind v4 site (Geist + Geist Mono), dark-only, green-tinted (`#06110C` background, `#4ADE80` primary), about 5,000px tall on desktop. Sticky header, then: hero → stats band → tech marquee → domain cards → numbered principles → feature split with flow diagram → certification cards → featured case-study cards → CTA band → minimal footer. Case-study pages and a blog list follow the same card language.
+
+**Why it feels rich while ours feels bare (same restraint, different density):**
+
+| Ingredient | Reference | Our v1 mockups |
+| --- | --- | --- |
+| Surface depth | Three tinted surfaces (`background`, `surface`, `surface-2`) + alternating full-width **bands** with `border-y` | One flat background, cards only |
+| Atmosphere | Grid pattern masked by a radial gradient under the hero; 2 large blurred **orbs** floating (14s / 18s); radial glow behind the CTA | None |
+| Hero | Terminal-style **kicker pill** (`>_ Solution Architect · 13+ years`), 60px H1 with a **colored accent phrase**, glowing primary button, animated **SVG diagram** (nodes pulse) on the right | Name + paragraph + small git-log card |
+| Proof at a glance | **Stats band**: 4 big numbers in primary, icon tiles, mono uppercase labels | Two diff lines inside the featured block |
+| Breadth | Infinite **tech marquee** of mono pills; **domain cards** with icon tile, count ("2 systems"), per-domain hue | One row of skill badges |
+| Section headers | Icon + H2 + one-line muted subtitle; mono **eyebrows** ("SUMMARY", "SCOPE") on inner pages | Bare H2 |
+| Cards | Category pill in domain hue, `↗` corner arrow, title turns primary, lift −2px + brighter border + shadow on hover, mono tech chips | Static cards, gray badges |
+| Process | Numbered principles (`01 —` in mono); a vertical **flow diagram** (Ingest → Core → Guardrails → Action) beside 2×2 feature cards | Not present |
+| Case study page | Back link, category + "Confidential" pills, meta grid with mono labels, **key-facts 2×2 cards**, eyebrow per section, ▹ bullets in primary, requirement cards side by side, mono **fact chips**, "More in <domain>" | Plainer version of the same |
+| Motion | `reveal-in` (fade + 16px rise, 0.5s) per section, orb float, node/ring pulse, icon bob, marquee; all disabled under reduced motion | Hover only |
+| CTA + footer | Centered CTA band with sparkle icon, glow, primary + outline buttons; one-line mono footer | Plain band |
+
+**Weak spots to avoid:** dark-only (no light mode); a lot of muted green-gray text at 12–14px; visible `{{TODO: …}}` placeholders on a live case study (needs a publish check); decorative animations (icon bob, ring pulse) that run forever; email shown as plain text; very long pages without in-page navigation; certification images are screenshots of PDFs.
+
+### 2.2 What we adopt, adapt or skip for Parker
+
+| Idea | Decision | How it maps to Parker and our constraints |
+| --- | --- | --- |
+| Tinted surfaces + bands | **Adopt** | Dark neutrals tinted toward jade (3.1); a `--band` surface for alternating full-width sections on Home and About. Light mode gets a faint warm-jade band. |
+| Masked grid + orbs + glow | **Adapt** | Only on the home hero and the CTA band, never behind prose. Light: grid at 6% jade, one orb at 10%. Dark: grid at 8%, two orbs at 18%. Orbs float slowly (20s / 26s), stop when off-screen and under reduced motion. Owner can turn effects off (`SiteSettings.ambientEffects`). |
+| Kicker pill + accent phrase | **Adopt** | Kicker from `Profile.heroKicker` (e.g. `> Senior Frontend · 5 yrs · Vue/Nuxt/TS`); accent phrase from `Profile.headlineAccent`, solid `--primary` (no gradient text, so contrast stays measurable). |
+| Hero diagram | **Adapt** | Instead of a generic architecture graph: a **migration diagram** (`v1 Vue 2` node → `v2 Nuxt 3` node with a component tree that "rewires"), built from the featured project's `versionFrom`/`versionTo` + up to 6 skills. SVG, CSS-animated, static under reduced motion. |
+| Stats band | **Adopt** | `ProfileStat` rows: years (computed from `careerStartDate`), products shipped (computed from published projects), framework migrations, enterprise platforms (seed values in 1.5). Numbers count up once on first view. |
+| Tech marquee | **Adapt** | From `Skill.showInMarquee`. Pauses on hover/focus, has a visible pause button, is `aria-hidden` for the duplicated half, and becomes a static wrapped list under reduced motion. |
+| Domain cards | **Adopt** | `Domain` entity: Fintech / Web3 (ReFi), Enterprise platforms (Samsung SDS), E-commerce tooling, Developer experience & testing. Icon tile, hue, project count, one-line description. |
+| Numbered principles | **Adopt** | Existing `Principle` rows rendered as `01 — Migrate in slices` with mono numbers. |
+| Flow diagram + 2×2 features | **Adapt** | "How I migrate a frontend": `ProcessStep` rows (Audit → Tokens & primitives → Strangler routes → Contract tests → Cut over) as a vertical flow beside 4 feature cards (from `Principle`). |
+| Certifications | **Skip** | Parker has none to show; the slot becomes "Worked with" (teams/companies as text chips) only if content exists. |
+| Case-study cards | **Adopt** | Domain-hued pill, `↗` arrow, hover lift, mono tech chips, plus our `DiffStat` line (the thing the reference lacks: numbers). |
+| Case-study page structure | **Adopt** | Back link, pills, meta grid, key-facts 2×2, eyebrows, ▹ bullets, decision cards, fact chips, "More in <domain>". Keep our sticky TOC (the reference has none). |
+| Blog list as cards | **Adapt** | Card rows with mono date · minutes and `#tag` chips; keep the year grouping and search. |
+| CTA band + footer | **Adopt** | CTA band with glow, a primary "Copy email" button (the address is never shown as visible text) and up to 2 outline buttons from `SocialLink.showInCta`. Footer stays one line + mono build hash. |
+| Dark-only, forever animations, TODO leaks | **Reject** | Light + dark; ambient motion only in 2 places; publish validation blocks `{{TODO` and empty required fields. |
 
 ---
 
@@ -212,31 +275,55 @@ All color pairs below were measured with the WCAG 2.x relative luminance formula
 
 ### 3.1 Color (semantic, shadcn names)
 
-| Token | Light | Dark | Use | Contrast (measured) |
+v2 change: dark neutrals are **tinted toward jade** (hue ≈ 165°) instead of pure gray, which gives depth without adding colors. Light stays warm neutral. All dark pairs were re-measured.
+
+| Token | Light | Dark (v2) | Use | Contrast (measured, light / dark) |
 | --- | --- | --- | --- | --- |
-| `--background` / `--foreground` | `#FAFAF9` / `#18181B` | `#0B0C0E` / `#EDEDEF` | Page and body text | 16.96 / 16.74 ✅ |
-| `--card` / `--card-foreground` | `#FFFFFF` / `#18181B` | `#131417` / `#EDEDEF` | Cards, inputs, tables | ≥ 16 ✅ |
-| `--popover` / `--popover-foreground` | `#FFFFFF` / `#18181B` | `#1A1B1F` / `#EDEDEF` | Menus, dialogs, command palette | 14.72 dark ✅ |
-| `--muted` | `#F2F2EF` | `#1A1B1F` | Code bg, table hover, skeleton base | n/a |
-| `--muted-foreground` | `#52525B` | `#A1A1AA` | Secondary text | 7.40 on bg, 6.89 on muted / 7.64, 6.71 ✅ |
-| `--subtle-foreground` (ext) | `#6B6B74` | `#85858F` | Meta, placeholders, timestamps | 5.05 bg, 4.70 muted / 5.36 bg, 5.04 card, 4.71 muted ✅ |
-| `--primary` / `--primary-foreground` | `#0F766E` / `#FFFFFF` | `#2DD4BF` / `#042F2B` | Links, primary button, active nav | primary on bg 5.24 / 10.51; fg on primary 5.47 / 7.80 ✅ |
+| `--background` / `--foreground` | `#FAFAF9` / `#18181B` | `#0A0F0E` / `#E8EFED` | Page and body text | 16.96 / 16.55 ✅ |
+| `--card` / `--card-foreground` | `#FFFFFF` / `#18181B` | `#111817` / `#E8EFED` | Cards, inputs, tables | ≥ 16 / ≥ 15 ✅ |
+| `--popover` / `--popover-foreground` | `#FFFFFF` / `#18181B` | `#172120` / `#E8EFED` | Menus, dialogs, command palette | ≥ 16 / 14.12 ✅ |
+| `--band` (ext, v2) | `#F3F5F3` | `#0D1412` | Alternating full-width section bands | muted-fg on band 7.05 / 8.20, subtle 4.82, primary 5.00 ✅ |
+| `--muted` | `#F2F2EF` | `#172120` | Code bg, table hover, skeleton base, icon tiles | n/a |
+| `--muted-foreground` | `#52525B` | `#9DB0AB` | Secondary text | 7.40 bg, 6.89 muted / 8.49 bg, 7.91 card, 7.24 muted ✅ |
+| `--subtle-foreground` (ext) | `#6B6B74` | `#809590` | Meta, placeholders, timestamps | 5.05 bg, 4.70 muted / 6.09 bg, 5.67 card, 5.19 muted ✅ |
+| `--primary` / `--primary-foreground` | `#0F766E` / `#FFFFFF` | `#2DD4BF` / `#042F2B` | Links, primary button, accent phrase, stat numbers | primary on bg 5.24 / 10.37, on card 5.47 / 9.67; fg on primary 5.47 / 7.80 ✅ |
 | `--primary-hover` (ext) | `#115E59` | `#5EEAD4` | Hover/pressed | white on it 7.58 ✅ |
-| `--primary-subtle` / `--primary-subtle-foreground` (ext) | `#E3F2EF` / `#115E59` | `#0F2E2B` / `#5EEAD4` | Selected rows, active tag | 6.58 / 9.82 ✅ |
-| `--secondary` / `--secondary-foreground` | `#F2F2EF` / `#18181B` | `#1A1B1F` / `#EDEDEF` | Secondary button | 15.80 / 14.72 ✅ |
-| `--accent` / `--accent-foreground` | `#F2F2EF` / `#18181B` | `#1A1B1F` / `#EDEDEF` | shadcn's hover/highlight bg for menu items, ghost buttons (not the brand color) | same as secondary ✅ |
-| `--destructive` / `--destructive-foreground` | `#B42318` / `#FFFFFF` | `#F97066` / `#0B0C0E` | Errors, destructive actions | on bg 6.29 / 7.02; fg on it 6.57 / 7.02 ✅ |
-| `--success` (ext) | `#067647` on `--success-subtle #E6F1EC` | `#47CD89` on `#1A2F25` | Published, sent | 5.45 bg, 4.92 subtle / 9.66, 7.01 ✅ |
-| `--warning` (ext) | `#93370D` on `#F4EBE7` | `#FDB022` on `#3A2F18` | Warnings, missing translation | 7.20, 6.40 / 10.63, 7.13 ✅ |
-| `--info` (ext) | `#1D4ED8` on `#E8EDFB` | `#7AA2F7` on `#1B2540` | Info callouts | 6.42 bg, 5.72 subtle / 7.77 bg, 6.02 subtle ✅ |
+| `--primary-subtle` / `--primary-subtle-foreground` (ext) | `#E3F2EF` / `#115E59` | `#0F2E2B` / `#5EEAD4` | Selected rows, active tag, kicker pill | 6.58 / 9.82 ✅ |
+| `--secondary`, `--accent` (+ foregrounds) | `#F2F2EF` / `#18181B` | `#172120` / `#E8EFED` | Secondary button; shadcn hover bg (not the brand color) | 15.80 / 14.12 ✅ |
+| `--destructive` / `--destructive-foreground` | `#B42318` / `#FFFFFF` | `#F97066` / `#0A0F0E` | Errors, destructive actions | 6.29 / 6.93; fg on it 6.57 / 6.93 ✅ |
+| `--success` on `--success-subtle` (ext) | `#067647` on `#E6F1EC` | `#47CD89` on `#1A2F25` | Published, sent | 5.45 bg, 4.92 subtle / 9.53, 7.01 ✅ |
+| `--warning` on `--warning-subtle` (ext) | `#93370D` on `#F4EBE7` | `#FDB022` on `#3A2F18` | Warnings, missing translation | 7.20, 6.40 / 10.49, 7.13 ✅ |
+| `--info` on `--info-subtle` (ext) | `#1D4ED8` on `#E8EDFB` | `#7AA2F7` on `#1B2540` | Info callouts | 6.42, 5.72 / 7.67, 6.02 ✅ |
 | `--destructive-subtle` (ext) | `#F7E9E8` | `#3A1F1F` | Error panels | destructive on it 5.56 / 5.40 ✅ |
-| `--border` | `#E4E4E0` | `#26272C` | Dividers (decorative) | 1.22 / 1.31 (decorative only) |
-| `--input` | `#8A8A93` | `#6B6C75` | Input, checkbox, switch borders | 3.42 on card / 3.53 on card ✅ |
-| `--ring` | `#0F766E` | `#2DD4BF` | Focus ring, 2px + 2px offset | 5.24 / 10.51 ✅ |
-| `--chart-1…5` | `#0F766E`, `#1D4ED8`, `#93370D`, `#6B6B74`, `#067647` | `#2DD4BF`, `#7AA2F7`, `#FDB022`, `#85858F`, `#47CD89` | Charts, always with labels or patterns, never color alone | ≥ 3:1 vs bg ✅ |
-| `--sidebar` family | `--sidebar: #F4F4F2`, `--sidebar-accent: #EAEAE6`, `--sidebar-primary: #0F766E`, `--sidebar-border: #E4E4E0`, `--sidebar-ring: #0F766E` | `--sidebar: #0E0F12`, `--sidebar-accent: #1A1B1F`, `--sidebar-primary: #2DD4BF`, `--sidebar-border: #26272C` | shadcn `Sidebar` (admin) | sidebar text = foreground/muted-foreground ✅ |
+| `--border` | `#E4E4E0` | `#233230` | Dividers, card outlines (decorative) | decorative only |
+| `--border-strong` (ext, v2) | `#CFCFC9` | `#2F4542` | Card border on hover, band edges | decorative only (hover also lifts + shadows) |
+| `--input` | `#8A8A93` | `#62807A` | Input, checkbox, switch borders | 3.42 on card / 4.19 on card ✅ |
+| `--ring` | `#0F766E` | `#2DD4BF` | Focus ring, 2px + 2px offset | 5.24 / 10.37 ✅ |
+| `--chart-1…5` | `#0F766E`, `#1D4ED8`, `#93370D`, `#6B6B74`, `#067647` | `#2DD4BF`, `#7AA2F7`, `#FDB022`, `#809590`, `#47CD89` | Charts, always labelled | ≥ 3:1 vs bg ✅ |
+| `--sidebar` family | `--sidebar: #F4F4F2`, `--sidebar-accent: #EAEAE6`, `--sidebar-primary: #0F766E`, `--sidebar-border: #E4E4E0` | `--sidebar: #0C1211`, `--sidebar-accent: #172120`, `--sidebar-primary: #2DD4BF`, `--sidebar-border: #233230` | shadcn `Sidebar` (admin) | muted-fg on sidebar 7.02 / 8.32 ✅ |
 
 Theme switching: `next-themes` with `attribute="class"` (shadcn default, `.dark` on `<html>`), default `system`, `disableTransitionOnChange`. Theme choice is a UI preference, not content.
+
+### 3.1b Atmosphere and domain hues (v2)
+
+**Atmosphere tokens** (decorative; never carry text, never behind body copy):
+
+| Token | Light | Dark | Use |
+| --- | --- | --- | --- |
+| `--grid-line` | `rgb(15 118 110 / .06)` | `rgb(45 212 191 / .08)` | 44px grid on the home hero and CTA band, masked with `radial-gradient(80% 60% at 50% 0, #000 40%, transparent)` |
+| `--glow` | `rgb(15 118 110 / .10)` | `rgb(45 212 191 / .18)` | Orbs (blur 80px) and the radial glow behind the CTA |
+| `--glow-button` | `none` (uses `--shadow-1`) | `0 0 24px -6px rgb(45 212 191 / .55)` | Primary button in hero and CTA only |
+| `--card-glass` | `rgb(255 255 255 / .72)` | `rgb(17 24 23 / .72)` | Cards that sit on top of the grid (+ `backdrop-filter: blur(8px)`); solid `--card` fallback when `prefers-reduced-transparency: reduce` or no `backdrop-filter` support |
+
+**Domain hues** (for `Domain.hue`, used on domain cards, case-study pills and the card's top-edge accent). Pills always show an icon + text label; hue is never the only cue. Tint = hue at 10% over `#FFFFFF` (light) / 14% over `--card` (dark).
+
+| Hue key | Light text / tint | Dark text / tint | Contrast (text on tint, light / dark) | Suggested domain |
+| --- | --- | --- | --- | --- |
+| `jade` | `#0F766E` / `#E7F1F1` | `#2DD4BF` / `#15322F` | 4.76 / 7.38 ✅ | Developer experience & testing |
+| `amber` | `#8A4B08` / `#F3EDE6` | `#FBBF24` / `#322F19` | 5.85 / 8.08 ✅ | Fintech / Web3 (ReFi) |
+| `blue` | `#1D4ED8` / `#E8EDFB` | `#7AA2F7` / `#202B36` | 5.72 / 5.71 ✅ | Enterprise platforms |
+| `violet` | `#6D28D9` / `#F0EAFB` | `#C4B5FD` / `#2A2E37` | 6.04 / 7.37 ✅ | E-commerce tooling |
+| `rose` | `#B4235A` / `#F8E9EF` | `#FDA4C4` / `#322C2F` | 5.38 / 7.34 ✅ | Spare (e.g. "This portfolio") |
 
 ### 3.2 Typography (the core of the design)
 
@@ -252,16 +339,18 @@ Theme switching: `next-themes` with `attribute="class"` (shadcn default, `.dark`
 
 Loaded with `next/font/google`, `subsets: ['latin', 'latin-ext', 'vietnamese']`, `display: 'swap'`, `adjustFontFallback` on (metric-matched fallback, no layout shift). Exposed as `--font-heading`, `--font-sans`, `--font-mono`. Nothing else is loaded; total ≤ 5 font files.
 
-**Scale: 6 public sizes, 3 admin sizes.** Hierarchy uses size *and* weight *and* space; never introduce a 7th size, change weight or spacing instead.
+**Scale: 8 public sizes (each with one job), 3 admin sizes.** v2 adds `text-display` (home hero only) and `text-eyebrow` (mono labels only). Hierarchy uses size *and* weight *and* space; do not add more sizes, change weight or spacing instead.
 
 | Token | Size (mobile → desktop) | Line-height | Weight · family | Use |
 | --- | --- | --- | --- | --- |
-| `text-title` | 34px → 48px (`clamp(2.125rem, 1.6rem + 2.2vw, 3rem)`) | 1.2 (1.25 for vi) | 700 · heading | Page H1, home hero name |
+| `text-display` (v2) | 40px → 64px (`clamp(2.5rem, 1.5rem + 4vw, 4rem)`) | 1.1 en / 1.2 vi | 700 · heading, `-0.02em` | Home hero H1 only (with accent phrase) |
+| `text-title` | 34px → 48px (`clamp(2.125rem, 1.6rem + 2.2vw, 3rem)`) | 1.2 (1.25 for vi) | 700 · heading | Page H1, stat numbers, CTA band H2 |
 | `text-heading` | 26px → 30px | 1.3 | 600 · heading | H2 (sections, markdown `##`) |
-| `text-subheading` | 20px | 1.4 | 600 · heading | H3 (cards, markdown `###`) |
-| `text-prose` | 18px | 1.75 | 400 · sans | Long-form: case studies, notes, bio |
-| `text-body` | 16px | 1.6 | 400/500 · sans | UI and short copy on public pages |
-| `text-meta` | 14px | 1.5 | 500 · sans (mono for dates/versions) | Meta, captions, tags, footnotes |
+| `text-subheading` | 20px | 1.4 | 600 · heading | H3, card titles, markdown `###` |
+| `text-prose` | 18px | 1.75 | 400 · sans | Long-form: case studies, notes, bio, hero sub-line |
+| `text-body` | 16px | 1.6 | 400/500 · sans | UI and short copy, card descriptions |
+| `text-meta` | 14px | 1.5 | 500 · sans (mono for dates, versions, chips) | Meta, captions, tags, chips |
+| `text-eyebrow` (v2) | 12px | 1.4 | 500 · mono, uppercase, `0.08em` tracking, `--primary` or `--subtle-foreground` | Eyebrows ("CASE STUDY", "OUTCOME"), stat labels. Max 4 words; never sentences |
 | admin `text-ui-title` | 20px | 1.4 | 600 · sans | Admin page titles |
 | admin `text-ui` | 14px | 1.5 | 400/500 · sans | All admin UI, tables, inputs |
 | admin `text-ui-meta` | 12.5px | 1.4 | 500 · sans | Timestamps, counts, kbd |
@@ -300,8 +389,8 @@ Markdown `####` and deeper render as `text-prose` 600 (no new size). Posts and c
 | Elevation | Light | Dark | Use |
 | --- | --- | --- | --- |
 | `--shadow-0` | none | none | Flat (most surfaces; use borders) |
-| `--shadow-1` | `0 1px 2px rgb(16 24 40 / .06)` | `0 0 0 1px rgb(255 255 255 / .06)` | Cards on hover, sticky header |
-| `--shadow-2` | `0 4px 12px -2px rgb(16 24 40 / .10), 0 2px 4px -2px rgb(16 24 40 / .06)` | `0 0 0 1px rgb(255 255 255 / .08), 0 8px 24px rgb(0 0 0 / .5)` | Popovers, dropdowns, toasts |
+| `--shadow-1` | `0 1px 2px rgb(16 24 40 / .06)` | `0 0 0 1px rgb(255 255 255 / .06)` | Sticky header, resting cards on a band |
+| `--shadow-2` | `0 4px 12px -2px rgb(16 24 40 / .10), 0 2px 4px -2px rgb(16 24 40 / .06)` | `0 0 0 1px rgb(255 255 255 / .08), 0 8px 24px rgb(0 0 0 / .5)` | Popovers, dropdowns, toasts, card hover (v2) |
 | `--shadow-3` | `0 16px 40px -8px rgb(16 24 40 / .18)` | `0 0 0 1px rgb(255 255 255 / .10), 0 24px 48px rgb(0 0 0 / .6)` | Dialogs, command palette |
 
 Dark mode expresses elevation with a lighter surface plus a 1px inner hairline, not with shadow alone.
@@ -318,7 +407,27 @@ Dark mode expresses elevation with a lighter surface plus a 1px inner hairline, 
 | `--ease-in` | `cubic-bezier(0.7, 0, 0.84, 0)` | Leaving (use 0.75× duration) |
 | `--ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` | Moving/reordering |
 
-Rules: animate only `opacity` and `transform`; reveal distance ≤ 8px; no scroll-jacking, no parallax; View Transitions for route changes only between list ↔ case study (cover image morph). `@media (prefers-reduced-motion: reduce)`: all durations → `0.01ms` except opacity fades (kept at `--dur-fast`), no transforms, no auto-playing video, the timeline renders fully expanded.
+Rules (v2):
+
+- Animate only `opacity` and `transform` (plus `box-shadow`/`border-color` on hover). No scroll-jacking, no parallax tied to scroll position, no cursor-follow effects.
+- Every effect below is CSS-only except the reveal and count-up, which use one shared `IntersectionObserver` hook (`useInView`, `once: true`). No animation library.
+- Ambient animations run **only** on the home hero and the CTA band, pause when off-screen (`animation-play-state: paused` via the same observer) and when the tab is hidden.
+
+| Effect | Where | Spec | Reduced-motion fallback |
+| --- | --- | --- | --- |
+| Section reveal | Home and About sections, case-study key-facts, card grids | `opacity 0 → 1`, `translateY(12px) → 0`, `--dur-slow` (320ms) `--ease-out`, once, when 15% visible. Grids stagger 60ms per item, max 6 items (later items appear with the 6th) | Content visible immediately, no transform |
+| Card hover / focus-within | Project, domain, post cards | Border → `--border-strong`, `translateY(-2px)`, `--shadow-2`, title → `--primary`, `↗` arrow moves 2px up-right; `--dur-fast` | Color and border change only, no lift |
+| Button hover | Primary buttons | Background → `--primary-hover`; in dark hero/CTA also `--glow-button` intensifies | Same, no glow change |
+| Orbs | Hero (2), CTA (1) | 320–420px circles of `--glow`, `filter: blur(80px)`, float ±24px over 20s / 26s `ease-in-out infinite` | Static, same position |
+| Hero migration diagram | Home hero | Nodes fade in in order (60ms stagger), connector stroke draws once (`stroke-dashoffset`, 900ms), then node "pulse" opacity .6 ↔ 1 every 3s on the active (`v2`) node only | Fully drawn, no pulse |
+| Stat count-up | Stats band | Numbers count from 0 to value once, 700ms `--ease-out`, `tabular-nums` so width does not jump; real value is in the DOM from the start (`aria-label` = final value) | Final values shown |
+| Tech marquee | Below stats | Two identical tracks translate −50% over 40s linear infinite; pauses on hover and keyboard focus; visible pause/play button (`aria-pressed`); second track `aria-hidden` | Single static, wrapped list of chips |
+| Theme switch | Global | No transition (`disableTransitionOnChange`) | n/a |
+| Route transition | Projects list ↔ case study | View Transitions API: cover image morph, 320ms | Instant |
+
+- Never animate: body text, prose, code, table rows, admin UI (admin keeps only menu/dialog/toast transitions from shadcn).
+- `@media (prefers-reduced-motion: reduce)`: all of the above fall back as listed; durations → `0.01ms` except opacity fades at `--dur-fast`; the timeline renders fully expanded.
+- `@media (prefers-reduced-transparency: reduce)`: `--card-glass` → solid `--card`, orbs hidden.
 
 ### 3.5 Breakpoints and z-index
 
@@ -379,6 +488,16 @@ shadcn/ui (Tailwind v4, `new-york` style, `baseColor: neutral`, `cssVariables: t
   --info: #1D4ED8;    --info-subtle: #E8EDFB;
   --destructive-subtle: #F7E9E8;
 
+  /* v2: bands, atmosphere, domain hues */
+  --band: #F3F5F3; --border-strong: #CFCFC9;
+  --grid-line: rgb(15 118 110 / .06); --glow: rgb(15 118 110 / .10);
+  --glow-button: var(--shadow-1); --card-glass: rgb(255 255 255 / .72);
+  --hue-jade: #0F766E;   --hue-jade-subtle: #E7F1F1;
+  --hue-amber: #8A4B08;  --hue-amber-subtle: #F3EDE6;
+  --hue-blue: #1D4ED8;   --hue-blue-subtle: #E8EDFB;
+  --hue-violet: #6D28D9; --hue-violet-subtle: #F0EAFB;
+  --hue-rose: #B4235A;   --hue-rose-subtle: #F8E9EF;
+
   --shadow-1: 0 1px 2px rgb(16 24 40 / .06);
   --shadow-2: 0 4px 12px -2px rgb(16 24 40 / .10), 0 2px 4px -2px rgb(16 24 40 / .06);
   --shadow-3: 0 16px 40px -8px rgb(16 24 40 / .18);
@@ -395,28 +514,37 @@ shadcn/ui (Tailwind v4, `new-york` style, `baseColor: neutral`, `cssVariables: t
 }
 
 .dark {
-  --background: #0B0C0E;  --foreground: #EDEDEF;
-  --card: #131417;        --card-foreground: #EDEDEF;
-  --popover: #1A1B1F;     --popover-foreground: #EDEDEF;
+  --background: #0A0F0E;  --foreground: #E8EFED;
+  --card: #111817;        --card-foreground: #E8EFED;
+  --popover: #172120;     --popover-foreground: #E8EFED;
   --primary: #2DD4BF;     --primary-foreground: #042F2B;
-  --secondary: #1A1B1F;   --secondary-foreground: #EDEDEF;
-  --muted: #1A1B1F;       --muted-foreground: #A1A1AA;
-  --accent: #1A1B1F;      --accent-foreground: #EDEDEF;
-  --destructive: #F97066; --destructive-foreground: #0B0C0E;
-  --border: #26272C;      --input: #6B6C75;  --ring: #2DD4BF;
-  --chart-1: #2DD4BF; --chart-2: #7AA2F7; --chart-3: #FDB022; --chart-4: #85858F; --chart-5: #47CD89;
-  --sidebar: #0E0F12; --sidebar-foreground: #EDEDEF;
+  --secondary: #172120;   --secondary-foreground: #E8EFED;
+  --muted: #172120;       --muted-foreground: #9DB0AB;
+  --accent: #172120;      --accent-foreground: #E8EFED;
+  --destructive: #F97066; --destructive-foreground: #0A0F0E;
+  --border: #233230;      --input: #62807A;  --ring: #2DD4BF;
+  --chart-1: #2DD4BF; --chart-2: #7AA2F7; --chart-3: #FDB022; --chart-4: #809590; --chart-5: #47CD89;
+  --sidebar: #0C1211; --sidebar-foreground: #E8EFED;
   --sidebar-primary: #2DD4BF; --sidebar-primary-foreground: #042F2B;
-  --sidebar-accent: #1A1B1F; --sidebar-accent-foreground: #EDEDEF;
-  --sidebar-border: #26272C; --sidebar-ring: #2DD4BF;
+  --sidebar-accent: #172120; --sidebar-accent-foreground: #E8EFED;
+  --sidebar-border: #233230; --sidebar-ring: #2DD4BF;
 
-  --subtle-foreground: #85858F;
+  --subtle-foreground: #809590;
   --primary-hover: #5EEAD4;
   --primary-subtle: #0F2E2B; --primary-subtle-foreground: #5EEAD4;
   --success: #47CD89; --success-subtle: #1A2F25;
   --warning: #FDB022; --warning-subtle: #3A2F18;
   --info: #7AA2F7;    --info-subtle: #1B2540;
   --destructive-subtle: #3A1F1F;
+
+  --band: #0D1412; --border-strong: #2F4542;
+  --grid-line: rgb(45 212 191 / .08); --glow: rgb(45 212 191 / .18);
+  --glow-button: 0 0 24px -6px rgb(45 212 191 / .55); --card-glass: rgb(17 24 23 / .72);
+  --hue-jade: #2DD4BF;   --hue-jade-subtle: #15322F;
+  --hue-amber: #FBBF24;  --hue-amber-subtle: #322F19;
+  --hue-blue: #7AA2F7;   --hue-blue-subtle: #202B36;
+  --hue-violet: #C4B5FD; --hue-violet-subtle: #2A2E37;
+  --hue-rose: #FDA4C4;   --hue-rose-subtle: #322C2F;
 
   --shadow-1: 0 0 0 1px rgb(255 255 255 / .06);
   --shadow-2: 0 0 0 1px rgb(255 255 255 / .08), 0 8px 24px rgb(0 0 0 / .5);
@@ -426,12 +554,18 @@ shadcn/ui (Tailwind v4, `new-york` style, `baseColor: neutral`, `cssVariables: t
 @media (prefers-reduced-motion: reduce) {
   :root { --dur-instant: 0.01ms; --dur-base: 0.01ms; --dur-slow: 0.01ms; }
   *, *::before, *::after { scroll-behavior: auto !important; }
+  .marquee-track, .orb, .diagram-pulse { animation: none !important; }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root, .dark { --card-glass: var(--card); }
+  .orb { display: none; }
 }
 ```
 
 ### 3.7 Tailwind v4 mapping (same file, `@theme inline`)
 
-`@theme inline` turns every variable into utilities that follow the active theme: `bg-background`, `text-muted-foreground`, `text-subtle-foreground`, `bg-primary-subtle`, `border-input`, `ring-ring`, `rounded-lg`, `shadow-2`, `font-heading`, `text-prose`, `z-modal`, `duration-base`, `ease-out`.
+`@theme inline` turns every variable into utilities that follow the active theme: `bg-background`, `text-muted-foreground`, `text-subtle-foreground`, `bg-primary-subtle`, `border-input`, `ring-ring`, `rounded-lg`, `shadow-2`, `font-heading`, `text-prose`, `bg-band`, `border-border-strong`, `bg-hue-amber-subtle text-hue-amber`, `text-display`, `text-eyebrow`, `z-modal`, `duration-base`, `ease-out`.
 
 ```css
 @theme inline {
@@ -452,6 +586,13 @@ shadcn/ui (Tailwind v4, `new-york` style, `baseColor: neutral`, `cssVariables: t
   --color-warning: var(--warning);         --color-warning-subtle: var(--warning-subtle);
   --color-info: var(--info);               --color-info-subtle: var(--info-subtle);
   --color-border: var(--border);           --color-input: var(--input);   --color-ring: var(--ring);
+  --color-band: var(--band);               --color-border-strong: var(--border-strong);
+  --color-card-glass: var(--card-glass);
+  --color-hue-jade: var(--hue-jade);       --color-hue-jade-subtle: var(--hue-jade-subtle);
+  --color-hue-amber: var(--hue-amber);     --color-hue-amber-subtle: var(--hue-amber-subtle);
+  --color-hue-blue: var(--hue-blue);       --color-hue-blue-subtle: var(--hue-blue-subtle);
+  --color-hue-violet: var(--hue-violet);   --color-hue-violet-subtle: var(--hue-violet-subtle);
+  --color-hue-rose: var(--hue-rose);       --color-hue-rose-subtle: var(--hue-rose-subtle);
   --color-chart-1: var(--chart-1); --color-chart-2: var(--chart-2); --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4); --color-chart-5: var(--chart-5);
   --color-sidebar: var(--sidebar);                         --color-sidebar-foreground: var(--sidebar-foreground);
@@ -468,17 +609,20 @@ shadcn/ui (Tailwind v4, `new-york` style, `baseColor: neutral`, `cssVariables: t
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
 
+  --text-display: clamp(2.5rem, 1.5rem + 4vw, 4rem);     --text-display--line-height: 1.1;
   --text-title: clamp(2.125rem, 1.6rem + 2.2vw, 3rem);   --text-title--line-height: 1.2;
   --text-heading: clamp(1.625rem, 1.5rem + 0.5vw, 1.875rem); --text-heading--line-height: 1.3;
   --text-subheading: 1.25rem;  --text-subheading--line-height: 1.4;
   --text-prose: 1.125rem;      --text-prose--line-height: 1.75;
   --text-body: 1rem;           --text-body--line-height: 1.6;
   --text-meta: 0.875rem;       --text-meta--line-height: 1.5;
+  --text-eyebrow: 0.75rem;     --text-eyebrow--line-height: 1.4;  --text-eyebrow--letter-spacing: 0.08em;
   --text-ui-title: 1.25rem;    --text-ui-title--line-height: 1.4;
   --text-ui: 0.875rem;         --text-ui--line-height: 1.5;
   --text-ui-meta: 0.78125rem;  --text-ui-meta--line-height: 1.4;
 
   --shadow-1: var(--shadow-1); --shadow-2: var(--shadow-2); --shadow-3: var(--shadow-3);
+  --shadow-glow: var(--glow-button);
   --ease-out: var(--ease-out); --ease-in: var(--ease-in); --ease-in-out: var(--ease-in-out);
   --z-index-raised: var(--z-raised); --z-index-header: var(--z-header); --z-index-sidebar: var(--z-sidebar);
   --z-index-dropdown: var(--z-dropdown); --z-index-overlay: var(--z-overlay);
@@ -492,12 +636,13 @@ shadcn/ui (Tailwind v4, `new-york` style, `baseColor: neutral`, `cssVariables: t
   * { @apply border-border outline-ring/50; }
   body { @apply bg-background text-foreground font-sans text-body antialiased; font-feature-settings: "cv05", "cv08"; }
   h1, h2, h3 { @apply font-heading; letter-spacing: -0.015em; }
+  :lang(vi) .text-display { line-height: 1.2; }
   code, kbd, pre { font-variant-ligatures: none; }
   :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 }
 ```
 
-Tailwind's default sizes stay available because shadcn components use `text-sm` (14px, equal to `text-ui` / `text-meta`) and `text-xs` (12px, badges and kbd). App code and product components may only use the 9 named sizes; a lint rule flags `text-(xs|sm|base|lg|xl|[2-9]xl)` outside `components/ui/`, so a 7th public size cannot sneak in. Components never use raw palette classes (`teal-700`); `eslint-plugin-tailwindcss` with an allowlist enforces this.
+Tailwind's default sizes stay available because shadcn components use `text-sm` (14px, equal to `text-ui` / `text-meta`) and `text-xs` (12px, badges and kbd). App code and product components may only use the 11 named sizes (8 public + 3 admin); a lint rule flags `text-(xs|sm|base|lg|xl|[2-9]xl)` outside `components/ui/`, so a 9th public size cannot sneak in. Components never use raw palette classes (`teal-700`); `eslint-plugin-tailwindcss` with an allowlist enforces this.
 
 ---
 
@@ -607,7 +752,8 @@ Not from shadcn (custom, built on the above): `Prose`, `CodeBlock` (Shiki), `Mar
 ### 4.4 Layout and grid rules
 
 - **Public container:** `max-width: var(--container)` (1120px), page padding 20px → 32px (`md`) → 40px (`lg`). Prose max `var(--measure)` (66ch). Grid: 4 / 8 / 12 columns, gutters 16 / 24 / 32px.
-- **Vertical rhythm:** section gap 64px mobile, 96px desktop; within a section, heading → content 24px; card grid gap 24px.
+- **Bands (v2):** full-width `Band` sections (`--band` + `border-y`) alternate with the plain background so long pages have rhythm; content inside stays in the container. Never two bands in a row; never a band inside prose. Atmosphere (grid/orbs) only in the home hero and the CTA band.
+- **Vertical rhythm:** section gap 64px mobile, 96px desktop (inside a band: 64/80px padding); within a section, heading → content 24px; card grid gap 24px.
 - **Home and lists:** project grid 1 col (`base`), 2 cols (`md`), featured project spans full width on `lg` (cover left 7 cols, text right 5).
 - **Case study / post:** 12-col on `lg`: content cols 1–8, sticky TOC cols 10–12. Full-bleed media allowed to break out to the container width, never to the viewport.
 - **Admin:** fluid; sidebar 240 + content. Lists are full-width tables. Editor: `lg` = editor + properties pane (320px); `2xl` = editor + live preview + properties. Never horizontally scroll the page, only the table region (focusable, `aria-label`).
@@ -681,6 +827,33 @@ Patterns:
 
 TanStack Form usage: contact form, login, every admin editor (profile, settings, project, post, experience, skill), and inline-editable cells (nav label, sort). Field arrays for `ProjectMetric` rows and nav items. Validators are the zod schemas from `packages/contracts` (`validators: { onChange: schema, onSubmit: schema }`), the same ones the Nest `ZodValidationPipe` runs.
 
+### 4.7 Rich-layer components (v2)
+
+All are product components in `packages/ui`, fed by props (section 4.5), each with skeleton / empty / error handled by `SectionBoundary`.
+
+| Component | Data | Anatomy | States | A11y |
+| --- | --- | --- | --- | --- |
+| `Atmosphere` | `SiteSettings.ambientEffects` | Absolutely positioned layer: masked `--grid-line` grid + 1–2 orbs; `variant="hero" \| "cta"` | Off → renders nothing | `aria-hidden`, `pointer-events: none`; never inside `Prose` |
+| `Band` | none | Full-width section wrapper with `--band` background and `border-y` | n/a | Section landmark with `aria-labelledby` its H2 |
+| `SectionHeader` | `PageSection.title/intro`, `iconKey` | Icon tile (28px, `--muted` bg, `--primary` icon) + H2 (`text-heading`) + one-line intro (`text-body`, muted) + optional right link | No intro → title only | Icon `aria-hidden` |
+| `Eyebrow` | chrome or `PageSection` | Mono, `text-eyebrow`, uppercase, `--primary` | n/a | Plain text, not a heading |
+| `KickerPill` | `Profile.heroKicker` | Mono `>_` prompt glyph + text in a `--primary-subtle` pill, 28px tall | Missing → hidden | Prompt glyph `aria-hidden` |
+| `AccentHeadline` | `Profile.headline`, `headlineAccent` | H1 with the accent substring wrapped in `<span class="text-primary">` | Accent not found in headline → plain H1 (admin validates) | One H1 per page |
+| `MigrationDiagram` | featured `Project.versionFrom/To`, up to 6 `Skill` | SVG: left node `v1 · Vue 2`, right node `v2 · Nuxt 3`, 3–6 component nodes rewiring between them, labels in mono | Missing versions → shows the `ProcessStep` names as a vertical chain | `role="img"` + `aria-label` built from data ("Migration from Vue 2 to Nuxt 3: …"); text alternative under it in `sr-only` |
+| `StatBand` / `StatItem` | `ProfileStat[]` | 2×2 (mobile) / 4-col (desktop): icon tile, number (`text-title`, heading font, `--primary`, `tabular-nums`), mono uppercase label | < 2 visible stats → section hidden | Number + label in one element; count-up does not change `aria-label` |
+| `TechMarquee` | `Skill[]` where `showInMarquee` | Mono chips (`--card`, `--border`, 28px), 2 tracks; edge fade masks; pause button at the right end | < 6 skills → static row | Second track `aria-hidden`; pause button `aria-pressed`; static under reduced motion |
+| `DomainCard` | `Domain` + project count | Icon tile tinted with hue, title, one-line description, mono count ("2 projects") top-right, 2px top edge in the hue on hover | 0 projects → card hidden | Whole card links to `/projects?domain=slug` |
+| `PrincipleList` | `Principle[]` | 2-col list: mono `01 —` number + title (600) + body | Hidden if empty | `<ol>` |
+| `ProcessFlow` | `ProcessStep[]` | Vertical chain of step cards joined by `↓` connectors; active step (the middle one) uses `--primary-subtle` and a glowing icon | < 3 steps → hidden | `<ol>`, connectors `aria-hidden` |
+| `FeatureCard` (2×2) | `Principle` or `ProcessStep` | Icon tile + title + 2-line body on `--card-glass` | n/a | Not a link unless `href` |
+| `CaseCard` | `Project` + `Domain` + top metric | Domain pill (icon + name, hue tint), `↗` corner icon, title (`text-subheading`), 2–3 line tagline, `DiffStat` line (top metric), mono tech chips (max 4, "+2") | No metric → chips only; confidential → "NDA" pill | Card is one link (title link + stretched `::after`); `↗` `aria-hidden` |
+| `KeyFacts` | `Project.keyFacts` (2–4 lines) | 2×2 grid of small cards, each with a hue dot and one sentence | < 2 → hidden | `<ul>` |
+| `FactChips` | `Project.factChips` | Mono chips row (`text-meta`, `--muted` bg) | Empty → hidden | `<ul>` |
+| `RequirementColumns` | `Project.constraints` split by `### Functional` / `### Non-functional` in md | Two cards side by side, ▹ bullets in `--primary` | One heading → single card | Headings stay `h3` |
+| `PostCard` | `Post` | Card row: mono date · minutes, title (`text-subheading`) + `↗`, 2-line excerpt, `#tag` mono chips | n/a | Title is the link |
+| `CtaBand` | `PageSection(HOME, cta)` + `SocialLink.showInCta` | Centered: sparkle icon tile, H2, intro, primary button + up to 2 outline buttons; `Atmosphere variant="cta"` behind | No title → hidden | Email as "Copy email" button with toast; address only in `mailto:` |
+| `ContentProgress` | none | 2px `--primary` bar under the header on case study and post, width = scroll progress | Hidden under reduced motion | `aria-hidden` (TOC is the accessible navigation) |
+
 ---
 
 ## 5. Page-by-page UI spec
@@ -699,10 +872,16 @@ All text in the wireframes below is **seed data** from the CV or chrome strings;
 | Home · hero | `site.profile`, `site.settings.availability*` | RSC | Title + 2 lines + 2 buttons | n/a (seeded singleton) | `error.tsx` (critical) | `badge`, `button` |
 | Home · featured | `GET /public/projects?featured=1&limit=1` | RSC, tag `projects` | Cover + 3 lines + 2 stats | Hide | Inline `alert` + Retry | `card`, `badge` |
 | Home · selected work | `GET /public/projects?limit=3` | RSC | 3 card skeletons | Hide | Inline `alert` | `card`, `badge` |
-| Home · career log panel | `GET /public/experience` (company, role, years) | RSC, tag `experience` | 4 mono lines | Hide | Inline `alert` | none (custom) |
+| Home · hero diagram (v2, replaces the v1 career-log panel) | featured project `versionFrom/To` + up to 6 linked `Skill` | RSC | Diagram-shaped block | Hide the diagram, hero text spans full width | Hide | `card` |
 | Home · skills | `GET /public/skills` (grouped by depth) | RSC, tag `skills` | 3 rows of chips | Hide | Inline `alert` | `badge` |
 | Home · latest notes | `GET /public/posts?limit=3` | RSC, tag `posts` | 3 rows | Hide | Inline `alert` | `separator` |
 | Home · contact CTA | `PageSection(HOME, cta).title/ctaLabel` | RSC | n/a | Hide if no title | n/a | `button` |
+| Home · stats band (v2) | `GET /public/site` → `profileStats` (computed values resolved on the server) | RSC, tag `site` | 4 tiles (icon + number + label blocks) | Hide if < 2 visible | Inline `alert` | none (custom `StatBand`) |
+| Home · tech marquee (v2) | `GET /public/skills?marquee=1` | RSC, tag `skills` | 1 row of 8 chip blocks | Hide if 0; static row if < 6 | Hide (decorative duplicate of skills) | `badge`, `button` (pause) |
+| Home · domains (v2) | `GET /public/domains` (with published project counts) | RSC, tag `domains` | 4 cards | Hide; cards with 0 projects hidden | Inline `alert` | `card` |
+| Home · process (v2) | `GET /public/process-steps` | RSC, tag `site` | 2×2 cards + 5-step chain | Hide if < 3 steps | Inline `alert` | `card` |
+| Home · CTA band (v2) | `PageSection(HOME, cta)` + `socialLinks.filter(showInCta)` | RSC | n/a | Hide if no title | n/a | `button` |
+| Case study · key facts + chips (v2) | `project.keyFacts`, `project.factChips`, `project.domain` | RSC (same request) | 2×2 blocks | Hide each if empty | Part of page `error.tsx` | `badge`, `card` |
 | About · intro | `site.profile.bio`, `resumeEnId/ViId` | RSC | Avatar + 3 lines | n/a | `error.tsx` | `avatar`, `button` |
 | About · timeline | `GET /public/experience` | RSC | 3 items | Empty main list: `empty` | Inline `alert` | `accordion`, `badge` |
 | About · skills, education, principles | `GET /public/skills`, `/education`, `/principles` | RSC | Chips / 1 row / 3 cards | Hide | Inline `alert` | `badge`, `card` |
@@ -717,378 +896,352 @@ All text in the wireframes below is **seed data** from the CV or chrome strings;
 | Admin editors | `GET /admin/{entity}/:id` + Media, Tags, Skills | Prefetch + TanStack Form | Form skeleton | n/a (404 → "Not found" + back) | `alert` + Retry; save errors in `SaveStatus` | `tabs`, `field`, `input`, `textarea`, `select`, `switch`, `calendar`, `popover` + `command`, `resizable`, `sheet`/`drawer` (mobile properties), `progress` |
 | Admin site & sections | `GET /admin/site`, `/admin/nav`, `/admin/sections`, `/admin/social`, `/admin/contact-topics` | Prefetch + TanStack Form/Table | Form + rows | `empty` per list | `alert` + Retry | `tabs`, `table`, `switch`, `field`, `button` (move up/down) |
 
-### 5.1 Home `/[locale]`
+### 5.1 Home `/[locale]` (v2)
 
-Purpose: in 10 seconds, who he is, what he ships, and one way to act. Sections: Hero → Featured case study → Selected work (3) → "What I work with" (skill groups) → Latest notes (3) → Contact CTA (default order; actual order and visibility come from `PageSection`).
+Purpose: in 10 seconds, who he is, what he ships, proof in numbers, and one way to act. Default section order (from `PageSection`, admin can reorder/hide): **hero → stats → marquee → featured case study → domains → selected work → how I migrate (process) → skills by depth → latest notes → CTA band**. Bands (`--band`) alternate: stats+marquee, domains, process. Legend: `░` = masked grid, `◌` = orb/glow, `[ ]` = button, `‹›` = pill.
 
-Mobile (375):
+Desktop (1440, container 1120):
 ```
-┌───────────────────────────────┐
-│ ◆ parker      ⌘K  VI/EN  ☰    │
-├───────────────────────────────┤
-│ ● Open to senior roles        │
-│                               │
-│ Parker Vu                     │
-│ Senior Frontend Engineer.     │
-│ 5 years shipping data-dense   │
-│ product UIs in Vue, Nuxt, TS. │
-│ Fintech · Samsung SDS · e-com │
-│                               │
-│ [ View work ]  [ Contact ]    │
-├───────────────────────────────┤
-│ FEATURED          v1 → v2     │
-│ ┌───────────────────────────┐ │
-│ │       cover 16:10         │ │
-│ └───────────────────────────┘ │
-│ Particula: Vue 2 → Nuxt 3     │
-│ − 38% bundle   + 120 specs    │
-│ Read case study →             │
-├───────────────────────────────┤
-│ Selected work                 │
-│ [card] [card] [card] (stack)  │
-├───────────────────────────────┤
-│ What I work with              │
-│ Daily · Shipped · Growing     │
-├───────────────────────────────┤
-│ Latest notes  (3 rows)        │
-├───────────────────────────────┤
-│ Let's talk →  [ Contact ]     │
-│ footer                        │
-└───────────────────────────────┘
-```
-
-Desktop (1280):
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│ ◆ parker        Work  About  Notes  Contact      [⌘K Search] VI/EN ◐ │
-├──────────────────────────────────────────────────────────────────────┤
-│  ● Open to senior roles                                              │
-│  Parker Vu                                         ┌───────────────┐ │
-│  Senior Frontend Engineer. 5 years shipping        │ $ git log      │ │
-│  data-dense product UIs in Vue, Nuxt and           │ v4 portfolio   │ │
-│  TypeScript, now building with Next.js.            │ v3 particula   │ │
-│  Fintech · Samsung SDS · e-commerce tooling        │ v2 samsung sds │ │
-│  [ View work ]  [ Contact ]                        │ v1 litgroup    │ │
-│                                                    └───────────────┘ │
-├──────────────────────────────────────────────────────────────────────┤
-│ FEATURED CASE STUDY                                                  │
-│ ┌──────────────────────────────────┐  Particula v2       v1 → v2    │
-│ │                                  │  Led the Vue 2 → Nuxt 3 rewrite │
-│ │          cover 16:10             │  of an RWA ratings platform.    │
-│ │                                  │  ─ bundle     412kB → 255kB     │
-│ └──────────────────────────────────┘  + e2e specs     0 → 120        │
-│                                       Read case study →             │
-├──────────────────────────────────────────────────────────────────────┤
-│ Selected work                                         All projects → │
-│ [ card ]                [ card ]                [ card ]             │
-├──────────────────────────────────────────────────────────────────────┤
-│ What I work with   Daily: …      Shipped: …      Growing: …          │
-├──────────────────────────────────────────────────────────────────────┤
-│ Latest notes   date · title · tags · 5 min                (3 rows)   │
-├──────────────────────────────────────────────────────────────────────┤
-│ Have a product that needs to move forward without breaking? Contact →│
-└──────────────────────────────────────────────────────────────────────┘
-```
-Metric values in wireframes are placeholders until Parker supplies real ones (1.4 item 1). The "git log" panel is the career timeline in miniature; each line links to its case study.
-
-### 5.2 About + experience timeline `/[locale]/about`
-
-Sections: intro (photo, bio, location, languages: Vietnamese, English; works with Korean/US/UK teams) → Timeline → Skills by depth → Education → "How I work" (3 principles) → Download CV (PDF from `Profile.resumeMediaId`).
-
-Mobile:
-```
-┌───────────────────────────────┐
-│ header                        │
-├───────────────────────────────┤
-│ (avatar)  About               │
-│ bio paragraph…                │
-│ Hanoi · VI/EN · [Download CV] │
-├───────────────────────────────┤
-│ Experience                    │
-│ ●  Kobizo · Frontend Dev      │
-│ │  Feb 2024 — now · Hanoi     │
-│ │  Particula v2 lead …        │
-│ │  [Vue3][Nuxt3][TanStack]    │
-│ │  Case study →               │
-│ ●  CMC Global · Frontend Dev  │
-│ │  Jul 2022 — Jun 2024        │
-│ ●  LitGroup · Fullstack Dev   │
-│ │  ├ Frontend  Jan–Jun 2022   │
-│ │  └ Backend   Jan–Dec 2021   │
-├───────────────────────────────┤
-│ Skills: Daily/Shipped/Growing │
-│ Education · How I work        │
-└───────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────────────┐
+│ ◆ parker.dev      Work  About  Notes  Contact          [Search ⌘K] ‹EN|VI› ◐   │ sticky, blur
+├────────────────────────────────────────────────────────────────────────────────────┤
+│░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░◌◌◌░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│ Atmosphere hero
+│░  ‹>_ Senior Frontend · 5 yrs · Vue/Nuxt/TS›        ┌──────────────────────────┐ ░│
+│░                                                     │  ┌────┐        ┌────┐    │ ░│
+│░  I move products forward                            │  │ v1 │──┐ ┌──▶│ v2 │    │ ░│ MigrationDiagram
+│░  without breaking them.   ← accent in --primary     │  │Vue2│  ├─┤   │Nuxt│    │ ░│  (nodes pulse on v2)
+│░  (text-display 64px)                                │  └────┘  │ │   └────┘    │ ░│
+│░                                                     │  ○Pinia ○Query ○PrimeVue │ ░│
+│░  Parker Vu · Senior Frontend Engineer. 5 years      │  ○Tailwind ○Playwright   │ ░│
+│░  shipping data-dense product UIs… (text-prose)      └──────────────────────────┘ ░│
+│░  ● Open to senior roles · Hanoi, GMT+7                                            ░│
+│░  [ View case studies → ]glow   [ Download CV ]                                    ░│
+├════════════════════════════════════════════════════════════════════════════════════┤ band
+│   ┌──┐            ┌──┐              ┌──┐               ┌──┐                       │
+│   │▣ │ 5+         │▣ │ 4            │▣ │ 3             │▣ │ 20+                   │ StatBand
+│   └──┘ YEARS      └──┘ PRODUCTS     └──┘ CLIENT        └──┘ ASSET CLASSES         │  numbers --primary
+│        SHIPPING        SHIPPED           COUNTRIES          RATED (PARTICULA)     │  labels eyebrow
+│ ─────────────────────────────────────────────────────────────────────────────────  │
+│ ‹Vue 3›‹Nuxt 3›‹TypeScript›‹Pinia›‹TanStack Query›‹PrimeVue›‹Playwright›‹Vitest› ⏸ │ TechMarquee (fades)
+├════════════════════════════════════════════════════════════════════════════════════┤
+│ ▣ Featured case study                                               All work →    │ SectionHeader
+│ ┌───────────────────────────────────────────┐  ‹▣ Fintech / Web3›   v1 → v2     │
+│ │ cover 16:10 (project image or diagram)    │  Particula v2                     │
+│ │                                           │  Rewriting an RWA ratings app     │
+│ │                                           │  without stopping delivery.       │
+│ └───────────────────────────────────────────┘  − bundle     412kB → 255kB       │
+│                                                + e2e specs      0 → 120          │
+│                                                ‹Nuxt 3›‹TanStack›‹Playwright›    │
+│                                                Read case study ↗                 │
+├════════════════════════════════════════════════════════════════════════════════════┤ band
+│ ▣ Domains   Products I've shipped, grouped by the problem they solve               │
+│ ┌────────────────────────┐ ┌────────────────────────┐ ┌────────────────────────┐  │
+│ │ ▣amber      1 project  │ │ ▣blue      2 projects  │ │ ▣violet     1 project  │  │ DomainCard ×4
+│ │ Fintech / Web3 (ReFi)  │ │ Enterprise platforms   │ │ E-commerce tooling     │  │  (3+1 or 4-col)
+│ │ RWA ratings, carbon…   │ │ Samsung SDS ops tools… │ │ Cart migrations across │  │
+│ └────────────────────────┘ └────────────────────────┘ └────────────────────────┘  │
+├════════════════════════════════════════════════════════════════════════════════════┤
+│ ▣ Selected work                                                    All projects → │
+│ ┌──────────────────────────┐ ┌──────────────────────────┐ ┌──────────────────────┐│
+│ │‹▣ Fintech›            ↗  │ │‹▣ E-commerce›         ↗  │ │‹▣ Enterprise› ‹NDA› ↗││ CaseCard ×3
+│ │ Particula v2             │ │ Cart migration tool      │ │ MSP Advanced         ││  hover: lift, title
+│ │ Nuxt 3 rewrite of…       │ │ Flask APIs + Vue 2 UI…   │ │ Re-platformed MSP…   ││  → primary
+│ │ − bundle 412→255kB       │ │ + carts 4 platforms      │ │ + team 15 · KR       ││
+│ │ ‹Nuxt 3›‹TanStack›‹+2›   │ │ ‹Flask›‹Vue 2›‹Pinia›    │ │ ‹Vue 2›‹Vuex›        ││
+│ └──────────────────────────┘ └──────────────────────────┘ └──────────────────────┘│
+├════════════════════════════════════════════════════════════════════════════════════┤ band
+│ ‹EYEBROW: PROCESS›                                                                 │
+│ How I migrate a frontend                      ┌────────────────────────────┐      │
+│ Short intro (text-prose, muted, 2 lines)       │ 01 Audit  · tokens, states │      │ ProcessFlow
+│ ┌───────────────────┐ ┌───────────────────┐    └─────────────┬──────────────┘      │
+│ │▣ Migrate in slices│ │▣ Test the contract│    ┌─────────────▼──────────────┐      │
+│ │ 2-line body       │ │ 2-line body       │    │ 03 Strangler routes  ◉glow │      │  active step
+│ └───────────────────┘ └───────────────────┘    └─────────────┬──────────────┘      │
+│ ┌───────────────────┐ ┌───────────────────┐    ┌─────────────▼──────────────┐      │
+│ │▣ Server state ≠ UI│ │▣ Write it down    │    │ 05 Cut over · delete v1    │      │
+│ └───────────────────┘ └───────────────────┘    └────────────────────────────┘      │
+├════════════════════════════════════════════════════════════════════════════════════┤
+│ ▣ What I work with      Daily ‹…›   ·   Shipped before ‹…›   ·   Growing ‹…›      │ 3 columns
+├────────────────────────────────────────────────────────────────────────────────────┤
+│ ▣ Latest notes                                                       All notes →  │
+│ ┌────────────────────────────────────────────────────────────────────────────────┐ │
+│ │ OCT 12 · 6 MIN   Vue → React: what transfers, what doesn't  ↗   #react #vue    │ │ PostCard rows ×3
+│ └────────────────────────────────────────────────────────────────────────────────┘ │
+├────────────────────────────────────────────────────────────────────────────────────┤
+│░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░◌◌◌◌◌░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│ CtaBand (glow)
+│                                  ✦                                                 │
+│             Have a product that needs to move forward?                             │
+│             Senior frontend roles or a migration done right.                       │
+│             [ ✉ Copy email ]glow  [ in LinkedIn ]  [ ⌥ GitHub ]                    │
+├────────────────────────────────────────────────────────────────────────────────────┤
+│ © 2026 Parker Vu · Hung Vu Van — Senior Frontend      Work  Notes  CV  ⌥ in ✉ · a1b2c3 │ mono footer
+└────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-Desktop:
+Mobile (390):
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│ header                                                               │
-├──────────────────────────────────────────────────────────────────────┤
-│ ┌──────┐  About                                        [Download CV] │
-│ │avatar│  Bio (prose, 2–3 short paragraphs, 66ch)                    │
-│ └──────┘  Hanoi, Vietnam · Vietnamese, English · GitHub parker2808   │
-├──────────────────────────────────────────────────────────────────────┤
-│ 2024 ─ now │ ● Kobizo · Frontend Developer                           │
-│            │   Particula: main frontend, led v1 → v2 migration       │
-│            │   • highlight  • highlight  • highlight                 │
-│            │   [Vue 3] [Nuxt 3] [PrimeVue] [TanStack] [Playwright]   │
-│ 2022 ─ 24  │ ● CMC Global · Frontend Developer (Samsung SDS)         │
-│            │   MSP Advanced · MSP App Expansion                      │
-│ 2021 ─ 22  │ ● LitGroup · Fullstack Developer                        │
-│            │   ├ Frontend (2022) Vue 2, TS, Pinia                    │
-│            │   └ Backend  (2021) Flask, Laravel, store APIs          │
-├──────────────────────────────────────────────────────────────────────┤
-│ Skills    Daily | Shipped before | Growing      (3 columns of tags)  │
-│ Education HaUI · Computer Science · 2017–2021                        │
-│ How I work  1 Migrate in slices  2 Test the contract  3 Write it down│
-└──────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────┐
+│ ◆ parker.dev    ⌘K ◐  ☰      │
+├──────────────────────────────┤
+│░‹>_ Senior Frontend · 5 yrs›░│ atmosphere (1 orb)
+│░ I move products            ░│
+│░ forward without            ░│ text-display 40px
+│░ breaking them.             ░│ accent line in primary
+│░ Parker Vu · Senior FE…     ░│
+│░ [ View case studies → ]    ░│ full width
+│░ [ Download CV ]            ░│
+│░ ┌─────────────────────────┐░│ MigrationDiagram
+│░ │ v1 Vue2 ──▶ v2 Nuxt3    │░│ (compact, horizontal)
+│░ └─────────────────────────┘░│
+├══════════════════════════════┤ band
+│ 5+ YEARS    │ 4 PRODUCTS     │ StatBand 2×2
+│ 3 COUNTRIES │ 20+ CLASSES    │
+│ ‹Vue 3›‹Nuxt 3›‹TS›‹Pinia› ⏸ │ marquee
+├══════════════════════════════┤
+│ ▣ Featured case study        │
+│ [cover]                      │
+│ ‹Fintech› Particula v2 v1→v2 │
+│ − bundle 412kB → 255kB       │
+│ Read case study ↗            │
+├══════════════════════════════┤ band
+│ ▣ Domains                    │
+│ [DomainCard] (stacked ×4)    │
+├──────────────────────────────┤
+│ ▣ Selected work              │
+│ [CaseCard] (stacked ×3)      │
+├══════════════════════════════┤ band
+│ PROCESS · How I migrate      │
+│ 01 → 02 → 03◉ → 04 → 05      │ vertical flow
+│ [Feature] [Feature] (1 col)  │
+├──────────────────────────────┤
+│ Skills · Notes (cards)       │
+├──────────────────────────────┤
+│░  ✦ Have a product…?        ░│ CTA band
+│░  [ Copy email ] [in] [⌥]   ░│
+│ footer (2 lines, mono)       │
+└──────────────────────────────┘
 ```
-The year column is sticky per item on `lg`. Timeline items expand/collapse highlights (`<details>`), open by default when reduced motion is on.
+Metric values are placeholders until Parker supplies real ones (1.4 item 1). Stats with no real number stay hidden (`isVisible=false`), never invented.
 
-### 5.3 Projects list `/[locale]/projects`
+### 5.2 About + experience timeline `/[locale]/about` (v2)
 
-Filters: `All · Frontend · Fullstack · Enterprise` (derived from tags) and a tech filter combobox; URL-synced. Sort: featured order, then end date desc.
-
-Mobile:
-```
-┌───────────────────────────────┐
-│ header                        │
-├───────────────────────────────┤
-│ Work                          │
-│ 4 case studies, 2021 — now    │
-│ [All][Frontend][Fullstack] ▸  │
-│ [Tech ▾]                      │
-├───────────────────────────────┤
-│ ┌───────────────────────────┐ │
-│ │ cover                     │ │
-│ └───────────────────────────┘ │
-│ Particula v2        v1 → v2   │
-│ Kobizo · 2024 — now           │
-│ [Nuxt 3][TanStack][Playwright]│
-├───────────────────────────────┤
-│ (next card) …                 │
-└───────────────────────────────┘
-```
+Sections: intro split (avatar card + bio) → stats strip (reuses `StatBand`, compact) → **timeline** with year rail → principles (`01 —` list) → skills by depth → education → CV download card.
 
 Desktop:
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│ header                                                               │
-├──────────────────────────────────────────────────────────────────────┤
-│ Work                                                                 │
-│ Four products I moved forward, 2021 — now.                           │
-│ [All] [Frontend] [Fullstack] [Enterprise]          [Tech: any ▾]     │
-├──────────────────────────────────────────────────────────────────────┤
-│ ┌─────────────────────────────────────┐ ┌──────────────────────────┐ │
-│ │ cover                               │ │ cover                    │ │
-│ ├─────────────────────────────────────┤ ├──────────────────────────┤ │
-│ │ Particula v2               v1 → v2  │ │ Cart migration tool      │ │
-│ │ Led the Nuxt 3 rewrite…             │ │ Flask + Vue 2 + TS …     │ │
-│ │ Kobizo · 2024 — now · team 6        │ │ LitGroup · 2021 — 2022   │ │
-│ │ [Nuxt 3] [TanStack] [Playwright]    │ │ [Flask] [Vue 2] [Pinia]  │ │
-│ └─────────────────────────────────────┘ └──────────────────────────┘ │
-│ ┌─────────────────────────────────────┐ ┌──────────────────────────┐ │
-│ │ diagram cover        🔒 NDA         │ │ cover                    │ │
-│ │ Samsung SDS MSP Advanced            │ │ This portfolio           │ │
-│ └─────────────────────────────────────┘ └──────────────────────────┘ │
-│ Empty filter state: "No projects with Svelte. Clear filters"         │
-└──────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────────────┐
+│ header                                                                             │
+├────────────────────────────────────────────────────────────────────────────────────┤
+│ ‹EYEBROW: ABOUT›                                                                   │
+│ ┌─────────────────────┐  Hi, I'm Parker (Hung Vu Van).            (text-title H1)  │
+│ │   avatar 1:1        │  Bio, 2–3 paragraphs, text-prose, 66ch.                    │
+│ │   rounded-xl        │                                                            │
+│ │ Hanoi · GMT+7       │  ‹Vietnamese› ‹English› ‹Works with KR · US · UK teams›    │
+│ │ [Download CV ↓]     │                                                            │
+│ └─────────────────────┘                                                            │
+├════════════════════════════════════════════════════════════════════════════════════┤ band
+│ 5+ YEARS · 4 PRODUCTS · 3 COUNTRIES · 20+ ASSET CLASSES        (compact StatBand)  │
+├════════════════════════════════════════════════════════════════════════════════════┤
+│ ▣ Experience                                                                       │
+│  2024 ─ NOW  ●━━ Kobizo · Frontend Developer        ‹▣ Fintech›  Case study ↗      │
+│  (sticky)    ┃   Particula: main frontend, led v1 → v2.                            │
+│              ┃   ▹ highlight  ▹ highlight  ▹ highlight                             │
+│              ┃   ‹Vue 3›‹Nuxt 3›‹PrimeVue›‹TanStack›‹Playwright›                   │
+│  2022 ─ 2024 ●━━ CMC Global · Frontend Developer    ‹▣ Enterprise› ‹NDA›           │
+│              ┃   Samsung SDS: MSP Advanced, MSP App Expansion                      │
+│  2021 ─ 2022 ●━━ LitGroup · Fullstack Developer     ‹▣ E-commerce›                 │
+│              ┣ Frontend · 2022 · Vue 2, TS, Pinia                                  │
+│              ┗ Backend  · 2021 · Flask, Laravel, store APIs                        │
+├════════════════════════════════════════════════════════════════════════════════════┤ band
+│ ‹EYEBROW: PRINCIPLES›  How I work                                                  │
+│ 01 — Migrate in slices        02 — Test the contract, not the pixels               │
+│ 03 — Server state is not UI state   04 — Write the decision down                   │
+├────────────────────────────────────────────────────────────────────────────────────┤
+│ ▣ Skills   DAILY ‹…›   SHIPPED BEFORE ‹…›   GROWING ‹…›                            │
+│ ▣ Education  Hanoi University of Industry · Computer Science · 2017–2021           │
+└────────────────────────────────────────────────────────────────────────────────────┘
 ```
-
-### 5.4 Project case study `/[locale]/projects/[slug]`
-
-Fixed section order (CMS fields): Overview (meta grid) → Problem → Constraints → Approach (with diagrams) → Key decisions (each: options, choice, why) → Outcome (DiffStats) → What I'd do differently → Next/previous case study. Rendered statically (`generateStaticParams`), revalidated by tag on publish.
 
 Mobile:
 ```
-┌───────────────────────────────┐
-│ header                        │
-├───────────────────────────────┤
-│ Work / Particula v2           │
-│ Particula v2        v1 → v2   │
-│ Rewriting an RWA ratings app  │
-│ without stopping delivery.    │
-│ ┌───────────────────────────┐ │
-│ │ cover                     │ │
-│ └───────────────────────────┘ │
-│ Client  Particula             │
-│ Role    Main frontend         │
-│ Team    6 · 2024 — now        │
-│ Stack   Nuxt 3, TanStack, …   │
-├───────────────────────────────┤
-│ ▸ On this page  (details)     │
-├───────────────────────────────┤
-│ Outcome                       │
-│ ─ bundle     412kB → 255kB    │
-│ + e2e specs      0 → 120      │
-├───────────────────────────────┤
-│ ## Problem  (prose)           │
-│ ## Approach (prose + diagram) │
-│ ## Key decisions              │
-│ ## What I'd do differently    │
-├───────────────────────────────┤
-│ ← Prev      Next case study → │
-└───────────────────────────────┘
+┌──────────────────────────────┐
+│ ABOUT                        │
+│ [avatar 96]  Hi, I'm Parker  │
+│ Bio (prose)                  │
+│ ‹VI›‹EN›‹KR·US·UK teams›     │
+│ [ Download CV ↓ ]            │
+├══════════════════════════════┤
+│ StatBand 2×2                 │
+├══════════════════════════════┤
+│ ● 2024 — now                 │ year on top of each item
+│ ┃ Kobizo · Frontend Dev      │
+│ ┃ ▹ … ▹ … ‹chips›            │ highlights in accordion
+│ ● 2022 — 2024 CMC Global     │
+│ ● 2021 — 2022 LitGroup       │
+├══════════════════════════════┤
+│ 01 — … 02 — … (1 col)        │
+│ Skills · Education           │
+└──────────────────────────────┘
 ```
+
+### 5.3 Projects list `/[locale]/projects` (v2)
+
+Header with eyebrow + H1 + intro, a **domain filter row** (domain pills with counts, URL `?domain=`) and a tech combobox; then a featured wide `CaseCard`, then a 2-col (desktop) grid. Each card shows a domain pill, `↗`, top `DiffStat`, chips.
 
 Desktop:
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│ header                                                               │
-├──────────────────────────────────────────────────────────────────────┤
-│ Work / Particula v2                                                  │
-│ Particula v2                                              v1 → v2    │
-│ Rewriting an RWA ratings app without stopping delivery.              │
-│ ┌──────────────────────────────────────────────────────────────────┐ │
-│ │                        cover (container width)                   │ │
-│ └──────────────────────────────────────────────────────────────────┘ │
-│ Client Particula │ Role Main frontend │ Team 6 │ 2024 — now │ Stack… │
-├───────────────────────────────────────────────────┬──────────────────┤
-│ Outcome                                           │ On this page     │
-│ ┌─────────────────────┐ ┌─────────────────────┐   │ ▌Outcome         │
-│ │ − bundle            │ │ + e2e specs         │   │  Problem         │
-│ │ 412kB → 255kB       │ │ 0 → 120             │   │  Approach        │
-│ └─────────────────────┘ └─────────────────────┘   │  Key decisions   │
-│ ## Problem          (prose, 66ch)                 │  Differently     │
-│ ## Approach         diagram + caption             │                  │
-│ ## Key decisions                                  │ Stack            │
-│ ┌ Decision: Axios → TanStack Query ─────────────┐ │ [Nuxt 3] …       │
-│ │ Options · Choice · Why · Cost                 │ │                  │
-│ └───────────────────────────────────────────────┘ │ Live site ↗      │
-│ ## What I'd do differently                        │                  │
-├───────────────────────────────────────────────────┴──────────────────┤
-│ ← MSP Advanced                                Cart migration tool →  │
-└──────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────────────┐
+│ header                                                                             │
+├────────────────────────────────────────────────────────────────────────────────────┤
+│ ‹EYEBROW: WORK›                                                                    │
+│ Case studies                                                       (text-title)    │
+│ Four products I moved forward, 2021 — now.                         (text-prose)    │
+│ ‹All 4› ‹▣ Fintech 1› ‹▣ Enterprise 2› ‹▣ E-commerce 1›          [Tech: any ▾]    │
+├────────────────────────────────────────────────────────────────────────────────────┤
+│ ┌────────────────────────────────────────────────────────────────────────────────┐ │
+│ │ ┌───────────────────────────────┐  ‹▣ Fintech / Web3›  v1 → v2            ↗   │ │ featured, wide
+│ │ │ cover 16:10                   │  Particula v2                              │ │
+│ │ └───────────────────────────────┘  Tagline (2 lines) · Kobizo · 2024 — now   │ │
+│ │                                    − bundle 412→255kB   + specs 0→120         │ │
+│ └────────────────────────────────────────────────────────────────────────────────┘ │
+│ ┌───────────────────────────────────────┐ ┌───────────────────────────────────────┐ │
+│ │‹▣ E-commerce›                      ↗  │ │‹▣ Enterprise› ‹NDA›                ↗  │ │
+│ │ Cart migration tool                   │ │ MSP Advanced (Samsung SDS)            │ │
+│ │ Flask APIs + Vue 2 UI for…            │ │ Re-platformed MSP App logic…          │ │
+│ │ + platforms 4 · LitGroup · 2021–22    │ │ team 15 · CMC Global · 2022–24        │ │
+│ │ ‹Flask›‹Laravel›‹Vue 2›‹Pinia›        │ │ ‹Vue 2›‹Vuex›                         │ │
+│ └───────────────────────────────────────┘ └───────────────────────────────────────┘ │
+│ Empty filter: empty state "No case studies for Svelte" + [Clear filters]          │
+└────────────────────────────────────────────────────────────────────────────────────┘
 ```
-`confidential` projects: no screenshots, diagrams only, and a callout "Details generalised under NDA".
 
-### 5.5 Blog list `/[locale]/notes` and post `/[locale]/notes/[slug]`
+Mobile: filter pills scroll horizontally (with edge fade), tech combobox below, cards stacked, featured card = normal card with the cover on top.
 
-List: search (title + excerpt + tags, server-side `MATCH … AGAINST` or a prebuilt index), tag chips, year-grouped list. Post: title, meta, TOC, prose, code blocks, tags, "Edit history" (published/updated dates), prev/next, related by tag.
+### 5.4 Project case study `/[locale]/projects/[slug]` (v2)
 
-List mobile:
+Order: back link → pills (domain, NDA) → H1 + tagline → meta grid (mono eyebrow labels) → cover → **key facts 2×2** → Outcome stats → sections each with an eyebrow (`SUMMARY` Problem, `LIMITS` Constraints, `SCOPE` Requirements as two cards, `HOW` Approach + diagram, `TRADE-OFFS` Key decisions as cards, `RESULT` Outcome, `RETRO` What I'd do differently) → fact chips → "More in <domain>" cards → prev/next. Sticky TOC + reading progress bar. The hero area may use a faint grid (no orbs); the prose area is plain `--background`.
+
+Desktop:
 ```
-┌───────────────────────────────┐
-│ header                        │
-├───────────────────────────────┤
-│ Notes                         │
-│ [🔍 Search notes…          ]  │
-│ [all][vue][react][nuxt] ▸     │
-│ 12 notes                      │
-├───────────────────────────────┤
-│ 2026                          │
-│ Vue → React: what transfers   │
-│ Oct 12 · 6 min · [react]      │
-│ ───────────────────────────── │
-│ TanStack Query in Nuxt 3      │
-│ Sep 30 · 8 min · [nuxt]       │
-└───────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────────────┐
+│ header ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ (2px reading progress)                     │
+├────────────────────────────────────────────────────────────────────────────────────┤
+│░ ← All case studies                                                               ░│ faint grid
+│░ ‹▣ Fintech / Web3›  ‹v1 → v2›                                                    ░│
+│░ Particula v2: Vue 2 → Nuxt 3                                     (text-title)    ░│
+│░ Rewriting an RWA ratings app without stopping delivery.          (text-prose)    ░│
+│░ CLIENT        ROLE              TEAM     PERIOD          STACK                   ░│ eyebrow labels
+│░ Particula     Main frontend     6        Feb 2024 — now  Nuxt 3 · TanStack · …   ░│
+├────────────────────────────────────────────────────────────────────────────────────┤
+│ ┌────────────────────────────── cover 21:9 (rounded-xl) ─────────────────────────┐ │
+│ └────────────────────────────────────────────────────────────────────────────────┘ │
+├───────────────────────────────────────────────────────────┬────────────────────────┤
+│ ┌─────────────────────────┐ ┌─────────────────────────┐   │ ON THIS PAGE           │
+│ │● Strangler migration:   │ │● TanStack Query replaced│   │ ▌Key facts             │ KeyFacts 2×2
+│ │  Nuxt 3 beside Vue 2    │ │  Axios as server state  │   │  Outcome               │
+│ └─────────────────────────┘ └─────────────────────────┘   │  Problem               │
+│ ┌─────────────────────────┐ ┌─────────────────────────┐   │  Requirements          │
+│ │● Core component library │ │● 120 Playwright specs   │   │  Approach              │
+│ └─────────────────────────┘ └─────────────────────────┘   │  Decisions             │
+│ RESULT                                                    │  Retro                 │
+│ ## Outcome   ┌ − bundle 412→255kB ┐ ┌ + specs 0→120 ┐     │                        │
+│ SUMMARY                                                   │ STACK                  │
+│ ## Problem   prose 18px/1.75, 66ch, ▹ bullets             │ ‹Nuxt 3›‹Vue 3›…       │
+│ SCOPE                                                     │                        │
+│ ## Requirements                                           │ Live site ↗            │
+│ ┌ Functional ─────────────┐ ┌ Non-functional ─────────┐   │                        │
+│ │ ▹ ratings dashboards    │ │ ▹ no stale ratings      │   │                        │
+│ └─────────────────────────┘ └─────────────────────────┘   │                        │
+│ HOW · ## Approach   prose + diagram (figure + caption)    │                        │
+│ TRADE-OFFS · ## Key decisions                             │                        │
+│ ┌ Axios → TanStack Query ─────────────────────────────┐   │                        │
+│ │ OPTIONS · CHOICE · WHY · COST  (eyebrow labels)     │   │                        │
+│ └─────────────────────────────────────────────────────┘   │                        │
+│ RETRO · ## What I'd do differently                        │                        │
+│ ‹fact chip›‹fact chip›‹fact chip›                         │                        │
+├───────────────────────────────────────────────────────────┴────────────────────────┤
+│ More in Fintech / Web3   [CaseCard] [CaseCard]                                     │
+│ ← MSP Advanced                                          Cart migration tool →      │
+└────────────────────────────────────────────────────────────────────────────────────┘
 ```
+
+Mobile: meta grid becomes 2 columns; key facts 1 column; TOC becomes a sticky "On this page ▾" `collapsible` under the header; requirement cards stack.
+
+### 5.5 Blog list `/[locale]/notes` and post `/[locale]/notes/[slug]` (v2)
+
+List: eyebrow `WRITING` + H1 + intro → search + tag chips → year groups of `PostCard` rows (card with mono `OCT 12, 2026 · 6 MIN`, title + `↗`, excerpt, `#tag` chips). Featured post (`isFeatured`) gets a wider card with cover on top of the list.
 
 List desktop:
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│ header                                                               │
-├──────────────────────────────────────────────────────────────────────┤
-│ Notes                              [🔍 Search notes…        ⌘K]      │
-│ Things I learned shipping frontends.                                 │
-│ [all] [vue] [react] [nuxt] [testing] [architecture]   12 results     │
-├──────────────────────────────────────────────────────────────────────┤
-│ 2026  │ Oct 12  Vue → React: what transfers, what doesn't   6 min    │
-│       │         excerpt one line…                  [react] [vue]     │
-│       │ Sep 30  TanStack Query in Nuxt 3                    8 min    │
-│ 2025  │ …                                                            │
-│ No results: "Nothing for 'svelte'. Try another tag or clear search." │
-└──────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────────────┐
+│ WRITING                                                                            │
+│ Notes                                     [⌕ Search notes…                 ⌘K ]   │
+│ Things I learned shipping frontends.                                               │
+│ ‹all 12› ‹#vue› ‹#react› ‹#nuxt› ‹#testing› ‹#architecture›                         │
+├────────────────────────────────────────────────────────────────────────────────────┤
+│ 2026 ──────────────────────────────────────────────────────────────────────────── │
+│ ┌────────────────────────────────────────────────────────────────────────────────┐ │
+│ │ OCT 12, 2026 · 6 MIN                                                           │ │
+│ │ Vue → React: what transfers, what doesn't ↗                    (subheading)    │ │
+│ │ Excerpt, 2 lines, text-body muted…                                             │ │
+│ │ #react #vue                                                                    │ │
+│ └────────────────────────────────────────────────────────────────────────────────┘ │
+│ ┌ SEP 30, 2026 · 8 MIN · TanStack Query in Nuxt 3 ↗ … ───────────────────────────┐ │
+└────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-Post mobile:
-```
-┌───────────────────────────────┐
-│ header                        │
-├───────────────────────────────┤
-│ Notes / Vue → React           │
-│ Vue → React: what transfers   │
-│ Oct 12, 2026 · 6 min          │
-│ [react] [vue]  · Tiếng Việt ↗ │
-│ ▸ On this page                │
-├───────────────────────────────┤
-│ prose…                        │
-│ ┌ app/page.tsx ──── [copy] ┐  │
-│ │ code                     │  │
-│ └──────────────────────────┘  │
-├───────────────────────────────┤
-│ Related · ← Prev  Next →      │
-└───────────────────────────────┘
-```
+Post: unchanged reading column (66ch, plain background) — v2 adds the eyebrow `NOTE · #react`, reading progress bar, `▹` bullets, callouts with an icon tile, code block header with language badge + copy, a "Key takeaways" card at the end (from `Post.takeaways`, optional), and related `PostCard`s.
 
 Post desktop:
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│ header                                                               │
-├───────────────────────────────────────────────────┬──────────────────┤
-│ Notes / Vue → React                               │                  │
-│ Vue → React: what transfers                       │ On this page     │
-│ Oct 12, 2026 · Updated Oct 14 · 6 min             │ ▌Reactivity      │
-│ [react] [vue]                  Read in Tiếng Việt │  Effects         │
-│ ───────────────────────────────────────────────── │  Data fetching   │
-│ prose (text-prose, 66ch)                          │                  │
-│ > callout                                         │ Share · Copy link│
-│ ┌ components/Counter.tsx ─────────── [copy] ┐     │                  │
-│ │ diff-highlighted code                     │     │                  │
-│ └───────────────────────────────────────────┘     │                  │
-├───────────────────────────────────────────────────┴──────────────────┤
-│ Related notes (3)                   ← Prev          Next →           │
-└──────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────────────┐
+│ header ━━━━━━━━━━━━━━ (progress)                                                   │
+├────────────────────────────────────────────────────────────┬───────────────────────┤
+│ ← Notes                                                    │                       │
+│ NOTE · #REACT #VUE                                         │ ON THIS PAGE          │
+│ Vue → React: what transfers, what doesn't   (text-title)   │ ▌Reactivity           │
+│ Oct 12, 2026 · Updated Oct 14 · 6 min · Đọc bằng tiếng Việt│  Effects              │
+│ ─────────────────────────────────────────────────────────  │  Data fetching        │
+│ prose 18/1.75, 66ch                                        │                       │
+│ ┌ ▣ Callout ────────────────────────────────────────────┐  │ Copy link             │
+│ │ Treat React state as a value you replace…             │  │                       │
+│ └───────────────────────────────────────────────────────┘  │                       │
+│ ┌ components/Counter.tsx ─────────── ‹tsx› [copy] ┐        │                       │
+│ │ code 15px JetBrains Mono, diff lines tinted     │        │                       │
+│ └─────────────────────────────────────────────────┘        │                       │
+│ ┌ KEY TAKEAWAYS ────────────────────────────────────────┐  │                       │
+│ │ ▹ … ▹ … ▹ …                                           │  │                       │
+│ └───────────────────────────────────────────────────────┘  │                       │
+├────────────────────────────────────────────────────────────┴───────────────────────┤
+│ Related notes  [PostCard] [PostCard] [PostCard]          ← Prev        Next →      │
+└────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 5.6 Contact `/[locale]/contact`
+Mobile (list and post): cards full width; search above tags; tags scroll horizontally; TOC collapsible; code blocks scroll horizontally inside a focusable region.
 
-TanStack Form + `useMutation` whose `mutationFn` is a Server Action (works without JS too), zod schema shared from `packages/contracts`, topics from `ContactTopic`; honeypot + per-IP rate limit (5/hour); success panel; error keeps input. Email shown as `<email>` with a copy button; phone never shown.
+### 5.6 Contact `/[locale]/contact` (v2)
 
-Mobile:
-```
-┌───────────────────────────────┐
-│ header                        │
-├───────────────────────────────┤
-│ Contact                       │
-│ Usually replies within 2 days │
-│ <email>  [copy]               │
-│ GitHub · LinkedIn             │
-├───────────────────────────────┤
-│ Name *                        │
-│ [                          ]  │
-│ Email *                       │
-│ [                          ]  │
-│ ⚠ Enter a valid email         │
-│ Topic   [ Job opportunity ▾ ] │
-│ Message *                     │
-│ [                          ]  │
-│ [                          ]  │
-│ 0 / 2000                      │
-│ [        Send message      ]  │
-└───────────────────────────────┘
-```
+Split layout on a faint grid: left = eyebrow, H1, intro (`SiteSettings.contactIntro`), reply-time note, channel cards (Copy email, LinkedIn, GitHub, each with icon tile), availability badge; right = form card on `--card-glass`. Success replaces the form with a status card (check icon tile, message, "Back to case studies").
 
 Desktop:
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│ header                                                               │
-├──────────────────────────────┬───────────────────────────────────────┤
-│ Contact                      │ Name *            Email *             │
-│ Hiring for a senior frontend │ [              ]  [                 ] │
-│ role, or need a migration    │ Topic                                 │
-│ done right? Write to me.     │ [ Job opportunity ▾ ]                 │
-│                              │ Message *                             │
-│ <email>  [copy]              │ [                                   ] │
-│ GitHub parker2808            │ [                                   ] │
-│ LinkedIn                     │ 0 / 2000                              │
-│ Hanoi, GMT+7                 │ [ Send message ]  Sending… / ✓ Sent   │
-└──────────────────────────────┴───────────────────────────────────────┘
-Success: form replaced by "✓ Message sent. I'll reply to <their email>." (focus moves to it)
+┌────────────────────────────────────────────────────────────────────────────────────┐
+│░ CONTACT                                    ┌────────────────────────────────────┐░│
+│░ Let's talk about your product.             │ Name *            Email *          │░│
+│░ Senior frontend roles or a migration       │ [              ]  [              ] │░│
+│░ done right. (text-prose)                   │ Topic                              │░│
+│░ ● Open to senior roles · replies in 2 days │ [ Job opportunity          ▾ ]     │░│
+│░ ┌───────────────────────────────────────┐  │ Message *                          │░│
+│░ │ ▣ Email        [ Copy email ]         │  │ [                                ] │░│
+│░ ├───────────────────────────────────────┤  │ [                                ] │░│
+│░ │ ▣ LinkedIn     linkedin.com/in/…  ↗   │  │ 0 / 2000                           │░│
+│░ ├───────────────────────────────────────┤  │ [ Send message → ]glow             │░│
+│░ │ ▣ GitHub       github.com/parker2808 ↗│  └────────────────────────────────────┘░│
+│░ └───────────────────────────────────────┘                                        ░│
+└────────────────────────────────────────────────────────────────────────────────────┘
 ```
+
+Mobile: channel cards first (stacked), form below, full-width submit. Validation: inline errors under fields + summary `alert` on submit; inputs keep their values on error.
 
 ### 5.7 Admin dashboard `/admin`
 
@@ -1265,6 +1418,27 @@ Desktop:
 Sidebar gains a **Site** group: Site settings, Profile, Media. The admin UI itself is English-only chrome; every content field shows EN and VI side by side via locale tabs.
 
 
+### 5.11 Admin changes for v2 (small; the admin layout stays as is)
+
+The admin keeps its Linear-style calm: **no atmosphere, bands, orbs, reveals or marquee in `/admin`**. It only gains the editors and checks the richer public site needs.
+
+| Where | Change | Components |
+| --- | --- | --- |
+| Sidebar → Content | New lists: **Stats**, **Domains**, **Process steps**. Same `DataTable` + sheet editor pattern as Skills (drag + Move up/down, `isVisible` switch, optimistic reorder) | `table`, `sheet`, `switch` |
+| Stats editor | Label EN/VI, `source` select; `value` + `suffix` shown only for `MANUAL`; read-only preview of the computed value for the others | `select`, `field`, `input` |
+| Domains editor | Name/description EN/VI, **hue picker** (5 swatches with names, `radio-group`, shows the light and dark pill preview), **icon picker**, read-only project count | `radio-group`, `popover` + `command` |
+| Icon picker (shared) | Searchable grid of the allowlisted lucide icons; stores `iconKey`; keyboard-navigable (arrow keys in the grid, Enter selects) | `popover`, `command`, `toggle-group` |
+| Profile editor | New fields: hero kicker, headline accent (inline error if it is not a substring of the headline, per locale) | `field`, `input` |
+| Project editor | New "Card & facts" tab: domain select, key facts (2–4 lines, counter), fact chips (tag input, ≤ 6) | `select`, `textarea`, `badge` |
+| Post editor | "Key takeaways" field (≤ 5 lines) under the body | `textarea` |
+| Skills table | New "Marquee" switch column; header shows "n of 6+ needed" | `switch` |
+| Social links | New "Show in CTA" switch (max 2, others disabled when 2 are on) | `switch`, `tooltip` |
+| Site → General | New switches: "Ambient effects (grid, glow)" and "Animate tech marquee" | `switch` |
+| Site → Sections | New keys `stats`, `marquee`, `domains`, `process`, `principles` appear as rows with the existing reorder/hide controls | existing |
+| Publish validation | Blocks publish when any EN field contains `{{`, `TODO`, `TBD` or `lorem` (the reference site shows a raw `{{TODO}}` in production; ours must not), and when a project has no domain | `alert` list in the editor |
+| Dashboard → Content health | Adds lines: "Projects without a domain", "Case studies with < 2 key facts", "Stats hidden (fewer than 2 visible)", "Marquee needs 6+ skills" | existing card |
+| Live preview (`2xl`) | Renders the real public components (`CaseCard`, `KeyFacts`, `StatBand`) with the draft props, in light and dark (toggle in the preview header) | `toggle-group` |
+
 ---
 
 ## 6. Lab-day mapping (high level)
@@ -1315,3 +1489,62 @@ Notes for the executing agent:
 - The Lab tab budget (210 words) means each Drill names the slice and its done-check only. Specs live here; link sections, e.g. "Spec: portfolio-design-system §5.4".
 - Backend steps should link the glossary (1.6) the first time a term appears.
 - Days 25–27 reuse the behavioral content: the stories Parker rehearses are the case studies he publishes.
+
+**v2 rich-layer work, folded into the existing days** (no new days; each item is one extra step in that day's Drill):
+
+| Day | Added frontend step | Added backend / DB step | Done when |
+| --- | --- | --- | --- |
+| 1 | v2 tokens: tinted dark, `--band`, `--border-strong`, atmosphere tokens, domain hues, `text-display`, `text-eyebrow` on the specimen page | n/a | Specimen shows bands, hue pills and eyebrows in light and dark, all AA |
+| 2 | `Atmosphere`, `Band`, `Eyebrow`, `SectionHeader` stories; `useInView` hook + reveal utility with the reduced-motion fallback | n/a | Story toggles reduced motion and reduced transparency; nothing moves |
+| 6 | `CaseCard` (hover lift, domain pill, `DiffStat`), `DomainCard`, `StatBand`, `KeyFacts`, `FactChips`, `PostCard` | n/a | Cards pass keyboard hover parity (focus-within looks like hover) |
+| 7 | Home v2 section order from the registry: stats, marquee, domains, process, CTA band | Seed new `PageSection` keys | Hiding `marquee` in Adminer removes it |
+| 8 | `ProcessFlow`, `PrincipleList`, `TechMarquee` (pause button) | `ProfileStat`, `ProcessStep` tables; `Principle.iconKey`, `Skill.showInMarquee` (1-to-many recap) | Stats band shows computed years from `careerStartDate` |
+| 9 | `MigrationDiagram` SVG from featured project data | `Domain` table + `Project.domainId` FK; `keyFacts`, `factChips` columns; seed 4 domains | `GET /public/domains` returns project counts via `_count` |
+| 10 | n/a | `Post.takeaways`; publish validation for `{{`, `TODO`, `lorem` | Publishing a post with `TODO` → `400` with `fieldErrors` |
+| 13 | Admin Stats/Domains/Process lists; icon + hue pickers | CRUD for the 3 new tables | Reorder domains; home order updates after revalidate |
+| 14 | Motion and paint budget: hero LCP ≤ 2.0s, orbs on a composited layer, CLS 0 from count-up and reveal | n/a | Lighthouse perf ≥ 95 with ambient effects on |
+| 28 | Reduced-motion and reduced-transparency audit on home, case study, post | n/a | Audit notes show every effect's fallback working |
+
+---
+
+## 7. Mockup rebuild brief (v2)
+
+For the model rebuilding `mockups/portfolio/`. Parker's verdict on v1 was "too bare/plain". The v1 screens (`01`–`09`) were one neutral surface, small headings, flat cards and no imagery. **The new screens must look richer on a quick glance** while keeping every type rule in 3.2 and every contrast pair in 3.1. Follow sections 2, 3, 4.7 and 5.1–5.6 of this spec. Do not copy the reference site's layout, copy or green palette.
+
+### 7.1 Global rules (apply to every public screen)
+
+| # | Must be visibly different from v1 | Spec |
+| --- | --- | --- |
+| G1 | Sections alternate between `--background` and full-width `--band` stripes with `border-y`; no long run of same-color sections | 3.1, 4.4 |
+| G2 | Dark mode uses the **jade-tinted** neutrals (`#0A0F0E` bg, `#111817` card), not v1's gray `#0B0C0E` | 3.1, 3.6 |
+| G3 | Home hero and CTA band sit on the masked 44px grid with 1–2 soft orbs (`--glow`); no atmosphere anywhere else | 3.1b, 4.7 `Atmosphere` |
+| G4 | Every section title has a mono uppercase **eyebrow** above it and, on home, a 28px **icon tile** beside it | 3.2 `text-eyebrow`, 4.7 `SectionHeader` |
+| G5 | Cards have a visible hover/focus state: lift −2px, `--border-strong`, `--shadow-2`, title turns `--primary`, `↗` corner arrow. One card per screen is captured in the hover state (add `.is-hover` to it) | 3.4 motion table |
+| G6 | Projects carry a **domain pill** (icon + name) in its hue; hues come from the 5-hue table only | 3.1b |
+| G7 | Icons are inline SVGs copied from lucide (stroke 1.75, 16/20px). No emoji, no icon fonts | 4.7 |
+| G8 | Body and prose sizes stay exactly as in 3.2 (16/18px, 1.6/1.75). "Richer" comes from surfaces, cards and icons, **never** from smaller, lighter or lower-contrast text | 3.2 |
+| G9 | Content: CV-based placeholders as in v1 (Parker Vu / Hung Vu Van, Hanoi, `parker2808`, Particula v2, LitGroup cart migration, Samsung SDS MSP, This portfolio). **No phone or email**: show `<email>` where an address would appear, and the "Copy email" button copies the placeholder | 1.5 |
+| G10 | Each screen exists in light; home, case study and post also in dark (`?dark=1`) | 3.6 |
+
+**Screenshot spec:** Playwright + system Chrome, DPR 2, full page, widths 1440 (desktop) and 390 (mobile). Capture with `reducedMotion: 'no-preference'` but freeze animations in their final state (add a `.capture` class on `<html>` that sets `animation: none !important; transition: none !important` and shows revealed content and final count-up values), so orbs, glows and hover states are visible but the image is deterministic. File names below; save to artifacts and keep `screenshot.mjs` as the single entry point.
+
+### 7.2 Screens
+
+| File | Screen | Must be visibly different from v1 | Content to use |
+| --- | --- | --- | --- |
+| `01-home-light.png` (1440) | Home, light | (1) Hero: kicker pill `>_ Senior Frontend · 5 yrs · Vue/Nuxt/TS`, H1 at `text-display` (64px) with the accent phrase in `--primary`, hero sub-line at `text-prose`, primary + outline buttons, and the **`MigrationDiagram`** (v1 → v2 nodes on a card) on the right instead of the v1 `git log` box; grid + orbs behind. (2) New **stats band** (4 tiles, icon + big number + mono label) on a band. (3) New **tech marquee** row with the pause button visible. (4) Featured case study becomes a large `CaseCard` with a real-looking cover (tinted gradient + UI screenshot frame with fake UI blocks), domain pill, `DiffStat` lines and fact chips, not the flat grid placeholder. (5) New **domains** 4-card row with hue icon tiles and project counts. (6) Selected work cards: domain pill, `↗`, `DiffStat`, chips; one card in hover state. (7) New **process** band: 2×2 feature cards + 5-step vertical flow with the middle step highlighted. (8) Skills in 3 columns with depth headings. (9) Notes as `PostCard` rows with `#tags`. (10) **CTA band** with grid, glow, icon tile, H2, "Copy email" + GitHub + LinkedIn buttons, replacing v1's plain one-line CTA. (11) Footer: one mono line (name, footer nav, social icons, deploy hash), as in the 5.1 wireframe | Section 5.1 wireframe; stats: "5+ years", "4 products shipped", "2 framework migrations", "1 enterprise platform"; domains as in 1.5 v2 seed |
+| `02-home-dark.png` (1440) | Home, dark | Same structure as 01 in the jade-tinted dark theme; orbs and grid more visible (dark values), primary button with `--glow-button`; band contrast visible between `#0A0F0E` and `#0D1412` | Same as 01 |
+| `03-case-study-light.png` (1440) | Particula v2 case study | (1) Header: back link, domain pill + status pills, H1, tagline, **meta grid** with eyebrow labels (ROLE, TEAM, TIMELINE, STACK). (2) 21:9 cover with a framed UI screenshot instead of the flat grid. (3) **Key facts** 2×2 cards. (4) Each section starts with an eyebrow (SUMMARY, LIMITS, HOW, TRADE-OFFS, RESULT, RETRO). (5) **Requirement columns** (functional / non-functional) with ▹ bullets. (6) Decisions as small cards with "Chose / Over / Because". (7) Before → after metrics as a `DiffStat` card. (8) **Fact chips** row. (9) "More in Fintech / Web3" with 2 `CaseCard`s. (10) Sticky TOC on the right with the active item marked, and the 2px reading-progress bar under the header (show it at ~40%) | Section 5.4; Particula: Vue 2 → Nuxt 3, RWA ratings, ReFi, team of 6, 2024–now |
+| `03b-case-study-dark.png` (1440, new) | Case study, dark | Same as 03 in dark | Same |
+| `04-blog-post-light.png` (1440) | Post "Vue → React: what transfers, what doesn't" | (1) NOTE eyebrow + mono date · minutes + tag chips above the H1. (2) Callout with an icon tile, not only a left border. (3) Code block with a header bar (filename + language badge + copy button). (4) **Key takeaways** card at the end (3–5 ▹ bullets, `--primary-subtle` background). (5) Prev/next as two `PostCard`s. (6) Sticky TOC + progress bar. Prose stays 18px / 1.75 / 66ch | Section 5.5 |
+| `04b-blog-list-light.png` (1440, new) | Notes list | Search input with icon + `⌘K` hint, tag pills with counts, `PostCard` list (date · minutes, title, `↗`, excerpt, `#tags`), one card in hover state | Section 5.5; 3–5 posts with CV-based titles |
+| `05-home-mobile-light.png` (390) | Home, mobile | Hero with kicker, `text-display` at 40px, diagram **below** the buttons (scaled), stats 2×2, marquee single row, domain cards 1 column, process as a vertical chain only (feature cards under it), CTA band full width with stacked buttons; header with hamburger. Nothing truncated; no horizontal page scroll | Section 5.1 mobile wireframe |
+| `06-admin-dashboard.png` (1440, dark) | Admin dashboard | Keep layout. Only change: Content health card lists the new v2 checks ("Projects without a domain", "Case studies with < 2 key facts", "Marquee needs 6+ skills"); sidebar shows new Stats, Domains and Process items. Use the tinted dark tokens. **No** grid, orbs or bands | Section 5.11 |
+| `07-admin-projects-table.png` (1440) | Admin projects table | Keep layout. Add a **Domain** column (hue pill) and a "Key facts" count column | Section 5.11 |
+| `08-admin-project-editor.png` (1440) | Admin project editor | Keep layout. Show the new "Card & facts" tab active: domain select, key facts textarea with counter, fact chips input, and the live preview showing the real `CaseCard` | Section 5.11 |
+| `09-home-skeletons.png` (1440) | Home loading state | Skeletons now match the v2 sections: hero with diagram block, 4 stat tiles, marquee chip row, featured card, 4 domain cards, process chain. Atmosphere stays visible (it is not content); no shimmer under reduced motion | Section 5.0 rows |
+| `10-about-light.png` (1440, new) | About + timeline | Intro split (avatar card with city + availability pill, bio), compact stats strip, timeline with a year rail and company groups (LitGroup shows 2 roles), numbered principles (`01 —`), skills by depth, education row, CV download card | Section 5.2; 4 experience rows from the CV |
+| `11-projects-light.png` (1440, new) | Projects list | Domain filter pills with counts (hue dots), tech combobox, wide featured card then a 2-column `CaseCard` grid, one card in hover state | Section 5.3; 4 projects |
+| `12-contact-light.png` (1440, new) | Contact | Split layout on the faint grid: left H1 + intro + reply-time note + channel cards (Email `<email>` with "Copy email", GitHub `parker2808`, LinkedIn); right form on `--card-glass` with topic select; one field shown in its error state | Section 5.6 |
+
+**Acceptance check before handing back:** (a) every screen has at least one band, one eyebrow and one icon tile (admin excepted); (b) body text is 16px and prose 18px everywhere; (c) a contrast spot-check of muted text on `--band` and of every hue pill passes 4.5:1 in both themes; (d) a search of `mockups/portfolio/*.html` for email-shaped strings, `+84` and `gmail` finds nothing; (e) the 390px screenshot has no horizontal overflow.
