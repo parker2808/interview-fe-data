@@ -951,7 +951,7 @@
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** Spreading a new filters object every render makes the child’s deep watch think everything changed. Mutating `props.filters.page` syncs three pages because they share the reference. Emit a page update instead.",
-            "vi": "**Điều gì xảy ra:** Spread object filters mới mỗi render khiến watch sâu của child nghĩ mọi thứ đổi. Mutate `props.filters.page` đồng bộ ba trang vì chúng dùng chung reference. Hãy emit cập nhật page."
+            "vi": "**Điều gì xảy ra:** Spread object filters mới mỗi render khiến watch sâu của child nghĩ mọi thứ đổi. Mutate `props.filters.page` đồng bộ ba trang vì chúng dùng chung reference. Hãy emit cập nhật `page`."
           }
         },
         {
@@ -1053,7 +1053,7 @@
           },
           "text": {
             "en": "Props are a typed one-way contract. Objects pass by reference, so I treat them as read-only snapshots and I emit primitives instead of incrementing props.filters.page. A new object every render retriggers child watches even when values did not change — I pass a stable computed. Provide/inject is tree-ambient for theme and form context; Pinia is app-wide client state. Fallthrough attrs land on the root unless inheritAttrs is false, and undeclared props bypass the typed contract. On the admin product three list pages stayed in sync because they mutated the same filters object.",
-            "vi": "Props là contract một chiều có type. Object truyền theo reference, nên tôi coi chúng là snapshot chỉ đọc và emit primitive thay vì tăng props.filters.page. Object mới mỗi render kích watch child dù value không đổi — tôi truyền computed ổn định. Provide/inject là ambient theo cây cho theme và form context; Pinia là state client toàn app. Attr fallthrough rơi vào root trừ khi inheritAttrs false, và prop không khai bypass contract có type. Ở sản phẩm admin, ba trang list đồng bộ vì chúng mutate cùng object filters."
+            "vi": "Props là contract một chiều có type. Object truyền theo reference, nên tôi coi chúng là snapshot chỉ đọc và emit primitive thay vì tăng `props.filters.page`. Object mới mỗi render kích watch child dù value không đổi — tôi truyền computed ổn định. Provide/inject là ambient theo cây cho theme và form context; Pinia là state client toàn app. Attr fallthrough rơi vào root trừ khi inheritAttrs false, và prop không khai bypass contract có type. Ở sản phẩm admin, ba trang list đồng bộ vì chúng mutate cùng object filters."
           }
         },
         {
@@ -1285,7 +1285,7 @@
           },
           "text": {
             "en": "- **Computed vs method in a template?** Computed if it is derived state. Method if it is an event.\n- **Why not `heavy(item)` as a computed?** Computed has no argument. Precompute.\n- **Writable computed?** A getter plus setter. Easy to overuse; prefer a named set function.\n- **Cost of a computed?** Cheap if deps are cheap. Do not deep-walk 50k rows inside one.",
-            "vi": "- **Computed khác method trong template?** Computed nếu là state suy ra. Method nếu là event.\n- **Vì sao không `heavy(item)` là computed?** Computed không có đối số. Hãy tính trước.\n- **Computed ghi được?** Getter cộng setter. Dễ lạm dụng; ưu tiên hàm set có tên.\n- **Chi phí computed?** Rẻ nếu dep rẻ. Đừng đi sâu 50k hàng trong một computed."
+            "vi": "- **Computed khác method trong template?** Computed nếu là state suy ra. Method nếu là event.\n- **Vì sao không `heavy(item)` là computed?** Computed không có đối số. Hãy tính trước.\n- **Computed ghi được?** Getter cộng setter. Dễ lạm dụng; ưu tiên hàm `set` có tên.\n- **Chi phí computed?** Rẻ nếu dep rẻ. Đừng đi sâu 50k hàng trong một computed."
           }
         },
         {
@@ -1731,7 +1731,7 @@
             },
             {
               "en": "Map/Set or a class instance should be `markRaw` or you proxy internals and break them. Hunt updates that happen every frame — usually a watcher writing a value that invalidates itself.",
-              "vi": "Map/Set hoặc instance class nên `markRaw` không thì bạn proxy nội bộ và phá chúng. Hãy săn cập nhật mỗi frame — thường là watcher ghi value tự làm mất hiệu lực."
+              "vi": "`Map`/`Set` hoặc instance class nên `markRaw` không thì bạn proxy nội bộ và phá chúng. Hãy săn cập nhật mỗi frame — thường là watcher ghi value tự làm mất hiệu lực."
             },
             {
               "en": "DevTools first vs adding logs: DevTools are less wrong about which dependency triggered; logs in computed/watch change timing. Binary-search git when the class is unclear.",
@@ -1937,7 +1937,7 @@
           "items": [
             {
               "en": "**How it works:** A Proxy intercepts get (track) and set (trigger). It tracks new keys and index writes — Vue 2 could not. It cannot wrap primitives, and it cannot see mutations inside `markRaw` / shallow targets.",
-              "vi": "**Cách hoạt động:** Proxy chặn get (track) và set (trigger). Nó track key mới và ghi index — Vue 2 không làm được. Nó không bọc primitive, và không thấy mutate trong `markRaw` / target nông."
+              "vi": "**Cách hoạt động:** Proxy chặn get (track) và `set` (trigger). Nó track key mới và ghi index — Vue 2 không làm được. Nó không bọc primitive, và không thấy mutate trong `markRaw` / target nông."
             },
             {
               "en": "A module-level `reactive` is shared across SSR requests unless you create it per app. `reactive` unwraps nested refs; `ref` of a reactive object double-wraps.",
@@ -2051,7 +2051,7 @@
           },
           "text": {
             "en": "- `ref` replace; `reactive` mutate small; `shallowRef` / `markRaw` when deep Proxy hurts.\n- In-place writes on `shallowRef` do nothing until `triggerRef`.\n- Module-level `reactive` is a cross-request SSR leak. Create per app.\n- Proxy identity in Map/Set keys surprises people. `toRaw` for interop.\n- On the admin product the 50k-row table is shallowRef; Mapbox is markRaw.",
-            "vi": "- `ref` thay nguyên; `reactive` mutate túi nhỏ; `shallowRef` / `markRaw` khi Proxy sâu đau.\n- Ghi tại chỗ trên `shallowRef` không làm gì đến khi `triggerRef`.\n- `reactive` mức module là rò SSR giữa request. Hãy tạo per app.\n- Identity Proxy trong key Map/Set làm bất ngờ. `toRaw` để tương thích.\n- Ở sản phẩm admin, bảng 50k hàng là shallowRef; Mapbox là markRaw."
+            "vi": "- `ref` thay nguyên; `reactive` mutate túi nhỏ; `shallowRef` / `markRaw` khi Proxy sâu đau.\n- Ghi tại chỗ trên `shallowRef` không làm gì đến khi `triggerRef`.\n- `reactive` mức module là rò SSR giữa request. Hãy tạo per app.\n- Identity Proxy trong key `Map`/`Set` làm bất ngờ. `toRaw` để tương thích.\n- Ở sản phẩm admin, bảng 50k hàng là shallowRef; Mapbox là markRaw."
           }
         },
         {
@@ -2113,7 +2113,7 @@
           },
           "text": {
             "en": "- **ref vs reactive?** Replace vs mutate a small bag. Do not mix without a reason.\n- **Why triggerRef?** Shallow in-place writes are silent otherwise.\n- **SSR singleton?** Module-level reactive is shared. Create per app.\n- **Set/Map keys?** Proxy identity ≠ raw identity. toRaw for interop.",
-            "vi": "- **ref khác reactive?** Thay nguyên khác mutate túi nhỏ. Đừng trộn không lý do.\n- **Vì sao triggerRef?** Ghi tại chỗ nông im lặng nếu không.\n- **Singleton SSR?** reactive mức module dùng chung. Hãy tạo per app.\n- **Key Set/Map?** Identity Proxy ≠ identity raw. toRaw để tương thích."
+            "vi": "- **ref khác reactive?** Thay nguyên khác mutate túi nhỏ. Đừng trộn không lý do.\n- **Vì sao triggerRef?** Ghi tại chỗ nông im lặng nếu không.\n- **Singleton SSR?** reactive mức module dùng chung. Hãy tạo per app.\n- **Key `Set`/`Map`?** Identity Proxy ≠ identity raw. toRaw để tương thích."
           }
         },
         {
