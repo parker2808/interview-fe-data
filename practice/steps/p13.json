@@ -9,7 +9,7 @@
   },
   "summary": {
     "en": "Lists grow, and cursor pagination keeps them fast and stable.",
-    "vi": "List sẽ dài, và cursor pagination giữ chúng nhanh và ổn định."
+    "vi": "List sẽ dài ra, cursor pagination giữ chúng nhanh và ổn định."
   },
   "estimateMin": 120,
   "prereqs": ["p12"],
@@ -22,7 +22,7 @@
       },
       "explain": {
         "en": "Each page returns `nextCursor`. The next request says \"give me rows after this id/date\". New inserts do not shift page 2 like offset pagination does.",
-        "vi": "Mỗi trang trả `nextCursor`. Request sau nói \"cho hàng sau id/date này\". Hàng mới insert không làm lệch trang 2 như offset."
+        "vi": "Mỗi trang trả `nextCursor`. Request sau nói “cho hàng sau id/date này”. Hàng insert mới không đẩy lệch trang 2 như offset pagination."
       }
     },
     {
@@ -42,7 +42,7 @@
       },
       "explain": {
         "en": "`LIMIT 20 OFFSET 40` looks simple and breaks when rows are inserted above the window (duplicates/gaps). Skip it for these lists.",
-        "vi": "`LIMIT 20 OFFSET 40` trông đơn giản và gãy khi có hàng insert phía trên cửa sổ (trùng/hổng). Đừng dùng cho các list này."
+        "vi": "`LIMIT 20 OFFSET 40` trông đơn giản, nhưng gãy khi có hàng insert phía trên đoạn đang lấy (trùng hoặc hổng). Đừng dùng cho các list này."
       }
     }
   ],
@@ -100,11 +100,11 @@
     {
       "title": {
         "en": "Prove paging and the limit cap",
-        "vi": "Chứng minh paging và trần limit"
+        "vi": "Chứng tỏ paging và trần limit"
       },
       "detail": {
         "en": "Seed enough posts to fill two pages. Walk cursors: no duplicate ids, no gaps. `limit=500` must 400 via zod, not silently cap.",
-        "vi": "Seed đủ post cho hai trang. Đi theo cursor: không trùng id, không hổng. `limit=500` phải 400 nhờ zod, không lặng lẽ cắt."
+        "vi": "Seed đủ post để phủ hai trang. Đi lần lượt theo cursor: không trùng id, không hổng. `limit=500` phải ra 400 nhờ zod, không lặng lẽ cắt."
       },
       "code": {
         "lang": "bash",
@@ -115,7 +115,7 @@
   "doneWhen": [
     {
       "en": "Paging through all posts returns no duplicates or gaps.",
-      "vi": "Lướt hết posts không trùng và không hổng hàng."
+      "vi": "Lướt hết post không trùng, không hổng hàng."
     },
     {
       "en": "`limit=500` gives a 400 with a field error on `limit`.",

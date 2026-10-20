@@ -7,7 +7,7 @@
   },
   "summary": {
     "en": "Senior testing is a trophy, not a pyramid: unit the domain, integrate Vue plus MSW around behaviour, E2E only money and auth, and never gate a Vue app on 80% lines. Start with 8.1–8.3.",
-    "vi": "Kiểm thử mức senior là trophy, không phải pyramid: unit domain, integrate Vue kèm MSW quanh hành vi, E2E chỉ tiền và auth, và đừng chặn app Vue bằng 80% dòng. Bắt đầu từ 8.1–8.3."
+    "vi": "Kiểm thử mức senior là trophy, không phải pyramid: unit phần domain, integrate Vue kèm MSW quanh hành vi, E2E chỉ luồng tiền và auth, và đừng lấy 80% dòng làm cổng chặn app Vue. Bắt đầu từ 8.1–8.3."
   },
   "category": "practices",
   "order": 11,
@@ -42,14 +42,14 @@
           "type": "paragraph",
           "text": {
             "en": "This doc is senior frontend testing for interviews: Vitest units, Vue Testing Library components, Playwright E2E, coverage policy, TDD/BDD judgment, and how you introduce contracts into a legacy Vue app. Interviewers score strategy — which layer catches which failure, what you refuse to test, how you keep CI green under flake — not a `sum(2, 3)` kata.",
-            "vi": "Tài liệu này là kiểm thử frontend mức senior cho phỏng vấn: unit Vitest, component Vue Testing Library, E2E Playwright, policy coverage, phán đoán TDD/BDD, và cách đưa contract vào app Vue legacy. Người phỏng vấn chấm strategy — tầng nào bắt kịch bản lỗi nào, thứ bạn từ chối test, cách giữ CI xanh khi flake — không phải kata `sum(2, 3)`."
+            "vi": "Bài này nói về kiểm thử frontend mức senior cho phỏng vấn: unit Vitest, component Vue Testing Library, E2E Playwright, policy coverage, cách cân nhắc TDD/BDD, và cách đưa contract vào app Vue legacy. Người phỏng vấn chấm strategy: tầng nào bắt lỗi nào, thứ bạn từ chối test, cách giữ CI xanh khi flake. Không phải kata `sum(2, 3)`."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "Study 8.1–8.3 first (unit, component, E2E). Then 8.4–8.5 for coverage and TDD judgment. 8.6 is the production move: contracts, visual-regression scope, and a legacy safety net. The shape that usually wins is a **testing trophy**: lots of integration around user behaviour, a few Playwright money/auth paths, unit tests for pure domain, and static analysis as the cheap base. Vue 3 + TypeScript first; the same philosophy is React Testing Library / Playwright in a Next app.",
-            "vi": "Hãy học 8.1–8.3 trước (unit, component, E2E). Rồi 8.4–8.5 cho coverage và phán đoán TDD. 8.6 là nước đi production: contract, phạm vi visual regression, và lưới an toàn legacy. Hình thường thắng là **testing trophy**: nhiều integration quanh hành vi user, vài path Playwright ra tiền hoặc chặn auth, unit cho domain thuần, và static analysis làm đáy rẻ. Vue 3 + TypeScript trước; cùng philosophy là React Testing Library / Playwright trên app Next."
+            "vi": "Đọc 8.1–8.3 trước (unit, component, E2E). Rồi 8.4–8.5 cho coverage và cách cân nhắc TDD. 8.6 là nước đi production: contract, phạm vi visual regression, và lưới an toàn cho legacy. Cấu trúc thường thắng là **testing trophy**: nhiều integration quanh hành vi user, vài path Playwright cho tiền và auth, unit cho domain thuần, và static analysis làm đế rẻ. Vue 3 + TypeScript trước; cùng philosophy trên app Next là React Testing Library / Playwright."
           }
         },
         {
@@ -119,14 +119,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** A unit test is **arrange, act, assert** on a **function contract** — money, permissions, parsers — not a component tree. Vitest is the runner (Vite-native, Jest-compatible). HTTP belongs behind MSW (Mock Service Worker: intercept `fetch`/`xhr` at the network). A composable that pulls Router, Pinia, and `useFetch` is integration.",
-            "vi": "**Tóm tắt:** Unit test là **arrange, act, assert** trên **hợp đồng hàm** — tiền, permission, parser — không phải cây component. Vitest là runner (gần Vite, tương thích Jest). HTTP nằm sau MSW (Mock Service Worker: chặn `fetch`/`xhr` ở network). Composable kéo Router, Pinia và `useFetch` là integration."
+            "vi": "**Tóm tắt:** Unit test là **arrange, act, assert** trên **contract của hàm**: tiền, permission, parser, không phải một cây component. Vitest là runner (Vite-native, tương thích Jest). HTTP nằm sau MSW (Mock Service Worker: chặn `fetch`/`xhr` ở network). Composable kéo Router, Pinia và `useFetch` là integration."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** A catalog search composable pulls Vue Router, Pinia, `useFetch`, and a toast plugin. “How do you unit-test a Vue app?” is the opener — they are listening for **what you refuse to mock**, not a Vitest config walkthrough. Mocking “the world” keeps tests green while checkout breaks.",
-            "vi": "**Vì sao quan trọng:** Composable tìm catalog kéo Vue Router, Pinia, `useFetch` và plugin toast. “Bạn unit-test app Vue thế nào?” là câu mở — họ nghe **thứ bạn từ chối mock**, không phải walkthrough config Vitest. Mock “cả thế giới” giữ test xanh trong khi checkout gãy."
+            "vi": "**Vì sao quan trọng:** Composable search catalog kéo Vue Router, Pinia, `useFetch` và plugin toast. “Bạn unit-test app Vue thế nào?” là câu mở: họ đang nghe **thứ bạn từ chối mock**, không phải tour config Vitest. Mock “cả thế giới” thì test vẫn xanh trong khi checkout gãy."
           }
         },
         {
@@ -135,15 +135,15 @@
           "items": [
             {
               "en": "**How it works:** Arrange inputs and seams (a pure function, or MSW handlers). Act by calling the function or flipping a `ref`. Assert the **user-visible or domain contract** (`invoiceTotalCents`, `items.value`), not an internal `ref` name. Restore fakes in `afterEach`: `vi.useRealTimers()`, `vi.unstubAllGlobals()`.",
-              "vi": "**Cách hoạt động:** Arrange input và seam (hàm thuần, hoặc handler MSW). Act bằng cách gọi hàm hoặc gán `ref`. Assert **hợp đồng domain hoặc thứ user thấy** (`invoiceTotalCents`, `items.value`), không phải tên `ref` nội bộ. Khôi phục fake trong `afterEach`: `vi.useRealTimers()`, `vi.unstubAllGlobals()`."
+              "vi": "**Cách hoạt động:** Arrange input và seam (hàm thuần, hoặc handler MSW). Act bằng cách gọi hàm hoặc gán `ref`. Assert **contract domain hoặc thứ user thấy** (`invoiceTotalCents`, `items.value`), không phải tên `ref` nội bộ. Khôi phục fake trong `afterEach`: `vi.useRealTimers()`, `vi.unstubAllGlobals()`."
             },
             {
               "en": "MSW (`setupServer` + `http.get`) is the HTTP seam: the composable still calls `fetch`. `vi.mock(\"./api\")` couples the test to a module path; a rename stays green. Fake timers (`vi.useFakeTimers` + `advanceTimersByTimeAsync`) own debounce; forgetting `flushPromises` after async Vue work is the #1 false-red.",
-              "vi": "MSW (`setupServer` + `http.get`) là seam HTTP: composable vẫn gọi `fetch`. `vi.mock(\"./api\")` buộc test vào đường module; đổi tên vẫn xanh. Fake timer (`vi.useFakeTimers` + `advanceTimersByTimeAsync`) sở hữu debounce; quên `flushPromises` sau việc async Vue là false-red số 1."
+              "vi": "MSW (`setupServer` + `http.get`) là seam HTTP: composable vẫn gọi `fetch`. `vi.mock(\"./api\")` buộc test vào path của module; đổi tên vẫn xanh. Fake timer (`vi.useFakeTimers` + `advanceTimersByTimeAsync`) phụ trách debounce; quên `flushPromises` sau việc async của Vue là false-red số 1."
             },
             {
               "en": "Extract the pure core when the composable is a world-puller: `invoiceTotalCents(lines, taxBps)` is a unit; `useCatalogSearch` with a real Pinia and MSW is integration. React analog: the same split is a pure function versus React Testing Library plus MSW. Do not snapshot huge markup — it fails on class-name churn.",
-              "vi": "Tách lõi thuần khi composable kéo cả thế giới: `invoiceTotalCents(lines, taxBps)` là unit; `useCatalogSearch` với Pinia thật và MSW là integration. Analog React: cùng tách là hàm thuần khác React Testing Library kèm MSW. Đừng snapshot markup lớn — nó fail vì class name đổi."
+              "vi": "Tách lõi thuần khi composable kéo cả thế giới: `invoiceTotalCents(lines, taxBps)` là unit; `useCatalogSearch` với Pinia thật và MSW là integration. Tương đương React: cùng cách tách, hàm thuần so với React Testing Library kèm MSW. Đừng snapshot markup lớn: nó fail vì class name đổi liên tục."
             }
           ]
         },
@@ -152,14 +152,14 @@
           "lang": "ts",
           "code": {
             "en": "const server = setupServer(\n  http.get(\"/api/catalog\", ({ request }) => {\n    const q = new URL(request.url).searchParams.get(\"q\") ?? \"\"\n    return HttpResponse.json({ items: q ? [{ sku: \"A\", name: q }] : [] })\n  }),\n)\nbeforeAll(() => server.listen())\nafterEach(() => { server.resetHandlers(); vi.useRealTimers() })\nit(\"surfaces results after the debounce settles\", async () => {\n  vi.useFakeTimers()\n  const { query, items } = useCatalogSearch({ debounceMs: 300 })\n  query.value = \"sku-9\"\n  await vi.advanceTimersByTimeAsync(300)\n  await flushPromises() // Vue flush + fetch microtasks; skip this → false red\n  expect(items.value).toEqual([{ sku: \"A\", name: \"sku-9\" }])\n})\nexport function invoiceTotalCents(lines: Line[], taxBps: number): number {\n  const sub = lines.reduce((sum, l) => sum + l.qty * l.unitCents, 0)\n  return sub + Math.round((sub * taxBps) / 10_000) // unit this; do not mock it\n}",
-            "vi": "const server = setupServer(\n  http.get(\"/api/catalog\", ({ request }) => {\n    const q = new URL(request.url).searchParams.get(\"q\") ?? \"\"\n    return HttpResponse.json({ items: q ? [{ sku: \"A\", name: q }] : [] })\n  }),\n)\nbeforeAll(() => server.listen())\nafterEach(() => { server.resetHandlers(); vi.useRealTimers() })\nit(\"hiện kết quả sau khi debounce settle\", async () => {\n  vi.useFakeTimers()\n  const { query, items } = useCatalogSearch({ debounceMs: 300 })\n  query.value = \"sku-9\"\n  await vi.advanceTimersByTimeAsync(300)\n  await flushPromises() // flush Vue + microtask fetch; bỏ bước này → false red\n  expect(items.value).toEqual([{ sku: \"A\", name: \"sku-9\" }])\n})\nexport function invoiceTotalCents(lines: Line[], taxBps: number): number {\n  const sub = lines.reduce((sum, l) => sum + l.qty * l.unitCents, 0)\n  return sub + Math.round((sub * taxBps) / 10_000) // unit cái này; đừng mock\n}"
+            "vi": "const server = setupServer(\n  http.get(\"/api/catalog\", ({ request }) => {\n    const q = new URL(request.url).searchParams.get(\"q\") ?? \"\"\n    return HttpResponse.json({ items: q ? [{ sku: \"A\", name: q }] : [] })\n  }),\n)\nbeforeAll(() => server.listen())\nafterEach(() => { server.resetHandlers(); vi.useRealTimers() })\nit(\"surfaces results after the debounce settles\", async () => {\n  vi.useFakeTimers()\n  const { query, items } = useCatalogSearch({ debounceMs: 300 })\n  query.value = \"sku-9\"\n  await vi.advanceTimersByTimeAsync(300)\n  await flushPromises() // flush Vue + microtask fetch; bỏ bước này → false red\n  expect(items.value).toEqual([{ sku: \"A\", name: \"sku-9\" }])\n})\nexport function invoiceTotalCents(lines: Line[], taxBps: number): number {\n  const sub = lines.reduce((sum, l) => sum + l.qty * l.unitCents, 0)\n  return sub + Math.round((sub * taxBps) / 10_000) // unit cái này; đừng mock\n}"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** The search test talks to MSW, not a mocked `api.ts`. Advancing 300 ms fires the debounce; `flushPromises` lets Vue and `fetch` settle. Renaming an internal `ref` does not fail. Changing tax math in `invoiceTotalCents` does — that is the unit you keep next to the integration.",
-            "vi": "**Điều gì xảy ra:** Test search nói với MSW, không phải `api.ts` bị mock. Tăng 300 ms bắn debounce; `flushPromises` để Vue và `fetch` settle. Đổi tên `ref` nội bộ không fail. Đổi toán thuế trong `invoiceTotalCents` thì fail — đó là unit bạn giữ cạnh integration."
+            "vi": "**Điều gì xảy ra:** Test search nói với MSW, không phải `api.ts` bị mock. Tăng 300 ms thì debounce chạy; `flushPromises` để Vue và `fetch` settle. Đổi tên `ref` nội bộ không fail. Đổi toán thuế trong `invoiceTotalCents` thì fail: đó là unit bạn giữ cạnh integration."
           }
         },
         {
@@ -186,7 +186,7 @@
               },
               {
                 "en": "Fast; tests contracts",
-                "vi": "Nhanh; test hợp đồng"
+                "vi": "Nhanh; test contract"
               },
               {
                 "en": "Needs a seam (domain fn / API module)",
@@ -204,7 +204,7 @@
               },
               {
                 "en": "Couples to internals; false confidence",
-                "vi": "Buộc vào nội bộ; tự tin giả"
+                "vi": "Dính vào internals; tự tin giả"
               }
             ],
             [
@@ -214,7 +214,7 @@
               },
               {
                 "en": "Catches “user cannot pay”",
-                "vi": "Bắt “user không trả được”"
+                "vi": "Bắt “user không thanh toán được”"
               },
               {
                 "en": "Slower than `sum()`",
@@ -245,7 +245,7 @@
           },
           "text": {
             "en": "- Unit-test pure domain and small composables whose contract is a function, not a component tree.\n- Put HTTP behind MSW. `vi.mock` of axios or Vue internals stays green while checkout breaks.\n- Fail when the user-visible or domain contract changes, not when you rename an internal `ref`.\n- Fake timers and `flushPromises` are part of the contract. Restore them in `afterEach`.\n- Track flake and time-to-signal. Line coverage is 8.4 — do not answer this question with 80%.",
-            "vi": "- Unit-test domain thuần và composable nhỏ mà hợp đồng là hàm, không phải cây component.\n- Để HTTP sau MSW. `vi.mock` axios hoặc nội bộ Vue vẫn xanh khi checkout gãy.\n- Fail khi hợp đồng domain hoặc thứ user thấy đổi, không phải khi bạn đổi tên `ref` nội bộ.\n- Fake timer và `flushPromises` là một phần hợp đồng. Khôi phục chúng trong `afterEach`.\n- Theo dõi flake và time-to-signal. Coverage dòng là 8.4 — đừng trả lời câu này bằng 80%."
+            "vi": "- Unit-test domain thuần và composable nhỏ mà contract là hàm, không phải cây component.\n- Để HTTP sau MSW. `vi.mock` axios hoặc internals Vue vẫn xanh khi checkout gãy.\n- Fail khi contract domain hoặc thứ user thấy đổi, không phải khi bạn đổi tên `ref` nội bộ.\n- Fake timer và `flushPromises` là một phần contract. Khôi phục chúng trong `afterEach`.\n- Theo dõi flake và time-to-signal. Coverage dòng nằm ở 8.4. Đừng trả lời câu này bằng 80%."
           }
         },
         {
@@ -260,11 +260,11 @@
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "A catalog search composable pulls Router, Pinia, `useFetch`, and a toast. They want what you refuse to mock — not a Vitest config tour.",
-            "vi": "Composable tìm catalog kéo Router, Pinia, `useFetch` và toast. Họ muốn thứ bạn từ chối mock — không phải tour config Vitest."
+            "vi": "Composable search catalog kéo Router, Pinia, `useFetch` và một toast. Họ muốn nghe thứ bạn từ chối mock, không phải một tour config Vitest."
           }
         },
         {
@@ -275,7 +275,7 @@
           },
           "text": {
             "en": "I unit-test pure domain — money, permissions, parsers — and I put HTTP behind MSW. A composable that pulls Router, Pinia, and useFetch is integration, or I extract the pure core and unit that. I do not mock Vue internals or the entire axios module; those tests stay green while checkout breaks. I flushPromises after async work and I restore fake timers in afterEach. I track flake and time-to-signal, not line coverage. On the admin product the catalog search test advances the debounce, waits for MSW, and asserts items — renaming an internal ref does not fail. Tax math lives in invoiceTotalCents next to that test.",
-            "vi": "Tôi unit-test domain thuần — tiền, permission, parser — và để HTTP sau MSW. Composable kéo Router, Pinia và useFetch là integration, hoặc tôi tách lõi thuần rồi unit cái đó. Tôi không mock nội bộ Vue hay cả module axios; những test đó vẫn xanh khi checkout gãy. Tôi flushPromises sau việc async và khôi phục fake timer trong afterEach. Tôi theo dõi flake và time-to-signal, không phải coverage dòng. Ở sản phẩm admin, test tìm catalog tăng debounce, chờ MSW, rồi assert items — đổi tên ref nội bộ không fail. Toán thuế nằm ở invoiceTotalCents cạnh test đó."
+            "vi": "Mình unit-test domain thuần: tiền, permission, parser, và để HTTP sau MSW. Composable kéo Router, Pinia và useFetch là integration, hoặc mình tách lõi thuần rồi unit lõi ấy. Mình không mock internals Vue hay cả module axios; những test đó vẫn xanh khi checkout gãy. Mình flushPromises sau việc async và khôi phục fake timer trong afterEach. Mình theo dõi flake và time-to-signal, không phải coverage dòng. Ở sản phẩm admin, test search catalog tăng debounce, chờ MSW, rồi assert items: đổi tên ref nội bộ không fail. Toán thuế nằm ở invoiceTotalCents cạnh test đó."
           }
         },
         {
@@ -287,15 +287,15 @@
             },
             {
               "en": "Do not mock Vue internals, entire axios, or snapshots of whole pages.",
-              "vi": "Đừng mock nội bộ Vue, cả axios, hoặc snapshot cả trang."
+              "vi": "Đừng mock internals Vue, cả module axios, hoặc snapshot của cả trang."
             },
             {
               "en": "Fail on contract change, not on renaming an internal `ref`.",
-              "vi": "Fail khi hợp đồng đổi, không phải khi đổi tên `ref` nội bộ."
+              "vi": "Fail khi contract đổi, không phải khi đổi tên `ref` nội bộ."
             },
             {
               "en": "Restore fake timers. `flushPromises` after async Vue work.",
-              "vi": "Khôi phục fake timer. `flushPromises` sau việc async Vue."
+              "vi": "Khôi phục fake timer. `flushPromises` sau việc async của Vue."
             }
           ]
         },
@@ -307,7 +307,7 @@
           },
           "text": {
             "en": "- **How do you test a composable that uses `onMounted`?** Mount it with Testing Library, or extract the function `onMounted` calls and unit that.\n- **Vitest + Vue Testing Library vs Jest + RTL?** Same contract: query by role, MSW for HTTP. Vitest is Vite-native.\n- **Why not Cypress component tests as the default in 2026?** Heavier runner; keep components in Vitest/VTL and E2E in Playwright.\n- **What do you refuse to test at the unit layer?** Vue internals, CSS, and a composable that is really the whole app.",
-            "vi": "- **Test composable dùng `onMounted` thế nào?** Mount bằng Testing Library, hoặc tách hàm mà `onMounted` gọi rồi unit cái đó.\n- **Vitest + Vue Testing Library khác Jest + RTL?** Cùng hợp đồng: query theo role, MSW cho HTTP. Vitest gần Vite.\n- **Vì sao không lấy Cypress component làm mặc định 2026?** Runner nặng; giữ component ở Vitest/VTL và E2E ở Playwright.\n- **Thứ bạn từ chối test ở tầng unit?** Nội bộ Vue, CSS, và composable thực ra là cả app."
+            "vi": "- **Test composable dùng `onMounted` thế nào?** Mount bằng Testing Library, hoặc tách hàm `onMounted` gọi rồi unit hàm ấy.\n- **Vitest + Vue Testing Library khác Jest + RTL?** Cùng contract: query theo role, MSW cho HTTP. Vitest là Vite-native.\n- **Vì sao không lấy Cypress component test làm mặc định năm 2026?** Runner nặng hơn; giữ component ở Vitest/VTL và E2E ở Playwright.\n- **Thứ bạn từ chối test ở tầng unit?** Internals Vue, CSS, và composable kéo cả app."
           }
         },
         {
@@ -336,7 +336,7 @@
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** They hand you a Pay button and ask `mount` versus `shallowMount`, how you wait for async UI, and what you assert. `wrapper.find(\".btn-primary\")` plus a full-HTML snapshot is the junior answer. A rename of a class should not fail; unwiring `emit(\"paid\")` should.",
-            "vi": "**Vì sao quan trọng:** Họ đưa nút Pay và hỏi `mount` khác `shallowMount`, cách chờ UI async, và bạn assert gì. `wrapper.find(\".btn-primary\")` kèm snapshot cả HTML là câu junior. Đổi tên class không được fail; gỡ `emit(\"paid\")` thì phải."
+            "vi": "**Vì sao quan trọng:** Họ đưa nút Pay rồi hỏi `mount` khác `shallowMount` thế nào, cách chờ UI async, và bạn assert gì. `wrapper.find(\".btn-primary\")` kèm snapshot cả HTML là câu junior. Đổi tên class không được fail; gỡ `emit(\"paid\")` thì phải fail."
           }
         },
         {
@@ -345,15 +345,15 @@
           "items": [
             {
               "en": "**How it works:** Render with VTL `render` (or VTU `mount`). Find `getByRole(\"button\", { name: /pay/i })`. Click with `userEvent`. Wait with `waitFor` / `flushPromises` — Vue flushes DOM updates asynchronously, so a click that returns before the handler finishes is a lie. Assert disabled / text / presence, not `vm.loading`.",
-              "vi": "**Cách hoạt động:** Render bằng VTL `render` (hoặc VTU `mount`). Tìm `getByRole(\"button\", { name: /pay/i })`. Click bằng `userEvent`. Chờ bằng `waitFor` / `flushPromises` — Vue flush DOM bất đồng bộ, nên click trả về trước khi handler xong là nói dối. Assert disabled / text / có mặt, không phải `vm.loading`."
+              "vi": "**Cách hoạt động:** Render bằng VTL `render` (hoặc VTU `mount`). Tìm `getByRole(\"button\", { name: /pay/i })`. Click bằng `userEvent`. Chờ bằng `waitFor` / `flushPromises`: Vue flush DOM bất đồng bộ, nên click trả về trước khi handler xong là nói dối. Assert disabled / text / có mặt, không phải `vm.loading`."
             },
             {
               "en": "`shallowMount` stubs child components. You no longer test slots, provide/inject, Teleport, or a nested `PayButton` that never disables. Use it only when the child is a canvas or map you cannot afford to render. Query Teleported dialogs on `document.body`, not on the wrapper.",
-              "vi": "`shallowMount` stub child. Bạn không còn test slot, provide/inject, Teleport, hoặc `PayButton` lồng mà không bao giờ disable. Chỉ dùng khi child là canvas hoặc map bạn không thể render. Query dialog Teleport trên `document.body`, không trên wrapper."
+              "vi": "`shallowMount` stub child. Bạn không còn test slot, provide/inject, Teleport, hoặc `PayButton` lồng nhau mà không bao giờ disable. Chỉ dùng khi child là canvas hoặc map bạn không thể render. Query dialog Teleport trên `document.body`, không trên wrapper."
             },
             {
               "en": "Drive a **real Pinia** and a **memory router**. Stubbing every action tests a mock. React analog: the same contract is React Testing Library — `getByRole`, `userEvent`, no Enzyme `shallow`. Playwright component tests are for real layout or focus; usually E2E the path instead (8.3).",
-              "vi": "Chạy **Pinia thật** và **memory router**. Stub mọi action là test cái mock. Analog React: cùng hợp đồng là React Testing Library — `getByRole`, `userEvent`, không Enzyme `shallow`. Playwright component dành cho layout hoặc focus thật; thường E2E path đó (8.3)."
+              "vi": "Chạy **Pinia thật** và **memory router**. Stub mọi action là đang test cái mock. Tương đương React: cùng contract là React Testing Library: `getByRole`, `userEvent`, không Enzyme `shallow`. Playwright component dành cho layout hoặc focus thật; thường E2E path đó (8.3)."
             }
           ]
         },
@@ -362,14 +362,14 @@
           "lang": "ts",
           "code": {
             "en": "it(\"disables Pay while the payment intent is in flight\", async () => {\n  const user = userEvent.setup()\n  const pinia = createPinia() // real store; stubbing pay() tests a mock\n  render(PayButton, {\n    props: { amountCents: 1999, currency: \"USD\" },\n    global: { plugins: [pinia] },\n  })\n  await user.click(screen.getByRole(\"button\", { name: /pay \\$19\\.99/i }))\n  await waitFor(() => {\n    expect(screen.getByRole(\"button\", { name: /processing/i })).toBeDisabled()\n  })\n  // rename .btn-primary → still green; drop emit(\"paid\") → red\n})",
-            "vi": "it(\"disable Pay khi payment intent đang bay\", async () => {\n  const user = userEvent.setup()\n  const pinia = createPinia() // store thật; stub pay() là test cái mock\n  render(PayButton, {\n    props: { amountCents: 1999, currency: \"USD\" },\n    global: { plugins: [pinia] },\n  })\n  await user.click(screen.getByRole(\"button\", { name: /pay \\$19\\.99/i }))\n  await waitFor(() => {\n    expect(screen.getByRole(\"button\", { name: /processing/i })).toBeDisabled()\n  })\n  // đổi tên .btn-primary → vẫn xanh; gỡ emit(\"paid\") → đỏ\n})"
+            "vi": "it(\"disables Pay while the payment intent is in flight\", async () => {\n  const user = userEvent.setup()\n  const pinia = createPinia() // store thật; stub pay() là test cái mock\n  render(PayButton, {\n    props: { amountCents: 1999, currency: \"USD\" },\n    global: { plugins: [pinia] },\n  })\n  await user.click(screen.getByRole(\"button\", { name: /pay \\$19\\.99/i }))\n  await waitFor(() => {\n    expect(screen.getByRole(\"button\", { name: /processing/i })).toBeDisabled()\n  })\n  // đổi tên .btn-primary → vẫn xanh; gỡ emit(\"paid\") → đỏ\n})"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** The tester clicks the named Pay button, not `.btn-primary`. While the intent is in flight the accessible name becomes Processing and the control is disabled. `waitFor` covers Vue’s async flush. A class rename stays green; dropping the paid emit does not.",
-            "vi": "**Điều gì xảy ra:** Người test click nút Pay theo tên, không phải `.btn-primary`. Khi intent đang bay, tên accessible thành Processing và control bị disable. `waitFor` phủ flush async của Vue. Đổi tên class vẫn xanh; gỡ emit paid thì không."
+            "vi": "**Điều gì xảy ra:** Người test click nút Pay theo tên, không phải `.btn-primary`. Khi intent đang gửi, tên accessible thành Processing và control bị disable. `waitFor` phủ flush async của Vue. Đổi tên class vẫn xanh; gỡ emit paid thì không."
           }
         },
         {
@@ -385,7 +385,7 @@
             },
             {
               "en": "Skip when",
-              "vi": "Bỏ khi"
+              "vi": "Bỏ qua khi"
             }
           ],
           "rows": [
@@ -428,7 +428,7 @@
               },
               {
                 "en": "Default — it hides shipped bugs",
-                "vi": "Mặc định — nó giấu bug đưa lên"
+                "vi": "Mặc định: nó giấu bug bạn đưa lên"
               }
             ],
             [
@@ -442,7 +442,7 @@
               },
               {
                 "en": "Usual case — E2E the path instead",
-                "vi": "Case thường — E2E path đó"
+                "vi": "Case thường: E2E path đó"
               }
             ]
           ]
@@ -455,7 +455,7 @@
           },
           "text": {
             "en": "- Query by role, label, and text. Never `.btn-primary` plus a full-page snapshot.\n- `mount` finds integration bugs (slots, Teleport, nested Pay). `shallowMount` hides them.\n- Async: `flushPromises` / `waitFor`. A click that returns before the handler finishes is a lie.\n- Real Pinia and a memory router. Stubbing every action tests a mock.\n- `v-if` removes from the tree (`exists()` false). `v-show` stays, hidden — assert the accessible state.",
-            "vi": "- Query theo role, label và text. Đừng `.btn-primary` kèm snapshot cả trang.\n- `mount` bắt bug integration (slot, Teleport, Pay lồng). `shallowMount` giấu chúng.\n- Async: `flushPromises` / `waitFor`. Click trả về trước khi handler xong là nói dối.\n- Pinia thật và memory router. Stub mọi action là test cái mock.\n- `v-if` gỡ khỏi cây (`exists()` false). `v-show` còn, bị ẩn — assert trạng thái accessible."
+            "vi": "- Query theo role, label và text. Đừng `.btn-primary` kèm snapshot cả trang.\n- `mount` bắt bug integration (slot, Teleport, Pay lồng nhau). `shallowMount` thì giấu mất.\n- Async: `flushPromises` / `waitFor`. Click trả về trước khi handler xong là nói dối.\n- Pinia thật và memory router. Stub mọi action là test cái mock.\n- `v-if` gỡ khỏi cây (`exists()` false). `v-show` vẫn còn, chỉ ẩn: assert state accessible."
           }
         },
         {
@@ -470,11 +470,11 @@
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "A Pay button: `mount` versus `shallowMount`, how you wait, and what you assert. CSS class plus a snapshot is the junior answer.",
-            "vi": "Nút Pay: `mount` khác `shallowMount`, cách bạn chờ, và bạn assert gì. Class CSS kèm snapshot là câu junior."
+            "vi": "Một nút Pay: `mount` khác `shallowMount`, bạn chờ thế nào, và assert cái gì. Class CSS kèm snapshot là câu junior."
           }
         },
         {
@@ -485,7 +485,7 @@
           },
           "text": {
             "en": "I query by role, label, and text and I click like a user — Vue Testing Library on greenfield, same contract as React Testing Library. mount is the default because shallowMount stubs the children I actually ship. I wait with flushPromises or waitFor, not a click that returns before the handler finishes. I drive a real Pinia and a memory router; stubbing every action tests a mock. I query Teleported dialogs on document.body. On the admin product, Pay disables while the intent is in flight; renaming btn-primary does not fail, dropping emit paid does.",
-            "vi": "Tôi query theo role, label và text rồi click như user — Vue Testing Library trên greenfield, cùng hợp đồng với React Testing Library. mount là mặc định vì shallowMount stub child tôi thực sự đưa lên. Tôi chờ bằng flushPromises hoặc waitFor, không phải click trả về trước khi handler xong. Tôi chạy Pinia thật và memory router; stub mọi action là test cái mock. Tôi query dialog Teleport trên document.body. Ở sản phẩm admin, Pay disable khi intent đang bay; đổi tên btn-primary không fail, gỡ emit paid thì fail."
+            "vi": "Mình query theo role, label và text rồi click như user. Greenfield thì dùng Vue Testing Library, cùng contract với React Testing Library. mount là mặc định vì shallowMount stub những child mình ship. Mình chờ bằng flushPromises hoặc waitFor, không dùng kiểu click trả về trước khi handler xong. Mình dùng Pinia thật và memory router; stub mọi action là test cái mock. Dialog Teleport thì query trên document.body. Ở sản phẩm admin, Pay disable khi intent đang xử lý; đổi tên btn-primary không fail, gỡ emit paid thì fail."
           }
         },
         {
@@ -497,7 +497,7 @@
             },
             {
               "en": "`mount` finds integration bugs. `shallowMount` hides them.",
-              "vi": "`mount` bắt bug integration. `shallowMount` giấu chúng."
+              "vi": "`mount` bắt bug integration. `shallowMount` thì giấu mất."
             },
             {
               "en": "Async: `flushPromises` / `waitFor`. Real Pinia, memory router.",
@@ -505,7 +505,7 @@
             },
             {
               "en": "Query Teleports on `document.body`. Assert accessible state, not `vm`.",
-              "vi": "Query Teleport trên `document.body`. Assert trạng thái accessible, không phải `vm`."
+              "vi": "Query Teleport trên `document.body`. Assert state accessible, không phải `vm`."
             }
           ]
         },
@@ -517,7 +517,7 @@
           },
           "text": {
             "en": "- **How do you test a Headless UI / Radix-style listbox?** Open it like a user; assert the option by role and name; do not poke `vm.open`.\n- **Where do you query a Teleported dialog?** `document.body` (or `screen`), never the component wrapper.\n- **`v-if` vs `v-show` — exists() vs accessible state?** `v-if` is gone. `v-show` is hidden. Prefer accessible assertions.\n- **When is VTU `mount` still better than Testing Library?** When you must assert `emitted()` or slot props at a low level.",
-            "vi": "- **Test listbox kiểu Headless UI / Radix thế nào?** Mở như user; assert option theo role và tên; đừng chọc `vm.open`.\n- **Query dialog Teleport ở đâu?** `document.body` (hoặc `screen`), không bao giờ wrapper component.\n- **`v-if` khác `v-show` — exists() khác trạng thái accessible?** `v-if` biến mất. `v-show` bị ẩn. Ưu tiên assert accessible.\n- **Khi nào VTU `mount` vẫn hơn Testing Library?** Khi bạn phải assert `emitted()` hoặc slot props tầng thấp."
+            "vi": "- **Test listbox kiểu Headless UI / Radix thế nào?** Mở như user; assert option theo role và tên; đừng chọc `vm.open`.\n- **Query dialog Teleport ở đâu?** `document.body` (hoặc `screen`), không bao giờ wrapper component.\n- **`v-if` khác `v-show`: exists() khác state accessible?** `v-if` thì mất. `v-show` thì ẩn. Ưu tiên assert accessible.\n- **Khi nào VTU `mount` vẫn hơn Testing Library?** Khi bạn phải assert `emitted()` hoặc slot props ở tầng thấp."
           }
         },
         {
@@ -539,14 +539,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Playwright drives a real browser on **critical paths** only: login, permission-denied, checkout, refund, SSO. Select by **role and name**. Auto-wait on assertions (`toBeVisible`) — never `waitForTimeout`. Auth is `storageState` from a setup project, plus one dedicated login spec.",
-            "vi": "**Tóm tắt:** Playwright điều khiển browser thật chỉ trên **path critical**: login, bị từ chối quyền, checkout, refund, SSO. Chọn theo **role và tên**. Auto-wait trên assert (`toBeVisible`) — đừng `waitForTimeout`. Auth là `storageState` từ project setup, kèm một spec login riêng."
+            "vi": "**Tóm tắt:** Playwright chạy browser thật, chỉ trên **critical path**: login, permission-denied, checkout, refund, SSO. Chọn theo **role và tên**. Auto-wait trên assert (`toBeVisible`), đừng `waitForTimeout`. Auth là `storageState` từ project setup, kèm một spec login riêng."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** Checkout is red on CI every other Tuesday because of `waitForTimeout(3000)` and a shared staging email. “What do you E2E?” then flake, POM versus fixtures, auth, traces, and workers. E2E is the first thing CI skips when it is red — budget a handful of specs.",
-            "vi": "**Vì sao quan trọng:** Checkout đỏ trên CI cách tuần vì `waitForTimeout(3000)` và email staging dùng chung. “Bạn E2E gì?” rồi flake, POM khác fixture, auth, trace, và worker. E2E là thứ CI bỏ qua đầu tiên khi đỏ — hãy budget một nắm spec."
+            "vi": "**Vì sao quan trọng:** Checkout đỏ trên CI cứ thứ Ba cách tuần vì `waitForTimeout(3000)` và email staging dùng chung. Câu “Bạn E2E gì?” rồi đến flake, POM khác fixture, auth, trace, và worker. E2E là thứ CI bỏ qua đầu tiên khi đỏ. Hãy budget một nắm spec."
           }
         },
         {
@@ -555,15 +555,15 @@
           "items": [
             {
               "en": "**How it works:** Playwright **auto-waits**: a locator action retries until the element is actionable; `expect(locator).toBeVisible()` retries until timeout. `waitForTimeout` is a sleep that flakes when the machine is slow and lies when it is fast. Prefer locator assertions over `networkidle` — websockets and analytics never go idle.",
-              "vi": "**Cách hoạt động:** Playwright **auto-wait**: action trên locator retry đến khi element actionable; `expect(locator).toBeVisible()` retry đến timeout. `waitForTimeout` là sleep: máy chậm thì flake, máy nhanh thì nói dối. Ưu tiên assert locator hơn `networkidle` — websocket và analytics không bao giờ idle."
+              "vi": "**Cách hoạt động:** Playwright **auto-wait**: action trên locator retry đến khi element actionable; `expect(locator).toBeVisible()` retry đến timeout. `waitForTimeout` là sleep: máy chậm thì flake, máy nhanh thì nói dối. Ưu tiên assert locator hơn `networkidle`. Websocket và analytics không bao giờ idle."
             },
             {
               "en": "Auth: a setup project writes `storageState`; other projects reuse it. Keep **one** UI-login spec so a login regression cannot hide. Workers > 1 need **isolated users** (unique emails), not one shared cashier. Trace-on-first-retry makes a red job diagnosable without SSH.",
-              "vi": "Auth: project setup ghi `storageState`; project khác tái sử dụng. Giữ **một** spec login UI để regression login không giấu được. Worker > 1 cần **user tách** (email unique), không một cashier dùng chung. Trace-on-first-retry giúp job đỏ chẩn đoán được mà không SSH."
+              "vi": "Auth: project setup ghi `storageState`; project khác dùng lại. Giữ **một** spec login UI để regression login không giấu được. Worker > 1 cần **user riêng** (email unique), không dùng chung một cashier. Trace-on-first-retry giúp job đỏ chẩn đoán được mà không SSH."
             },
             {
               "en": "Fixtures (`test.extend`) beat a `Page Object` that wraps every click. A POM is justified when the same checkout widget is used in three specs. Disable animations (`prefers-reduced-motion`). Playwright over Cypress in 2026: multiple contexts, traces, `storageState`, no implicit retry magic on clicks. Vue analog: same paths in a Nuxt app; Next analog: same, watch for RSC payload vs client nav.",
-              "vi": "Fixture (`test.extend`) hơn `Page Object` bọc mọi click. POM đáng khi cùng widget checkout dùng trong ba spec. Tắt animation (`prefers-reduced-motion`). Playwright hơn Cypress năm 2026: nhiều context, trace, `storageState`, không magic retry ngầm trên click. Analog Vue: cùng path trên app Nuxt; analog Next: giống, chú ý payload RSC khác nav client."
+              "vi": "Fixture (`test.extend`) hơn `Page Object` bọc mọi click. POM đáng dùng khi cùng widget checkout xuất hiện trong ba spec. Tắt animation (`prefers-reduced-motion`). Playwright hơn Cypress năm 2026: nhiều context, trace, `storageState`, không magic retry ngầm trên click. Analog Vue: cùng path trên app Nuxt; analog Next: cũng vậy, chú ý payload RSC khác nav client."
             }
           ]
         },
@@ -572,14 +572,14 @@
           "lang": "ts",
           "code": {
             "en": "export default defineConfig({\n  retries: process.env.CI ? 2 : 0,\n  workers: process.env.CI ? 4 : undefined,\n  use: {\n    trace: \"on-first-retry\", // a red job without a trace is wasted money\n    screenshot: \"only-on-failure\",\n    storageState: \"playwright/.auth/user.json\",\n  },\n  projects: [\n    { name: \"setup\", testMatch: /auth\\.setup\\.ts/ },\n    { name: \"chromium\", dependencies: [\"setup\"] },\n  ],\n})\ntest(\"checkout completes with a saved card\", async ({ page }) => {\n  await page.goto(\"/checkout\")\n  await page.getByRole(\"button\", { name: \"Pay now\" }).click()\n  await expect(page.getByRole(\"heading\", { name: \"Order confirmed\" })).toBeVisible()\n  // never waitForTimeout(3000) — auto-wait the heading\n})",
-            "vi": "export default defineConfig({\n  retries: process.env.CI ? 2 : 0,\n  workers: process.env.CI ? 4 : undefined,\n  use: {\n    trace: \"on-first-retry\", // job đỏ không có trace là tiền bỏ đi\n    screenshot: \"only-on-failure\",\n    storageState: \"playwright/.auth/user.json\",\n  },\n  projects: [\n    { name: \"setup\", testMatch: /auth\\.setup\\.ts/ },\n    { name: \"chromium\", dependencies: [\"setup\"] },\n  ],\n})\ntest(\"checkout hoàn tất với thẻ đã lưu\", async ({ page }) => {\n  await page.goto(\"/checkout\")\n  await page.getByRole(\"button\", { name: \"Pay now\" }).click()\n  await expect(page.getByRole(\"heading\", { name: \"Order confirmed\" })).toBeVisible()\n  // đừng waitForTimeout(3000) — auto-wait heading\n})"
+            "vi": "export default defineConfig({\n  retries: process.env.CI ? 2 : 0,\n  workers: process.env.CI ? 4 : undefined,\n  use: {\n    trace: \"on-first-retry\", // job đỏ không có trace là tiền bỏ đi\n    screenshot: \"only-on-failure\",\n    storageState: \"playwright/.auth/user.json\",\n  },\n  projects: [\n    { name: \"setup\", testMatch: /auth\\.setup\\.ts/ },\n    { name: \"chromium\", dependencies: [\"setup\"] },\n  ],\n})\ntest(\"checkout completes with a saved card\", async ({ page }) => {\n  await page.goto(\"/checkout\")\n  await page.getByRole(\"button\", { name: \"Pay now\" }).click()\n  await expect(page.getByRole(\"heading\", { name: \"Order confirmed\" })).toBeVisible()\n  // đừng waitForTimeout(3000): auto-wait heading\n})"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** Setup logs in once and writes cookies. Chromium reuses that state, so checkout does not type a password. The heading assertion auto-waits. A timeout sleep is gone. A failure on CI retries with a trace you can open locally.",
-            "vi": "**Điều gì xảy ra:** Setup login một lần và ghi cookie. Chromium tái sử dụng state đó, nên checkout không gõ password. Assert heading auto-wait. Sleep timeout biến mất. Fail trên CI retry kèm trace bạn mở được local."
+            "vi": "**Điều gì xảy ra:** Setup login một lần rồi ghi cookie. Chromium dùng lại state đó, nên checkout không gõ password. Assert heading được auto-wait. Không còn sleep timeout. Fail trên CI thì retry kèm trace bạn mở được local."
           }
         },
         {
@@ -591,7 +591,7 @@
             },
             {
               "en": "Cost of yes",
-              "vi": "Giá nếu có"
+              "vi": "Giá nếu chọn"
             },
             {
               "en": "Prefer",
@@ -606,7 +606,7 @@
               },
               {
                 "en": "Slow, flaky, env-hungry",
-                "vi": "Chậm, flake, đói môi trường"
+                "vi": "Chậm, flake, ngốn env"
               },
               {
                 "en": "A handful: money + auth",
@@ -652,7 +652,7 @@
               },
               {
                 "en": "Isolated users per worker",
-                "vi": "User tách theo worker"
+                "vi": "User riêng theo worker"
               }
             ]
           ]
@@ -665,7 +665,7 @@
           },
           "text": {
             "en": "- E2E only money and auth by default. Integration (8.2) owns the rest of the trophy.\n- Role + name. CSS and XPath are how flake enters. Auto-wait; never `waitForTimeout`.\n- `storageState` plus one dedicated login spec. Workers need isolated users.\n- Trace-on-retry and p95 duration are how you keep CI honest. A red job without a trace is wasted money.\n- Playwright over Cypress in 2026: contexts, traces, `storageState`, no implicit click-retry magic.",
-            "vi": "- E2E chỉ tiền và auth theo mặc định. Integration (8.2) sở hữu phần còn lại của trophy.\n- Role + tên. CSS và XPath là cửa flake. Auto-wait; đừng `waitForTimeout`.\n- `storageState` kèm một spec login riêng. Worker cần user tách.\n- Trace-on-retry và p95 duration là cách giữ CI trung thực. Job đỏ không trace là tiền bỏ đi.\n- Playwright hơn Cypress năm 2026: context, trace, `storageState`, không magic retry click ngầm."
+            "vi": "- E2E mặc định chỉ tiền và auth. Integration (8.2) chịu phần còn lại của trophy.\n- Role + tên. CSS và XPath là cửa flake đi vào. Auto-wait; đừng `waitForTimeout`.\n- `storageState` kèm một spec login riêng. Worker cần user riêng.\n- Trace-on-retry và p95 duration là cách giữ CI trung thực. Job đỏ không có trace là tiền bỏ đi.\n- Playwright hơn Cypress năm 2026: context, trace, `storageState`, không magic retry click ngầm."
           }
         },
         {
@@ -673,18 +673,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: red every other Tuesday. Cause: `waitForTimeout` + shared email. Fix: locator assert + isolated users.\n- Symptom: hung CI. Cause: `networkidle` on a websocket SPA. Fix: `toBeVisible` on the heading.\n- Symptom: login regression shipped. Cause: every spec used `storageState` only. Fix: one UI-login spec.\n- Symptom: undiagnosable red. Cause: no trace. Fix: `trace: \"on-first-retry\"`.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: đỏ cách tuần. Nguyên nhân: `waitForTimeout` + email dùng chung. Cách xử lý: assert locator + user tách.\n- Triệu chứng: CI treo. Nguyên nhân: `networkidle` trên SPA websocket. Cách xử lý: `toBeVisible` trên heading.\n- Triệu chứng: regression login lên prod. Nguyên nhân: mọi spec chỉ dùng `storageState`. Cách xử lý: một spec login UI.\n- Triệu chứng: đỏ không chẩn đoán được. Nguyên nhân: không trace. Cách xử lý: `trace: \"on-first-retry\"`."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: đỏ cứ thứ Ba cách tuần. Nguyên nhân: `waitForTimeout` + email dùng chung. Cách xử lý: assert locator + user riêng.\n- Triệu chứng: CI treo. Nguyên nhân: `networkidle` trên SPA websocket. Cách xử lý: `toBeVisible` trên heading.\n- Triệu chứng: regression login lên prod. Nguyên nhân: mọi spec chỉ dùng `storageState`. Cách xử lý: một spec login UI.\n- Triệu chứng: đỏ không chẩn đoán được. Nguyên nhân: không trace. Cách xử lý: `trace: \"on-first-retry\"`."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "Checkout is red on CI because of a three-second sleep and a shared staging email. They want what you E2E, how you kill flake, and whether a red job has a trace.",
-            "vi": "Checkout đỏ trên CI vì sleep ba giây và email staging dùng chung. Họ muốn bạn E2E gì, cách giết flake, và job đỏ có trace không."
+            "vi": "Checkout đỏ trên CI vì sleep ba giây và email staging dùng chung. Họ muốn biết bạn E2E gì, cách dẹp flake, và job đỏ có trace không."
           }
         },
         {
@@ -695,7 +695,7 @@
           },
           "text": {
             "en": "I E2E login, checkout, refund, and SSO — nothing else by default. I select by role and name and I never waitForTimeout. Auth is storageState from a setup project, plus one dedicated login spec so I cannot hide a login regression. Workers above one need isolated users. A red job without a trace is wasted money. Playwright over Cypress in 2026: multiple contexts, traces, storageState, no implicit retry magic on clicks. On the admin product we had four money paths and one login spec; p95 and flake rate are the dashboard, not spec count.",
-            "vi": "Tôi E2E login, checkout, refund và SSO — không gì khác theo mặc định. Tôi chọn theo role và tên và không bao giờ waitForTimeout. Auth là storageState từ project setup, kèm một spec login riêng để tôi không giấu được regression login. Worker trên một cần user tách. Job đỏ không có trace là tiền bỏ đi. Playwright hơn Cypress năm 2026: nhiều context, trace, storageState, không magic retry ngầm trên click. Ở sản phẩm admin chúng tôi có bốn path tiền và một spec login; p95 và tỉ lệ flake là dashboard, không phải số spec."
+            "vi": "Mình E2E login, checkout, refund và SSO, mặc định không thêm gì khác. Mình chọn theo role và tên, không bao giờ waitForTimeout. Auth là storageState từ project setup, kèm một spec login riêng để regression login không giấu được. Worker trên một thì cần user riêng. Job đỏ không có trace là tiền bỏ đi. Playwright hơn Cypress năm 2026: nhiều context, trace, storageState, không magic retry ngầm trên click. Ở sản phẩm admin team mình có bốn path tiền và một spec login; dashboard là p95 và tỉ lệ flake, không phải số spec."
           }
         },
         {
@@ -707,11 +707,11 @@
             },
             {
               "en": "`storageState` + fixtures over a POM that wraps every click.",
-              "vi": "`storageState` + fixture hơn POM bọc mọi click."
+              "vi": "`storageState` + fixture hơn một POM bọc mọi click."
             },
             {
               "en": "Trace-on-retry and isolated users keep CI honest.",
-              "vi": "Trace-on-retry và user tách giữ CI trung thực."
+              "vi": "Trace-on-retry và user riêng giữ CI trung thực."
             },
             {
               "en": "`networkidle` hangs on websocket SPAs. Assert the heading.",
@@ -727,7 +727,7 @@
           },
           "text": {
             "en": "- **Why Playwright over Cypress in 2026?** Contexts, traces, `storageState`, multi-tab. Cypress still retries clicks in ways that hide bugs.\n- **How do you E2E SSO?** One setup that completes the IdP dance; reuse `storageState`; do not click through OAuth in every spec.\n- **What does `networkidle` do on a websocket app?** It never fires. Use locator assertions.\n- **When is a `Page Object` still justified?** The same checkout widget in three specs — not a wrapper around every click.",
-            "vi": "- **Vì sao Playwright hơn Cypress năm 2026?** Context, trace, `storageState`, đa tab. Cypress vẫn retry click theo cách giấu bug.\n- **E2E SSO thế nào?** Một setup hoàn tất vòng IdP; tái sử dụng `storageState`; đừng click OAuth mọi spec.\n- **`networkidle` làm gì trên app websocket?** Nó không bao giờ fire. Dùng assert locator.\n- **Khi nào `Page Object` vẫn đáng?** Cùng widget checkout trong ba spec — không phải bọc mọi click."
+            "vi": "- **Vì sao Playwright hơn Cypress năm 2026?** Context, trace, `storageState`, đa tab. Cypress vẫn retry click theo cách giấu bug.\n- **E2E SSO thế nào?** Một setup đi hết flow IdP; dùng lại `storageState`; đừng click OAuth trong từng spec.\n- **`networkidle` làm gì trên app websocket?** Nó không bao giờ fire. Dùng assert locator.\n- **Khi nào `Page Object` vẫn đáng?** Cùng widget checkout trong ba spec, không phải wrapper quanh mọi click."
           }
         },
         {
@@ -738,7 +738,7 @@
           "level": 3,
           "text": {
             "en": "8.4. Test Coverage",
-            "vi": "8.4. Coverage của test"
+            "vi": "8.4. Test coverage"
           },
           "id": {
             "en": "84-test-coverage",
@@ -749,14 +749,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Coverage is **which branches of risky code ran**, not a quality score. Line coverage is cheap to game. **Branch** coverage on money, auth, and permissions is the useful number. v8 (Vitest’s default) **cannot see Playwright** — a 90% unit report can still mean nobody clicked checkout in a browser.",
-            "vi": "**Tóm tắt:** Coverage là **nhánh code rủi ro nào đã chạy**, không phải điểm chất lượng. Coverage dòng dễ bị làm đẹp. Coverage **nhánh** trên tiền, auth và permission mới là số hữu ích. v8 (mặc định Vitest) **không thấy Playwright** — báo cáo unit 90% vẫn có thể nghĩa là chưa ai click checkout trên browser."
+            "vi": "**Tóm tắt:** Coverage là **nhánh nào của code rủi ro đã chạy**, không phải điểm chất lượng. Coverage dòng dễ bị làm đẹp. Coverage **nhánh** trên tiền, auth và permission mới là số hữu ích. v8 (mặc định của Vitest) **không thấy Playwright**. Báo cáo unit 90% vẫn có thể nghĩa là chưa ai click checkout trên browser."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “What coverage do you require?” If you say **80%** as a repo-wide gate, many interviewers mark you junior — especially when `canRefund()` is untested and snapshots pad the number. Teams add `/* istanbul ignore */` and generated files to protect the metric. That is coverage theater.",
-            "vi": "**Vì sao quan trọng:** “Bạn yêu cầu coverage bao nhiêu?” Nếu bạn nói **80%** làm cổng cả repo, nhiều người phỏng vấn chấm junior — nhất là khi `canRefund()` chưa test và snapshot đệm số. Team thêm `/* istanbul ignore */` và file generate để bảo vệ metric. Đó là diễn kịch coverage."
+            "vi": "**Vì sao quan trọng:** “Bạn yêu cầu coverage bao nhiêu?” Nếu bạn nói **80%** làm gate cả repo, nhiều người phỏng vấn chấm junior, nhất là khi `canRefund()` chưa test và snapshot đệm số. Team thêm `/* istanbul ignore */` và file generate để bảo vệ metric. Đó là diễn kịch coverage."
           }
         },
         {
@@ -765,15 +765,15 @@
           "items": [
             {
               "en": "**How it works:** Instrument Vitest (`coverage.provider: \"v8\"`) for **insight**. Include `src/domain/**` and the auth/checkout composables. Exclude specs and generated code. Fail CI on a **branch-coverage drop** in that include list, not on `pages/` or Vue SFC chrome. Snapshot tests inflate line coverage without exercising branches.",
-              "vi": "**Cách hoạt động:** Instrument Vitest (`coverage.provider: \"v8\"`) để **nhìn**. Include `src/domain/**` và composable auth/checkout. Exclude spec và code generate. Fail CI khi **coverage nhánh tụt** trong list include đó, không phải trên `pages/` hoặc chrome SFC Vue. Test snapshot phình coverage dòng mà không đi nhánh."
+              "vi": "**Cách hoạt động:** Instrument Vitest (`coverage.provider: \"v8\"`) để lấy **insight**. Include `src/domain/**` và composable auth/checkout. Exclude spec và code generate. Fail CI khi **coverage nhánh tụt** trong list include đó, không phải trên `pages/` hoặc chrome SFC Vue. Test snapshot phình coverage dòng mà không đi qua nhánh."
             },
             {
               "en": "Critical-path E2E (8.3) is a separate gate. Coverage of a suite that mocks everything covers the mock. Permission functions have branches (`canRefund` captured vs pending vs expired); a snapshot of the refund button does not. Mutation testing (Stryker) is worth it only on a small domain module after the branch number already exists.",
-              "vi": "E2E path critical (8.3) là cổng riêng. Coverage của suite mock tất cả là coverage cái mock. Hàm permission có nhánh (`canRefund` captured khác pending khác hết hạn); snapshot nút refund thì không. Mutation testing (Stryker) chỉ đáng trên module domain nhỏ sau khi số nhánh đã có."
+              "vi": "E2E critical path (8.3) là gate riêng. Coverage của suite mock hết mọi thứ là coverage cái mock. Hàm permission có nhánh (`canRefund` captured khác pending khác expired); snapshot nút refund thì không. Mutation testing (Stryker) chỉ đáng trên module domain nhỏ, sau khi đã có số nhánh."
             },
             {
               "en": "On Next, RSC wrappers and generated types will tank a repo-wide gate — same policy: instrument domain, not `app/`. Vue analog: do not include `.nuxt/` or auto-imported stubs. The interview answer is a **risk map**, not a percentage.",
-              "vi": "Trên Next, wrapper RSC và type generate sẽ phá cổng cả repo — cùng policy: instrument domain, không phải `app/`. Analog Vue: đừng include `.nuxt/` hoặc stub auto-import. Câu phỏng vấn là **bản đồ rủi ro**, không phải phần trăm."
+              "vi": "Trên Next, wrapper RSC và type generate sẽ phá gate cả repo. Cùng policy: instrument domain, không phải `app/`. Analog Vue: đừng include `.nuxt/` hoặc stub auto-import. Câu phỏng vấn là **bản đồ rủi ro**, không phải phần trăm."
             }
           ]
         },
@@ -782,14 +782,14 @@
           "lang": "ts",
           "code": {
             "en": "// Insight, not an 80% club. Branch drop in domain fails CI; pages/ does not.\nexport default defineConfig({\n  test: {\n    coverage: {\n      provider: \"v8\", // does not see Playwright paths\n      include: [\"src/domain/**\", \"src/composables/useAuth.ts\", \"src/composables/useCheckout.ts\"],\n      exclude: [\"**/*.spec.ts\", \"src/generated/**\"],\n      thresholds: {\n        \"src/domain/**\": { branches: 90, statements: 0 },\n      },\n      reporter: [\"text\", \"html\"],\n    },\n  },\n})",
-            "vi": "// Để nhìn, không phải gậy 80%. Nhánh tụt ở domain fail CI; pages/ thì không.\nexport default defineConfig({\n  test: {\n    coverage: {\n      provider: \"v8\", // không thấy path Playwright\n      include: [\"src/domain/**\", \"src/composables/useAuth.ts\", \"src/composables/useCheckout.ts\"],\n      exclude: [\"**/*.spec.ts\", \"src/generated/**\"],\n      thresholds: {\n        \"src/domain/**\": { branches: 90, statements: 0 },\n      },\n      reporter: [\"text\", \"html\"],\n    },\n  },\n})"
+            "vi": "// Để lấy insight, không phải club 80%. Nhánh tụt ở domain fail CI; pages/ thì không.\nexport default defineConfig({\n  test: {\n    coverage: {\n      provider: \"v8\", // không thấy path Playwright\n      include: [\"src/domain/**\", \"src/composables/useAuth.ts\", \"src/composables/useCheckout.ts\"],\n      exclude: [\"**/*.spec.ts\", \"src/generated/**\"],\n      thresholds: {\n        \"src/domain/**\": { branches: 90, statements: 0 },\n      },\n      reporter: [\"text\", \"html\"],\n    },\n  },\n})"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** v8 reports only the include list. A branch drop in `src/domain` fails CI. `pages/` can sit at 20% without blocking. Playwright still has to click checkout — this config will not see that click.",
-            "vi": "**Điều gì xảy ra:** v8 chỉ báo list include. Nhánh tụt ở `src/domain` fail CI. `pages/` có thể 20% mà không chặn. Playwright vẫn phải click checkout — config này không thấy click đó."
+            "vi": "**Điều gì xảy ra:** v8 chỉ báo list include. Nhánh tụt ở `src/domain` fail CI. `pages/` có thể ngồi ở 20% mà không chặn. Playwright vẫn phải click checkout. Config này không thấy click đó."
           }
         },
         {
@@ -820,7 +820,7 @@
               },
               {
                 "en": "The suite mocked the collaborator",
-                "vi": "Suite mock collaborator"
+                "vi": "Suite đã mock collaborator"
               }
             ],
             [
@@ -834,7 +834,7 @@
               },
               {
                 "en": "Snapshots and generated files pad it",
-                "vi": "Snapshot và file generate đệm"
+                "vi": "Snapshot và file generate đệm số"
               }
             ],
             [
@@ -858,11 +858,11 @@
               },
               {
                 "en": "Assertions would catch a bug",
-                "vi": "Assert sẽ bắt bug"
+                "vi": "Assert sẽ bắt được bug"
               },
               {
                 "en": "You run it on Vue SFCs",
-                "vi": "Bạn chạy trên SFC Vue"
+                "vi": "Bạn chạy nó trên SFC Vue"
               }
             ]
           ]
@@ -875,7 +875,7 @@
           },
           "text": {
             "en": "- Cover risk, not lines. Money, auth, permissions, PII, refunds, feature-flag defaults.\n- v8 cannot see Playwright. A 90% unit report can still mean checkout was never clicked.\n- Fail CI on a branch-coverage drop in `src/domain`, not on `pages/` or SFC chrome.\n- Coverage of a fully mocked suite covers the mock. Permission functions have branches; snapshots do not.\n- Mutation testing is a scalpel on a small domain module, not a Vue app gate.",
-            "vi": "- Cover rủi ro, không phải dòng. Tiền, auth, permission, PII, refund, mặc định feature-flag.\n- v8 không thấy Playwright. Báo cáo unit 90% vẫn có thể nghĩa là chưa click checkout.\n- Fail CI khi coverage nhánh tụt ở `src/domain`, không phải `pages/` hay chrome SFC.\n- Coverage của suite mock hết là coverage cái mock. Hàm permission có nhánh; snapshot thì không.\n- Mutation testing là dao mổ trên module domain nhỏ, không phải cổng app Vue."
+            "vi": "- Cover rủi ro, không phải dòng. Tiền, auth, permission, PII, refund, mặc định feature-flag.\n- v8 không thấy Playwright. Báo cáo unit 90% vẫn có thể nghĩa là chưa ai click checkout.\n- Fail CI khi branch coverage tụt ở `src/domain`, không phải `pages/` hay chrome SFC.\n- Coverage của suite mock hết là coverage cái mock. Hàm permission có nhánh; snapshot thì không.\n- Mutation testing là dao mổ trên module domain nhỏ, không phải gate cho app Vue."
           }
         },
         {
@@ -883,18 +883,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: 90% green, `canRefund` untested. Cause: snapshots pad lines. Fix: branch thresholds on domain.\n- Symptom: Next/Nuxt gate always red. Cause: RSC wrappers / `.nuxt` in include. Fix: exclude generated.\n- Symptom: theater. Cause: `istanbul ignore` and empty tests. Fix: review the include list, not the number.\n- Symptom: checkout untested in a browser. Cause: trusting v8. Fix: Playwright money path as a separate gate.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: 90% xanh, `canRefund` chưa test. Nguyên nhân: snapshot đệm dòng. Cách xử lý: ngưỡng nhánh trên domain.\n- Triệu chứng: cổng Next/Nuxt luôn đỏ. Nguyên nhân: wrapper RSC / `.nuxt` trong include. Cách xử lý: exclude phần generate.\n- Triệu chứng: diễn kịch. Nguyên nhân: `istanbul ignore` và test rỗng. Cách xử lý: review list include, không phải con số.\n- Triệu chứng: checkout chưa test trên browser. Nguyên nhân: tin v8. Cách xử lý: path tiền Playwright làm cổng riêng."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: 90% xanh, `canRefund` chưa test. Nguyên nhân: snapshot đệm dòng. Cách xử lý: ngưỡng nhánh trên domain.\n- Triệu chứng: gate Next/Nuxt luôn đỏ. Nguyên nhân: wrapper RSC / `.nuxt` trong include. Cách xử lý: exclude phần generate.\n- Triệu chứng: diễn kịch. Nguyên nhân: `istanbul ignore` và test rỗng. Cách xử lý: review list include, không phải con số.\n- Triệu chứng: checkout chưa test trên browser. Nguyên nhân: tin v8. Cách xử lý: path tiền Playwright làm gate riêng."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "“What coverage do you require?” 80% as a repo-wide gate, with `canRefund()` untested, is the junior answer. They want a risk map.",
-            "vi": "“Bạn yêu cầu coverage bao nhiêu?” 80% làm cổng cả repo, trong khi `canRefund()` chưa test, là câu junior. Họ muốn bản đồ rủi ro."
+            "vi": "“Bạn yêu cầu coverage bao nhiêu?” 80% làm gate cả repo, trong khi `canRefund()` chưa test, là câu junior. Họ muốn bản đồ rủi ro."
           }
         },
         {
@@ -905,7 +905,7 @@
           },
           "text": {
             "en": "I do not gate the repo on 80%. I cover risk: money, auth, permissions, refunds. v8 will not see Playwright, so a 90% unit report can still mean checkout was never clicked in a browser. I fail CI on a branch-coverage drop in src/domain, not on pages. Coverage of a suite that mocks everything covers the mock. canRefund has branches; a snapshot of the refund button does not. On the admin product we instrumented domain and checkout composables, and Playwright still owned Pay. Mutation testing stayed on the tax module only.",
-            "vi": "Tôi không chặn repo bằng 80%. Tôi cover rủi ro: tiền, auth, permission, refund. v8 không thấy Playwright, nên báo cáo unit 90% vẫn có thể nghĩa là chưa ai click checkout trên browser. Tôi fail CI khi coverage nhánh tụt ở src/domain, không phải pages. Coverage của suite mock tất cả là coverage cái mock. canRefund có nhánh; snapshot nút refund thì không. Ở sản phẩm admin chúng tôi instrument domain và composable checkout, và Playwright vẫn sở hữu Pay. Mutation testing chỉ ở module thuế."
+            "vi": "Mình không gate cả repo ở 80%. Mình cover rủi ro: tiền, auth, permission, refund. v8 không thấy Playwright, nên báo cáo unit 90% vẫn có thể nghĩa là chưa ai click checkout trên browser. Mình fail CI khi branch coverage tụt ở src/domain, không phải pages. Coverage của suite mock hết là coverage cái mock. canRefund có nhánh; snapshot nút refund thì không. Ở admin nội bộ, bọn mình instrument domain và composable checkout, còn Playwright vẫn chịu trách nhiệm Pay. Mutation testing chỉ nằm ở module thuế."
           }
         },
         {
@@ -913,7 +913,7 @@
           "items": [
             {
               "en": "Cover risk, not lines. 80% as a repo gate is usually theater.",
-              "vi": "Cover rủi ro, không phải dòng. 80% làm cổng repo thường là diễn kịch."
+              "vi": "Cover rủi ro, không phải dòng. Gate 80% cả repo thường là diễn kịch."
             },
             {
               "en": "v8 cannot see Playwright. Checkout still needs a browser spec.",
@@ -921,7 +921,7 @@
             },
             {
               "en": "Fail CI on `src/domain` branch coverage, not on `pages/`.",
-              "vi": "Fail CI trên coverage nhánh `src/domain`, không phải `pages/`."
+              "vi": "Fail CI trên branch coverage của `src/domain`, không phải `pages/`."
             },
             {
               "en": "Mocked suites cover the mock. Snapshots pad lines, not branches.",
@@ -937,7 +937,7 @@
           },
           "text": {
             "en": "- **Would you fail the build on coverage drop?** Yes on `src/domain` branches. No on `pages/` or generated files.\n- **How does this differ on Next?** RSC wrappers and generated types tank a repo-wide gate. Instrument domain.\n- **When is mutation testing worth it?** A small frozen domain module after branch coverage already exists.\n- **Why is coverage of a fully mocked suite misleading?** You measured the mock, not the collaborator you ship.",
-            "vi": "- **Bạn có fail build khi coverage tụt?** Có trên nhánh `src/domain`. Không trên `pages/` hay file generate.\n- **Khác gì trên Next?** Wrapper RSC và type generate phá cổng cả repo. Instrument domain.\n- **Khi nào mutation testing đáng?** Module domain nhỏ đã đóng băng hợp đồng, sau khi coverage nhánh đã có.\n- **Vì sao coverage suite mock hết gây hiểu nhầm?** Bạn đo cái mock, không phải collaborator bạn đưa lên."
+            "vi": "- **Bạn có fail build khi coverage tụt?** Có trên nhánh `src/domain`. Không trên `pages/` hay file generate.\n- **Khác gì trên Next?** Wrapper RSC và type generate phá gate cả repo. Instrument domain.\n- **Khi nào mutation testing đáng?** Module domain nhỏ đã đóng băng, sau khi đã có branch coverage.\n- **Vì sao coverage suite mock hết gây hiểu nhầm?** Bạn đo cái mock, không phải collaborator bạn ship."
           }
         },
         {
@@ -959,14 +959,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** TDD (test-driven development) is **red → green → refactor** on a **stable contract**: pricing, RBAC, parsers, adapters against a frozen OpenAPI fixture. BDD (behaviour-driven development) is a **shared language** in the test title (`Given / When / Then`), not a Cucumber stack. Do not TDD a modal’s padding.",
-            "vi": "**Tóm tắt:** TDD (test-driven development) là **đỏ → xanh → refactor** trên **hợp đồng ổn định**: giá, RBAC, parser, adapter trên fixture OpenAPI đã đóng. BDD (behaviour-driven development) là **ngôn ngữ chung** trong title test (`Given / When / Then`), không phải stack Cucumber. Đừng TDD padding của modal."
+            "vi": "**Tóm tắt:** TDD (test-driven development) là **đỏ → xanh → refactor** trên một **contract ổn định**: giá, RBAC, parser, adapter trên fixture OpenAPI đã đóng băng. BDD (behaviour-driven development) là **ngôn ngữ chung** trong title test (`Given / When / Then`), không phải stack Cucumber. Đừng TDD padding của modal."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “Do you practice TDD?” They want **judgment**, not a manifesto — and they will smell TDD theater (tests dated yesterday, written after) or “we TDD” plus 0% coverage on permissions. If PM is still changing checkout steps, tests-first encode yesterday’s guess.",
-            "vi": "**Vì sao quan trọng:** “Bạn có TDD không?” Họ muốn **phán đoán**, không phải tuyên ngôn — và họ sẽ ngửi ra diễn kịch TDD (test đề ngày hôm qua, viết sau) hoặc “chúng tôi TDD” kèm 0% coverage permission. Nếu PM vẫn đổi bước checkout, test-trước chỉ mã hóa đoán của hôm qua."
+            "vi": "**Vì sao quan trọng:** “Bạn có TDD không?” Họ muốn **cách cân nhắc**, không phải tuyên ngôn, và họ ngửi ra diễn kịch TDD (test đề ngày hôm qua, viết sau) hoặc “we TDD” kèm 0% coverage permission. Nếu PM vẫn đang đổi bước checkout, test-first chỉ mã hóa phỏng đoán của hôm qua."
           }
         },
         {
@@ -975,15 +975,15 @@
           "items": [
             {
               "en": "**How it works:** Red: write a failing example of the contract (`canRefund` within 24h). Green: the smallest implementation. Refactor: names and duplication, tests stay green. The test **name** is the spec you review in the PR — “Given a captured card payment, When it is within 24h, Then the cashier may refund in full.”",
-              "vi": "**Cách hoạt động:** Đỏ: viết ví dụ fail của hợp đồng (`canRefund` trong 24h). Xanh: implementation nhỏ nhất. Refactor: tên và trùng lặp, test vẫn xanh. **Tên** test là spec bạn review trong PR — “Given a captured card payment, When it is within 24h, Then the cashier may refund in full.”"
+              "vi": "**Cách hoạt động:** Đỏ: viết ví dụ fail của contract (`canRefund` trong 24h). Xanh: implementation nhỏ nhất. Refactor: tên và chỗ trùng, test vẫn xanh. **Tên** test là spec bạn review trong PR: “Given a captured card payment, When it is within 24h, Then the cashier may refund in full”."
             },
             {
               "en": "Spike exploratory UI, then lock behaviour with Testing Library (8.2). TDD adapters against a **frozen** fixture; when the spec still moves, you are encoding a guess. Cucumber / 40-layer `Given` is only worth it if the org already runs Gherkin and someone owns the glue. Otherwise the title is enough.",
-              "vi": "Spike UI đang khám phá, rồi khóa hành vi bằng Testing Library (8.2). TDD adapter trên fixture **đã đóng**; khi spec còn chạy, bạn đang mã hóa một phỏng đoán. Cucumber / `Given` 40 tầng chỉ đáng nếu org đã chạy Gherkin và có người sở hữu glue. Không thì title là đủ."
+              "vi": "Spike UI đang khám phá, rồi khóa hành vi bằng Testing Library (8.2). TDD adapter trên fixture **đã đóng băng**; khi spec vẫn còn đổi, bạn đang mã hóa một phỏng đoán. Cucumber / `Given` 40 tầng chỉ đáng nếu org đã chạy Gherkin và có người chịu trách nhiệm glue. Không thì title là đủ."
             },
             {
               "en": "Contract tests ([8.6](#86-contract-tests-visual-regression-and-legacy-vue)) beat a `Cart.addItem` kata as “TDD in this codebase.” Review test names as the spec. Reject tests that assert internals. Honest “when TDD slowed me down”: design-system visuals, or a spike on a new Nuxt route.",
-              "vi": "Contract test ([8.6](#86-contract-test-visual-regression-va-vue-legacy)) hơn kata `Cart.addItem` khi nói “TDD trong codebase này.” Review tên test như spec. Từ chối test assert nội bộ. Câu thật “khi TDD làm tôi chậm”: visual design system, hoặc spike route Nuxt mới."
+              "vi": "Contract test ([8.6](#86-contract-test-visual-regression-va-vue-legacy)) hơn kata `Cart.addItem` khi nói “TDD trong codebase này”. Review tên test như spec. Từ chối test assert nội bộ. Thành thật “khi TDD làm mình chậm”: visual design system, hoặc spike một route Nuxt mới."
             }
           ]
         },
@@ -999,7 +999,7 @@
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** The titles are the product spec. Red fails on a missing function. Green is the smallest `canRefund`. A later refactor of internals keeps both titles green. QA can read the names without opening Cucumber.",
-            "vi": "**Điều gì xảy ra:** Title là spec product. Đỏ fail vì thiếu hàm. Xanh là `canRefund` nhỏ nhất. Refactor nội bộ sau đó vẫn giữ cả hai title xanh. QA đọc tên mà không mở Cucumber."
+            "vi": "**Điều gì xảy ra:** Title chính là spec product. Đỏ fail vì thiếu hàm. Xanh là `canRefund` nhỏ nhất. Refactor nội bộ sau đó vẫn giữ cả hai title xanh. QA đọc tên mà không cần mở Cucumber."
           }
         },
         {
@@ -1044,7 +1044,7 @@
               },
               {
                 "en": "Cucumber glue nobody owns",
-                "vi": "Glue Cucumber không ai sở hữu"
+                "vi": "Glue Cucumber không ai chịu trách nhiệm"
               }
             ],
             [
@@ -1068,11 +1068,11 @@
               },
               {
                 "en": "HTTP boundary stays honest",
-                "vi": "Biên HTTP còn trung thực"
+                "vi": "Biên HTTP vẫn thật"
               },
               {
                 "en": "No spec pipeline, then they rot",
-                "vi": "Không pipeline spec thì chúng thối"
+                "vi": "Không pipeline spec thì chúng mục"
               }
             ]
           ]
@@ -1085,7 +1085,7 @@
           },
           "text": {
             "en": "- TDD for frozen contracts and pure domain. Not for exploratory UI or a modal’s padding.\n- BDD is a shared language in the test title, not a Cucumber stack unless the org already runs Gherkin.\n- Review test names as the spec. Reject tests that assert internals.\n- “We TDD” plus zero tests on permissions is a tell. Point at `canRefund`, not a kata.\n- Contract tests in 8.6 are the TDD that protects a Vue app against API drift.",
-            "vi": "- TDD cho hợp đồng đã đóng và domain thuần. Không cho UI đang khám phá hay padding modal.\n- BDD là ngôn ngữ chung trong title test, không phải stack Cucumber trừ khi org đã chạy Gherkin.\n- Review tên test như spec. Từ chối test assert nội bộ.\n- “Chúng tôi TDD” kèm zero test permission là tín hiệu. Chỉ vào `canRefund`, không phải kata.\n- Contract test ở 8.6 là TDD bảo vệ app Vue khỏi API lệch."
+            "vi": "- TDD cho contract đã đóng băng và domain thuần. Không cho UI đang khám phá hay padding modal.\n- BDD là ngôn ngữ chung trong title test, không phải stack Cucumber trừ khi org đã chạy Gherkin.\n- Review tên test như spec. Từ chối test assert nội bộ.\n- “We TDD” kèm zero test permission là tín hiệu. Chỉ vào `canRefund`, không phải kata.\n- Contract test ở 8.6 là TDD bảo vệ app Vue khỏi API lệch."
           }
         },
         {
@@ -1093,18 +1093,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: tests dated yesterday. Cause: TDD theater. Fix: review git dates vs the feature; ask for the red commit.\n- Symptom: 3× a designer-heavy flow. Cause: TDD dogma on padding. Fix: spike UI, then lock with Testing Library.\n- Symptom: QA owns Cypress, dev owns Vitest, nobody shares language. Cause: BDD died in two toolchains. Fix: titles both sides.\n- Symptom: “we TDD” and `canRefund` is empty. Cause: kata culture. Fix: TDD the money contract.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: test đề ngày hôm qua. Nguyên nhân: diễn kịch TDD. Cách xử lý: review ngày git khác feature; hỏi commit đỏ.\n- Triệu chứng: flow nặng designer chậm 3×. Nguyên nhân: giáo điều TDD trên padding. Cách xử lý: spike UI, rồi khóa bằng Testing Library.\n- Triệu chứng: QA sở hữu Cypress, dev sở hữu Vitest, không ai chung ngôn ngữ. Nguyên nhân: BDD chết ở hai toolchain. Cách xử lý: title cả hai phía.\n- Triệu chứng: “chúng tôi TDD” và `canRefund` trống. Nguyên nhân: văn hóa kata. Cách xử lý: TDD hợp đồng tiền."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: test ghi ngày hôm qua. Nguyên nhân: diễn kịch TDD. Cách xử lý: review ngày git so với feature; hỏi commit đỏ.\n- Triệu chứng: flow nặng designer chậm 3×. Nguyên nhân: giáo điều TDD trên padding. Cách xử lý: spike UI, rồi khóa bằng Testing Library.\n- Triệu chứng: QA phụ trách Cypress, dev phụ trách Vitest, không chung ngôn ngữ. Nguyên nhân: BDD chết ở hai toolchain. Cách xử lý: title cả hai phía.\n- Triệu chứng: “we TDD” và `canRefund` trống. Nguyên nhân: văn hóa kata. Cách xử lý: TDD contract tiền."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "“Do you practice TDD?” They want where yes, where no, and whether “we TDD” is covering a hole in permissions.",
-            "vi": "“Bạn có TDD không?” Họ muốn chỗ có, chỗ không, và “chúng tôi TDD” có đang che lỗ permission không."
+            "vi": "“Bạn có TDD không?” Họ muốn chỗ nào có, chỗ nào không, và “we TDD” có đang che lỗ permission không."
           }
         },
         {
@@ -1115,7 +1115,7 @@
           },
           "text": {
             "en": "I TDD pricing, RBAC, and adapters against a frozen fixture. I do not red-green a modal’s padding — I spike the UI and lock behaviour with Testing Library. Given / When / Then is how I talk to QA and PM; it lives in the test title. I do not need Cucumber unless the org already runs Gherkin. We TDD plus zero tests on permissions is a tell. Contract tests in 8.6 are the TDD that actually protects this Vue app. On the admin product canRefund was written red first; checkout steps were not, because PM was still moving them.",
-            "vi": "Tôi TDD giá, RBAC và adapter trên fixture đã đóng. Tôi không đỏ-xanh padding của modal — tôi spike UI rồi khóa hành vi bằng Testing Library. Given / When / Then là cách tôi nói với QA và PM; nó nằm ở title test. Tôi không cần Cucumber trừ khi org đã chạy Gherkin. Chúng tôi TDD kèm zero test permission là tín hiệu. Contract test ở 8.6 mới là TDD thực sự bảo vệ app Vue này. Ở sản phẩm admin canRefund được viết đỏ trước; bước checkout thì không, vì PM vẫn đang dời chúng."
+            "vi": "Mình TDD giá, RBAC và adapter trên fixture đã đóng băng. Mình không đỏ-xanh padding của modal: mình spike UI rồi khóa hành vi bằng Testing Library. Given / When / Then là cách mình nói với QA và PM; nó nằm ở title test. Mình không cần Cucumber trừ khi org đã chạy Gherkin. We TDD kèm zero test permission là tín hiệu. Contract test ở 8.6 mới là TDD bảo vệ app Vue này. Ở admin nội bộ canRefund được viết đỏ trước; bước checkout thì không, vì PM vẫn đang dời chúng."
           }
         },
         {
@@ -1123,7 +1123,7 @@
           "items": [
             {
               "en": "TDD for frozen contracts and pure domain. Not for exploratory UI.",
-              "vi": "TDD cho hợp đồng đã đóng và domain thuần. Không cho UI đang khám phá."
+              "vi": "TDD cho contract đã đóng băng và domain thuần. Không cho UI đang khám phá."
             },
             {
               "en": "BDD is a shared language in the test title, not a Cucumber stack.",
@@ -1135,7 +1135,7 @@
             },
             {
               "en": "Contract tests (8.6) beat a kata as “TDD in this codebase.”",
-              "vi": "Contract test (8.6) hơn kata khi nói “TDD trong codebase này.”"
+              "vi": "Contract test (8.6) hơn kata khi nói “TDD trong codebase này”."
             }
           ]
         },
@@ -1147,7 +1147,7 @@
           },
           "text": {
             "en": "- **When did TDD last slow you down?** Design-system visuals, or a spike on a new Nuxt route — the contract was not frozen.\n- **How do you review a TDD PR?** Read the titles as the spec. Reject internals. Ask for the red commit.\n- **Why do contract tests beat a Cart.addItem kata?** They protect the HTTP boundary you actually ship.\n- **QA owns Cypress, dev owns Vitest — how does BDD survive?** Shared titles both sides, not two Gherkin stacks.",
-            "vi": "- **Lần TDD làm bạn chậm gần nhất?** Visual design system, hoặc spike route Nuxt mới — hợp đồng chưa đóng.\n- **Review PR TDD thế nào?** Đọc title như spec. Từ chối nội bộ. Hỏi commit đỏ.\n- **Vì sao contract test hơn kata Cart.addItem?** Chúng bảo vệ biên HTTP bạn thực sự đưa lên.\n- **QA sở hữu Cypress, dev sở hữu Vitest — BDD sống thế nào?** Title chung cả hai phía, không phải hai stack Gherkin."
+            "vi": "- **Lần TDD làm bạn chậm gần nhất?** Visual design system, hoặc spike route Nuxt mới: contract chưa đóng băng.\n- **Review PR TDD thế nào?** Đọc title như spec. Từ chối nội bộ. Hỏi commit đỏ.\n- **Vì sao contract test hơn kata Cart.addItem?** Chúng bảo vệ biên HTTP bạn ship.\n- **QA phụ trách Cypress, dev phụ trách Vitest: BDD sống thế nào?** Title chung cả hai phía, không phải hai stack Gherkin."
           }
         },
         {
@@ -1169,14 +1169,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** A **contract test** checks that two sides of a boundary still agree — usually HTTP: generated types and MSW handlers from the **same** OpenAPI spec, so a breaking change fails CI before merge. **Visual regression** diffs pixels on a locked theme. On **legacy Vue**, characterize money/auth first; do not start at 80% coverage.",
-            "vi": "**Tóm tắt:** **Contract test** kiểm tra hai phía của một biên vẫn đồng ý — thường là HTTP: type generate và handler MSW từ **cùng** spec OpenAPI, để thay đổi phá vỡ fail CI trước merge. **Visual regression** diff pixel trên theme đã khóa. Trên **Vue legacy**, characterize tiền/auth trước; đừng bắt đầu ở 80% coverage."
+            "vi": "**Tóm tắt:** **Contract test** kiểm tra hai phía của một biên vẫn khớp, thường là HTTP: type generate và handler MSW từ **cùng** spec OpenAPI, để breaking change fail CI trước merge. **Visual regression** diff pixel trên theme đã khóa. Trên **Vue legacy**, characterize tiền/auth trước; đừng bắt đầu ở 80% coverage."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** The API changed and the UI shipped anyway. Or: this Vue 2/3 app has no tests, and someone wants 80% coverage after a Composition API rewrite. Where do you start, and do you do visual regression? Hand-written TS types drift. Percy on every dashboard chart becomes 200 flaky diffs from fonts.",
-            "vi": "**Vì sao quan trọng:** API đổi mà UI vẫn lên. Hoặc: app Vue 2/3 không có test, ai đó muốn 80% coverage sau rewrite Composition API. Bạn bắt đầu đâu, và có visual regression không? Type TS viết tay bị lệch. Percy mọi chart dashboard thành 200 diff flake vì font."
+            "vi": "**Vì sao quan trọng:** API đổi mà UI vẫn lên. Hoặc: app Vue 2/3 không có test, ai đó muốn 80% coverage sau rewrite Composition API. Bạn bắt đầu từ đâu, và có làm visual regression không? Type TS viết tay bị lệch. Percy mọi chart dashboard thành 200 diff flake vì font."
           }
         },
         {
@@ -1185,15 +1185,15 @@
           "items": [
             {
               "en": "**How it works:** One spec → OpenAPI types + MSW handlers generated from it. Component tests hit those handlers, so they test the UI against the contract, not a fantasy mock. Pact (consumer-driven contracts) helps when **multiple consumers** deploy separately from the API. Skip Pact on a Nuxt monolith with colocated `server/api`.",
-              "vi": "**Cách hoạt động:** Một spec → type OpenAPI + handler MSW generate từ đó. Test component đánh những handler đó, nên chúng test UI với hợp đồng, không phải mock tưởng tượng. Pact (contract do consumer lái) giúp khi **nhiều consumer** deploy tách khỏi API. Bỏ Pact trên monolith Nuxt với `server/api` đặt cạnh."
+              "vi": "**Cách hoạt động:** Một spec → type OpenAPI + handler MSW generate từ đó. Test component đánh những handler đó, nên chúng test UI theo contract, không phải mock tưởng tượng. Pact (consumer-driven contracts) giúp khi **nhiều consumer** deploy tách khỏi API. Bỏ Pact trên monolith Nuxt với `server/api` đặt cạnh."
             },
             {
               "en": "Visuals: design-system atoms plus a few marketing/checkout screens. Freeze theme, viewport, timezone, `animations: disabled`. Reviewed diffs, not auto-approve. Skip every dashboard chart and unlocked webfonts. Storybook/Chromatic for atoms; Playwright screenshots for a checkout chrome path.",
-              "vi": "Visual: atom design system kèm vài màn marketing/checkout. Khóa theme, viewport, múi giờ, `animations: disabled`. Diff được review, không tự approve. Bỏ mọi chart dashboard và webfont chưa khóa. Storybook/Chromatic cho atom; screenshot Playwright cho path chrome checkout."
+              "vi": "Visual: atom design system kèm vài màn marketing/checkout. Khóa theme, viewport, timezone, `animations: disabled`. Diff được review, không auto-approve. Bỏ mọi chart dashboard và webfont chưa khóa. Storybook/Chromatic cho atom; screenshot Playwright cho path chrome checkout."
             },
             {
               "en": "Legacy Vue with no tests: Playwright on login and the revenue path first (characterization: lock **current** behaviour, even if it is ugly). Extract pure functions and unit those. Then MSW on the existing Axios client. Do not wait for a rewrite, and do not start at 80%. Keep E2E green across a Vue 2 → 3 compiler change so you can move.",
-              "vi": "Vue legacy không test: Playwright trên login và path doanh thu trước (characterization: khóa hành vi **hiện tại**, dù xấu). Tách hàm thuần rồi unit. Rồi MSW trên client Axios sẵn có. Đừng chờ rewrite, và đừng bắt đầu ở 80%. Giữ E2E xanh xuyên đổi compiler Vue 2 → 3 để còn bước được."
+              "vi": "Vue legacy không có test: Playwright trên login và path doanh thu trước (characterization: khóa hành vi **hiện tại**, dù xấu). Tách hàm thuần rồi unit những hàm đó. Rồi MSW trên client Axios sẵn có. Đừng chờ rewrite, và đừng bắt đầu ở 80%. Giữ E2E xanh xuyên đổi compiler Vue 2 → 3 để còn bước được."
             }
           ]
         },
@@ -1202,14 +1202,14 @@
           "lang": "ts",
           "code": {
             "en": "// Same OpenAPI spec → types + MSW. A breaking field fails CI before merge.\nimport { paths } from \"./openapi\" // generated\nimport { HttpResponse, http } from \"msw\"\ntype Catalog = paths[\"/api/catalog\"][\"get\"][\"responses\"][\"200\"][\"content\"][\"application/json\"]\nexport const catalogHandler = http.get(\"/api/catalog\", () =>\n  HttpResponse.json({ items: [{ sku: \"A\", name: \"sku-9\" }] } satisfies Catalog),\n)\n// Legacy characterization: lock today, then extract. Do not start at 80%.\ntest(\"cashier can refund a captured card from the order page\", async ({ page }) => {\n  await page.goto(\"/orders/1001\")\n  await page.getByRole(\"button\", { name: \"Refund\" }).click()\n  await expect(page.getByRole(\"status\")).toHaveText(/refund queued/i)\n})",
-            "vi": "// Cùng spec OpenAPI → type + MSW. Field phá vỡ fail CI trước merge.\nimport { paths } from \"./openapi\" // generated\nimport { HttpResponse, http } from \"msw\"\ntype Catalog = paths[\"/api/catalog\"][\"get\"][\"responses\"][\"200\"][\"content\"][\"application/json\"]\nexport const catalogHandler = http.get(\"/api/catalog\", () =>\n  HttpResponse.json({ items: [{ sku: \"A\", name: \"sku-9\" }] } satisfies Catalog),\n)\n// Characterization legacy: khóa hôm nay, rồi tách. Đừng bắt đầu ở 80%.\ntest(\"cashier refund được thẻ captured từ trang đơn\", async ({ page }) => {\n  await page.goto(\"/orders/1001\")\n  await page.getByRole(\"button\", { name: \"Refund\" }).click()\n  await expect(page.getByRole(\"status\")).toHaveText(/refund queued/i)\n})"
+            "vi": "// Cùng spec OpenAPI → type + MSW. Field phá vỡ fail CI trước merge.\nimport { paths } from \"./openapi\" // generated\nimport { HttpResponse, http } from \"msw\"\ntype Catalog = paths[\"/api/catalog\"][\"get\"][\"responses\"][\"200\"][\"content\"][\"application/json\"]\nexport const catalogHandler = http.get(\"/api/catalog\", () =>\n  HttpResponse.json({ items: [{ sku: \"A\", name: \"sku-9\" }] } satisfies Catalog),\n)\n// Characterization legacy: khóa hôm nay, rồi tách. Đừng bắt đầu ở 80%.\ntest(\"cashier can refund a captured card from the order page\", async ({ page }) => {\n  await page.goto(\"/orders/1001\")\n  await page.getByRole(\"button\", { name: \"Refund\" }).click()\n  await expect(page.getByRole(\"status\")).toHaveText(/refund queued/i)\n})"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `satisfies Catalog` will not compile if the spec drops `name`. The Playwright spec locks refund behaviour on the Vue 2 screen you have — a characterization net — before anyone rewrites the SFC.",
-            "vi": "**Điều gì xảy ra:** `satisfies Catalog` sẽ không compile nếu spec bỏ `name`. Spec Playwright khóa hành vi refund trên màn Vue 2 bạn đang có — lưới characterization — trước khi ai rewrite SFC."
+            "vi": "**Điều gì xảy ra:** `satisfies Catalog` sẽ không compile nếu spec bỏ `name`. Spec Playwright khóa hành vi refund trên màn Vue 2 bạn đang có (lưới characterization) trước khi ai rewrite SFC."
           }
         },
         {
@@ -1240,7 +1240,7 @@
               },
               {
                 "en": "Nobody owns the spec pipeline",
-                "vi": "Không ai sở hữu pipeline spec"
+                "vi": "Không ai chịu trách nhiệm pipeline spec"
               }
             ],
             [
@@ -1295,7 +1295,7 @@
           },
           "text": {
             "en": "- One spec → types + MSW. A breaking OpenAPI change fails CI before merge.\n- Pact when consumers deploy separately. Skip it on a colocated Nuxt BFF.\n- Visual: design system + a few screens, locked fonts, reviewed diffs — not every chart.\n- Legacy: Playwright on money/auth first. Characterize the app you have. Then extract pure functions.\n- Do not wait for a rewrite. Do not start at 80% coverage. Keep E2E green across Vue 2 → 3.",
-            "vi": "- Một spec → type + MSW. Thay đổi OpenAPI phá vỡ fail CI trước merge.\n- Pact khi consumer deploy tách. Bỏ trên BFF Nuxt đặt cạnh.\n- Visual: design system + vài màn, font khóa, diff được review — không phải mọi chart.\n- Legacy: Playwright trên tiền/auth trước. Characterize app bạn đang có. Rồi tách hàm thuần.\n- Đừng chờ rewrite. Đừng bắt đầu ở 80% coverage. Giữ E2E xanh xuyên Vue 2 → 3."
+            "vi": "- Một spec → type + MSW. Breaking change trên OpenAPI fail CI trước merge.\n- Pact khi consumer deploy tách nhau. Bỏ trên BFF Nuxt nằm cùng app.\n- Visual: design system + vài màn, font khóa, diff được review. Không phải mọi chart.\n- Legacy: Playwright trên tiền/auth trước. Characterize app bạn đang có. Rồi tách hàm thuần.\n- Đừng chờ rewrite. Đừng bắt đầu ở 80% coverage. Giữ E2E xanh xuyên Vue 2 → 3."
           }
         },
         {
@@ -1303,18 +1303,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: UI shipped, API broke. Cause: hand-written types. Fix: generate types + MSW from one spec.\n- Symptom: 200 flaky visual diffs. Cause: unlocked fonts / every chart. Fix: atoms + checkout, freeze theme.\n- Symptom: rewrite stalled, still no tests. Cause: 80% first. Fix: Playwright money/auth, then extract.\n- Symptom: HAR mocks rot. Cause: recorded once, never regenerated. Fix: generate from the spec pipeline.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: UI lên, API gãy. Nguyên nhân: type viết tay. Cách xử lý: generate type + MSW từ một spec.\n- Triệu chứng: 200 diff visual flake. Nguyên nhân: font chưa khóa / mọi chart. Cách xử lý: atom + checkout, khóa theme.\n- Triệu chứng: rewrite kẹt, vẫn không test. Nguyên nhân: 80% trước. Cách xử lý: Playwright tiền/auth, rồi tách.\n- Triệu chứng: mock HAR thối. Nguyên nhân: ghi một lần, không bao giờ generate lại. Cách xử lý: generate từ pipeline spec."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: UI lên, API gãy. Nguyên nhân: type viết tay. Cách xử lý: generate type + MSW từ một spec.\n- Triệu chứng: 200 visual diff flaky. Nguyên nhân: font chưa khóa / mọi chart. Cách xử lý: atom + checkout, khóa theme.\n- Triệu chứng: rewrite kẹt, vẫn chưa có test. Nguyên nhân: 80% trước. Cách xử lý: Playwright tiền/auth, rồi tách.\n- Triệu chứng: mock HAR lệch. Nguyên nhân: record một lần, không bao giờ generate lại. Cách xử lý: generate từ pipeline spec."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "The API changed and the UI shipped anyway — or a Vue 2 app has no tests and someone wants 80% after a rewrite. Where do you start, and do you visual-regress?",
-            "vi": "API đổi mà UI vẫn lên — hoặc app Vue 2 không test và ai đó muốn 80% sau rewrite. Bạn bắt đầu đâu, và có visual-regress không?"
+            "vi": "API đổi mà UI vẫn lên, hoặc app Vue 2 không có test và ai đó muốn 80% sau rewrite. Bạn bắt đầu từ đâu, và có visual-regress không?"
           }
         },
         {
@@ -1325,7 +1325,7 @@
           },
           "text": {
             "en": "I treat the HTTP boundary as a contract: generated types and MSW from the same OpenAPI spec, so a breaking change fails CI before merge. Visuals stay on the design system and checkout chrome, locked fonts, reviewed diffs — not every dashboard chart. On a legacy Vue app I put Playwright on login and the revenue path first, lock current behaviour with characterization tests, then extract pure functions. I do not wait for a rewrite, and I do not start at 80% coverage. Pact is for multiple consumers; a Nuxt monolith with colocated server routes does not need it.",
-            "vi": "Tôi xem biên HTTP là hợp đồng: type generate và MSW từ cùng spec OpenAPI, để thay đổi phá vỡ fail CI trước merge. Visual ở lại trên design system và chrome checkout, font khóa, diff được review — không phải mọi chart dashboard. Trên app Vue legacy tôi để Playwright lên login và path doanh thu trước, khóa hành vi hiện tại bằng characterization test, rồi tách hàm thuần. Tôi không chờ rewrite, và không bắt đầu ở 80% coverage. Pact dành cho nhiều consumer; monolith Nuxt với server route đặt cạnh không cần."
+            "vi": "Mình coi ranh giới HTTP là contract: type generate và MSW từ cùng spec OpenAPI, nên breaking change fail CI trước merge. Visual chỉ nằm ở design system và chrome checkout, font khóa, diff được review, không phải mọi chart dashboard. Trên app Vue legacy, mình cho Playwright chạy login và path doanh thu trước, khóa hành vi hiện tại bằng characterization test, rồi tách hàm thuần. Mình không chờ rewrite, và không bắt đầu ở 80% coverage. Pact dành cho nhiều consumer; monolith Nuxt với server route nằm cùng app thì không cần."
           }
         },
         {
@@ -1333,7 +1333,7 @@
           "items": [
             {
               "en": "One spec → types + MSW. A breaking OpenAPI change fails CI before merge.",
-              "vi": "Một spec → type + MSW. OpenAPI phá vỡ fail CI trước merge."
+              "vi": "Một spec → type + MSW. Breaking change trên OpenAPI fail CI trước merge."
             },
             {
               "en": "Visual: design system + a few screens, locked fonts, reviewed diffs.",
@@ -1345,7 +1345,7 @@
             },
             {
               "en": "Pact when consumers deploy separately. Skip it on a colocated BFF.",
-              "vi": "Pact khi consumer deploy tách. Bỏ trên BFF đặt cạnh."
+              "vi": "Pact khi consumer deploy tách nhau. Bỏ trên BFF nằm cùng app."
             }
           ]
         },
@@ -1357,7 +1357,7 @@
           },
           "text": {
             "en": "- **How do you version the contract?** Back-compat window, feature flags on new fields, consumer-driven tests when many apps consume.\n- **Storybook vs Playwright for visuals?** Atoms in Chromatic/Storybook. Checkout chrome in Playwright.\n- **Why keep E2E green across Vue 2 → 3?** So the compiler change cannot silently break Pay.\n- **When is Pact overkill vs generated MSW?** One web app, spec in the repo — generate. Many consumers — Pact.",
-            "vi": "- **Version hợp đồng thế nào?** Cửa sổ tương thích ngược, feature flag trên field mới, test consumer-driven khi nhiều app dùng.\n- **Storybook khác Playwright cho visual?** Atom ở Chromatic/Storybook. Chrome checkout ở Playwright.\n- **Vì sao giữ E2E xanh xuyên Vue 2 → 3?** Để đổi compiler không âm thầm gãy Pay.\n- **Khi nào Pact thừa so với MSW generate?** Một web app, spec trong repo — generate. Nhiều consumer — Pact."
+            "vi": "- **Version contract thế nào?** Cửa sổ back-compat, feature flag trên field mới, test consumer-driven khi nhiều app cùng dùng.\n- **Storybook khác Playwright cho visual?** Atom ở Chromatic/Storybook. Chrome checkout ở Playwright.\n- **Vì sao giữ E2E xanh xuyên Vue 2 → 3?** Để đổi compiler không âm thầm gãy Pay.\n- **Khi nào Pact thừa so với MSW generate?** Một web app, spec trong repo: generate. Nhiều consumer: Pact."
           }
         },
         {

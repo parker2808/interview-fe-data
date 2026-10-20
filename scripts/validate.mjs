@@ -74,7 +74,7 @@ if (!existsSync(resolvedRoot)) {
 }
 
 for (const file of listJsonFiles(resolvedRoot)) {
-  if (file.includes('/schema/')) continue
+  if (file.includes('/schema/') || file.includes('/plans/')) continue
   const data = readJson(file)
   if (data) walkLocalized(data, path.relative(resolvedRoot, file))
 }

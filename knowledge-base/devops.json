@@ -7,7 +7,7 @@
   },
   "summary": {
     "en": "Build once, promote the digest, roll back in Git. Flags are runtime risk, not a second version control. Start with 14.1–14.2, then preview env and probes.",
-    "vi": "Build một lần, promote digest, rollback trong Git. Flag là rủi ro lúc runtime, không phải version control thứ hai. Bắt đầu từ 14.1–14.2, rồi env preview và probe."
+    "vi": "Build một lần, promote digest, rollback trong Git. Flag là rủi ro lúc runtime, không phải version control thứ hai. Bắt đầu từ 14.1–14.2, rồi preview env và probe."
   },
   "category": "infra",
   "order": 17,
@@ -42,14 +42,14 @@
           "type": "paragraph",
           "text": {
             "en": "This doc is senior **frontend** DevOps: immutable artifacts, preview environments, feature flags versus env deploys, rollback, and what FE CI should gate. You are not the platform engineer. You still must talk about how a Vue/Nuxt app actually reaches users.",
-            "vi": "Tài liệu này là DevOps **frontend** mức senior: artifact bất biến, môi trường preview, feature flag khác deploy theo env, rollback, và cổng CI FE nên chặn gì. Bạn không phải platform engineer. Bạn vẫn phải nói app Vue/Nuxt tới user thế nào."
+            "vi": "Bài này nói về DevOps **frontend** ở góc nhìn senior: artifact bất biến, môi trường preview, feature flag khác với deploy theo env, rollback, và CI phía FE nên chặn gì. Bạn không phải platform engineer. Bạn vẫn phải nói được app Vue/Nuxt tới tay user thế nào."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "Study 14.1–14.2 first (GitOps plus the pipeline you would draw). Then 14.3 for preview and env (deeper than the NET-OPS preview Q&A). 14.4 is flags — cross-ref the rollout Q&A in words. 14.5 is what you own in Kubernetes: image, probes, cache headers, not CNI. GitOps + Argo CD is a common enterprise backdrop; translate it into the digest you promote.",
-            "vi": "Hãy học 14.1–14.2 trước (GitOps cộng pipeline bạn sẽ vẽ). Rồi 14.3 cho preview và env (sâu hơn Q&A preview NET-OPS). 14.4 là flag — xem Q&A rollout bằng lời. 14.5 là thứ bạn sở hữu trong Kubernetes: image, probe, header cache, không phải CNI. GitOps + Argo CD là phông nền enterprise thường gặp; dịch nó thành digest bạn promote."
+            "vi": "Đọc 14.1–14.2 trước (GitOps và pipeline bạn sẽ vẽ). Rồi 14.3 cho preview và env (sâu hơn Q&A preview bên NET-OPS). 14.4 là flag: đối chiếu Q&A rollout bằng lời. 14.5 là phần bạn chịu trách nhiệm trên Kubernetes: image, probe, cache header, không phải CNI. GitOps + Argo CD là bối cảnh enterprise hay gặp; hãy quy nó về digest bạn promote."
           }
         },
         {
@@ -95,14 +95,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** GitOps means **Git is the desired state** of the cluster. CI builds an immutable image tagged with the git SHA; a GitOps repo (Helm/Kustomize) moves to that digest; Argo CD reconciles. Rollback is a Git revert, not `kubectl edit`. You never ship `:latest`.",
-            "vi": "**Tóm tắt:** GitOps nghĩa là **Git là trạng thái mong muốn** của cluster. CI build image bất biến gắn git SHA; repo GitOps (Helm/Kustomize) chuyển sang digest đó; Argo CD reconcile. Rollback là revert Git, không phải `kubectl edit`. Bạn không bao giờ xuất `:latest`."
+            "vi": "**Tóm tắt:** GitOps nghĩa là **Git là desired state** của cluster. CI build một image bất biến gắn tag git SHA; repo GitOps (Helm/Kustomize) chuyển sang digest đó; Argo CD reconcile. Rollback là revert Git, không phải `kubectl edit`. Bạn không bao giờ ship `:latest`."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “How does your frontend get to production?” They use Argo CD. They want **your** part: the digest, why `:latest` is bad, and how you roll back a bad Vue release without ssh. Instant mitigate is flag-off; fast rollback is revert the GitOps commit.",
-            "vi": "**Vì sao quan trọng:** “Frontend tới production thế nào?” Họ dùng Argo CD. Họ muốn phần **của bạn**: digest, vì sao `:latest` tệ, và rollback release Vue xấu mà không ssh. Giảm thiệt hại tức thì là gạt flag; rollback nhanh là revert commit GitOps."
+            "vi": "**Vì sao quan trọng:** “Frontend lên production thế nào?” Họ dùng Argo CD. Họ muốn phần **của bạn**: digest, vì sao `:latest` không ổn, và cách rollback một release Vue hỏng mà không cần ssh. Mitigate ngay thì gạt flag; rollback nhanh thì revert commit GitOps."
           }
         },
         {
@@ -111,19 +111,19 @@
           "items": [
             {
               "en": "**How it works:** CI produces an immutable image or static artifact (`ghcr.io/acme/web@sha256:…`). Prefer the digest in prod, not a moving tag. The GitOps repo records that digest. Argo CD applies it. Drift (someone kubectl-edited) is something Argo will fight — that is the point.",
-              "vi": "**Cách hoạt động:** CI tạo image hoặc artifact tĩnh bất biến (`ghcr.io/acme/web@sha256:…`). Ưu tiên digest trên prod, không phải tag trôi. Repo GitOps ghi digest đó. Argo CD apply. Drift (ai đó kubectl-edit) là thứ Argo sẽ đánh — đó là mục đích."
+              "vi": "**Cách hoạt động:** CI tạo image hoặc artifact tĩnh bất biến (`ghcr.io/acme/web@sha256:…`). Prod nên trỏ digest, không phải tag trôi. Repo GitOps ghi digest đó. Argo CD apply. Drift (ai đó kubectl-edit) là thứ Argo sẽ kéo về. Đó chính là mục đích."
             },
             {
               "en": "Build once, promote the same digest through staging → prod by changing env, not by rebuilding. A different image for staging versus prod is a failure mode: you did not test what you shipped.",
-              "vi": "Build một lần, promote cùng digest xuyên staging → prod bằng cách đổi env, không rebuild. Image khác nhau cho staging khác prod là kịch bản lỗi: bạn không test thứ đã xuất."
+              "vi": "Build một lần, promote cùng digest từ staging → prod bằng cách đổi env, không rebuild. Image staging khác image prod là failure mode: bạn không test đúng thứ đã ship."
             },
             {
               "en": "Instant mitigate: feature flag off (14.4). Fast rollback: revert the GitOps commit; Argo syncs the previous digest. `kubectl rollout undo` just gets re-applied. Preview is a namespace from a PR SHA, not a laptop snowflake.",
-              "vi": "Giảm thiệt hại tức thì: gạt feature flag (14.4). Rollback nhanh: revert commit GitOps; Argo sync digest trước. `kubectl rollout undo` chỉ bị apply lại. Preview là namespace từ SHA PR, không phải laptop snowflake."
+              "vi": "Mitigate ngay: tắt feature flag (14.4). Rollback nhanh: revert commit GitOps; Argo sync digest trước. `kubectl rollout undo` rồi cũng bị apply lại. Preview là namespace từ SHA của PR, không phải snowflake trên laptop."
             },
             {
               "en": "Frontend-specific: cache `index.html` short, hashed assets `immutable`. Argo healthy plus old JS usually means a CDN still holding HTML. Secrets in GitOps belong in Sealed / External Secrets — know they exist; do not paste them.",
-              "vi": "Đặc thù frontend: cache `index.html` ngắn, asset đã hash `immutable`. Argo healthy cộng JS cũ thường nghĩa CDN còn giữ HTML. Secret trong GitOps thuộc Sealed / External Secrets — biết chúng tồn tại; đừng dán."
+              "vi": "Phía frontend: cache `index.html` ngắn, asset đã hash thì `immutable`. Argo healthy mà JS vẫn cũ, thường là CDN còn giữ HTML. Secret trong GitOps để ở Sealed / External Secrets. Biết chúng tồn tại; đừng dán."
             }
           ]
         },
@@ -132,14 +132,14 @@
           "lang": "text",
           "code": {
             "en": "git push SHA\nCI: lint | vue-tsc | vitest | nuxt build | budget\nCI: docker build → ghcr.io/acme/web@sha256:abc…\nCI: commit image: sha256:abc into gitops/apps/web.yaml\nArgo CD: sync cluster to Git (never kubectl apply from a laptop)\nrollback: git revert that gitops commit; Argo reapplies sha256:old\nmitigate first: flag checkout_v2 = off  (14.4)\n# never: image: acme/web:latest",
-            "vi": "git push SHA\nCI: lint | vue-tsc | vitest | nuxt build | ngân sách\nCI: docker build → ghcr.io/acme/web@sha256:abc…\nCI: commit image: sha256:abc vào gitops/apps/web.yaml\nArgo CD: sync cluster theo Git (không bao giờ kubectl apply từ laptop)\nrollback: git revert commit gitops đó; Argo apply lại sha256:old\ngiảm thiệt hại trước: flag checkout_v2 = off  (14.4)\n# không bao giờ: image: acme/web:latest"
+            "vi": "git push SHA\nCI: lint | vue-tsc | vitest | nuxt build | budget\nCI: docker build → ghcr.io/acme/web@sha256:abc…\nCI: commit image: sha256:abc vào gitops/apps/web.yaml\nArgo CD: sync cluster theo Git (đừng kubectl apply từ laptop)\nrollback: git revert commit gitops đó; Argo apply lại sha256:old\nmitigate trước: flag checkout_v2 = off  (14.4)\n# không bao giờ: image: acme/web:latest"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** The cluster only changes when Git changes. Rollback is another Git commit. `:latest` would make Argo and reality diverge on every pull. The flag is faster than a revert when checkout is on fire.",
-            "vi": "**Điều gì xảy ra:** Cluster chỉ đổi khi Git đổi. Rollback là một commit Git khác. `:latest` sẽ làm Argo và thực tế lệch mỗi lần pull. Flag nhanh hơn revert khi checkout đang cháy."
+            "vi": "**Điều gì xảy ra:** Cluster chỉ đổi khi Git đổi. Rollback là một commit Git khác. `:latest` làm Argo và thực tế lệch nhau mỗi lần pull. Flag nhanh hơn revert khi checkout đang cháy."
           }
         },
         {
@@ -176,7 +176,7 @@
             [
               {
                 "en": "Vitest + production build + budget",
-                "vi": "Vitest + production build + ngân sách"
+                "vi": "Vitest + production build + budget"
               },
               {
                 "en": "Tree-shake breaks; 12.3 in CI form",
@@ -190,7 +190,7 @@
             [
               {
                 "en": "Playwright smoke + CWV budgets",
-                "vi": "Playwright smoke + ngân sách CWV"
+                "vi": "Playwright smoke + CWV budget"
               },
               {
                 "en": "Login/buy; lab not RUM",
@@ -204,15 +204,15 @@
             [
               {
                 "en": "Image scan + hidden maps",
-                "vi": "Quét image + map hidden"
+                "vi": "Quét image + map ẩn"
               },
               {
                 "en": "Org + Sentry on the SHA",
-                "vi": "Org + Sentry đúng SHA"
+                "vi": "Org + Sentry gắn SHA"
               },
               {
                 "en": "Release, not the public CDN",
-                "vi": "Release, không CDN public"
+                "vi": "Release, không phải CDN public"
               }
             ]
           ]
@@ -225,7 +225,7 @@
           },
           "text": {
             "en": "- You own the digest and the GitOps path. You do not own CNI. Claiming Kubernetes because you edited an image tag is the tell.\n- Blue/green a static SPA with two prefixes plus an ingress or CDN alias. HTML cache is the usual miss.\n- Do not gate merge on coverage theater. Gate on budgets and smoke.\n- Verify: Argo shows the SHA you intended; curl of `/` after rollback serves the previous hashed assets.",
-            "vi": "- Bạn sở hữu digest và đường GitOps. Bạn không sở hữu CNI. Nhận Kubernetes vì đã sửa image tag là tín hiệu họ chờ.\n- Blue/green SPA tĩnh bằng hai prefix cộng alias ingress hoặc CDN. Cache HTML là miss thường gặp.\n- Đừng chặn merge bằng kịch coverage. Chặn bằng ngân sách và smoke.\n- Kiểm chứng: Argo hiện SHA bạn định; curl `/` sau rollback phục vụ asset hash trước."
+            "vi": "- Bạn chịu trách nhiệm digest và đường GitOps, không phải CNI. Tự nhận rành Kubernetes chỉ vì đã sửa image tag, đó là tín hiệu lộ.\n- Blue/green SPA tĩnh bằng hai prefix kèm alias ingress hoặc CDN. Cache HTML là miss thường gặp.\n- Đừng chặn merge bằng kịch coverage. Chặn bằng budget và smoke.\n- Kiểm chứng: Argo hiện SHA bạn định ship; curl `/` sau rollback phải ra asset hash cũ."
           }
         },
         {
@@ -233,18 +233,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Shipping `:latest`. Symptom: you cannot say what is in prod. Cause: a moving tag. Fix: digest in GitOps.\n- `kubectl rollout undo` while Argo is syncing. Symptom: the old pod comes back. Cause: Git still points at the bad digest. Fix: revert Git.\n- Rebuilding for prod. Symptom: staging never ran that JS. Cause: “just change the env and rebuild.” Fix: runtime env, one digest.\n- Long HTML cache. Symptom: Argo healthy, users on last week’s Vue. Cause: `index.html` immutable. Fix: HTML short, assets hashed immutable.",
-            "vi": "**Lỗi hay gặp**\n- Xuất `:latest`. Triệu chứng: không nói được prod đang gì. Nguyên nhân: tag trôi. Sửa: digest trong GitOps.\n- `kubectl rollout undo` khi Argo đang sync. Triệu chứng: pod cũ trở lại. Nguyên nhân: Git vẫn trỏ digest xấu. Sửa: revert Git.\n- Rebuild cho prod. Triệu chứng: staging chưa chạy JS đó. Nguyên nhân: “đổi env rồi rebuild.” Sửa: env runtime, một digest.\n- Cache HTML dài. Triệu chứng: Argo healthy, user còn Vue tuần trước. Nguyên nhân: `index.html` immutable. Sửa: HTML ngắn, asset hash immutable."
+            "vi": "**Lỗi hay gặp**\n- Ship `:latest`. Triệu chứng: không nói được prod đang chạy gì. Nguyên nhân: tag trôi. Sửa: digest trong GitOps.\n- `kubectl rollout undo` khi Argo đang sync. Triệu chứng: pod cũ trở lại. Nguyên nhân: Git vẫn trỏ digest hỏng. Sửa: revert Git.\n- Rebuild cho prod. Triệu chứng: staging chưa từng chạy JS đó. Nguyên nhân: “đổi env rồi rebuild”. Sửa: env runtime, một digest.\n- Cache HTML dài. Triệu chứng: Argo healthy, user còn Vue tuần trước. Nguyên nhân: `index.html` immutable. Sửa: HTML cache ngắn, asset hash thì immutable."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "How does your frontend get to production? They use Argo CD. They want your part of the pipeline, why :latest is bad, and how you roll back a bad Vue release without ssh.",
-            "vi": "Frontend tới production thế nào? Họ dùng Argo CD. Họ muốn phần pipeline của bạn, vì sao :latest tệ, và rollback release Vue xấu mà không ssh."
+            "vi": "Frontend lên production thế nào? Họ dùng Argo CD. Họ muốn phần pipeline của bạn, vì sao :latest không ổn, và cách rollback một release Vue hỏng mà không ssh."
           }
         },
         {
@@ -255,7 +255,7 @@
           },
           "text": {
             "en": "I build once and promote the digest. CI tests, builds ghcr.io/acme/web at a sha256, and commits that digest to GitOps — Argo syncs, I do not kubectl apply. Rollback is revert Git; kubectl rollout undo just gets re-applied. I never ship latest. If checkout is on fire I kill the flag first, then revert the digest. I gate PRs on typecheck, unit, production build, and a bundle budget. Cache HTML short and hashed assets immutable, or Argo looks healthy while users run last week’s JavaScript.",
-            "vi": "Tôi build một lần và promote digest. CI test, build ghcr.io/acme/web tại một sha256, và commit digest đó vào GitOps — Argo sync, tôi không kubectl apply. Rollback là revert Git; kubectl rollout undo chỉ bị apply lại. Tôi không bao giờ xuất latest. Nếu checkout đang cháy tôi gạt flag trước, rồi revert digest. Tôi chặn PR bằng typecheck, unit, production build, và ngân sách bundle. Cache HTML ngắn và asset hash immutable, nếu không Argo trông healthy trong khi user chạy JavaScript tuần trước."
+            "vi": "Mình build một lần rồi promote digest. CI test, build ghcr.io/acme/web ở một sha256, rồi commit digest đó vào GitOps. Argo sync, mình không kubectl apply. Rollback là revert Git; kubectl rollout undo rồi cũng bị apply lại. Mình không bao giờ ship latest. Checkout đang cháy thì gạt flag trước, rồi mới revert digest. Mình chặn PR bằng typecheck, unit, production build, và bundle budget. Cache HTML ngắn, asset hash thì immutable. Không thì Argo trông healthy trong khi user còn chạy JavaScript tuần trước."
           }
         },
         {
@@ -263,7 +263,7 @@
           "items": [
             {
               "en": "Git is the desired state. Promote a digest. Never :latest.",
-              "vi": "Git là trạng thái mong muốn. Promote một digest. Không bao giờ :latest."
+              "vi": "Git là desired state. Promote một digest. Không bao giờ :latest."
             },
             {
               "en": "Rollback is a GitOps revert. kubectl undo loses to Argo.",
@@ -287,7 +287,7 @@
           },
           "text": {
             "en": "- **How do you blue/green a static SPA?** Two prefixes plus switch ingress or a CDN alias. HTML cache must expire.\n- **What is drift?** Someone kubectl-edited. Argo will fight them — that is good.\n- **Why is a different image for staging vs prod a failure mode?** You did not test what you shipped.\n- **Liveness vs readiness for a Nuxt Node process?** That is 14.5. Cheap /healthz versus Nitro is listening.",
-            "vi": "- **Blue/green SPA tĩnh thế nào?** Hai prefix cộng chuyển ingress hoặc alias CDN. Cache HTML phải hết hạn.\n- **Drift là gì?** Ai đó kubectl-edit. Argo sẽ đánh họ — đó là điều tốt.\n- **Vì sao image khác nhau staging khác prod là kịch bản lỗi?** Bạn không test thứ đã xuất.\n- **Liveness khác readiness cho process Node Nuxt?** Đó là 14.5. /healthz rẻ khác Nitro đang listen."
+            "vi": "- **Blue/green SPA tĩnh thế nào?** Hai prefix, rồi chuyển ingress hoặc alias CDN. Cache HTML phải hết hạn.\n- **Drift là gì?** Ai đó kubectl-edit. Argo sẽ kéo về. Đó là điều tốt.\n- **Vì sao image staging khác prod là failure mode?** Bạn không test thứ đã ship.\n- **Liveness khác readiness cho process Node của Nuxt?** Đó là 14.5. /healthz rẻ, khác với Nitro đang listen."
           }
         },
         {
@@ -309,14 +309,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Two tracks. **PR** is fast feedback: install, then parallel lint / `vue-tsc` / Vitest, then production build plus budget, then an optional Playwright smoke on the preview URL. **Main** publishes **one** artifact, bumps GitOps, uploads hidden maps, never rebuilds inside the cluster.",
-            "vi": "**Tóm tắt:** Hai track. **PR** là phản hồi nhanh: install, rồi lint / `vue-tsc` / Vitest song song, rồi production build cộng ngân sách, rồi Playwright smoke tùy chọn trên URL preview. **Main** publish **một** artifact, bump GitOps, upload map hidden, không bao giờ rebuild trong cluster."
+            "vi": "**Tóm tắt:** Hai track. **PR** là feedback nhanh: install, rồi lint / `vue-tsc` / Vitest song song, rồi production build kèm budget, rồi Playwright smoke tùy chọn trên URL preview. **Main** publish **một** artifact, bump GitOps, upload map ẩn, không bao giờ rebuild trong cluster."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “Draw the pipeline for a Nuxt app in a monorepo.” They want what is parallel, where the one artifact is published, and why Playwright against `nuxt dev` is not evidence. Minutes-to-green and flake rate matter as much as coverage.",
-            "vi": "**Vì sao quan trọng:** “Vẽ pipeline cho app Nuxt trong monorepo.” Họ muốn thứ gì song song, artifact duy nhất publish ở đâu, và vì sao Playwright nhắm `nuxt dev` không phải bằng chứng. Phút-tới-xanh và tỷ lệ flake quan trọng bằng coverage."
+            "vi": "**Vì sao quan trọng:** “Vẽ pipeline cho app Nuxt trong monorepo”. Họ muốn cái gì chạy song song, artifact duy nhất publish ở đâu, và vì sao Playwright nhắm `nuxt dev` không phải bằng chứng. Phút để pipeline xanh và tỷ lệ flake quan trọng không kém coverage."
           }
         },
         {
@@ -325,19 +325,19 @@
           "items": [
             {
               "en": "**How it works:** PR: pnpm cache → parallel lint | vue-tsc | vitest → nuxt build + bundle budget → optional Playwright smoke on the preview URL (14.3). Fork PRs do not get production secrets.",
-              "vi": "**Cách hoạt động:** PR: cache pnpm → lint | vue-tsc | vitest song song → nuxt build + ngân sách bundle → Playwright smoke tùy chọn trên URL preview (14.3). PR fork không nhận secret production."
+              "vi": "**Cách hoạt động:** PR: cache pnpm → lint | vue-tsc | vitest song song → nuxt build + bundle budget → Playwright smoke tùy chọn trên URL preview (14.3). PR fork không nhận secret production."
             },
             {
               "en": "Main: the same gates plus a fuller e2e, docker from `dist` or standalone Nitro, push digest, commit GitOps, hidden sourcemaps to Sentry `release=SHA`, Argo sync, synthetic smoke on prod.",
-              "vi": "Main: cùng cổng cộng e2e đầy hơn, docker từ `dist` hoặc Nitro standalone, push digest, commit GitOps, sourcemap hidden tới Sentry `release=SHA`, Argo sync, smoke synthetic trên prod."
+              "vi": "Main: cùng gate, kèm e2e đầy hơn, docker từ `dist` hoặc Nitro standalone, push digest, commit GitOps, sourcemap ẩn lên Sentry `release=SHA`, Argo sync, smoke synthetic trên prod."
             },
             {
               "en": "Monorepo: build **affected** packages (Turbo/Nx). Playwright hits the production build or the preview URL, never `nuxt dev`. Watch OOM on CI `nuxt build`.",
-              "vi": "Monorepo: build package **affected** (Turbo/Nx). Playwright đụng production build hoặc URL preview, không bao giờ `nuxt dev`. Coi OOM lúc `nuxt build` trên CI."
+              "vi": "Monorepo: build package **affected** (Turbo/Nx). Playwright chạy production build hoặc URL preview, không bao giờ `nuxt dev`. Để ý OOM khi `nuxt build` trên CI."
             },
             {
               "en": "Quality gates are ordered by blast radius: lint/types are cheap and block; budget blocks merge; e2e smoke blocks deploy; coverage percent does not. Skipping tests “just this once” is how green pipelines still ship incidents.",
-              "vi": "Cổng chất lượng xếp theo bán kính nổ: lint/type rẻ và chặn; ngân sách chặn merge; e2e smoke chặn deploy; phần trăm coverage thì không. Bỏ test “chỉ lần này” là cách pipeline xanh vẫn xuất incident."
+              "vi": "Quality gate xếp theo blast radius: lint/type rẻ và chặn; budget chặn merge; e2e smoke chặn deploy; phần trăm coverage thì không. Bỏ test “chỉ lần này” là cách pipeline xanh vẫn ship incident."
             }
           ]
         },
@@ -346,14 +346,14 @@
           "lang": "text",
           "code": {
             "en": "PR  → install (pnpm cache)\n    → parallel: lint | vue-tsc | vitest\n    → nuxt build + bundle budget\n    → optional: Playwright smoke on preview URL\n    → optional: preview deploy (14.3)\nmain → same gates\n     → docker FROM dist or standalone Nitro\n     → push ghcr.io/app@sha256:…\n     → commit digest to gitops/; Sentry maps release=SHA\n     → Argo sync; synthetic smoke on prod",
-            "vi": "PR  → install (cache pnpm)\n    → song song: lint | vue-tsc | vitest\n    → nuxt build + ngân sách bundle\n    → tùy chọn: Playwright smoke trên URL preview\n    → tùy chọn: preview deploy (14.3)\nmain → cùng cổng\n     → docker FROM dist hoặc Nitro standalone\n     → push ghcr.io/app@sha256:…\n     → commit digest vào gitops/; map Sentry release=SHA\n     → Argo sync; smoke synthetic trên prod"
+            "vi": "PR  → install (pnpm cache)\n    → song song: lint | vue-tsc | vitest\n    → nuxt build + bundle budget\n    → tùy chọn: Playwright smoke trên URL preview\n    → tùy chọn: preview deploy (14.3)\nmain → cùng gate\n     → docker FROM dist hoặc Nitro standalone\n     → push ghcr.io/app@sha256:…\n     → commit digest vào gitops/; map Sentry release=SHA\n     → Argo sync; smoke synthetic trên prod"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** The PR track never publishes. Main is the only place a digest is born. Playwright against `nuxt dev` would green a tree-shake bug that only exists in the production Rollup/Rolldown graph. Sentry maps are tied to the SHA that Argo just synced.",
-            "vi": "**Điều gì xảy ra:** Track PR không bao giờ publish. Main là nơi duy nhất một digest ra đời. Playwright nhắm `nuxt dev` sẽ xanh một bug tree-shake chỉ tồn tại trên graph production Rollup/Rolldown. Map Sentry gắn SHA mà Argo vừa sync."
+            "vi": "**Điều gì xảy ra:** Track PR không bao giờ publish. Main là nơi duy nhất một digest ra đời. Playwright nhắm `nuxt dev` sẽ cho xanh một bug tree-shake chỉ tồn tại trên graph production của Rollup/Rolldown. Map Sentry gắn với SHA mà Argo vừa sync."
           }
         },
         {
@@ -384,7 +384,7 @@
               },
               {
                 "en": "Serialise them for no reason",
-                "vi": "Xếp serial không lý do"
+                "vi": "Chạy serial không vì lý do gì"
               }
             ],
             [
@@ -394,7 +394,7 @@
               },
               {
                 "en": "production nuxt build + budget",
-                "vi": "nuxt build production + ngân sách"
+                "vi": "production nuxt build + budget"
               },
               {
                 "en": "Skip because “CI is slow”",
@@ -439,7 +439,7 @@
           },
           "text": {
             "en": "- Who can approve GitOps prod is an org control. Frontend still reviews the image digest in that PR.\n- `npm publish` of a private design system without provenance is a supply-chain smell (security 10.7).\n- Merge-to-main for a product Vue app; a nightly train is for things that cannot break checkout today.\n- Verify: one SHA in GitOps, Sentry, and the running pod. Three different SHAs is the bug.",
-            "vi": "- Ai approve GitOps prod là kiểm soát org. Frontend vẫn review image digest trong PR đó.\n- `npm publish` design system riêng không provenance là mùi supply-chain (bảo mật 10.7).\n- Merge-to-main cho app Vue sản phẩm; tàu nightly cho thứ không được phá checkout hôm nay.\n- Kiểm chứng: một SHA trên GitOps, Sentry, và pod đang chạy. Ba SHA khác nhau là bug."
+            "vi": "- Ai được approve GitOps prod là kiểm soát của org. Frontend vẫn review image digest trong PR đó.\n- `npm publish` design system private không có provenance là mùi supply-chain (bảo mật 10.7).\n- App Vue sản phẩm thì merge-to-main. Lịch nightly dành cho thứ không được làm gãy checkout hôm nay.\n- Kiểm chứng: một SHA trên GitOps, Sentry, và pod đang chạy. Ba SHA khác nhau là bug."
           }
         },
         {
@@ -447,18 +447,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Playwright against `nuxt dev`. Symptom: CI green, prod broken. Cause: different bundler graph. Fix: preview URL or `nuxt preview`.\n- Rebuilding on the cluster. Symptom: prod JS you never tested. Cause: “Helm will build it.” Fix: the image is the artifact.\n- Fork PRs with prod secrets. Symptom: leaked tokens. Cause: same workflow. Fix: secrets only on trusted main.\n- Hidden maps uploaded to the CDN. Symptom: source in public. Cause: mixed with hashed assets. Fix: Sentry only, `sourcemap: \"hidden\"`.",
-            "vi": "**Lỗi hay gặp**\n- Playwright nhắm `nuxt dev`. Triệu chứng: CI xanh, prod gãy. Nguyên nhân: graph bundler khác. Sửa: URL preview hoặc `nuxt preview`.\n- Rebuild trên cluster. Triệu chứng: JS prod chưa từng test. Nguyên nhân: “Helm sẽ build.” Sửa: image là artifact.\n- PR fork với secret prod. Triệu chứng: token rò. Nguyên nhân: cùng workflow. Sửa: secret chỉ trên main tin cậy.\n- Map hidden upload lên CDN. Triệu chứng: source public. Nguyên nhân: trộn với asset hash. Sửa: chỉ Sentry, `sourcemap: \"hidden\"`."
+            "vi": "**Lỗi hay gặp**\n- Playwright nhắm `nuxt dev`. Triệu chứng: CI xanh, prod gãy. Nguyên nhân: graph bundler khác. Sửa: URL preview hoặc `nuxt preview`.\n- Rebuild trên cluster. Triệu chứng: JS prod chưa từng test. Nguyên nhân: “Helm sẽ build”. Sửa: image là artifact.\n- PR fork mang secret prod. Triệu chứng: token bị lộ. Nguyên nhân: cùng một workflow. Sửa: secret chỉ trên main tin cậy.\n- Source map hidden upload lên CDN. Triệu chứng: source nằm public. Nguyên nhân: trộn với asset đã hash. Sửa: chỉ Sentry, `sourcemap: \"hidden\"`."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "Draw the pipeline for a Nuxt app in a monorepo. They want two tracks, what is parallel, where the one artifact is published, and why Playwright against nuxt dev is not evidence.",
-            "vi": "Vẽ pipeline cho app Nuxt trong monorepo. Họ muốn hai track, thứ gì song song, artifact duy nhất publish ở đâu, và vì sao Playwright nhắm nuxt dev không phải bằng chứng."
+            "vi": "Vẽ pipeline cho app Nuxt trong monorepo. Họ muốn hai track, chỗ nào chạy song song, artifact duy nhất publish ở đâu, và vì sao Playwright nhắm nuxt dev không phải bằng chứng."
           }
         },
         {
@@ -469,7 +469,7 @@
           },
           "text": {
             "en": "Two tracks. PR is lint, types, unit, production build, budget. Main publishes one digest and moves GitOps — I do not rebuild inside the cluster. Playwright hits the prod build or the preview URL, never nuxt dev. In a monorepo I build affected packages. I watch OOM on CI nuxt build; laptops lie about RAM. Hidden sourcemaps upload on the SHA that Argo just synced. Skipping tests just this once is how a green pipeline still ships an incident. Fork PRs do not get production secrets.",
-            "vi": "Hai track. PR là lint, type, unit, production build, ngân sách. Main publish một digest và dịch GitOps — tôi không rebuild trong cluster. Playwright đụng prod build hoặc URL preview, không bao giờ nuxt dev. Trong monorepo tôi build package affected. Tôi coi OOM lúc nuxt build trên CI; laptop nói dối về RAM. Sourcemap hidden upload đúng SHA mà Argo vừa sync. Bỏ test chỉ lần này là cách pipeline xanh vẫn xuất incident. PR fork không nhận secret production."
+            "vi": "Hai track. PR là lint, type, unit, production build, ngân sách. Main publish một digest rồi cập nhật GitOps. Mình không rebuild trong cluster. Playwright đụng prod build hoặc URL preview, không bao giờ nuxt dev. Trong monorepo mình build package affected. Mình để ý OOM lúc nuxt build trên CI; laptop nói dối về RAM. Source map hidden upload đúng SHA mà Argo vừa sync. Bỏ test chỉ lần này là cách pipeline xanh vẫn ship incident. PR fork không nhận secret production."
           }
         },
         {
@@ -477,7 +477,7 @@
           "items": [
             {
               "en": "PR is feedback. Main publishes one digest. Never rebuild in the cluster.",
-              "vi": "PR là phản hồi. Main publish một digest. Không rebuild trong cluster."
+              "vi": "PR là phản hồi. Main publish một digest. Không bao giờ rebuild trong cluster."
             },
             {
               "en": "Playwright hits the prod build or preview URL, never nuxt dev.",
@@ -489,7 +489,7 @@
             },
             {
               "en": "Maps go to Sentry on the SHA. Skipping tests ships incidents.",
-              "vi": "Map vào Sentry đúng SHA. Bỏ test là xuất incident."
+              "vi": "Source map lên Sentry đúng SHA. Bỏ test là ship incident."
             }
           ]
         },
@@ -501,7 +501,7 @@
           },
           "text": {
             "en": "- **How do you secret-scan the client bundle?** Fail CI if VITE_ looks like a key. Strings in dist are public.\n- **Who can approve GitOps prod?** Org control; FE still reviews the digest in that PR.\n- **Why is npm publish of a private design system without provenance a smell?** Supply chain. Tie it to the SHA.\n- **Merge-to-main vs nightly release train — which for a product Vue app?** Merge-to-main. Nightly is for what cannot break checkout today.",
-            "vi": "- **Quét secret trên bundle client thế nào?** Fail CI nếu VITE_ trông như key. Chuỗi trong dist là public.\n- **Ai approve GitOps prod?** Kiểm soát org; FE vẫn review digest trong PR đó.\n- **Vì sao npm publish design system riêng không provenance là mùi?** Supply chain. Buộc nó với SHA.\n- **Merge-to-main khác tàu nightly — cái nào cho app Vue sản phẩm?** Merge-to-main. Nightly cho thứ không được phá checkout hôm nay."
+            "vi": "- **Quét secret trên bundle client thế nào?** Fail CI nếu VITE_ trông giống key. Chuỗi trong dist là public.\n- **Ai được approve GitOps prod?** Kiểm soát của org; FE vẫn review digest trong PR đó.\n- **Vì sao npm publish design system private không có provenance là mùi?** Supply chain. Gắn nó với SHA.\n- **Merge-to-main khác lịch nightly, cái nào cho app Vue sản phẩm?** Merge-to-main. Nightly dành cho thứ không được làm gãy checkout hôm nay."
           }
         },
         {
@@ -523,14 +523,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Every PR gets a unique URL of **that SHA**, talking to staging APIs, fake data, and **separate** OAuth clients. Kill it on merge. Prefer **runtime** env on the Node image so the same digest can be preview, staging, and prod. `VITE_*` / `NUXT_PUBLIC_*` are always client.",
-            "vi": "**Tóm tắt:** Mỗi PR một URL riêng của **đúng SHA**, nói với API staging, data giả, và OAuth client **tách**. Giết lúc merge. Ưu tiên env **runtime** trên image Node để cùng digest làm preview, staging, và prod. `VITE_*` / `NUXT_PUBLIC_*` luôn là client."
+            "vi": "**Tóm tắt:** Mỗi PR có một URL riêng của **đúng SHA**, nói với API staging, data giả, và OAuth client **tách**. Hủy khi merge. Ưu tiên env **runtime** trên image Node để cùng digest làm preview, staging, và prod. `VITE_*` / `NUXT_PUBLIC_*` luôn là client."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “How do designers see a PR — without prod PII?” CORS, cookies, OAuth `redirect_uri`, and copied `VITE_*` are the follow-through. Distinct from the NET-OPS preview Q&A (team process): here the mechanism is **build-time versus runtime env**.",
-            "vi": "**Vì sao quan trọng:** “Designer xem PR thế nào — không PII prod?” CORS, cookie, OAuth `redirect_uri`, và `VITE_*` copy là phần theo. Khác Q&A preview NET-OPS (process team): ở đây cơ chế là **env lúc build khác lúc runtime**."
+            "vi": "**Vì sao quan trọng:** “Designer xem PR thế nào mà không lộ PII prod?” CORS, cookie, OAuth `redirect_uri`, và `VITE_*` bị copy là phần họ hỏi tiếp. Khác Q&A preview NET-OPS (process của team): ở đây cơ chế là **env lúc build khác env lúc runtime**."
           }
         },
         {
@@ -543,15 +543,15 @@
             },
             {
               "en": "Build-time env (`VITE_*`, `NUXT_PUBLIC_*` inlined by Vite) is baked into JS. If you bake the API URL at build time you **cannot** promote the digest. Runtime env (`runtimeConfig` / Docker `-e`) lets one digest wear three URLs.",
-              "vi": "Env lúc build (`VITE_*`, `NUXT_PUBLIC_*` bị Vite inline) nướng vào JS. Nếu nướng URL API lúc build bạn **không** promote được digest. Env runtime (`runtimeConfig` / Docker `-e`) để một digest mặc ba URL."
+              "vi": "Env lúc build (`VITE_*`, `NUXT_PUBLIC_*` bị Vite inline) được nướng vào JS. Nếu nướng URL API lúc build thì bạn **không** promote được digest. Env runtime (`runtimeConfig` / Docker `-e`) để một digest chạy được ba URL."
             },
             {
               "en": "Preview origins explode CORS and cookie `Domain=.example.com`. Same-site BFF them, or allowlist only on staging. Host-only cookies. SSR + WebSocket previews need a real Node host, not only static Pages.",
-              "vi": "Origin preview làm nổ CORS và cookie `Domain=.example.com`. BFF cùng site, hoặc allowlist chỉ trên staging. Cookie host-only. Preview SSR + WebSocket cần host Node thật, không chỉ Pages tĩnh."
+              "vi": "Origin preview làm nổ CORS và cookie `Domain=.example.com`. Bọc bằng BFF same-site, hoặc allowlist chỉ trên staging. Cookie host-only. Preview SSR + WebSocket cần host Node thật, không chỉ Pages tĩnh."
             },
             {
               "en": "e2e `baseURL` comes from CI. Playwright against the preview, not localhost. Fork PRs do not inherit prod `VITE_`.",
-              "vi": "`baseURL` e2e đến từ CI. Playwright nhắm preview, không localhost. PR fork không thừa kế `VITE_` prod."
+              "vi": "`baseURL` e2e lấy từ CI. Playwright nhắm preview, không localhost. PR fork không thừa kế `VITE_` prod."
             }
           ]
         },
@@ -560,14 +560,14 @@
           "lang": "ts",
           "code": {
             "en": "// nuxt.config.ts — public is always client; private stays on Nitro\nexport default defineNuxtConfig({\n  runtimeConfig: {\n    apiSecret: \"\",          // NUXT_API_SECRET — server only\n    public: { apiBase: \"\" }, // NUXT_PUBLIC_API_BASE — inlined if baked\n  },\n})\n// Docker runtime (same digest, three URLs):\n// docker run -e NUXT_PUBLIC_API_BASE=https://api.staging.example.com web@sha256:abc\n// never: VITE_STRIPE_SECRET=...  (always in the JS)",
-            "vi": "// nuxt.config.ts — public luôn là client; private ở lại Nitro\nexport default defineNuxtConfig({\n  runtimeConfig: {\n    apiSecret: \"\",          // NUXT_API_SECRET — chỉ server\n    public: { apiBase: \"\" }, // NUXT_PUBLIC_API_BASE — bị inline nếu nướng\n  },\n})\n// Docker runtime (cùng digest, ba URL):\n// docker run -e NUXT_PUBLIC_API_BASE=https://api.staging.example.com web@sha256:abc\n// không bao giờ: VITE_STRIPE_SECRET=...  (luôn trong JS)"
+            "vi": "// nuxt.config.ts: public luôn là client; private ở lại Nitro\nexport default defineNuxtConfig({\n  runtimeConfig: {\n    apiSecret: \"\",          // NUXT_API_SECRET: chỉ server\n    public: { apiBase: \"\" }, // NUXT_PUBLIC_API_BASE: bị inline nếu nướng\n  },\n})\n// Docker runtime (cùng digest, ba URL):\n// docker run -e NUXT_PUBLIC_API_BASE=https://api.staging.example.com web@sha256:abc\n// không bao giờ: VITE_STRIPE_SECRET=...  (luôn nằm trong JS)"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `apiSecret` stays on the server. `public.apiBase` can be injected at process start if you did not bake it. The same `sha256:abc` serves preview and prod with different `-e`. A Stripe secret in `VITE_` is already in the bundle an attacker downloads.",
-            "vi": "**Điều gì xảy ra:** `apiSecret` ở lại server. `public.apiBase` có thể được inject lúc process start nếu bạn không nướng. Cùng `sha256:abc` phục vụ preview và prod với `-e` khác. Secret Stripe trong `VITE_` đã nằm trong bundle kẻ tấn công tải."
+            "vi": "**Điều gì xảy ra:** `apiSecret` ở lại server. `public.apiBase` có thể inject lúc process start nếu bạn không nướng. Cùng `sha256:abc` phục vụ preview và prod với `-e` khác. Secret Stripe trong `VITE_` đã nằm trong bundle kẻ tấn công tải về."
           }
         },
         {
@@ -579,7 +579,7 @@
             },
             {
               "en": "When it binds",
-              "vi": "Khi nào gắn"
+              "vi": "Khi nào bind"
             },
             {
               "en": "Promote digest?",
@@ -590,7 +590,7 @@
             [
               {
                 "en": "`VITE_*` / baked `NUXT_PUBLIC_*`",
-                "vi": "`VITE_*` / `NUXT_PUBLIC_*` nướng"
+                "vi": "`VITE_*` / `NUXT_PUBLIC_*` đã nướng"
               },
               {
                 "en": "Compile time, in the JS",
@@ -598,7 +598,7 @@
               },
               {
                 "en": "No — URL is frozen in the file",
-                "vi": "Không — URL đóng trong file"
+                "vi": "Không: URL đóng cứng trong file"
               }
             ],
             [
@@ -612,7 +612,7 @@
               },
               {
                 "en": "Yes — same image, new URL",
-                "vi": "Có — cùng image, URL mới"
+                "vi": "Có: cùng image, URL mới"
               }
             ],
             [
@@ -653,7 +653,7 @@
           },
           "text": {
             "en": "- If you bake public API URLs at build time, you cannot promote the digest. That is the whole point of this topic versus 14.1.\n- Cookie `Domain=.example.com` leaking preview ↔ prod is the classic session mixup. Host-only cookies.\n- Wildcard CORS only on staging. `*` never on prod with credentials (networking 13.4).\n- Verify: noindex, staging API in Network, OAuth redirect_uri matches the preview host, e2e baseURL is the preview.",
-            "vi": "- Nếu nướng URL API public lúc build, bạn không promote được digest. Đó là cả điểm của topic này khác 14.1.\n- Cookie `Domain=.example.com` rò preview ↔ prod là lần lẫn session kinh điển. Cookie host-only.\n- CORS wildcard chỉ trên staging. `*` không bao giờ trên prod kèm credentials (networking 13.4).\n- Kiểm chứng: noindex, API staging trên Network, OAuth redirect_uri khớp host preview, e2e baseURL là preview."
+            "vi": "- Nếu nướng URL API public lúc build, bạn không promote được digest. Đó là cả ý của topic này so với 14.1.\n- Cookie `Domain=.example.com` rò preview ↔ prod là chuyện lẫn session kinh điển. Cookie host-only.\n- CORS wildcard chỉ trên staging. `*` không bao giờ trên prod kèm credentials (networking 13.4).\n- Kiểm chứng: noindex, API staging trên Network, OAuth redirect_uri khớp host preview, e2e baseURL là preview."
           }
         },
         {
@@ -661,18 +661,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Preview pointed at prod DB. Symptom: PII on a public URL. Cause: copied `.env`. Fix: staging API, fake data.\n- Baking `NUXT_PUBLIC_API_BASE` then “promoting.” Symptom: prod still talks to staging, or you rebuild. Cause: compile-time bind. Fix: runtime `-e`.\n- Cookie parent domain. Symptom: PM logged into prod from a preview. Fix: host-only; separate OAuth clients.\n- Static host for SSR + WS. Symptom: sockets 404. Cause: Pages is files. Fix: a Node preview.",
-            "vi": "**Lỗi hay gặp**\n- Preview trỏ DB prod. Triệu chứng: PII trên URL public. Nguyên nhân: copy `.env`. Sửa: API staging, data giả.\n- Nướng `NUXT_PUBLIC_API_BASE` rồi “promote.” Triệu chứng: prod vẫn nói staging, hoặc bạn rebuild. Nguyên nhân: gắn lúc compile. Sửa: `-e` runtime.\n- Cookie domain cha. Triệu chứng: PM login prod từ preview. Sửa: host-only; OAuth client tách.\n- Host tĩnh cho SSR + WS. Triệu chứng: socket 404. Nguyên nhân: Pages là file. Sửa: preview Node."
+            "vi": "**Lỗi hay gặp**\n- Preview trỏ DB prod. Triệu chứng: PII trên URL public. Nguyên nhân: copy `.env`. Sửa: API staging, data giả.\n- Nướng `NUXT_PUBLIC_API_BASE` rồi “promote”. Triệu chứng: prod vẫn nói với staging, hoặc bạn rebuild. Nguyên nhân: bind lúc compile. Sửa: `-e` runtime.\n- Cookie domain cha. Triệu chứng: PM login prod từ preview. Sửa: host-only; OAuth client tách.\n- Host tĩnh cho SSR + WS. Triệu chứng: socket 404. Nguyên nhân: Pages là file. Sửa: preview Node."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "How do designers and PMs see a PR — and how do you not leak prod data into previews? CORS, cookies, OAuth redirect_uri, and VITE_ copied from prod are the follow-through.",
-            "vi": "Designer và PM xem PR thế nào — và làm sao không rò data prod vào preview? CORS, cookie, OAuth redirect_uri, và VITE_ copy từ prod là phần theo."
+            "vi": "Designer và PM xem PR thế nào, và làm sao không rò data prod vào preview? CORS, cookie, OAuth redirect_uri, và VITE_ copy từ prod là phần họ hỏi tiếp."
           }
         },
         {
@@ -683,7 +683,7 @@
           },
           "text": {
             "en": "Each PR is pr-123.preview.example.com on that SHA, talking to staging, with its own OAuth client. I do not copy prod VITE_ and I do not point previews at the prod DB. If I bake the public API URL at build time I cannot promote the artifact — so I prefer runtime env on the Node image. Previews are noindex and die on merge. Host-only cookies, or a parent Domain leaks preview into prod. SSR plus WebSocket needs a real Node host. e2e baseURL is the preview URL. Distinct from the NET-OPS item: here I am talking build-time versus runtime, not the team rollback story.",
-            "vi": "Mỗi PR là pr-123.preview.example.com trên đúng SHA, nói với staging, với OAuth client riêng. Tôi không copy VITE_ prod và không trỏ preview vào DB prod. Nếu nướng URL API public lúc build tôi không promote được artifact — nên tôi ưu tiên env runtime trên image Node. Preview noindex và chết lúc merge. Cookie host-only, nếu không Domain cha rò preview vào prod. SSR cộng WebSocket cần host Node thật. e2e baseURL là URL preview. Khác mục NET-OPS: ở đây tôi nói lúc build khác lúc runtime, không phải chuyện rollback của team."
+            "vi": "Mỗi PR là pr-123.preview.example.com trên đúng SHA, nói với staging, với OAuth client riêng. Mình không copy VITE_ prod và không trỏ preview vào DB prod. Nếu nướng URL API public lúc build thì mình không promote được artifact, nên mình ưu tiên env runtime trên image Node. Preview để noindex và hủy lúc merge. Cookie host-only, không thì Domain cha rò preview sang prod. SSR kèm WebSocket cần host Node thật. e2e baseURL là URL preview. Khác mục NET-OPS: ở đây mình nói env lúc build khác lúc runtime, không phải chuyện rollback của team."
           }
         },
         {
@@ -691,11 +691,11 @@
           "items": [
             {
               "en": "Unique URL per SHA. Staging APIs. Kill on merge. Noindex.",
-              "vi": "URL riêng mỗi SHA. API staging. Giết lúc merge. Noindex."
+              "vi": "URL riêng mỗi SHA. API staging. Hủy lúc merge. Noindex."
             },
             {
               "en": "Runtime env lets one digest promote. Baked VITE_ cannot.",
-              "vi": "Env runtime để một digest promote. VITE_ nướng thì không."
+              "vi": "Env runtime để một digest promote được. VITE_ đã nướng thì không."
             },
             {
               "en": "Host-only cookies. Separate OAuth. Never prod DB.",
@@ -715,7 +715,7 @@
           },
           "text": {
             "en": "- **How do e2e tests target a preview?** Playwright baseURL from CI. Not localhost.\n- **Can you preview SSR plus WebSocket?** Yes, on a Node host. Static Pages is not enough.\n- **Why is a cookie Domain=.example.com dangerous with previews?** Session mixup preview ↔ prod.\n- **Wildcard CORS for staging vs prod — where is star never allowed?** Prod with credentials. Networking 13.4.",
-            "vi": "- **e2e nhắm preview thế nào?** Playwright baseURL từ CI. Không localhost.\n- **Preview SSR cộng WebSocket được không?** Được, trên host Node. Pages tĩnh không đủ.\n- **Vì sao cookie Domain=.example.com nguy hiểm với preview?** Lẫn session preview ↔ prod.\n- **CORS wildcard staging khác prod — sao không bao giờ được phép ở đâu?** Prod kèm credentials. Networking 13.4."
+            "vi": "- **e2e nhắm preview thế nào?** Playwright baseURL từ CI. Không localhost.\n- **Preview SSR kèm WebSocket được không?** Được, trên host Node. Pages tĩnh không đủ.\n- **Vì sao cookie Domain=.example.com nguy hiểm với preview?** Lẫn session preview ↔ prod.\n- **CORS wildcard staging khác prod, dấu sao không bao giờ được phép ở đâu?** Prod kèm credentials. Networking 13.4."
           }
         },
         {
@@ -737,14 +737,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Feature flags are **runtime control of risk**: kill switch, percentage rollout, entitlement, experiment. They are not a substitute for version control or a permanent `if/else` graveyard. Security and pricing evaluate in the BFF. Cross-ref the Q&A `feature-flags-rollout` for the spoken cleanup story.",
-            "vi": "**Tóm tắt:** Feature flag là **kiểm soát rủi ro lúc runtime**: kill switch, rollout phần trăm, entitlement, experiment. Chúng không thay version control hay nghĩa địa `if/else` vĩnh viễn. Bảo mật và giá đánh giá ở BFF. Xem Q&A rollout flag cho chuyện cleanup nói thành lời."
+            "vi": "**Tóm tắt:** Feature flag là **kiểm soát rủi ro lúc runtime**: kill switch, rollout theo phần trăm, entitlement, experiment. Không thay thế version control, cũng không phải nghĩa địa `if/else` vĩnh viễn. Bảo mật và giá đánh giá ở BFF. Xem Q&A `feature-flags-rollout` cho chuyện cleanup nói thành lời."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “Ship dark? Kill switch? Why not just deploy?” They want where you evaluate flags, what happens when the flag service is down, and how you delete them. Env deploys cannot slice prod users. Distinct from 14.3 (preview SHA): a flag ships **inside** prod.",
-            "vi": "**Vì sao quan trọng:** “Xuất tối? Kill switch? Sao không deploy?” Họ muốn bạn đánh giá flag ở đâu, chuyện gì khi dịch vụ flag chết, và cách xóa chúng. Deploy theo env không cắt được user prod. Khác 14.3 (SHA preview): flag xuất **bên trong** prod."
+            "vi": "**Vì sao quan trọng:** “Ship dark? Kill switch? Sao không chỉ deploy?” Họ muốn bạn đánh giá flag ở đâu, chuyện gì khi dịch vụ flag sập, và cách xóa chúng. Deploy theo env không cắt được user prod. Khác 14.3 (SHA preview): flag ship **bên trong** prod."
           }
         },
         {
@@ -753,19 +753,19 @@
           "items": [
             {
               "en": "**How it works:** Name the kind. Kill switch: disable new checkout, fail-safe. Gradual: consistent hash on user id, not `Math.random()` per request. Entitlement: plan has exports — server decides, FE only reflects. Experiment: copy/layout; watch CLS.",
-              "vi": "**Cách hoạt động:** Gọi loại. Kill switch: tắt checkout mới, fail-safe. Dần: hash ổn định trên user id, không `Math.random()` mỗi request. Entitlement: gói có export — server quyết, FE chỉ phản ánh. Experiment: copy/layout; coi CLS."
+              "vi": "**Cách hoạt động:** Nêu rõ loại. Kill switch: tắt checkout mới, fail-safe. Gradual: hash ổn định trên user id, không `Math.random()` mỗi request. Entitlement: gói có export, server quyết, FE chỉ phản ánh. Experiment: copy/layout; để ý CLS."
             },
             {
               "en": "Evaluate security and pricing in the BFF so the client cannot flip them. Client flags are UX chrome. Pin the SSR bucket in the payload so hydrate matches — a server `true` and a client `false` is a mismatch.",
-              "vi": "Đánh giá bảo mật và giá ở BFF để client không gạt được. Flag client là chrome UX. Ghim bucket SSR trong payload để hydrate khớp — server `true` và client `false` là mismatch."
+              "vi": "Đánh giá bảo mật và giá ở BFF để client không tự gạt được. Flag phía client chỉ là chrome UX. Ghim bucket SSR trong payload để hydrate khớp. Server `true` còn client `false` là mismatch."
             },
             {
               "en": "If the flag service 500s: fail-closed for payments, fail-open for a chat widget. Cleanup: a ticket and a date at 100% or when abandoned. A flag at 1% for six months is a process bug. ADR if it changes architecture.",
-              "vi": "Nếu dịch vụ flag 500: fail-closed cho thanh toán, fail-open cho widget chat. Cleanup: một ticket và một ngày lúc 100% hoặc khi bỏ. Flag 1% sáu tháng là bug process. ADR nếu nó đổi kiến trúc."
+              "vi": "Nếu dịch vụ flag trả 500: fail-closed cho thanh toán, fail-open cho widget chat. Cleanup: một ticket và một ngày lúc 100% hoặc khi bỏ. Flag 1% suốt sáu tháng là bug process. ADR nếu nó đổi kiến trúc."
             },
             {
               "en": "Client-side hide-a-button is not authz — the API must still refuse. Do not flag-gate content Google must see. `localStorage` flags that disagree across tabs are a multi-tab bug.",
-              "vi": "Giấu nút phía client không phải authz — API vẫn phải từ chối. Đừng gắn flag nội dung Google phải thấy. Flag `localStorage` lệch giữa các tab là bug đa tab."
+              "vi": "Giấu nút phía client không phải authz. API vẫn phải từ chối. Đừng gắn flag cho nội dung Google phải thấy. Flag `localStorage` lệch giữa các tab là bug đa tab."
             }
           ]
         },
@@ -781,7 +781,7 @@
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** A down flag service refuses checkout rather than charging blindly. The percent uses a stable hash so the same user does not flip every request. The boolean is pinned for hydrate. The ticket is part of the design, not a later hope. The rollout Q&A is the spoken STAR; this is the mechanism.",
-            "vi": "**Điều gì xảy ra:** Dịch vụ flag chết từ chối checkout chứ không charge mù. Phần trăm dùng hash ổn định để cùng user không gạt mỗi request. Boolean được ghim cho hydrate. Ticket là một phần thiết kế, không phải hy vọng sau. Q&A rollout là STAR nói; đây là cơ chế."
+            "vi": "**Điều gì xảy ra:** Dịch vụ flag chết thì từ chối checkout, không charge mù. Phần trăm dùng hash ổn định để cùng user không bị gạt mỗi request. Boolean được ghim cho hydrate. Ticket là một phần của thiết kế, không phải hy vọng để sau. Q&A rollout là STAR nói thành lời; đây là cơ chế."
           }
         },
         {
@@ -818,7 +818,7 @@
             [
               {
                 "en": "Gradual",
-                "vi": "Dần"
+                "vi": "Gradual"
               },
               {
                 "en": "10% of sessions",
@@ -854,7 +854,7 @@
               },
               {
                 "en": "Client OK; watch CLS/CWV",
-                "vi": "Client được; coi CLS/CWV"
+                "vi": "Client ổn; để ý CLS/CWV"
               }
             ]
           ]
@@ -867,7 +867,7 @@
           },
           "text": {
             "en": "- Nested flags in one SFC are combinatorial explosion. Flatten. Test both states where money or auth is guarded.\n- Targeting by tenant beats a boolean in localStorage that PM cannot flip.\n- Env deploys cannot slice prod users. That is why flags exist next to GitOps.\n- Verify: both states in component tests; hydrate match; a 500 from the flag service does not charge.",
-            "vi": "- Flag lồng trong một SFC là nổ tổ hợp. Dẹt. Test cả hai trạng thái khi chặn tiền hoặc auth.\n- Target theo tenant thắng boolean trong localStorage mà PM không gạt được.\n- Deploy theo env không cắt được user prod. Đó là lý do flag tồn tại cạnh GitOps.\n- Kiểm chứng: cả hai trạng thái trong component test; hydrate khớp; 500 từ dịch vụ flag không charge."
+            "vi": "- Flag lồng trong một SFC là nổ tổ hợp. Làm phẳng. Test cả hai state chỗ chặn tiền hoặc auth.\n- Target theo tenant hơn hẳn một boolean trong localStorage mà PM không gạt được.\n- Deploy theo env không cắt được user prod. Vì vậy flag nằm cạnh GitOps.\n- Kiểm chứng: cả hai state trong component test; hydrate khớp; 500 từ dịch vụ flag không charge."
           }
         },
         {
@@ -875,18 +875,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- `Math.random()` per request for 10%. Symptom: flicker, unpaid buckets. Cause: no stable hash. Fix: hash(userId + flagKey).\n- Client-only hide of a pay button. Symptom: crafted fetch still pays. Cause: flag as authz. Fix: BFF + API 403.\n- Flag at 1% for six months. Symptom: two code paths forever. Cause: no expiry. Fix: ticket dated at 100%.\n- SSR true, client false. Symptom: hydration mismatch. Cause: flag read twice. Fix: pin in payload.",
-            "vi": "**Lỗi hay gặp**\n- `Math.random()` mỗi request cho 10%. Triệu chứng: nháy, bucket không trả. Nguyên nhân: không hash ổn định. Sửa: hash(userId + flagKey).\n- Chỉ giấu nút pay phía client. Triệu chứng: fetch tự chế vẫn trả. Nguyên nhân: flag như authz. Sửa: BFF + API 403.\n- Flag 1% sáu tháng. Triệu chứng: hai path code mãi. Nguyên nhân: không hạn. Sửa: ticket hẹn lúc 100%.\n- SSR true, client false. Triệu chứng: hydration mismatch. Nguyên nhân: đọc flag hai lần. Sửa: ghim trong payload."
+            "vi": "**Lỗi hay gặp**\n- `Math.random()` mỗi request cho 10%. Triệu chứng: nháy, bucket không charge. Nguyên nhân: không hash ổn định. Sửa: hash(userId + flagKey).\n- Chỉ giấu nút pay phía client. Triệu chứng: fetch tự chế vẫn charge. Nguyên nhân: flag như authz. Sửa: BFF + API 403.\n- Flag 1% suốt sáu tháng. Triệu chứng: hai code path mãi. Nguyên nhân: không expiry. Sửa: ticket hẹn ngày lên 100%.\n- SSR true, client false. Triệu chứng: hydration mismatch. Nguyên nhân: đọc flag hai lần. Sửa: ghim trong payload."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "Ship dark? Kill switch? Why not just deploy? They want runtime control of risk, where you evaluate security/pricing flags, and how you clean flags up — not a LaunchDarkly demo.",
-            "vi": "Xuất tối? Kill switch? Sao không deploy? Họ muốn kiểm soát rủi ro lúc runtime, nơi bạn đánh giá flag bảo mật/giá, và cách dọn flag — không phải demo LaunchDarkly."
+            "vi": "Ship dark? Kill switch? Sao không deploy luôn? Họ muốn kiểm soát rủi ro lúc runtime, chỗ bạn đánh giá flag bảo mật/giá, và cách dọn flag, chứ không phải demo LaunchDarkly."
           }
         },
         {
@@ -897,7 +897,7 @@
           },
           "text": {
             "en": "I use flags to change risk at runtime — kill switch, 10% hash, entitlement — not to hide unfinished work forever. Payments evaluate in the BFF and fail closed. I pin the SSR bucket in the payload so hydrate matches. Cleanup is a ticket; a flag at 1% for six months is a process bug. Env deploys cannot slice prod users. Client hide-a-button is not authz. The spoken rollout story with an owner and an expiry lives in the feature-flags-rollout question; here I am describing the kinds and the fail-safe.",
-            "vi": "Tôi dùng flag để đổi rủi ro lúc runtime — kill switch, hash 10%, entitlement — không phải giấu việc dở mãi. Thanh toán đánh giá ở BFF và fail closed. Tôi ghim bucket SSR trong payload để hydrate khớp. Cleanup là một ticket; flag 1% sáu tháng là bug process. Deploy theo env không cắt được user prod. Giấu nút phía client không phải authz. Chuyện rollout nói thành lời với owner và hạn sống ở câu feature-flags-rollout; ở đây tôi mô tả các loại và fail-safe."
+            "vi": "Mình dùng flag để đổi rủi ro lúc runtime: kill switch, hash 10%, entitlement, chứ không giấu việc dở mãi. Payment được đánh giá ở BFF và fail closed. Mình ghim bucket SSR trong payload để hydrate khớp. Cleanup là một ticket; flag 1% suốt sáu tháng là bug process. Deploy theo env không cắt được user prod. Giấu nút phía client không phải authz. Câu chuyện rollout nói thành lời, kèm owner và hạn, nằm ở câu feature-flags-rollout; ở đây mình nói các loại và fail-safe."
           }
         },
         {
@@ -905,7 +905,7 @@
           "items": [
             {
               "en": "Flags are runtime risk. Name the kind. Fail-closed for money.",
-              "vi": "Flag là rủi ro runtime. Gọi loại. Fail-closed cho tiền."
+              "vi": "Flag là rủi ro runtime. Nêu rõ loại. Fail-closed cho tiền."
             },
             {
               "en": "BFF evaluates security and pricing. FE only reflects.",
@@ -913,11 +913,11 @@
             },
             {
               "en": "Stable hash, not Math.random. Pin SSR for hydrate.",
-              "vi": "Hash ổn định, không Math.random. Ghim SSR cho hydrate."
+              "vi": "Hash ổn định, không Math.random. Ghim SSR để hydrate khớp."
             },
             {
               "en": "Expiry ticket. Nested flags are a process bug.",
-              "vi": "Ticket hết hạn. Flag lồng là bug process."
+              "vi": "Ticket gắn expiry. Flag lồng là bug process."
             }
           ]
         },
@@ -929,7 +929,7 @@
           },
           "text": {
             "en": "- **How do you test both sides in CI?** Component tests with the flag on and off where money or auth is guarded.\n- **Flag vs branch vs skip the feature?** Flag for runtime risk. Branch for unfinished work. Skip if it is not this sprint.\n- **What happens if LaunchDarkly is down during checkout?** Fail-closed. Do not charge.\n- **Why is Math.random per request wrong for a 10% rollout?** The same user flickers. Hash the id.",
-            "vi": "- **Test cả hai phía trên CI thế nào?** Component test với flag on và off khi chặn tiền hoặc auth.\n- **Flag khác nhánh khác bỏ feature?** Flag cho rủi ro runtime. Nhánh cho việc dở. Bỏ nếu không phải sprint này.\n- **Chuyện gì nếu LaunchDarkly chết lúc checkout?** Fail-closed. Đừng charge.\n- **Vì sao Math.random mỗi request sai cho rollout 10%?** Cùng user nháy. Hash id."
+            "vi": "- **Test cả hai phía trên CI thế nào?** Component test với flag on và off chỗ chặn tiền hoặc auth.\n- **Flag khác branch khác bỏ feature?** Flag cho rủi ro runtime. Branch cho việc còn dở. Bỏ nếu không phải sprint này.\n- **Chuyện gì nếu LaunchDarkly chết lúc checkout?** Fail-closed. Đừng charge.\n- **Vì sao Math.random mỗi request sai cho rollout 10%?** Cùng user bị nháy. Hash id."
           }
         },
         {
@@ -940,7 +940,7 @@
           "level": 3,
           "text": {
             "en": "14.5. Frontend's Role in Kubernetes and GitOps",
-            "vi": "14.5. Vai trò frontend trong Kubernetes và GitOps"
+            "vi": "14.5. Vai trò của frontend trong Kubernetes và GitOps"
           },
           "id": {
             "en": "145-frontends-role-in-kubernetes-and-gitops",
@@ -951,14 +951,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** You own the **image**, the **ingress path**, **probes**, and **cache / CSP headers**. You do not own the cluster, CNI, or cert-manager. Editing a `values.yaml` tag is not “doing Kubernetes.”",
-            "vi": "**Tóm tắt:** Bạn sở hữu **image**, **đường ingress**, **probe**, và **header cache / CSP**. Bạn không sở hữu cluster, CNI, hay cert-manager. Sửa tag trong `values.yaml` không phải “làm Kubernetes.”"
+            "vi": "**Tóm tắt:** Bạn phụ trách **image**, **ingress path**, **probe**, và **header cache / CSP**. Bạn không phụ trách cluster, CNI, hay cert-manager. Sửa tag trong `values.yaml` không phải “làm Kubernetes”."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “Do you write Helm charts?” They are testing whether you overclaim. A static SPA is distroless nginx serving hashed files. Nuxt SSR is a Node process with HPA, readiness, and no sticky sessions unless you kept server-memory sessions — which you should not.",
-            "vi": "**Vì sao quan trọng:** “Bạn có viết Helm chart không?” Họ đang thử bạn nhận quá. SPA tĩnh là nginx distroless phục vụ file đã hash. Nuxt SSR là process Node với HPA, readiness, và không sticky session trừ khi bạn giữ session trong memory server — điều bạn không nên."
+            "vi": "**Vì sao quan trọng:** “Bạn có viết Helm chart không?” Họ đang thử xem bạn có nhận quá không. SPA tĩnh là nginx distroless phục vụ file đã hash. Nuxt SSR là process Node với HPA, readiness, và không sticky session, trừ khi bạn giữ session trong memory của server (điều bạn không nên làm)."
           }
         },
         {
@@ -967,19 +967,19 @@
           "items": [
             {
               "en": "**How it works:** Dockerfile or static bucket + CDN. Ports, health endpoints, SSR resource requests, path (`/`, `/app`), headers you need (CSP, cache). SPA: nginx or distroless serving `dist`. Nuxt SSR: `node .output/server/index.mjs` on `HOST=0.0.0.0`.",
-              "vi": "**Cách hoạt động:** Dockerfile hoặc bucket tĩnh + CDN. Port, endpoint health, request tài nguyên SSR, path (`/`, `/app`), header bạn cần (CSP, cache). SPA: nginx hoặc distroless phục vụ `dist`. Nuxt SSR: `node .output/server/index.mjs` trên `HOST=0.0.0.0`."
+              "vi": "**Cách hoạt động:** Dockerfile hoặc bucket tĩnh + CDN. Port, health endpoint, resource request cho SSR, path (`/`, `/app`), header bạn cần (CSP, cache). SPA: nginx hoặc distroless phục vụ `dist`. Nuxt SSR: `node .output/server/index.mjs` trên `HOST=0.0.0.0`."
             },
             {
               "en": "Liveness is `/healthz` cheap — do not SSR `/` as liveness or a slow page kills the pod. Readiness is Nitro listening (and maybe a warm cache). No readiness = traffic before listen. Horizontal SSR without a shared cache is a thundering herd, not a frontend jank mystery.",
-              "vi": "Liveness là `/healthz` rẻ — đừng SSR `/` làm liveness kẻo trang chậm giết pod. Readiness là Nitro đang listen (và có thể cache ấm). Không readiness = traffic trước khi listen. SSR ngang hàng không cache chung là thundering herd, không phải bí ẩn jank frontend."
+              "vi": "Liveness là `/healthz` rẻ. Đừng SSR `/` làm liveness, kẻo trang chậm giết pod. Readiness là Nitro đang listen (và có thể cache đã warm). Không readiness = traffic đến trước khi listen. SSR scale ngang không cache chung là thundering herd, không phải bí ẩn jank frontend."
             },
             {
               "en": "You own CSP because you know the FE origins. You own cache headers because you know HTML versus hashed assets (14.1). Config injection is runtime env (14.3), not a rebuild. Image is immutable; config is mounted or `-e`.",
-              "vi": "Bạn sở hữu CSP vì bạn biết origin FE. Bạn sở hữu header cache vì bạn biết HTML khác asset hash (14.1). Inject config là env runtime (14.3), không phải rebuild. Image bất biến; config được mount hoặc `-e`."
+              "vi": "Bạn phụ trách CSP vì bạn biết origin FE. Bạn phụ trách header cache vì bạn biết HTML khác asset đã hash (14.1). Inject config là env runtime (14.3), không phải rebuild. Image bất biến; config được mount hoặc `-e`."
             },
             {
               "en": "Canary 10%: two ReplicaSets or an ingress weight, plus a flag (14.4) if you need user-stable buckets. Logs from a pod are request ids and SSR errors; browser logs go to Sentry (19.x). SPA fallback must not swallow `/api`.",
-              "vi": "Canary 10%: hai ReplicaSet hoặc weight ingress, cộng flag (14.4) nếu cần bucket ổn định theo user. Log từ pod là request id và lỗi SSR; log browser vào Sentry (19.x). SPA fallback không được nuốt `/api`."
+              "vi": "Canary 10%: hai ReplicaSet hoặc weight ingress, kèm một flag (14.4) nếu cần bucket ổn định theo user. Log từ pod là request id và lỗi SSR; log browser vào Sentry (19.x). SPA fallback không được nuốt `/api`."
             }
           ]
         },
@@ -988,14 +988,14 @@
           "lang": "text",
           "code": {
             "en": "# SPA: distroless/nginx serving hashed files, HTML Cache-Control: no-store\n# Nuxt SSR:\nCMD [\"node\", \".output/server/index.mjs\"]\nENV HOST=0.0.0.0 PORT=3000\nGET /healthz  →  200  {\"ok\": true}   # liveness: cheap, no SSR\nGET /ready    →  200  after Nitro listen\n# probes: liveness /healthz; readiness /ready; never GET / as liveness\n# nginx: try_files $uri /index.html — but location /api/ proxies, never fallback",
-            "vi": "# SPA: distroless/nginx phục vụ file hash, HTML Cache-Control: no-store\n# Nuxt SSR:\nCMD [\"node\", \".output/server/index.mjs\"]\nENV HOST=0.0.0.0 PORT=3000\nGET /healthz  →  200  {\"ok\": true}   # liveness: rẻ, không SSR\nGET /ready    →  200  sau khi Nitro listen\n# probe: liveness /healthz; readiness /ready; không bao giờ GET / làm liveness\n# nginx: try_files $uri /index.html — nhưng location /api/ proxy, không fallback"
+            "vi": "# SPA: distroless/nginx phục vụ file đã hash, HTML Cache-Control: no-store\n# Nuxt SSR:\nCMD [\"node\", \".output/server/index.mjs\"]\nENV HOST=0.0.0.0 PORT=3000\nGET /healthz  →  200  {\"ok\": true}   # liveness: rẻ, không SSR\nGET /ready    →  200  sau khi Nitro listen\n# probe: liveness /healthz; readiness /ready; đừng dùng GET / làm liveness\n# nginx: try_files $uri /index.html, nhưng location /api/ thì proxy, không fallback"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** The process binds 0.0.0.0 so the probe can reach it. `/healthz` does not render Vue. `/ready` waits until Nitro accepts connections. `/api` is a proxy location so `try_files` cannot return `index.html` for a JSON miss. HTML is not immutable; JS hashes are.",
-            "vi": "**Điều gì xảy ra:** Process bind 0.0.0.0 để probe với tới. `/healthz` không render Vue. `/ready` chờ đến khi Nitro nhận connection. `/api` là location proxy để `try_files` không trả `index.html` cho JSON miss. HTML không immutable; hash JS thì có."
+            "vi": "**Điều gì xảy ra:** Process bind 0.0.0.0 để probe với tới. `/healthz` không render Vue. `/ready` chờ đến khi Nitro nhận connection. `/api` là location proxy để `try_files` không trả `index.html` khi miss JSON. HTML không immutable; hash JS thì có."
           }
         },
         {
@@ -1003,7 +1003,7 @@
           "headers": [
             {
               "en": "You own",
-              "vi": "Bạn sở hữu"
+              "vi": "Bạn phụ trách"
             },
             {
               "en": "You do not",
@@ -1032,7 +1032,7 @@
             [
               {
                 "en": "SPA: nginx + hashed assets",
-                "vi": "SPA: nginx + asset hash"
+                "vi": "SPA: nginx + asset đã hash"
               },
               {
                 "en": "Sticky sessions for a SPA",
@@ -1040,7 +1040,7 @@
               },
               {
                 "en": "SPA has no server session",
-                "vi": "SPA không có session server"
+                "vi": "SPA không có session phía server"
               }
             ],
             [
@@ -1081,7 +1081,7 @@
           },
           "text": {
             "en": "- Read Argo’s diff when “deploy didn’t.” The cluster is not a mystery; Git did not move, or HTML is cached.\n- You own CSP content because you know connect-src for the API and the preview hosts.\n- Horizontal SSR without shared cache stamps origin on every pod. That is ops plus a cache key, not Vue.\n- Verify: probe endpoints in a curl from another pod; `/api` is JSON not HTML; HTML Cache-Control is short.",
-            "vi": "- Đọc diff Argo khi “deploy không.” Cluster không phải bí ẩn; Git không dịch, hoặc HTML bị cache.\n- Bạn sở hữu nội dung CSP vì bạn biết connect-src cho API và host preview.\n- SSR ngang hàng không cache chung stamp origin mọi pod. Đó là ops cộng cache key, không phải Vue.\n- Kiểm chứng: endpoint probe bằng curl từ pod khác; `/api` là JSON không phải HTML; Cache-Control HTML ngắn."
+            "vi": "- Đọc diff Argo khi “deploy không”. Cluster không phải bí ẩn; Git không đổi, hoặc HTML đang bị cache.\n- Bạn phụ trách nội dung CSP vì bạn biết connect-src cho API và host preview.\n- SSR scale ngang không cache chung thì mỗi pod đều đánh origin. Đó là ops kèm cache key, không phải Vue.\n- Kiểm chứng: endpoint probe bằng curl từ pod khác; `/api` là JSON không phải HTML; Cache-Control của HTML ngắn."
           }
         },
         {
@@ -1089,18 +1089,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- No readiness. Symptom: 502 during roll. Cause: traffic before Nitro listen. Fix: `/ready`.\n- Liveness = `GET /`. Symptom: a slow dashboard restarts the pod. Cause: SSR on the probe. Fix: cheap `/healthz`.\n- SPA fallback swallowing `/api`. Symptom: HTML parsed as JSON. Cause: `try_files` on every location. Fix: proxy `/api` first.\n- Claiming you designed the cluster because you changed an image tag. Symptom: you fail the round. Cause: overclaim. Fix: name what you own.",
-            "vi": "**Lỗi hay gặp**\n- Không readiness. Triệu chứng: 502 lúc roll. Nguyên nhân: traffic trước khi Nitro listen. Sửa: `/ready`.\n- Liveness = `GET /`. Triệu chứng: dashboard chậm restart pod. Nguyên nhân: SSR trên probe. Sửa: `/healthz` rẻ.\n- SPA fallback nuốt `/api`. Triệu chứng: HTML bị parse như JSON. Nguyên nhân: `try_files` mọi location. Sửa: proxy `/api` trước.\n- Nhận đã thiết kế cluster vì đổi image tag. Triệu chứng: trượt vòng. Nguyên nhân: nhận quá. Sửa: gọi tên thứ bạn sở hữu."
+            "vi": "**Lỗi hay gặp**\n- Không readiness. Triệu chứng: 502 lúc roll. Nguyên nhân: traffic trước khi Nitro listen. Sửa: `/ready`.\n- Liveness = `GET /`. Triệu chứng: dashboard chậm restart pod. Nguyên nhân: SSR trên probe. Sửa: `/healthz` rẻ.\n- SPA fallback nuốt `/api`. Triệu chứng: HTML bị parse như JSON. Nguyên nhân: `try_files` mọi location. Sửa: proxy `/api` trước.\n- Nhận đã thiết kế cluster vì đổi image tag. Triệu chứng: trượt vòng. Nguyên nhân: nhận quá. Sửa: nêu rõ phần bạn phụ trách."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "Do you write Helm charts? They are testing whether you overclaim. What do you own — image, ingress, probes, cache headers — and what do you leave to the platform team?",
-            "vi": "Bạn có viết Helm chart không? Họ đang thử bạn nhận quá. Bạn sở hữu gì — image, ingress, probe, header cache — và để gì cho team platform?"
+            "vi": "Bạn có viết Helm chart không? Họ đang thử xem bạn có nhận quá không. Phần nào bạn phụ trách (image, ingress, probe, header cache), phần nào để team platform?"
           }
         },
         {
@@ -1111,7 +1111,7 @@
           },
           "text": {
             "en": "I own the image, the path, the probes, and the cache headers. I do not design CNI or cert-manager in a frontend round. A static SPA is distroless nginx; Nuxt SSR is node .output/server/index.mjs on HOST=0.0.0.0 with a cheap /healthz. Readiness is Nitro up. I never use GET / as liveness. try_files must not swallow /api. I read Argo’s diff when deploy didn’t. Claiming Kubernetes because I edited an image tag is the tell they are waiting for. Config is runtime env so the digest promotes.",
-            "vi": "Tôi sở hữu image, path, probe, và header cache. Tôi không thiết kế CNI hay cert-manager trong vòng frontend. SPA tĩnh là nginx distroless; Nuxt SSR là node .output/server/index.mjs trên HOST=0.0.0.0 với /healthz rẻ. Readiness là Nitro lên. Tôi không bao giờ dùng GET / làm liveness. try_files không được nuốt /api. Tôi đọc diff Argo khi deploy không. Nhận Kubernetes vì đã sửa image tag là tín hiệu họ chờ. Config là env runtime để digest promote."
+            "vi": "Mình phụ trách image, path, probe, và header cache. Mình không thiết kế CNI hay cert-manager trong vòng frontend. SPA tĩnh là nginx distroless; Nuxt SSR là node .output/server/index.mjs trên HOST=0.0.0.0 với /healthz rẻ. Readiness là Nitro đã lên. Mình không bao giờ dùng GET / làm liveness. try_files không được nuốt /api. Mình đọc diff Argo khi deploy không lên. Nhận Kubernetes vì đã sửa image tag là tín hiệu họ chờ. Config là env runtime để digest promote."
           }
         },
         {
@@ -1119,7 +1119,7 @@
           "items": [
             {
               "en": "Own image, path, probes, CSP, cache. Do not own the cluster.",
-              "vi": "Sở hữu image, path, probe, CSP, cache. Không sở hữu cluster."
+              "vi": "Phụ trách image, path, probe, CSP, cache. Không phụ trách cluster."
             },
             {
               "en": "Liveness is cheap /healthz. Readiness is Nitro listening.",
@@ -1143,7 +1143,7 @@
           },
           "text": {
             "en": "- **How would you run a canary 10%?** Ingress weight or two ReplicaSets, plus a flag if buckets must be user-stable.\n- **What do you log from a pod vs the browser?** Pod: request id, SSR errors. Browser: Sentry (19.x).\n- **Why is a full SSR of / a bad liveness probe?** A slow page kills the pod. Use /healthz.\n- **SPA fallback swallowing /api — how do you prevent it?** Proxy /api first; try_files only for the SPA.",
-            "vi": "- **Canary 10% thế nào?** Weight ingress hoặc hai ReplicaSet, cộng flag nếu bucket phải ổn định theo user.\n- **Log từ pod khác browser thứ gì?** Pod: request id, lỗi SSR. Browser: Sentry (19.x).\n- **Vì sao SSR đầy / là liveness kém?** Trang chậm giết pod. Dùng /healthz.\n- **SPA fallback nuốt /api — ngăn thế nào?** Proxy /api trước; try_files chỉ cho SPA."
+            "vi": "- **Canary 10% chạy thế nào?** Weight ingress hoặc hai ReplicaSet, kèm một flag nếu bucket phải ổn định theo từng user.\n- **Log từ pod khác browser thứ gì?** Pod: request id, lỗi SSR. Browser: Sentry (19.x).\n- **Vì sao SSR full trang / là liveness kém?** Trang chậm sẽ giết pod. Dùng /healthz.\n- **SPA fallback nuốt /api, ngăn thế nào?** Proxy /api trước; try_files chỉ dành cho SPA."
           }
         },
         {
