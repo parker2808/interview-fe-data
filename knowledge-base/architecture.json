@@ -42,14 +42,14 @@
           "type": "paragraph",
           "text": {
             "en": "This doc is senior frontend architecture for interviews: component patterns, the few GoF names that map onto Vue, SOLID as tests for change, micro-frontends as an org move, feature folders, and design-system versus app components. Interviewers are not scoring `Animal` / `Dog`. They want to know whether you structure Vue 3 apps so a team can change them.",
-            "vi": "Tài liệu này là kiến trúc frontend mức senior cho phỏng vấn: mẫu component, vài tên GoF map sang Vue, SOLID như bài test cho thay đổi, micro-frontend như nước đi tổ chức, thư mục theo feature, và design system khác component của app. Người phỏng vấn không chấm `Animal` / `Dog`. Họ muốn biết bạn cấu trúc app Vue 3 để một team còn đổi được."
+            "vi": "Bài này nói về kiến trúc frontend mức senior cho phỏng vấn: mẫu component, vài tên GoF map sang Vue, SOLID như bài test cho thay đổi, micro-frontend như nước đi tổ chức, thư mục theo feature, và design system khác component của app. Người phỏng vấn không chấm `Animal` / `Dog`. Họ muốn biết bạn cấu trúc app Vue 3 thế nào để team còn đổi được."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "Study 15.1–15.3 first (composition, named patterns, SOLID cuts). Then 15.5 for folders and 15.6 for what belongs in the design system. 15.4 is the trap: eight Vue developers do not need Module Federation. Default stack: Vue 3 + TypeScript + Pinia, Nuxt when SSR or a BFF matters. Answer with a decision, a constraint, a failure, and how you would verify.",
-            "vi": "Hãy học 15.1–15.3 trước (composition, pattern có tên, đường cắt SOLID). Rồi 15.5 cho thư mục và 15.6 cho thứ thuộc design system. 15.4 là bẫy: tám dev Vue không cần Module Federation. Stack mặc định: Vue 3 + TypeScript + Pinia, Nuxt khi SSR hoặc BFF quan trọng. Trả lời bằng một quyết định, một ràng buộc, một kịch bản lỗi, và cách kiểm chứng."
+            "vi": "Đọc 15.1–15.3 trước (composition, pattern có tên, đường cắt SOLID). Rồi 15.5 cho thư mục và 15.6 cho thứ thuộc design system. 15.4 là bẫy: tám dev Vue không cần Module Federation. Stack mặc định: Vue 3 + TypeScript + Pinia, Nuxt khi SSR hoặc BFF quan trọng. Trả lời bằng một quyết định, một ràng buộc, một kịch bản lỗi, và cách kiểm chứng."
           }
         },
         {
@@ -119,14 +119,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** A Vue 3 component **renders**. A composable **owns a use-case** (fetch, permissions, form). Container/presentational pairs were a React-Redux 2015 workaround. You still use **compound** parts when they share state and the caller must compose the DOM, and **headless / renderless** only when the DOM must vary wildly.",
-            "vi": "**Tóm tắt:** Component Vue 3 **render**. Composable **sở hữu một use-case** (fetch, permission, form). Cặp container/presentational là workaround React-Redux 2015. Bạn vẫn dùng phần **compound** khi chúng chia state và caller phải compose DOM, và **headless / renderless** chỉ khi DOM phải biến thiên mạnh."
+            "vi": "**Tóm tắt:** Component Vue 3 **render**. Composable **chịu trách nhiệm một use-case** (fetch, permissions, form). Cặp container/presentational là workaround React-Redux 2015. Bạn vẫn dùng phần **compound** khi chúng chia state và caller phải compose DOM, và **headless / renderless** chỉ khi DOM phải khác nhau rất nhiều."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** A teammate wants `UserListContainer.vue` + `UserListView.vue`; another wants a renderless `DataProvider` that slots twelve bindings. They are asking how you share behaviour — slots versus renderless versus composables — and whether you still invent container/view pairs in `<script setup>`.",
-            "vi": "**Vì sao quan trọng:** Một teammate muốn `UserListContainer.vue` + `UserListView.vue`; người khác muốn `DataProvider` renderless slot mười hai binding. Họ hỏi bạn chia hành vi thế nào — slot khác renderless khác composable — và bạn còn bịa cặp container/view trong `<script setup>` không."
+            "vi": "**Vì sao quan trọng:** Một teammate muốn `UserListContainer.vue` + `UserListView.vue`; người khác muốn `DataProvider` renderless slot mười hai binding. Họ hỏi bạn chia hành vi thế nào: slot khác renderless khác composable, và bạn còn bịa cặp container/view trong `<script setup>` không."
           }
         },
         {
@@ -135,15 +135,15 @@
           "items": [
             {
               "en": "**How it works:** Presentational/container split “smart” fetch from “dumb” markup because `connect()` leaked Redux. `<script setup>` plus a composable already splits look from behaviour: `useUserList()` returns `items` / `pending`; the SFC draws. Extract the composable at the **second consumer** or when the SFC is no longer readable — not at forty lines on principle.",
-              "vi": "**Cách hoạt động:** Presentational/container tách fetch “smart” khỏi markup “dumb” vì `connect()` rò Redux. `<script setup>` kèm composable đã tách nhìn khỏi hành vi: `useUserList()` trả `items` / `pending`; SFC vẽ. Tách composable ở **consumer thứ hai** hoặc khi SFC không còn đọc được — không phải ở bốn mươi dòng theo nguyên tắc."
+              "vi": "**Cách hoạt động:** Presentational/container tách fetch “smart” khỏi markup “dumb” vì `connect()` rò Redux. `<script setup>` kèm composable đã tách nhìn khỏi hành vi: `useUserList()` trả `items` / `pending`; SFC vẽ. Tách composable ở **consumer thứ hai** hoặc khi SFC không còn đọc được, không phải ở bốn mươi dòng theo nguyên tắc."
             },
             {
               "en": "**Compound:** `FilterBar.Search` / `.Facet` / `.Clear` share state through typed `provide` / `inject`, not `$parent`. The caller composes the DOM. **Headless / renderless:** a composable (`useListbox`) or Reka UI-style primitive owns keyboard and state; the app owns markup. A `DataProvider.vue` that slots twelve bindings is the wrong Vue 3 shape — that is a composable.",
-              "vi": "**Compound:** `FilterBar.Search` / `.Facet` / `.Clear` chia state qua `provide` / `inject` có type, không phải `$parent`. Caller compose DOM. **Headless / renderless:** composable (`useListbox`) hoặc primitive kiểu Reka UI sở hữu bàn phím và state; app sở hữu markup. `DataProvider.vue` slot mười hai binding là shape Vue 3 sai — đó là composable."
+              "vi": "**Compound:** `FilterBar.Search` / `.Facet` / `.Clear` chia state qua `provide` / `inject` có type, không phải `$parent`. Caller compose DOM. **Headless / renderless:** composable (`useListbox`) hoặc primitive kiểu Reka UI phụ trách bàn phím và state; app phụ trách markup. `DataProvider.vue` slot mười hai binding là shape Vue 3 sai: đó là composable."
             },
             {
               "en": "Mixins are done: name clashes, implicit `data`, untyped. Routing lives on the **page** (thin), which calls the feature composable — not on a badge. React analog: hooks plus composition; the same “don’t invent Container.js” rule. Scoped slots that create a new closure every render usually update the child — fine unless you measured it.",
-              "vi": "Mixin xong rồi: đụng tên, `data` ngầm, không type. Routing sống ở **trang** (mỏng), trang gọi composable của feature — không phải trên badge. Analog React: hook kèm composition; cùng rule “đừng bịa Container.js”. Scoped slot tạo closure mới mỗi render thường update child — ổn trừ khi bạn đã đo."
+              "vi": "Mixin xong rồi: đụng tên, `data` ngầm, không type. Routing sống ở **trang** (mỏng), trang gọi composable của feature, không phải trên badge. Analog React: hook kèm composition; cùng rule “đừng bịa Container.js”. Scoped slot tạo closure mới mỗi render thường update child: ổn trừ khi bạn đã đo."
             }
           ]
         },
@@ -159,7 +159,7 @@
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** The bar owns `q`. Search, Facet, and Clear read it through the injection key. The caller still decides the DOM order. A twelve-slot `DataProvider` would have been `useFilterBar()` instead.",
-            "vi": "**Điều gì xảy ra:** Bar sở hữu `q`. Search, Facet và Clear đọc qua injection key. Caller vẫn quyết thứ tự DOM. `DataProvider` mười hai slot lẽ ra là `useFilterBar()`."
+            "vi": "**Điều gì xảy ra:** Bar giữ `q`. Search, Facet và Clear đọc qua injection key. Caller vẫn quyết thứ tự DOM. `DataProvider` mười hai slot lẽ ra là `useFilterBar()`."
           }
         },
         {
@@ -190,7 +190,7 @@
               },
               {
                 "en": "Never as a pair of SFCs",
-                "vi": "Không bao giờ thành cặp SFC"
+                "vi": "Không bao giờ dùng cặp SFC"
               }
             ],
             [
@@ -204,7 +204,7 @@
               },
               {
                 "en": "Never — name clashes",
-                "vi": "Không bao giờ — đụng tên"
+                "vi": "Không bao giờ: đụng tên"
               }
             ],
             [
@@ -218,7 +218,7 @@
               },
               {
                 "en": "Compound DOM the caller must compose",
-                "vi": "DOM compound caller phải compose"
+                "vi": "DOM compound mà caller phải compose"
               }
             ],
             [
@@ -245,7 +245,7 @@
           },
           "text": {
             "en": "- Composition plus composables plus feature folders is the default. A component renders; a composable owns a use-case.\n- Compound `provide`/`inject` when parts share state and the caller must compose the DOM. Typed keys, not `$parent`.\n- Headless is a composable or a primitive. `DataProvider.vue` is the wrong shape in Vue 3.\n- Extract at the second consumer, not at forty lines. Routing stays on the thin page.\n- Mixins are done. React analog: hooks, not Container.js pairs.",
-            "vi": "- Composition kèm composable kèm thư mục feature là mặc định. Component render; composable sở hữu use-case.\n- Compound `provide`/`inject` khi phần chia state và caller phải compose DOM. Key có type, không phải `$parent`.\n- Headless là composable hoặc primitive. `DataProvider.vue` là shape sai trong Vue 3.\n- Tách ở consumer thứ hai, không phải ở bốn mươi dòng. Routing ở lại trên trang mỏng.\n- Mixin xong rồi. Analog React: hook, không phải cặp Container.js."
+            "vi": "- Composition, composable và thư mục feature là mặc định. Component render; composable chịu trách nhiệm use-case.\n- Compound `provide`/`inject` khi phần chia state và caller phải compose DOM. Key có type, không phải `$parent`.\n- Headless là composable hoặc primitive. `DataProvider.vue` là shape sai trong Vue 3.\n- Tách ở consumer thứ hai, không phải ở bốn mươi dòng. Routing ở lại trên trang mỏng.\n- Mixin xong rồi. Analog React: hook, không phải cặp Container.js."
           }
         },
         {
@@ -260,11 +260,11 @@
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "Presentational versus container — do you still do that? They want composables, compound parts, and when headless is real — not a pair of SFCs.",
-            "vi": "Presentational khác container — bạn còn làm vậy không? Họ muốn composable, phần compound, và khi nào headless là thật — không phải một cặp SFC."
+            "vi": "Presentational khác container: bạn còn làm vậy không? Họ muốn composable, phần compound, và khi nào headless là thật, không phải một cặp SFC."
           }
         },
         {
@@ -275,7 +275,7 @@
           },
           "text": {
             "en": "I do not invent container/view pairs. Vue 3 already splits look from behaviour with script setup and composables — a component renders, a composable owns a use-case. I still use compound components when parts share state and the caller must compose the DOM, implemented with typed provide/inject, not parent. Headless is a composable or a primitive like a listbox; a DataProvider that slots twelve bindings is the wrong shape. I extract at the second consumer, not at forty lines. Mixins are done. Routing lives on the thin page. On the admin product FilterBar is compound; useUserList lives next to the orders feature, not in a Container SFC.",
-            "vi": "Tôi không bịa cặp container/view. Vue 3 đã tách nhìn khỏi hành vi với script setup và composable — component render, composable sở hữu use-case. Tôi vẫn dùng compound khi phần chia state và caller phải compose DOM, implement bằng provide/inject có type, không phải parent. Headless là composable hoặc primitive như listbox; DataProvider slot mười hai binding là shape sai. Tôi tách ở consumer thứ hai, không phải ở bốn mươi dòng. Mixin xong rồi. Routing sống ở trang mỏng. Ở sản phẩm admin FilterBar là compound; useUserList nằm cạnh feature orders, không phải trong SFC Container."
+            "vi": "Mình không bịa cặp container/view. Vue 3 đã tách nhìn khỏi hành vi bằng script setup và composable: component render, composable chịu trách nhiệm use-case. Mình vẫn dùng compound khi phần chia state và caller phải compose DOM, implement bằng provide/inject có type, không phải parent. Headless là composable hoặc primitive như listbox; DataProvider slot mười hai binding là shape sai. Mình tách ở consumer thứ hai, không phải ở bốn mươi dòng. Mixin xong rồi. Routing sống ở trang mỏng. Trên sản phẩm admin FilterBar là compound; useUserList nằm cạnh feature orders, không phải trong SFC Container."
           }
         },
         {
@@ -283,7 +283,7 @@
           "items": [
             {
               "en": "A component renders. A composable owns a use-case. No Container/View pairs.",
-              "vi": "Component render. Composable sở hữu use-case. Không cặp Container/View."
+              "vi": "Component render. Composable chịu trách nhiệm use-case. Không cặp Container/View."
             },
             {
               "en": "Compound `provide`/`inject` when the caller must compose the DOM.",
@@ -307,7 +307,7 @@
           },
           "text": {
             "en": "- **Mixins vs composables?** Name clashes, implicit data, untyped — mixins are done.\n- **Where does routing live?** The page owns the composable, not a badge.\n- **When do you extract a 40-line SFC?** At the second consumer, or when it is no longer readable.\n- **Compound provide vs an `items` prop on Tabs?** Data-driven tabs want `items`. Caller-composed chrome wants compound.",
-            "vi": "- **Mixin khác composable?** Đụng tên, data ngầm, không type — mixin xong rồi.\n- **Routing sống ở đâu?** Trang sở hữu composable, không phải badge.\n- **Khi nào tách SFC 40 dòng?** Ở consumer thứ hai, hoặc khi không còn đọc được.\n- **Compound provide khác prop `items` trên Tabs?** Tab theo data muốn `items`. Chrome do caller compose muốn compound."
+            "vi": "- **Mixin khác composable?** Đụng tên, data ngầm, không type: mixin xong rồi.\n- **Routing sống ở đâu?** Trang phụ trách composable, không phải badge.\n- **Khi nào tách SFC 40 dòng?** Ở consumer thứ hai, hoặc khi không còn đọc được.\n- **Compound provide khác prop `items` trên Tabs?** Tab theo data muốn `items`. Chrome do caller compose muốn compound."
           }
         },
         {
@@ -329,14 +329,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Name **Observer, Strategy, Adapter, Facade** as Vue decisions, not GoF class diagrams. Observer is reactivity and query invalidation — Vue 3 removed `$on`/`$off` on purpose. Strategy is a map of functions. Adapter wraps a third-party SDK. Facade is the BFF or a small API module. Singleton is module scope or Pinia, per-request on Nuxt SSR.",
-            "vi": "**Tóm tắt:** Gọi tên **Observer, Strategy, Adapter, Facade** như quyết định Vue, không phải sơ đồ lớp GoF. Observer là reactivity và invalidation query — Vue 3 gỡ `$on`/`$off` có chủ đích. Strategy là map hàm. Adapter bọc SDK third-party. Facade là BFF hoặc module API nhỏ. Singleton là module scope hoặc Pinia, per-request trên Nuxt SSR."
+            "vi": "**Tóm tắt:** Nêu rõ **Observer, Strategy, Adapter, Facade** như quyết định Vue, không phải sơ đồ lớp GoF. Observer là reactivity và invalidation query: Vue 3 cố ý gỡ `$on`/`$off`. Strategy là map hàm. Adapter bọc SDK third-party. Facade là BFF hoặc module API nhỏ. Singleton là module scope hoặc Pinia, per-request trên Nuxt SSR."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “Which design patterns do you use in frontend?” A Singleton class diagram sounds junior-with-a-book. They want payments, CMS blocks, and a cart that must not leak across SSR users — named as Vue.",
-            "vi": "**Vì sao quan trọng:** “Bạn dùng design pattern nào ở frontend?” Sơ đồ lớp Singleton nghe như junior cầm sách. Họ muốn thanh toán, block CMS, và cart không được rò giữa user SSR — được gọi tên như Vue."
+            "vi": "**Vì sao quan trọng:** “Bạn dùng design pattern nào ở frontend?” Sơ đồ lớp Singleton nghe như junior cầm sách. Họ muốn thanh toán, block CMS, và cart không được rò giữa user SSR, nêu như quyết định Vue."
           }
         },
         {
@@ -349,7 +349,7 @@
             },
             {
               "en": "**Adapter** wraps Stripe or a legacy SOAP client behind `PaymentGateway`. The rest of the app never sees SDK types. **Facade** is Nitro `server/api/checkout.post.ts` or `orders.api.ts` — one shape for the UI. **Factory** is a whitelist `hero` / `faq` → `() => import(...)`; static-importing every CMS block is a 3 MB main.",
-              "vi": "**Adapter** bọc Stripe hoặc client SOAP legacy sau `PaymentGateway`. Phần còn lại của app không bao giờ thấy type SDK. **Facade** là Nitro `server/api/checkout.post.ts` hoặc `orders.api.ts` — một shape cho UI. **Factory** là whitelist `hero` / `faq` → `() => import(...)`; import tĩnh mọi block CMS là main 3 MB."
+              "vi": "**Adapter** bọc Stripe hoặc client SOAP legacy sau `PaymentGateway`. Phần còn lại của app không bao giờ thấy type SDK. **Facade** là Nitro `server/api/checkout.post.ts` hoặc `orders.api.ts`: một shape cho UI. **Factory** là whitelist `hero` / `faq` → `() => import(...)`; import tĩnh mọi block CMS là main 3 MB."
             },
             {
               "en": "Pinia is an app-scoped singleton on the client and **per-request** on Nuxt SSR. `class Foo { static instance }` leaks user data across requests. Module-level `ref` is the same leak. React analog: Observer is state + Query; Strategy is the same map.",
@@ -369,7 +369,7 @@
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** Checkout calls `pay(\"apple\", input)`. The map dispatches. Stripe stays behind `PaymentGateway`. Adding a kind does not touch the SFC. A global bus is not in this picture on purpose.",
-            "vi": "**Điều gì xảy ra:** Checkout gọi `pay(\"apple\", input)`. Map điều phối. Stripe ở sau `PaymentGateway`. Thêm kind không đụng SFC. Bus global cố ý không có trong hình này."
+            "vi": "**Điều gì xảy ra:** Checkout gọi `pay(\"apple\", input)`. Map điều phối. Stripe ở sau `PaymentGateway`. Thêm kind không đụng SFC. Bus global cố ý không có trong ví dụ này."
           }
         },
         {
@@ -455,7 +455,7 @@
           },
           "text": {
             "en": "- Name a pattern only when it clarifies the decision. Observer is the language; you do not need `class EventBus`.\n- Cross-feature notification: a domain event in the BFF, a Pinia action, or a query invalidation — not `mitt`.\n- Pinia is per-request on Nuxt SSR. Module `ref` and `static instance` leak users.\n- Factory for CMS blocks must whitelist + `import()`. Static import of every block is a 3 MB main.\n- `EventTarget` is for browser APIs, not app features talking to each other.",
-            "vi": "- Gọi tên pattern chỉ khi nó làm rõ quyết định. Observer là ngôn ngữ; bạn không cần `class EventBus`.\n- Thông báo xuyên feature: domain event ở BFF, action Pinia, hoặc invalidation query — không phải `mitt`.\n- Pinia là per-request trên Nuxt SSR. `ref` module và `static instance` rò user.\n- Factory cho block CMS phải whitelist + `import()`. Import tĩnh mọi block là main 3 MB.\n- `EventTarget` dành cho API browser, không phải feature app nói với nhau."
+            "vi": "- Chỉ nêu tên pattern khi nó làm rõ quyết định. Observer là ngôn ngữ; bạn không cần `class EventBus`.\n- Thông báo giữa các feature: domain event ở BFF, action Pinia, hoặc query invalidation, không phải `mitt`.\n- Pinia là per-request trên Nuxt SSR. `ref` ở module và `static instance` rò data user.\n- Factory cho block CMS phải whitelist + `import()`. Import tĩnh mọi block là main 3 MB.\n- `EventTarget` dành cho API browser, không phải feature trong app nói với nhau."
           }
         },
         {
@@ -463,18 +463,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: `OrderTable` talks to `HeaderCart` over `mitt`. Cause: fake Observer. Fix: Pinia action or query invalidation.\n- Symptom: user B sees user A’s cart on Nuxt. Cause: `static instance` / module `ref`. Fix: Pinia per-request.\n- Symptom: 3 MB main after a CMS page. Cause: factory static-imports every block. Fix: whitelist + `import()`.\n- Symptom: keep-alive double-registers a bus listener. Cause: event bus. Fix: do not use a bus.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `OrderTable` nói với `HeaderCart` qua `mitt`. Nguyên nhân: Observer giả. Cách xử lý: action Pinia hoặc invalidation query.\n- Triệu chứng: user B thấy cart user A trên Nuxt. Nguyên nhân: `static instance` / `ref` module. Cách xử lý: Pinia per-request.\n- Triệu chứng: main 3 MB sau trang CMS. Nguyên nhân: factory import tĩnh mọi block. Cách xử lý: whitelist + `import()`.\n- Triệu chứng: keep-alive đăng listener bus hai lần. Nguyên nhân: event bus. Cách xử lý: đừng dùng bus."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `OrderTable` nói với `HeaderCart` qua `mitt`. Nguyên nhân: Observer giả. Cách xử lý: action Pinia hoặc query invalidation.\n- Triệu chứng: user B thấy cart của user A trên Nuxt. Nguyên nhân: `static instance` / `ref` ở module. Cách xử lý: Pinia per-request.\n- Triệu chứng: main 3 MB sau một trang CMS. Nguyên nhân: factory import tĩnh mọi block. Cách xử lý: whitelist + `import()`.\n- Triệu chứng: keep-alive đăng listener bus hai lần. Nguyên nhân: event bus. Cách xử lý: đừng dùng bus."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "Which design patterns do you use in frontend? A Singleton class diagram is the junior answer. They want Observer, Strategy, Adapter, Facade as Vue decisions.",
-            "vi": "Bạn dùng design pattern nào ở frontend? Sơ đồ lớp Singleton là câu junior. Họ muốn Observer, Strategy, Adapter, Facade như quyết định Vue."
+            "vi": "Bạn dùng design pattern nào ở frontend? Sơ đồ lớp Singleton là câu junior. Họ muốn Observer, Strategy, Adapter, Facade như những quyết định Vue."
           }
         },
         {
@@ -485,7 +485,7 @@
           },
           "text": {
             "en": "I use the language, not GoF class diagrams. Observer is Vue reactivity and query invalidation — Vue 3 removed on/off on purpose, so OrderTable does not talk to HeaderCart over mitt. Strategy is a map of payment functions so I add Apple Pay without a two-hundred-line switch. Adapter wraps Stripe behind PaymentGateway. Facade is the BFF or a small api module. Singleton is module scope or Pinia, and on Nuxt it is per-request — a static instance leaks users. Factory for CMS blocks is a whitelist plus import. On the admin product we added a payment kind as a function, not a new branch in Checkout.vue.",
-            "vi": "Tôi dùng ngôn ngữ, không phải sơ đồ lớp GoF. Observer là reactivity Vue và invalidation query — Vue 3 gỡ on/off có chủ đích, nên OrderTable không nói với HeaderCart qua mitt. Strategy là map hàm thanh toán để tôi thêm Apple Pay mà không cần switch hai trăm dòng. Adapter bọc Stripe sau PaymentGateway. Facade là BFF hoặc module api nhỏ. Singleton là module scope hoặc Pinia, và trên Nuxt là per-request — static instance rò user. Factory cho block CMS là whitelist kèm import. Ở sản phẩm admin chúng tôi thêm kind thanh toán như một hàm, không phải nhánh mới trong Checkout.vue."
+            "vi": "Mình dùng ngôn ngữ, không phải sơ đồ lớp GoF. Observer là reactivity của Vue và query invalidation: Vue 3 gỡ on/off có chủ đích, nên OrderTable không nói với HeaderCart qua mitt. Strategy là map hàm thanh toán, mình thêm Apple Pay mà không cần switch hai trăm dòng. Adapter bọc Stripe sau PaymentGateway. Facade là BFF hoặc một module api nhỏ. Singleton là module scope hoặc Pinia, và trên Nuxt thì per-request: static instance sẽ rò user. Factory cho block CMS là whitelist kèm import. Ở admin nội bộ team mình thêm kind thanh toán như một hàm, không phải nhánh mới trong Checkout.vue."
           }
         },
         {
@@ -493,7 +493,7 @@
           "items": [
             {
               "en": "Observer is reactivity and query invalidation, not a global bus.",
-              "vi": "Observer là reactivity và invalidation query, không phải bus global."
+              "vi": "Observer là reactivity và query invalidation, không phải bus global."
             },
             {
               "en": "Strategy is a map of functions. Adapter hides SDK types.",
@@ -517,7 +517,7 @@
           },
           "text": {
             "en": "- **Where would you use an actual `EventTarget`?** Browser APIs, not app features talking across the tree.\n- **How do you test a strategy map?** A table of kind → expected gateway mock.\n- **Why does `static instance` leak on Nuxt SSR?** One isolate, many requests. Pinia is per-request.\n- **When is `mitt` acceptable?** Almost never between features. A Pinia action or a BFF event instead.",
-            "vi": "- **Khi nào dùng `EventTarget` thật?** API browser, không phải feature app nói xuyên cây.\n- **Test map strategy thế nào?** Bảng kind → mock gateway kỳ vọng.\n- **Vì sao `static instance` rò trên Nuxt SSR?** Một isolate, nhiều request. Pinia là per-request.\n- **Khi nào `mitt` chấp nhận được?** Hầu như không giữa feature. Action Pinia hoặc event BFF thay."
+            "vi": "- **Dùng `EventTarget` thật ở đâu?** API browser, không phải feature trong app nói với nhau xuyên cây.\n- **Test map strategy thế nào?** Một bảng kind → mock gateway kỳ vọng.\n- **Vì sao `static instance` rò trên Nuxt SSR?** Một isolate, nhiều request. Pinia là per-request.\n- **Khi nào `mitt` chấp nhận được?** Hầu như không bao giờ giữa các feature. Dùng action Pinia hoặc event BFF thì hơn."
           }
         },
         {
@@ -539,14 +539,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** SOLID on the frontend is **tests for change**, not animals. **S**plit a composable at a second reason to change. **O**pen via slots and registries, not `extends BaseButton`. **L**iskov: a `MenuButton` still behaves like a button. **I**nterface: small props. **D**epend on an `OrderApi`, not `new AxiosClient()` inside the composable.",
-            "vi": "**Tóm tắt:** SOLID trên frontend là **bài test cho thay đổi**, không phải động vật. **S** tách composable ở lý do đổi thứ hai. **O** mở qua slot và registry, không phải `extends BaseButton`. **L**iskov: `MenuButton` vẫn hành xử như button. **I**nterface: props nhỏ. **D** phụ thuộc `OrderApi`, không phải `new AxiosClient()` trong composable."
+            "vi": "**Tóm tắt:** SOLID trên frontend là **bài test cho thay đổi**, không phải chuyện động vật. **S** tách composable khi có lý do đổi thứ hai. **O** mở qua slot và registry, không phải `extends BaseButton`. **L**iskov: `MenuButton` vẫn hành xử như button. **I**nterface: props nhỏ. **D** phụ thuộc `OrderApi`, không phải `new AxiosClient()` trong composable."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “Apply SOLID to Vue.” If you mention animals they stop listening. `Checkout.vue` fetches the cart, validates VAT, talks to Stripe, and draws the stepper — that is four reasons to change. Where do you cut, and where is SOLID over-applied (20 files for a badge)?",
-            "vi": "**Vì sao quan trọng:** “Áp SOLID vào Vue.” Nếu bạn nhắc động vật họ ngừng nghe. `Checkout.vue` fetch cart, validate VAT, nói với Stripe, và vẽ stepper — đó là bốn lý do để đổi. Bạn cắt đâu, và đâu là SOLID bị áp quá (20 file cho một badge)?"
+            "vi": "**Vì sao quan trọng:** “Áp SOLID vào Vue”. Nếu bạn nhắc động vật, họ ngừng nghe. `Checkout.vue` fetch cart, validate VAT, nói với Stripe, và vẽ stepper: đó là bốn lý do để đổi. Bạn cắt ở đâu, và đâu là chỗ SOLID bị áp quá đà (20 file cho một badge)?"
           }
         },
         {
@@ -555,15 +555,15 @@
           "items": [
             {
               "en": "**How it works:** **S**RP: `useCart`, `useVat(country)`, `usePayment(strategy)`, leaf `OrderSummary`. Vuex as a god store was an SRP failure — Pinia stores per domain is the fix. **O**CP: slots, variant registries, `v-if` ladders are the smell; Options API `extends` copies data and fights TS.",
-              "vi": "**Cách hoạt động:** **S**RP: `useCart`, `useVat(country)`, `usePayment(strategy)`, leaf `OrderSummary`. Vuex như god store là fail SRP — store Pinia theo domain là cách xử lý. **O**CP: slot, registry variant; `v-if` ladder là mùi; Options API `extends` copy data và đánh nhau với TS."
+              "vi": "**Cách hoạt động:** **S**RP: `useCart`, `useVat(country)`, `usePayment(strategy)`, leaf `OrderSummary`. Vuex như god store là fail SRP; store Pinia theo domain mới là cách xử lý. **O**CP: slot, registry variant; `v-if` ladder là mùi; Options API `extends` copy data và cãi nhau với TS."
             },
             {
               "en": "**L**SP: `MenuButton` must be keyboard-activable and expose a disabled state. A shared interface only one implementer needs is a lie. **I**SP: `Pick` props; do not force every `ListItem` to implement drag. **D**IP: `useOrders(api = defaultApi)` so Storybook and tests never hit the network. A DI container that is a Singleton on the server is the same SSR leak as 15.2.",
-              "vi": "**L**SP: `MenuButton` phải kích hoạt được bằng bàn phím và lộ trạng thái disabled. Interface dùng chung mà chỉ một implementer cần là nói dối. **I**SP: props `Pick`; đừng bắt mọi `ListItem` implement drag. **D**IP: `useOrders(api = defaultApi)` để Storybook và test không bao giờ đụng network. DI container là Singleton trên server là cùng chỗ rò SSR như 15.2."
+              "vi": "**L**SP: `MenuButton` phải kích hoạt được bằng bàn phím và có state disabled. Interface dùng chung mà chỉ một implementer cần là nói dối. **I**SP: props `Pick`; đừng bắt mọi `ListItem` implement drag. **D**IP: `useOrders(api = defaultApi)` để Storybook và test không bao giờ đụng network. DI container là Singleton trên server thì cùng chỗ rò SSR như 15.2."
             },
             {
               "en": "Extract at the **second consumer or the first test that hurts**. Twenty files for a badge is YAGNI wearing SOLID. React analog: the same cuts are hooks plus an injected client.",
-              "vi": "Tách ở **consumer thứ hai hoặc test đầu tiên bị đau**. Hai mươi file cho một badge là YAGNI mặc SOLID. Analog React: cùng đường cắt là hook kèm client được inject."
+              "vi": "Tách ở **consumer thứ hai hoặc test đầu tiên bị đau**. Hai mươi file cho một badge là YAGNI đội lốt SOLID. Analog React: cùng đường cắt là hook kèm client được inject."
             }
           ]
         },
@@ -572,7 +572,7 @@
           "lang": "ts",
           "code": {
             "en": "export function useOrders(api: OrderApi = defaultApi) {\n  return useQuery({\n    queryKey: [\"orders\"],\n    queryFn: () => api.listOrders(), // DIP: tests pass fakeApi\n  })\n}\n// Checkout.vue renders OrderSummary. It does not talk to Stripe or VAT.\nexport function useVat(country: MaybeRef<string>, rates: VatRates = defaultRates) {\n  return computed(() => rates[toValue(country)] ?? 0)\n}\n// Nuxt: do not container.get(\"api\") as a process-wide singleton.",
-            "vi": "export function useOrders(api: OrderApi = defaultApi) {\n  return useQuery({\n    queryKey: [\"orders\"],\n    queryFn: () => api.listOrders(), // DIP: test truyền fakeApi\n  })\n}\n// Checkout.vue render OrderSummary. Nó không nói với Stripe hay VAT.\nexport function useVat(country: MaybeRef<string>, rates: VatRates = defaultRates) {\n  return computed(() => rates[toValue(country)] ?? 0)\n}\n// Nuxt: đừng container.get(\"api\") như singleton cả process."
+            "vi": "export function useOrders(api: OrderApi = defaultApi) {\n  return useQuery({\n    queryKey: [\"orders\"],\n    queryFn: () => api.listOrders(), // DIP: test truyền fakeApi\n  })\n}\n// Checkout.vue render OrderSummary. Không nói với Stripe hay VAT.\nexport function useVat(country: MaybeRef<string>, rates: VatRates = defaultRates) {\n  return computed(() => rates[toValue(country)] ?? 0)\n}\n// Nuxt: đừng container.get(\"api\") như singleton cả process."
           }
         },
         {
@@ -595,7 +595,7 @@
             },
             {
               "en": "Over-applied",
-              "vi": "Áp quá"
+              "vi": "Áp quá đà"
             }
           ],
           "rows": [
@@ -652,7 +652,7 @@
               },
               {
                 "en": "God props; `new Axios()` in the composable",
-                "vi": "Props thần; `new Axios()` trong composable"
+                "vi": "God props; `new Axios()` trong composable"
               }
             ]
           ]
@@ -665,7 +665,7 @@
           },
           "text": {
             "en": "- Treat SOLID as tests for change. `Checkout.vue` should not fetch, validate VAT, talk to Stripe, and draw the stepper.\n- The abstraction is a function or interface, not an abstract class. Store actions call an injected api.\n- Vuex as a god store is an SRP violation — that is why Pinia stores per domain exist.\n- Extract at the second consumer. Twenty files for a badge is the wrong SOLID answer.\n- A component that only works on `window` used in an SSR page broke D (and hydration). Inject the IO.",
-            "vi": "- Coi SOLID như bài test cho thay đổi. `Checkout.vue` không nên fetch, validate VAT, nói với Stripe, và vẽ stepper.\n- Abstraction là hàm hoặc interface, không phải abstract class. Action store gọi api được inject.\n- Vuex như god store là vi phạm SRP — đó là vì sao store Pinia theo domain tồn tại.\n- Tách ở consumer thứ hai. Hai mươi file cho một badge là câu SOLID sai.\n- Component chỉ chạy trên `window` dùng trong trang SSR đã gãy D (và hydration). Hãy inject IO."
+            "vi": "- Coi SOLID như bài test cho thay đổi. `Checkout.vue` không nên fetch, validate VAT, nói với Stripe, và vẽ stepper.\n- Abstraction là hàm hoặc interface, không phải abstract class. Action store gọi api được inject.\n- Vuex như god store là vi phạm SRP. Đó là lý do có store Pinia theo domain.\n- Tách ở consumer thứ hai. Hai mươi file cho một badge là câu SOLID sai.\n- Component chỉ chạy trên `window` mà dùng trong trang SSR thì đã gãy D (và hydration). Hãy inject IO."
           }
         },
         {
@@ -673,18 +673,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: animals in the answer. Cause: textbook SOLID. Fix: cut `Checkout.vue` instead.\n- Symptom: 20 files for a badge. Cause: SOLID as a religion. Fix: extract at the second consumer.\n- Symptom: tests hit the network. Cause: `new AxiosClient()` inside `useOrders`. Fix: inject `OrderApi`.\n- Symptom: Options `extends` copies data and breaks TS. Cause: fake OCP. Fix: slots / composition.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: động vật trong câu trả lời. Nguyên nhân: SOLID giáo khoa. Cách xử lý: cắt `Checkout.vue` thay vì thế.\n- Triệu chứng: 20 file cho một badge. Nguyên nhân: SOLID thành tôn giáo. Cách xử lý: tách ở consumer thứ hai.\n- Triệu chứng: test đụng network. Nguyên nhân: `new AxiosClient()` trong `useOrders`. Cách xử lý: inject `OrderApi`.\n- Triệu chứng: Options `extends` copy data và gãy TS. Nguyên nhân: OCP giả. Cách xử lý: slot / composition."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: động vật trong câu trả lời. Nguyên nhân: SOLID giáo khoa. Cách xử lý: cắt `Checkout.vue`.\n- Triệu chứng: 20 file cho một badge. Nguyên nhân: SOLID thành tôn giáo. Cách xử lý: tách ở consumer thứ hai.\n- Triệu chứng: test đụng network. Nguyên nhân: `new AxiosClient()` trong `useOrders`. Cách xử lý: inject `OrderApi`.\n- Triệu chứng: Options `extends` copy data và gãy TS. Nguyên nhân: OCP giả. Cách xử lý: slot / composition."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "Apply SOLID to Vue — `Checkout.vue` does four jobs. They want the cuts, and they want you to refuse twenty files for a badge.",
-            "vi": "Áp SOLID vào Vue — `Checkout.vue` làm bốn việc. Họ muốn đường cắt, và muốn bạn từ chối hai mươi file cho một badge."
+            "vi": "Áp SOLID vào Vue: `Checkout.vue` làm bốn việc. Họ muốn đường cắt, và muốn bạn từ chối hai mươi file cho một badge."
           }
         },
         {
@@ -695,7 +695,7 @@
           },
           "text": {
             "en": "I treat SOLID as tests for change, not animals. Checkout.vue should not fetch the cart, validate VAT, talk to Stripe, and draw the stepper — those are four reasons to change, so I cut useCart, useVat, usePayment, and a leaf OrderSummary. I inject the API client so Storybook and tests never hit the network. I extend with slots and registries, not extends BaseButton. A MenuButton still behaves like a button. I extract at the second consumer; twenty files for a badge is YAGNI. Vuex as a god store was the SRP failure Pinia stores per domain fix. On the admin product VAT became useVat when a second country appeared, not on day one.",
-            "vi": "Tôi coi SOLID như bài test cho thay đổi, không phải động vật. Checkout.vue không nên fetch cart, validate VAT, nói với Stripe, và vẽ stepper — đó là bốn lý do đổi, nên tôi cắt useCart, useVat, usePayment, và leaf OrderSummary. Tôi inject API client để Storybook và test không bao giờ đụng network. Tôi mở rộng bằng slot và registry, không phải extends BaseButton. MenuButton vẫn hành xử như button. Tôi tách ở consumer thứ hai; hai mươi file cho một badge là YAGNI. Vuex như god store là fail SRP mà store Pinia theo domain sửa. Ở sản phẩm admin VAT thành useVat khi quốc gia thứ hai xuất hiện, không phải ngày đầu."
+            "vi": "Mình coi SOLID như bài test cho thay đổi, không phải chuyện động vật. Checkout.vue không nên fetch cart, validate VAT, nói với Stripe, và vẽ stepper: đó là bốn lý do đổi, nên mình cắt useCart, useVat, usePayment, và leaf OrderSummary. Mình inject API client để Storybook và test không bao giờ đụng network. Mình mở rộng bằng slot và registry, không phải extends BaseButton. MenuButton vẫn hành xử như button. Mình tách ở consumer thứ hai; hai mươi file cho một badge là YAGNI. Vuex như god store là fail SRP mà store Pinia theo domain sửa. Ở admin nội bộ, VAT thành useVat khi quốc gia thứ hai xuất hiện, không phải ngày đầu."
           }
         },
         {
@@ -711,7 +711,7 @@
             },
             {
               "en": "Inject `OrderApi`. `new Axios()` inside a composable breaks tests.",
-              "vi": "Inject `OrderApi`. `new Axios()` trong composable phá test."
+              "vi": "Inject `OrderApi`. `new Axios()` trong composable làm gãy test."
             },
             {
               "en": "Extract at the second consumer. Twenty files for a badge is YAGNI.",
@@ -727,7 +727,7 @@
           },
           "text": {
             "en": "- **How does this interact with Pinia?** Store actions call an injected api, not `fetch` inside the action.\n- **Is Vuex a violation of SRP?** A god store is. That is why Pinia stores per domain exist.\n- **When is 20 files for a badge the wrong SOLID answer?** One consumer, no painful test — YAGNI.\n- **A `window`-only component on an SSR page — which letter?** D. Inject the IO; do not read `window` in setup.",
-            "vi": "- **Tương tác với Pinia thế nào?** Action store gọi api được inject, không phải `fetch` trong action.\n- **Vuex có vi phạm SRP?** God store thì có. Đó là vì sao store Pinia theo domain tồn tại.\n- **Khi nào 20 file cho một badge là câu SOLID sai?** Một consumer, không test đau — YAGNI.\n- **Component chỉ `window` trên trang SSR — chữ nào?** D. Inject IO; đừng đọc `window` trong setup."
+            "vi": "- **Tương tác với Pinia thế nào?** Action store gọi api được inject, không phải `fetch` trong action.\n- **Vuex có vi phạm SRP?** God store thì có. Đó là lý do có store Pinia theo domain.\n- **Khi nào 20 file cho một badge là câu SOLID sai?** Một consumer, không test đau: YAGNI.\n- **Component chỉ chạy trên `window` trong trang SSR, chữ nào?** D. Inject IO; đừng đọc `window` trong setup."
           }
         },
         {
@@ -749,14 +749,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** A **micro-frontend** splits one product into separately deployed UI slices (Module Federation, web components, iframes, or hard navigations). It is an **organisational** solution with a **performance and UX tax** — not a scalability pattern for eight Vue developers. Prefer a **monorepo with packages** until independent deploy and team boundaries force a split.",
-            "vi": "**Tóm tắt:** **Micro-frontend** tách một product thành lát UI deploy riêng (Module Federation, web component, iframe, hoặc điều hướng cứng). Đó là giải pháp **tổ chức** với **thuế hiệu năng và UX** — không phải pattern scale cho tám dev Vue. Ưu tiên **monorepo với package** đến khi deploy độc lập và ranh giới team buộc phải tách."
+            "vi": "**Tóm tắt:** **Micro-frontend** tách một product thành lát UI deploy riêng (Module Federation, web component, iframe, hoặc điều hướng cứng). Đó là giải pháp **tổ chức**, kèm **cái giá về performance và UX**, không phải pattern scale cho tám dev Vue. Ưu tiên **monorepo với package** cho đến khi deploy độc lập và ranh giới team buộc phải tách."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “Should we do micro-frontends?” Eight Vue developers, one product. A staff engineer wants Module Federation so teams can deploy independently. The user still has **one document, one tab order, one auth cookie, one design language**. Splitting the build multiplies those problems.",
-            "vi": "**Vì sao quan trọng:** “Chúng ta có nên làm micro-frontend?” Tám dev Vue, một product. Staff muốn Module Federation để team deploy độc lập. User vẫn có **một document, một thứ tự tab, một cookie auth, một ngôn ngữ design**. Tách build nhân những vấn đề đó."
+            "vi": "**Vì sao quan trọng:** “Có nên làm micro-frontend không?” Tám dev Vue, một product. Staff engineer muốn Module Federation để các team deploy độc lập. User vẫn có **một document, một thứ tự tab, một cookie auth, một ngôn ngữ design**. Tách build nhân những vấn đề đó lên."
           }
         },
         {
@@ -765,15 +765,15 @@
           "items": [
             {
               "en": "**How it works:** Module Federation (Webpack/Rspack; Vite via plugins) loads a remote at runtime and **shares** `vue` if `shared` is right — or duplicates Vue if it is not. Web components isolate style better and still share one JS world; a11y and forms are awkward. iframes isolate crashes and CSS, and they are the worst UX/a11y/SEO/auth story. Hard navigations to a separate SPA are fine for truly separate products (`/careers` vs `/app`).",
-              "vi": "**Cách hoạt động:** Module Federation (Webpack/Rspack; Vite qua plugin) load remote lúc runtime và **share** `vue` nếu `shared` đúng — hoặc nhân đôi Vue nếu không. Web component cô lập style tốt hơn và vẫn chung một thế giới JS; a11y và form vụng. iframe cô lập crash và CSS, và chúng là câu chuyện UX/a11y/SEO/auth tệ nhất. Điều hướng cứng sang SPA khác ổn cho product thật sự tách (`/careers` khác `/app`)."
+              "vi": "**Cách hoạt động:** Module Federation (Webpack/Rspack; Vite qua plugin) load remote lúc runtime và **share** `vue` nếu `shared` đúng, hoặc nhân đôi Vue nếu không. Web component cô lập style tốt hơn và vẫn chung một thế giới JS; a11y và form thì vụng. iframe cô lập crash và CSS, và đây là lựa chọn tệ nhất về UX/a11y/SEO/auth. Điều hướng cứng sang SPA khác thì ổn cho product tách hẳn (`/careers` khác `/app`)."
             },
             {
               "en": "Say **yes** only with independent deploy clocks **and** team boundaries that already fight a single pipeline. Costs: shared-dep versioning, duplicate framework bytes, inconsistent UX, incident coordination, LCP/INP versus the monolith. The shell still owns routing, auth, and the design tokens.",
-              "vi": "Chỉ nói **có** khi đồng hồ deploy độc lập **và** ranh giới team đã đánh nhau với một pipeline. Giá: version shared-dep, nhân đôi byte framework, UX lệch, điều phối incident, LCP/INP so với monolith. Shell vẫn sở hữu routing, auth và token design."
+              "vi": "Chỉ nói **có** khi đã có lịch deploy độc lập **và** ranh giới team vốn đã không muốn dùng chung một pipeline. Cái giá: version shared-dep, nhân đôi byte framework, UX lệch, điều phối incident, LCP/INP so với monolith. Shell vẫn chịu trách nhiệm routing, auth, và design token."
             },
             {
               "en": "React analog: the same tax. Next + Module Federation is still a runtime-coupling conversation. Nuxt: one app plus packages is the default; `layers` are not micro-frontends.",
-              "vi": "Analog React: cùng thuế. Next + Module Federation vẫn là chuyện coupling runtime. Nuxt: một app kèm package là mặc định; `layers` không phải micro-frontend."
+              "vi": "Analog React: cùng cái giá. Next + Module Federation vẫn là chuyện coupling lúc runtime. Nuxt: một app kèm package là mặc định; `layers` không phải micro-frontend."
             }
           ]
         },
@@ -782,14 +782,14 @@
           "lang": "ts",
           "code": {
             "en": "// Default: packages in one deploy. Not a remoteEntry.\n// apps/web depends on packages/ui and packages/domain-orders.\nexport default defineConfig({\n  // federation only when two deploy clocks already exist\n  plugins: [\n    // federation({ name: \"shell\", remotes: { checkout: \"checkout@/remoteEntry.js\" },\n    //   shared: { vue: { singleton: true, requiredVersion: \"^3.5\" } } })\n  ],\n})\n// If vue is not singleton, you pay two runtimes and break provide/inject across the seam.\nexport const shouldFederate =\n  independentDeploysPerWeek >= 1 && teamBoundaries.length >= 2",
-            "vi": "// Mặc định: package trong một deploy. Không phải remoteEntry.\n// apps/web phụ thuộc packages/ui và packages/domain-orders.\nexport default defineConfig({\n  // federation chỉ khi đã có hai đồng hồ deploy\n  plugins: [\n    // federation({ name: \"shell\", remotes: { checkout: \"checkout@/remoteEntry.js\" },\n    //   shared: { vue: { singleton: true, requiredVersion: \"^3.5\" } } })\n  ],\n})\n// Nếu vue không singleton, bạn trả hai runtime và gãy provide/inject xuyên seam.\nexport const shouldFederate =\n  independentDeploysPerWeek >= 1 && teamBoundaries.length >= 2"
+            "vi": "// Mặc định: package trong một deploy. Không phải remoteEntry.\n// apps/web phụ thuộc packages/ui và packages/domain-orders.\nexport default defineConfig({\n  // federation chỉ khi đã có hai lịch deploy\n  plugins: [\n    // federation({ name: \"shell\", remotes: { checkout: \"checkout@/remoteEntry.js\" },\n    //   shared: { vue: { singleton: true, requiredVersion: \"^3.5\" } } })\n  ],\n})\n// Nếu vue không singleton, bạn tốn hai runtime và gãy provide/inject xuyên seam.\nexport const shouldFederate =\n  independentDeploysPerWeek >= 1 && teamBoundaries.length >= 2"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** The default config has no remote. Federation is commented with `vue` as a singleton — the seam that `provide`/`inject` and Pinia depend on. The boolean is organisational, not a bundle-size slogan.",
-            "vi": "**Điều gì xảy ra:** Config mặc định không có remote. Federation được comment với `vue` singleton — seam mà `provide`/`inject` và Pinia phụ thuộc. Boolean là chuyện tổ chức, không phải slogan bundle."
+            "vi": "**Điều gì xảy ra:** Config mặc định không có remote. Federation được comment với `vue` là singleton: đó là seam mà `provide`/`inject` và Pinia phụ thuộc. Boolean là chuyện tổ chức, không phải slogan về bundle size."
           }
         },
         {
@@ -805,7 +805,7 @@
             },
             {
               "en": "Tax",
-              "vi": "Thuế"
+              "vi": "Cái giá"
             }
           ],
           "rows": [
@@ -848,7 +848,7 @@
               },
               {
                 "en": "Awkward Vue API; a11y/forms pain",
-                "vi": "API Vue vụng; đau a11y/form"
+                "vi": "API Vue vụng; đau đầu a11y/form"
               }
             ],
             [
@@ -862,7 +862,7 @@
               },
               {
                 "en": "Worst UX/a11y, or OK for separate products",
-                "vi": "UX/a11y tệ nhất, hoặc ổn cho product tách"
+                "vi": "UX/a11y tệ nhất, hoặc ổn cho product tách biệt"
               }
             ]
           ]
@@ -875,7 +875,7 @@
           },
           "text": {
             "en": "- Micro-frontends are an org move with a performance tax. Eight Vue developers: no.\n- The user still has one document, one tab order, one cookie, one design language.\n- Shared Vue singleton is smaller and version-locked. Duplicate Vue is “free” teams and a broken provide/inject seam.\n- iframes for untrusted or legacy admin. Hard navigation for truly separate products.\n- Verify: independent deploys without shell coordination; LCP/INP versus the monolith; duplicate-framework bytes.",
-            "vi": "- Micro-frontend là nước đi tổ chức với thuế hiệu năng. Tám dev Vue: không.\n- User vẫn có một document, một thứ tự tab, một cookie, một ngôn ngữ design.\n- Vue singleton share thì nhỏ hơn và khóa version. Nhân đôi Vue là team “tự do” và seam provide/inject gãy.\n- iframe cho admin không tin cậy hoặc legacy. Điều hướng cứng cho product thật sự tách.\n- Kiểm chứng: deploy độc lập không cần shell phối hợp; LCP/INP so với monolith; byte framework trùng."
+            "vi": "- Micro-frontend là nước đi tổ chức, kèm cái giá hiệu năng. Tám dev Vue: không.\n- User vẫn có một document, một thứ tự tab, một cookie, một ngôn ngữ design.\n- Vue share kiểu singleton thì nhỏ hơn và khóa version. Nhân đôi Vue là team “tự do” và seam provide/inject gãy.\n- iframe cho admin không tin cậy hoặc legacy. Hard navigation cho product vốn tách biệt.\n- Kiểm chứng: deploy độc lập không cần shell phối hợp; LCP/INP so với monolith; byte framework trùng."
           }
         },
         {
@@ -883,18 +883,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: two Vue runtimes, provide/inject dead. Cause: `shared` missed vue. Fix: singleton vue, or do not federate.\n- Symptom: LCP worse than the monolith. Cause: extra round-trips for remotes. Fix: packages in one deploy.\n- Symptom: design drift. Cause: no shared tokens. Fix: one DS package; federation does not replace that.\n- Symptom: eight people, four remotes. Cause: fashion. Fix: monorepo packages.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: hai runtime Vue, provide/inject chết. Nguyên nhân: `shared` sót vue. Cách xử lý: vue singleton, hoặc đừng federate.\n- Triệu chứng: LCP tệ hơn monolith. Nguyên nhân: thêm round-trip cho remote. Cách xử lý: package trong một deploy.\n- Triệu chứng: design lệch. Nguyên nhân: không token chung. Cách xử lý: một package DS; federation không thay cái đó.\n- Triệu chứng: tám người, bốn remote. Nguyên nhân: mốt. Cách xử lý: package monorepo."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: hai runtime Vue, provide/inject chết. Nguyên nhân: `shared` sót vue. Cách xử lý: vue singleton, hoặc đừng federate.\n- Triệu chứng: LCP tệ hơn monolith. Nguyên nhân: thêm round-trip cho remote. Cách xử lý: package trong một deploy.\n- Triệu chứng: design lệch. Nguyên nhân: không có token chung. Cách xử lý: một package DS; federation không thay được cái đó.\n- Triệu chứng: tám người, bốn remote. Nguyên nhân: theo mốt. Cách xử lý: package trong monorepo."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "Should we do micro-frontends? Eight Vue developers, one product, a staff engineer wants Module Federation. The senior default is no until deploy clocks and team boundaries force it.",
-            "vi": "Chúng ta có nên làm micro-frontend? Tám dev Vue, một product, staff muốn Module Federation. Mặc định senior là không đến khi đồng hồ deploy và ranh giới team buộc phải."
+            "vi": "Có nên làm micro-frontend? Tám dev Vue, một product, staff engineer muốn Module Federation. Mặc định của senior là không, trừ khi lịch deploy và ranh giới team buộc phải làm."
           }
         },
         {
@@ -905,7 +905,7 @@
           },
           "text": {
             "en": "Micro-frontends are an organisational solution with a performance tax, not a scalability pattern for eight Vue developers. The user still has one document, one tab order, one auth cookie, and one design language. I prefer a monorepo with packages — design system, ui, domain-orders — and one deploy until that burns. I say yes only with independent deploy clocks and team boundaries that already fight a single pipeline. Module Federation must share Vue as a singleton or provide/inject breaks. iframes are for untrusted or legacy admin. On the admin product we stayed on packages; we did not federate checkout.",
-            "vi": "Micro-frontend là giải pháp tổ chức với thuế hiệu năng, không phải pattern scale cho tám dev Vue. User vẫn có một document, một thứ tự tab, một cookie auth, và một ngôn ngữ design. Tôi ưu tiên monorepo với package — design system, ui, domain-orders — và một deploy đến khi cái đó cháy. Tôi chỉ nói có khi đồng hồ deploy độc lập và ranh giới team đã đánh nhau với một pipeline. Module Federation phải share Vue như singleton nếu không provide/inject gãy. iframe dành cho admin không tin cậy hoặc legacy. Ở sản phẩm admin chúng tôi ở lại trên package; không federate checkout."
+            "vi": "Micro-frontend là giải pháp tổ chức kèm cái giá hiệu năng, không phải pattern scale cho tám dev Vue. User vẫn có một document, một thứ tự tab, một cookie auth, và một ngôn ngữ design. Mình ưu tiên monorepo với package (design system, ui, domain-orders) và một deploy đến khi cách đó không còn chịu nổi. Mình chỉ nói có khi lịch deploy đã độc lập và ranh giới team vốn đã không chịu chung một pipeline. Module Federation phải share Vue như singleton, không thì provide/inject gãy. iframe dành cho admin không tin cậy hoặc legacy. Ở admin nội bộ, team mình vẫn dùng package; không federate checkout."
           }
         },
         {
@@ -913,19 +913,19 @@
           "items": [
             {
               "en": "Micro-frontends are an org move with a tax. Eight Vue developers: no.",
-              "vi": "Micro-frontend là nước đi tổ chức với thuế. Tám dev Vue: không."
+              "vi": "Micro-frontend là nước đi tổ chức, phải trả giá. Tám dev Vue: không."
             },
             {
               "en": "Default: monorepo packages, one deploy. Federation needs two clocks.",
-              "vi": "Mặc định: package monorepo, một deploy. Federation cần hai đồng hồ."
+              "vi": "Mặc định: package trong monorepo, một deploy. Federation cần hai lịch deploy."
             },
             {
               "en": "Share Vue as a singleton or `provide`/`inject` dies across the seam.",
-              "vi": "Share Vue như singleton nếu không `provide`/`inject` chết xuyên seam."
+              "vi": "Share Vue như singleton, không thì `provide`/`inject` chết xuyên seam."
             },
             {
               "en": "iframes for untrusted/legacy. Hard nav for truly separate products.",
-              "vi": "iframe cho không tin cậy/legacy. Nav cứng cho product thật sự tách."
+              "vi": "iframe cho thứ không tin cậy/legacy. Hard nav cho product vốn tách biệt."
             }
           ]
         },
@@ -937,7 +937,7 @@
           },
           "text": {
             "en": "- **Vite vs Webpack for Federation?** Still a Webpack/Rspack conversation; Vite plugins exist. Shared vue remains the seam.\n- **When are iframes justified?** Untrusted third-party admin, or a legacy app you will not rewrite.\n- **What does Nuxt `layers` give you instead?** Code reuse in one deploy, not independent remotes.\n- **How do you version a shared design system across remotes?** One package, semver, not copy-paste tokens.",
-            "vi": "- **Vite khác Webpack cho Federation?** Vẫn là chuyện Webpack/Rspack; plugin Vite có. Vue share vẫn là seam.\n- **Khi nào iframe đáng?** Admin third-party không tin cậy, hoặc app legacy bạn sẽ không rewrite.\n- **Nuxt `layers` cho gì thay?** Tái sử dụng code trong một deploy, không phải remote độc lập.\n- **Version design system chung xuyên remote thế nào?** Một package, semver, không copy-paste token."
+            "vi": "- **Vite khác Webpack cho Federation?** Vẫn là chuyện Webpack/Rspack; plugin Vite thì có. Vue share vẫn là seam.\n- **Khi nào iframe đáng dùng?** Admin third-party không tin cậy, hoặc app legacy bạn sẽ không rewrite.\n- **Nuxt `layers` cho gì thay?** Tái sử dụng code trong một deploy, không phải remote độc lập.\n- **Version design system chung xuyên remote thế nào?** Một package, semver, không copy-paste token."
           }
         },
         {
@@ -959,14 +959,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Organise by **feature**, not by type (`components/`, `composables/`, `stores/` at the root). A feature owns its components, composable, API module, and tests, and exposes a **public `index.ts`**. Boundaries are **enforced** by lint (no deep imports), not by a README.",
-            "vi": "**Tóm tắt:** Tổ chức theo **feature**, không theo type (`components/`, `composables/`, `stores/` ở root). Một feature sở hữu component, composable, module API và test của nó, và lộ **`index.ts` public**. Ranh giới được **enforce** bằng lint (không import sâu), không phải bằng README."
+            "vi": "**Tóm tắt:** Tổ chức theo **feature**, không theo type (`components/`, `composables/`, `stores/` ở root). Feature chịu trách nhiệm component, composable, module API và test của nó, và export một **public `index.ts`**. Ranh giới được **enforce** bằng lint (không import sâu), không phải bằng README."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** Type-based folders feel tidy until checkout reaches into `orders/components/OrderRow.vue` internals and a rename breaks three apps. Interviewers want the public API of a feature, what `shared/` is allowed to know, and which lint rule you would add on day one of a 100-feature codebase. Folders are not architecture — 16.1 covers that — but they are how architecture shows up in git.",
-            "vi": "**Vì sao quan trọng:** Thư mục theo type trông gọn đến khi checkout với vào nội bộ `orders/components/OrderRow.vue` và một lần đổi tên gãy ba app. Người phỏng vấn muốn public API của feature, `shared/` được biết gì, và rule lint bạn thêm ngày đầu của codebase 100 feature. Thư mục không phải kiến trúc — 16.1 nói chuyện đó — nhưng chúng là cách kiến trúc hiện ra trong git."
+            "vi": "**Vì sao quan trọng:** Thư mục theo type trông gọn đến khi checkout đụng vào internals của `orders/components/OrderRow.vue` và một lần đổi tên gãy ba app. Người phỏng vấn muốn public API của feature, `shared/` được biết gì, và rule lint bạn sẽ thêm ngày đầu của codebase 100 feature. Thư mục không phải kiến trúc (16.1 nói chuyện đó), nhưng chúng là cách kiến trúc hiện ra trong git."
           }
         },
         {
@@ -975,15 +975,15 @@
           "items": [
             {
               "en": "**How it works:** `features/orders/` holds `components/`, `composables/useOrders.ts`, `api/orders.api.ts`, `types.ts`, and `index.ts` (the only import other features may use). `pages/` (or Nuxt `pages/`) are thin: they compose features. `shared/ui` is app-level composites, not the design-system package (15.6). `shared/lib` is `http.ts` and date helpers — keep it small on purpose.",
-              "vi": "**Cách hoạt động:** `features/orders/` giữ `components/`, `composables/useOrders.ts`, `api/orders.api.ts`, `types.ts`, và `index.ts` (import duy nhất feature khác được dùng). `pages/` (hoặc `pages/` Nuxt) mỏng: chúng compose feature. `shared/ui` là composite mức app, không phải package design system (15.6). `shared/lib` là `http.ts` và helper ngày — giữ nhỏ có chủ đích."
+              "vi": "**Cách hoạt động:** `features/orders/` giữ `components/`, `composables/useOrders.ts`, `api/orders.api.ts`, `types.ts`, và `index.ts` (import duy nhất feature khác được dùng). `pages/` (hoặc Nuxt `pages/`) mỏng: chúng compose feature. `shared/ui` là composite mức app, không phải package design system (15.6). `shared/lib` là `http.ts` và helper ngày tháng: cố ý giữ nhỏ."
             },
             {
               "en": "Enforce with `eslint-plugin-import` no-restricted-paths, or Nx/Vite `enforce-module-boundaries`: `checkout` may import `@app/orders`, never `@app/orders/components/OrderRow.vue`. Feature-sliced design (FSD) is one named scheme; the invariant is the public API, not the Russian-folder names.",
-              "vi": "Enforce bằng `eslint-plugin-import` no-restricted-paths, hoặc Nx/Vite `enforce-module-boundaries`: `checkout` được import `@app/orders`, không bao giờ `@app/orders/components/OrderRow.vue`. Feature-sliced design (FSD) là một scheme có tên; bất biến là public API, không phải tên thư mục kiểu Nga."
+              "vi": "Enforce bằng `eslint-plugin-import` no-restricted-paths, hoặc Nx/Vite `enforce-module-boundaries`: `checkout` được import `@app/orders`, không bao giờ `@app/orders/components/OrderRow.vue`. Feature-sliced design (FSD) là một scheme có tên; phần bắt buộc là public API, không phải tên thư mục kiểu Nga."
             },
             {
               "en": "React/Next analog: `app/(dashboard)/orders/` plus a `features/orders` package; do not dump everything in `components/`. Vue analog: Nuxt layers for reuse across apps, still one public API per feature.",
-              "vi": "Analog React/Next: `app/(dashboard)/orders/` kèm package `features/orders`; đừng đổ tất cả vào `components/`. Analog Vue: Nuxt layers để tái sử dụng xuyên app, vẫn một public API mỗi feature."
+              "vi": "Cùng kiểu React/Next: `app/(dashboard)/orders/` kèm package `features/orders`; đừng nhét hết vào `components/`. Cùng kiểu Vue: Nuxt layers để tái sử dụng xuyên app, vẫn một public API mỗi feature."
             }
           ]
         },
@@ -992,14 +992,14 @@
           "lang": "text",
           "code": {
             "en": "app/\n  features/\n    orders/\n      components/          # OrderTable, not Button\n      composables/useOrders.ts\n      api/orders.api.ts\n      types.ts\n      index.ts             # public API — the only import other features use\n    checkout/\n  shared/\n    ui/                    # app composites, not the DS package (15.6)\n    lib/http.ts\n  pages/                   # thin: compose features\npackages/ui/               # design system\n# lint: checkout may import @app/orders, never orders/components/*",
-            "vi": "app/\n  features/\n    orders/\n      components/          # OrderTable, không phải Button\n      composables/useOrders.ts\n      api/orders.api.ts\n      types.ts\n      index.ts             # public API — import duy nhất feature khác dùng\n    checkout/\n  shared/\n    ui/                    # composite app, không phải package DS (15.6)\n    lib/http.ts\n  pages/                   # mỏng: compose feature\npackages/ui/               # design system\n# lint: checkout được import @app/orders, không bao giờ orders/components/*"
+            "vi": "app/\n  features/\n    orders/\n      components/          # OrderTable, không phải Button\n      composables/useOrders.ts\n      api/orders.api.ts\n      types.ts\n      index.ts             # public API: import duy nhất feature khác dùng\n    checkout/\n  shared/\n    ui/                    # composite của app, không phải package DS (15.6)\n    lib/http.ts\n  pages/                   # mỏng: compose feature\npackages/ui/               # design system\n# lint: checkout được import @app/orders, không bao giờ orders/components/*"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** Checkout talks to `orders` through `index.ts`. A rename of `OrderRow.vue` is local. `pages/` stays thin. The DS package is not inside `shared/ui`. Lint, not a wiki, holds the line.",
-            "vi": "**Điều gì xảy ra:** Checkout nói với `orders` qua `index.ts`. Đổi tên `OrderRow.vue` là local. `pages/` ở lại mỏng. Package DS không nằm trong `shared/ui`. Lint, không phải wiki, giữ lằn ranh."
+            "vi": "**Điều gì xảy ra:** Checkout nói với `orders` qua `index.ts`. Đổi tên `OrderRow.vue` là local. `pages/` vẫn mỏng. Package DS không nằm trong `shared/ui`. Lint, không phải wiki, giữ lằn ranh."
           }
         },
         {
@@ -1072,7 +1072,7 @@
               },
               {
                 "en": "Order ids, Pinia, route names",
-                "vi": "Id đơn, Pinia, tên route"
+                "vi": "id order, Pinia, tên route"
               }
             ]
           ]
@@ -1085,7 +1085,7 @@
           },
           "text": {
             "en": "- Feature folders beat type folders once a second team exists. The public `index.ts` is the architecture.\n- Enforce with lint. A README is a suggestion; a restricted-path rule is a boundary.\n- `shared/` that imports features is a cycle waiting to happen. Keep `shared` boring.\n- FSD is optional naming. Do not cargo-cult `entities/` / `widgets/` if the team does not know the words.\n- Distinct from 16.1: folders are not the system-design answer. They are how the answer shows up in git.",
-            "vi": "- Thư mục feature hơn thư mục type khi có team thứ hai. `index.ts` public là kiến trúc.\n- Enforce bằng lint. README là gợi ý; rule restricted-path là ranh giới.\n- `shared/` import feature là cycle đang chờ. Giữ `shared` nhàm.\n- FSD là đặt tên tùy chọn. Đừng theo đám `entities/` / `widgets/` nếu team không biết những từ đó.\n- Khác 16.1: thư mục không phải câu system-design. Chúng là cách câu trả lời hiện trong git."
+            "vi": "- Thư mục feature thắng thư mục type khi có team thứ hai. `index.ts` public mới là kiến trúc.\n- Enforce bằng lint. README chỉ là gợi ý; rule restricted-path mới là ranh giới.\n- `shared/` mà import feature là cycle đang chờ xảy ra. Giữ `shared` nhàm.\n- FSD là cách đặt tên tùy chọn. Đừng cargo-cult `entities/` / `widgets/` nếu team không biết những từ đó.\n- Khác 16.1: thư mục không phải câu trả lời system-design. Chúng là cách câu trả lời hiện trong git."
           }
         },
         {
@@ -1093,14 +1093,14 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: `components/`, `composables/`, `stores/` at root, 400 files each. Cause: type folders. Fix: feature slices + public index.\n- Symptom: checkout imports `orders/components/OrderRow.vue`. Cause: no lint boundary. Fix: restricted-paths.\n- Symptom: `shared/ui` knows about orders. Cause: shared became a junk drawer. Fix: move it into `features/orders`.\n- Symptom: architecture answer is a folder tree only. Cause: 16.1 was skipped. Fix: name boxes, SLAs, failures — then folders.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `components/`, `composables/`, `stores/` ở root, mỗi cái 400 file. Nguyên nhân: thư mục theo type. Cách xử lý: slice feature + index public.\n- Triệu chứng: checkout import `orders/components/OrderRow.vue`. Nguyên nhân: không ranh giới lint. Cách xử lý: restricted-paths.\n- Triệu chứng: `shared/ui` biết về orders. Nguyên nhân: shared thành ngăn đồ. Cách xử lý: dời vào `features/orders`.\n- Triệu chứng: câu kiến trúc chỉ là cây thư mục. Nguyên nhân: bỏ 16.1. Cách xử lý: gọi tên hộp, SLA, kịch bản lỗi — rồi mới thư mục."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `components/`, `composables/`, `stores/` ở root, mỗi cái 400 file. Nguyên nhân: thư mục theo type. Cách xử lý: slice feature + index public.\n- Triệu chứng: checkout import `orders/components/OrderRow.vue`. Nguyên nhân: không ranh giới lint. Cách xử lý: restricted-paths.\n- Triệu chứng: `shared/ui` biết orders. Nguyên nhân: shared thành chỗ chứa lộn xộn. Cách xử lý: dời vào `features/orders`.\n- Triệu chứng: câu kiến trúc chỉ là cây thư mục. Nguyên nhân: bỏ 16.1. Cách xử lý: nêu rõ box, SLA, kịch bản lỗi, rồi thư mục."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "How do you structure a 100-feature Vue app? They want a public API per feature and a lint rule, not `components/` at the root.",
@@ -1115,7 +1115,7 @@
           },
           "text": {
             "en": "I organise by feature, not by type. features/orders owns its table, useOrders, the API module, and tests, and it exports a public index. Pages are thin and compose features. shared stays boring — http and app composites, not domain widgets. The design system is a package, not a folder inside shared. I enforce the boundary with lint: checkout may import `@app/orders`, never a deep component path. Feature-sliced names are optional; the public API is not. Folders are not the system-design answer — that is 16.1 — but this is how the answer shows up in git. On the admin product, checkout stopped importing OrderRow internals after the restricted-path rule.",
-            "vi": "Tôi tổ chức theo feature, không theo type. features/orders sở hữu table, useOrders, module API và test, và export index public. Trang mỏng và compose feature. shared ở lại nhàm — http và composite app, không phải widget domain. Design system là một package, không phải thư mục trong shared. Tôi enforce ranh giới bằng lint: checkout được import `@app/orders`, không bao giờ đường component sâu. Tên feature-sliced là tùy chọn; public API thì không. Thư mục không phải câu system-design — đó là 16.1 — nhưng đây là cách câu trả lời hiện trong git. Ở sản phẩm admin, checkout thôi import nội bộ OrderRow sau rule restricted-path."
+            "vi": "Mình tổ chức theo feature, không theo type. features/orders chịu trách nhiệm table, useOrders, module API và test, rồi export index public. Pages mỏng và compose feature. shared giữ nhàm: http và composite của app, không phải widget domain. Design system là một package, không phải thư mục trong shared. Mình enforce ranh giới bằng lint: checkout được import `@app/orders`, không bao giờ đường dẫn component sâu. Tên feature-sliced là tùy chọn; public API thì không. Thư mục không phải câu trả lời system-design (cái đó là 16.1), nhưng đây là cách câu trả lời hiện trong git. Ở admin nội bộ, checkout thôi import internals của OrderRow sau rule restricted-path."
           }
         },
         {
@@ -1147,7 +1147,7 @@
           },
           "text": {
             "en": "- **What lint rule on day one of 100 features?** No deep imports across features; public index only.\n- **Where do Pinia stores live?** Inside the feature that owns the client state, not `stores/` at root.\n- **Nuxt layers vs feature folders?** Layers reuse across apps. Features still need a public API.\n- **When is FSD worth the vocabulary?** Multi-team, already trained. Otherwise feature + index is enough.",
-            "vi": "- **Rule lint ngày đầu của 100 feature?** Không import sâu xuyên feature; chỉ index public.\n- **Store Pinia sống ở đâu?** Trong feature sở hữu state client, không phải `stores/` ở root.\n- **Nuxt layers khác thư mục feature?** Layers tái sử dụng xuyên app. Feature vẫn cần public API.\n- **Khi nào FSD đáng vốn từ vựng?** Nhiều team, đã được train. Không thì feature + index là đủ."
+            "vi": "- **Rule lint ngày đầu của 100 feature?** Không import sâu xuyên feature; chỉ index public.\n- **Store Pinia sống ở đâu?** Trong feature chịu trách nhiệm client state, không phải `stores/` ở root.\n- **Nuxt layers khác thư mục feature?** Layers tái sử dụng xuyên app. Feature vẫn cần public API.\n- **Khi nào FSD đáng học vocabulary?** Nhiều team, đã được train. Không thì feature + index là đủ."
           }
         },
         {
@@ -1169,14 +1169,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** A **design system** ships **tokens plus accessible primitives** (`Button`, `TextField`, `Dialog`) as a **versioned package** with peer `vue`. **App components** (`OrderTable`, `VatField`, `CheckoutStepper`) know domain ids and stores. A leaky primitive — `Button` that requires `orderId` — is the usual interview failure.",
-            "vi": "**Tóm tắt:** **Design system** đưa **token kèm primitive accessible** (`Button`, `TextField`, `Dialog`) như **package có version** với peer `vue`. **Component của app** (`OrderTable`, `VatField`, `CheckoutStepper`) biết id domain và store. Primitive bị rò — `Button` đòi `orderId` — là kịch bản lỗi phỏng vấn thường gặp."
+            "vi": "**Tóm tắt:** **Design system** ship **token kèm primitive accessible** (`Button`, `TextField`, `Dialog`) như **package có version** với peer `vue`. **Component của app** (`OrderTable`, `VatField`, `CheckoutStepper`) biết id domain và store. Primitive bị rò (`Button` đòi `orderId`) là kịch bản fail phỏng vấn hay gặp."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** Four product teams, one “Button” that grew an `orderId` and a Pinia import. Ownership, API stability, and tokens are the interview — not a pretty Storybook. Padding that shifts layout is a **major**. Domain checkout widgets stay in the app.",
-            "vi": "**Vì sao quan trọng:** Bốn product team, một “Button” lớn lên `orderId` và import Pinia. Ownership, API ổn định, và token là câu phỏng vấn — không phải Storybook đẹp. Padding đẩy layout là **major**. Widget checkout domain ở lại trong app."
+            "vi": "**Vì sao quan trọng:** Bốn product team, một “Button” mọc thêm `orderId` và một import Pinia. Ownership, API ổn định, và token mới là câu phỏng vấn, không phải Storybook đẹp. Padding đẩy layout là **major**. Widget checkout domain ở lại trong app."
           }
         },
         {
@@ -1185,15 +1185,15 @@
           "items": [
             {
               "en": "**How it works:** Tokens are CSS variables with semantic names (`--color-danger`). Dark mode swaps tokens; the class on `<html>` comes from a cookie to avoid a flash. Primitives follow APG: a dialog has a focus trap; a button is a `<button>`. The package has an `exports` map, per-component entrypoints, `sideEffects` for CSS, and `vue` as a peerDependency.",
-              "vi": "**Cách hoạt động:** Token là biến CSS với tên ngữ nghĩa (`--color-danger`). Dark mode đổi token; class trên `<html>` đến từ cookie để tránh nháy. Primitive theo APG: dialog có focus trap; button là `<button>`. Package có `exports` map, entrypoint theo component, `sideEffects` cho CSS, và `vue` là peerDependency."
+              "vi": "**Cách hoạt động:** Token là biến CSS với tên semantic (`--color-danger`). Dark mode đổi token; class trên `<html>` lấy từ cookie để tránh flash lúc load. Primitive theo APG: dialog có focus trap; button là `<button>`. Package có `exports` map, entrypoint riêng từng component, `sideEffects` cho CSS, và `vue` là peerDependency."
             },
             {
               "en": "Apps pin semver and compose. They do not fork Button, and they do not wrap every primitive “just in case.” New primitives go through an RFC; app-specific requests get a no plus a composition alternative. Visual breaking change = major. Changelog + codemods for majors.",
-              "vi": "App ghim semver và compose. Chúng không fork Button, và không bọc mọi primitive “phòng khi.” Primitive mới đi qua RFC; request riêng app nhận một lời không kèm cách compose thay. Thay đổi visual phá vỡ = major. Changelog + codemod cho major."
+              "vi": "App ghim semver và compose. Không fork Button, và không bọc mọi primitive “phòng khi”. Primitive mới đi qua RFC; request riêng của app nhận lời không kèm cách compose thay thế. Visual breaking change = major. Changelog + codemod cho các bản major."
             },
             {
               "en": "Ownership is a guild with a public roadmap, not three `Button.vue` with no owner. React + Vue DS: share tokens, native primitives per framework — do not wrap Vue in React. Visual regression: Playwright/Chromatic with tokens as fixtures (see testing 8.6).",
-              "vi": "Ownership là guild với roadmap công, không phải ba `Button.vue` không chủ. DS React + Vue: chia token, primitive native mỗi framework — đừng bọc Vue trong React. Visual regression: Playwright/Chromatic với token làm fixture (xem kiểm thử 8.6)."
+              "vi": "Ownership là guild với roadmap công khai, không phải ba `Button.vue` không có owner. DS React + Vue: share token, primitive native mỗi framework, đừng bọc Vue trong React. Visual regression: Playwright/Chromatic với token làm fixture (xem testing 8.6)."
             }
           ]
         },
@@ -1202,14 +1202,14 @@
           "lang": "vue",
           "code": {
             "en": "<!-- Leaky: the DS now knows about orders. Every product team pays. -->\n<!-- <Button order-id=\"1001\" variant=\"pay\">Pay</Button> -->\n<!-- Honest primitive: no domain props. Composition lives in the app. -->\n<script setup lang=\"ts\">\ndefineProps<{ variant?: \"primary\" | \"ghost\"; loading?: boolean }>()\n</script>\n<template>\n  <button type=\"button\" :data-variant=\"variant\" :aria-busy=\"loading || undefined\">\n    <slot />\n  </button>\n</template>\n<!-- App: <PayButton :order-id=\"id\" /> uses DS Button + usePay(orderId). -->",
-            "vi": "<!-- Rò: DS giờ biết về orders. Mọi product team trả giá. -->\n<!-- <Button order-id=\"1001\" variant=\"pay\">Pay</Button> -->\n<!-- Primitive trung thực: không prop domain. Composition sống ở app. -->\n<script setup lang=\"ts\">\ndefineProps<{ variant?: \"primary\" | \"ghost\"; loading?: boolean }>()\n</script>\n<template>\n  <button type=\"button\" :data-variant=\"variant\" :aria-busy=\"loading || undefined\">\n    <slot />\n  </button>\n</template>\n<!-- App: <PayButton :order-id=\"id\" /> dùng Button DS + usePay(orderId). -->"
+            "vi": "<!-- Rò: DS giờ biết về orders. Mọi product team trả giá. -->\n<!-- <Button order-id=\"1001\" variant=\"pay\">Pay</Button> -->\n<!-- Primitive đúng nghĩa: không domain props. Composition nằm ở app. -->\n<script setup lang=\"ts\">\ndefineProps<{ variant?: \"primary\" | \"ghost\"; loading?: boolean }>()\n</script>\n<template>\n  <button type=\"button\" :data-variant=\"variant\" :aria-busy=\"loading || undefined\">\n    <slot />\n  </button>\n</template>\n<!-- App: <PayButton :order-id=\"id\" /> dùng Button DS + usePay(orderId). -->"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** The primitive knows `variant` and `loading`. `orderId` lives in the app’s `PayButton`. Adding Pay does not bump the DS. A leaky `order-id` on `Button` would force every team to understand checkout.",
-            "vi": "**Điều gì xảy ra:** Primitive biết `variant` và `loading`. `orderId` sống ở `PayButton` của app. Thêm Pay không bump DS. `order-id` rò trên `Button` sẽ buộc mọi team hiểu checkout."
+            "vi": "**Điều gì xảy ra:** Primitive biết `variant` và `loading`. `orderId` nằm ở `PayButton` của app. Thêm Pay không bump DS. `order-id` rò trên `Button` sẽ buộc mọi team hiểu checkout."
           }
         },
         {
@@ -1242,7 +1242,7 @@
               },
               {
                 "en": "Anything that needs an order id or a Pinia store",
-                "vi": "Thứ cần id đơn hoặc store Pinia"
+                "vi": "Thứ gì cần order id hoặc store Pinia"
               }
             ],
             [
@@ -1252,7 +1252,7 @@
               },
               {
                 "en": "Pinned consumer; no `node_modules` edits",
-                "vi": "Consumer ghim; không sửa `node_modules`"
+                "vi": "Consumer ghim version; không sửa `node_modules`"
               }
             ],
             [
@@ -1275,7 +1275,7 @@
           },
           "text": {
             "en": "- Wrong thing should be hard in the primitive API. `orderId` on `Button` is the leak.\n- A11y is non-negotiable. A dialog without a focus trap is not a primitive.\n- Padding that shifts layout is a major. Changelog + codemods.\n- Styled + tokens is faster for one brand; headless if brands diverge hard.\n- Do not bundle Vue inside the DS. Peer dep. Apps pin semver.",
-            "vi": "- Việc sai phải khó trong API primitive. `orderId` trên `Button` là chỗ rò.\n- A11y không thương lượng. Dialog không có focus trap không phải primitive.\n- Padding đẩy layout là major. Changelog + codemod.\n- Styled + token nhanh hơn cho một brand; headless nếu brand lệch mạnh.\n- Đừng bundle Vue trong DS. Peer dep. App ghim semver."
+            "vi": "- Việc sai phải khó làm trong API primitive. `orderId` trên `Button` là chỗ rò.\n- A11y không thương lượng. Dialog không có focus trap thì không phải primitive.\n- Padding đẩy layout là major. Changelog + codemod.\n- Styled + token nhanh hơn cho một brand; headless nếu brand lệch nhau mạnh.\n- Đừng bundle Vue trong DS. Peer dep. App ghim semver."
           }
         },
         {
@@ -1283,18 +1283,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: `Button` has `orderId`. Cause: domain leaked into the DS. Fix: `PayButton` in the app.\n- Symptom: three `Button.vue`, no owner. Cause: copy-paste. Fix: one package, a guild, a roadmap.\n- Symptom: library bundles Vue. Cause: missing peerDependency. Fix: peer `vue`; apps pin.\n- Symptom: Storybook-only, fails Nuxt SSR. Cause: `window` in setup. Fix: SSR stories + `ClientOnly` only where needed.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `Button` có `orderId`. Nguyên nhân: domain rò vào DS. Cách xử lý: `PayButton` trong app.\n- Triệu chứng: ba `Button.vue`, không chủ. Nguyên nhân: copy-paste. Cách xử lý: một package, một guild, một roadmap.\n- Triệu chứng: library bundle Vue. Nguyên nhân: thiếu peerDependency. Cách xử lý: peer `vue`; app ghim.\n- Triệu chứng: chỉ Storybook, gãy Nuxt SSR. Nguyên nhân: `window` trong setup. Cách xử lý: story SSR + `ClientOnly` chỉ nơi cần."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `Button` có `orderId`. Nguyên nhân: domain rò vào DS. Cách xử lý: `PayButton` trong app.\n- Triệu chứng: ba `Button.vue`, không có owner. Nguyên nhân: copy-paste. Cách xử lý: một package, một guild, một roadmap.\n- Triệu chứng: library bundle Vue. Nguyên nhân: thiếu peerDependency. Cách xử lý: peer `vue`; app ghim.\n- Triệu chứng: chỉ chạy Storybook, Nuxt SSR fail. Nguyên nhân: `window` trong setup. Cách xử lý: story SSR + `ClientOnly` chỉ chỗ cần."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "Design a component library for four product teams. They want tokens, accessible primitives, a versioned package, and a no to domain widgets — not a pretty Storybook.",
-            "vi": "Thiết kế component library cho bốn product team. Họ muốn token, primitive accessible, package có version, và một lời không với widget domain — không phải Storybook đẹp."
+            "vi": "Thiết kế component library cho bốn product team. Họ muốn token, primitive accessible, package có version, và một lời không với widget domain. Không phải một Storybook cho đẹp."
           }
         },
         {
@@ -1305,7 +1305,7 @@
           },
           "text": {
             "en": "I ship tokens and primitives as a versioned package with peer Vue. Apps pin semver and compose; they do not fork Button. A11y is non-negotiable — a dialog without a focus trap is not a primitive. Padding that shifts layout is a major. Domain checkout widgets stay in the app. The leak to refuse is orderId on Button. Ownership is a guild with a public roadmap. Visual regression uses tokens as fixtures. On the admin product PayButton lives next to checkout; Button in the DS only knows variant and loading.",
-            "vi": "Tôi đưa token và primitive như package có version với peer Vue. App ghim semver và compose; chúng không fork Button. A11y không thương lượng — dialog không có focus trap không phải primitive. Padding đẩy layout là major. Widget checkout domain ở lại trong app. Chỗ rò cần từ chối là orderId trên Button. Ownership là guild với roadmap công. Visual regression dùng token làm fixture. Ở sản phẩm admin PayButton sống cạnh checkout; Button trong DS chỉ biết variant và loading."
+            "vi": "Mình ship token và primitive thành package có version với peer Vue. App ghim semver rồi compose, không fork Button. A11y không thương lượng: dialog không có focus trap thì không phải primitive. Padding làm lệch layout là major. Widget checkout domain để trong app. Chỗ rò phải từ chối là orderId trên Button. Ownership là guild với roadmap công khai. Visual regression dùng token làm fixture. Ở sản phẩm admin, PayButton nằm cạnh checkout; Button trong DS chỉ biết variant và loading."
           }
         },
         {
@@ -1317,15 +1317,15 @@
             },
             {
               "en": "App components may know order ids and stores. Primitives must not.",
-              "vi": "Component app được biết id đơn và store. Primitive thì không."
+              "vi": "Component app được biết order id và store. Primitive thì không."
             },
             {
               "en": "`orderId` on `Button` is the leak. Padding shifts are majors.",
-              "vi": "`orderId` trên `Button` là chỗ rò. Padding đẩy là major."
+              "vi": "`orderId` trên `Button` là chỗ rò. Padding làm lệch layout là major."
             },
             {
               "en": "Ownership is a guild plus a roadmap, not three unowned Buttons.",
-              "vi": "Ownership là guild kèm roadmap, không phải ba Button vô chủ."
+              "vi": "Ownership là guild kèm roadmap, không phải ba Button không có owner."
             }
           ]
         },
@@ -1337,7 +1337,7 @@
           },
           "text": {
             "en": "- **How do you visual-regression test?** Chromatic/Playwright on primitives; tokens as fixtures. Not every app chart.\n- **React + Vue DS?** Share tokens. Native primitives per framework. Do not wrap Vue in React.\n- **When is a visual change a major?** It shifts layout or breaks a documented contract (padding, role).\n- **What do you say no to from a product team?** Domain props on primitives. Offer a composition in the app.",
-            "vi": "- **Visual-regression test thế nào?** Chromatic/Playwright trên primitive; token làm fixture. Không phải mọi chart app.\n- **DS React + Vue?** Chia token. Primitive native mỗi framework. Đừng bọc Vue trong React.\n- **Khi nào thay đổi visual là major?** Nó đẩy layout hoặc gãy hợp đồng đã ghi (padding, role).\n- **Bạn nói không thế nào với product team?** Prop domain trên primitive. Hãy đưa cách compose trong app."
+            "vi": "- **Visual-regression test thế nào?** Chromatic/Playwright trên primitive; token làm fixture. Không phải mọi chart app.\n- **DS React + Vue?** Dùng chung token. Primitive native mỗi framework. Đừng bọc Vue trong React.\n- **Khi nào thay đổi visual là major?** Nó làm lệch layout hoặc phá contract đã ghi (padding, role).\n- **Bạn nói không điều gì từ product team?** Prop domain trên primitive. Đề xuất compose trong app."
           }
         },
         {

@@ -7,7 +7,7 @@
   },
   "summary": {
     "en": "Senior TypeScript is making illegal states unrepresentable: unions, generics you can constrain, and DTOs that cannot send passwordHash. Start with 2.1; interviewers drill discriminated unions and lying fetch helpers.",
-    "vi": "TypeScript mức senior là biến trạng thái bất hợp pháp thành không biểu diễn được: union, generic có ràng buộc, và DTO không gửi được passwordHash. Bắt đầu từ 2.1; người phỏng vấn đào discriminated union và helper fetch nói dối."
+    "vi": "TypeScript mức senior là làm type không cho phép state sai: union, generic có ràng buộc, và DTO không gửi được passwordHash. Bắt đầu từ 2.1; người phỏng vấn xoáy discriminated union và helper fetch nói dối."
   },
   "category": "core",
   "order": 2,
@@ -42,14 +42,14 @@
           "type": "paragraph",
           "text": {
             "en": "This doc is senior TypeScript for Vue interviews: making illegal states unrepresentable. A UserId that cannot be passed where an OrderId belongs, a UI that cannot be loading and error at once, a PATCH DTO that cannot send passwordHash. It is for engineers who already compile, and now need a team rule with reasons.",
-            "vi": "Tài liệu này là TypeScript mức senior cho phỏng vấn Vue: biến trạng thái bất hợp pháp thành không biểu diễn được. UserId không thể truyền nơi cần OrderId, UI không thể vừa loading vừa error, DTO PATCH không thể gửi passwordHash. Dành cho engineer đã compile được, và giờ cần quy tắc team có lý do."
+            "vi": "Bài này nói về TypeScript mức senior cho phỏng vấn Vue: làm type không cho phép state sai. UserId không truyền vào chỗ cần OrderId được, UI không thể vừa loading vừa error, DTO PATCH không gửi được passwordHash. Dành cho engineer đã compile được, giờ cần một quy tắc team có lý do."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "Study 2.1 first (interface vs type, generics, narrowing). Interviewers ask discriminated unions and a useFetch that does not lie more than Partial vs Pick. Then read 2.2 for utilities, guards, mapped and conditional types. Prefer Vue 3 script setup; React is a mapping. For every topic, name what the type prevents, what runtime still allows, and how you would catch the rest with a parser or a test.",
-            "vi": "Hãy học 2.1 trước (interface vs type, generic, narrowing). Người phỏng vấn hỏi discriminated union và useFetch không nói dối nhiều hơn Partial vs Pick. Rồi đọc 2.2 về utility, guard, mapped và conditional type. Ưu tiên Vue 3 script setup; React là ánh xạ. Với mỗi topic, hãy nêu type ngăn gì, runtime vẫn cho gì, và bạn bắt phần còn lại bằng parser hoặc test thế nào."
+            "vi": "Đọc 2.1 trước (interface vs type, generic, narrowing). Người phỏng vấn hỏi discriminated union và một useFetch không nói dối, nhiều hơn Partial vs Pick. Rồi đọc 2.2 về utility, guard, mapped và conditional type. Ưu tiên Vue 3 script setup; React là bản đối chiếu. Với mỗi topic, nêu rõ type ngăn gì, runtime vẫn cho phép gì, và bạn bắt phần còn lại bằng parser hoặc test thế nào."
           }
         },
         {
@@ -107,14 +107,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** `interface` and `type` both name object shapes. Use `type` for unions, mapped and conditional aliases, and brands. Use `interface` when you need declaration merging.",
-            "vi": "**Tóm tắt:** `interface` và `type` đều đặt tên shape object. Dùng `type` cho union, alias mapped/conditional, và brand. Dùng `interface` khi cần declaration merging."
+            "vi": "**Tóm tắt:** `interface` và `type` đều đặt tên shape object. Dùng `type` cho union, alias mapped và conditional, và brand. Dùng `interface` khi cần declaration merging."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** A teammate `interface`s a union of API states “for consistency.” Another refuses `interface` because “types are more modern.” Interviewers want a **team rule with reasons**, not a Twitter preference. Two `interface User` files merge without a warning — that is how you lose a field you are staring at.",
-            "vi": "**Vì sao quan trọng:** Đồng nghiệp `interface` một union trạng thái API “cho consistency.” Người khác từ chối `interface` vì “type hiện đại hơn.” Người phỏng vấn muốn **quy tắc team có lý do**, không phải sở thích Twitter. Hai file `interface User` merge không cảnh báo — đó là cách bạn mất một field đang nhìn."
+            "vi": "**Vì sao quan trọng:** Một người trong team `interface` một union các state API “cho consistency”. Người khác từ chối `interface` vì “type hiện đại hơn”. Người phỏng vấn muốn **quy tắc team có lý do**, không phải sở thích Twitter. Hai file `interface User` merge mà không cảnh báo. Đó là cách bạn mất một field đang nhìn trước mặt."
           }
         },
         {
@@ -123,19 +123,19 @@
           "items": [
             {
               "en": "**How it works:** Both describe object shapes. `type` can also alias a union, an intersection, a mapped type, or a primitive. `interface` cannot name a union.",
-              "vi": "**Cách hoạt động:** Cả hai mô tả shape object. `type` còn alias được union, intersection, mapped type, hoặc primitive. `interface` không đặt tên union."
+              "vi": "**Cách hoạt động:** Cả hai mô tả shape object. `type` còn alias được union, intersection, mapped type, hoặc primitive. `interface` không đặt tên được union."
             },
             {
               "en": "`interface` declaration merging: two `interface User` in the same scope become one. That is the point of `Window`, Vue module augmentation, and Express.",
-              "vi": "`interface` declaration merging: hai `interface User` cùng scope thành một. Đó là ý của `Window`, module augmentation Vue, và Express."
+              "vi": "`interface` declaration merging: hai `interface User` cùng scope thành một. Đó là mục đích của `Window`, module augmentation Vue, và Express."
             },
             {
               "en": "`extends` on an interface fails loudly on a conflict. An intersection `A & B` can collapse a field to `never` more quietly.",
-              "vi": "`extends` trên interface fail ồn khi xung đột. Intersection `A & B` có thể sập field thành `never` thầm hơn."
+              "vi": "`extends` trên interface thì fail rõ khi xung đột. Intersection `A & B` có thể kéo field về `never` thầm hơn."
             },
             {
               "en": "Object shapes can be either. Follow the repo. Mixed style in one PR is the real cost, not picking the “modern” keyword.",
-              "vi": "Shape object dùng được cả hai. Hãy theo repo. Style lẫn trong một PR mới là chi phí thật, không phải chọn keyword “hiện đại.”"
+              "vi": "Shape object dùng được cả hai. Theo repo. Style lẫn trong một PR mới là chi phí thật, không phải chuyện chọn keyword “hiện đại”."
             }
           ]
         },
@@ -144,14 +144,14 @@
           "lang": "ts",
           "code": {
             "en": "type ApiState<T> =\n  | { status: 'loading' }\n  | { status: 'success'; data: T }\n  | { status: 'error'; error: Error }\n\n// interface: merge is the point — one env.d.ts\ndeclare global {\n  interface Window {\n    analytics?: { track(event: string): void }\n  }\n}\n\ninterface User { id: string }\ninterface User { name: string } // merges — can hide a missing field",
-            "vi": "type ApiState<T> =\n  | { status: 'loading' }\n  | { status: 'success'; data: T }\n  | { status: 'error'; error: Error }\n\n// interface: merge là mục đích — một env.d.ts\ndeclare global {\n  interface Window {\n    analytics?: { track(event: string): void }\n  }\n}\n\ninterface User { id: string }\ninterface User { name: string } // merge — có thể giấu field thiếu"
+            "vi": "type ApiState<T> =\n  | { status: 'loading' }\n  | { status: 'success'; data: T }\n  | { status: 'error'; error: Error }\n\n// interface: merge là mục đích, một env.d.ts\ndeclare global {\n  interface Window {\n    analytics?: { track(event: string): void }\n  }\n}\n\ninterface User { id: string }\ninterface User { name: string } // merge, có thể giấu field thiếu"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `ApiState` is a union — that must be a `type`. `Window.analytics` is declaration merging — that must be an `interface`. The two `interface User` blocks become one type; a third file can add a field you did not see in the PR.",
-            "vi": "**Điều gì xảy ra:** `ApiState` là union — phải là `type`. `Window.analytics` là declaration merging — phải là `interface`. Hai khối `interface User` thành một type; file thứ ba có thể thêm field bạn không thấy trong PR."
+            "vi": "**Điều gì xảy ra:** `ApiState` là union, nên phải là `type`. `Window.analytics` là declaration merging, nên phải là `interface`. Hai khối `interface User` thành một type; file thứ ba có thể thêm field bạn không thấy trong PR."
           }
         },
         {
@@ -159,7 +159,7 @@
           "headers": [
             {
               "en": "Need",
-              "vi": "Nhu cầu"
+              "vi": "Cần"
             },
             {
               "en": "Choose",
@@ -174,7 +174,7 @@
             [
               {
                 "en": "Union / brand / mapped alias",
-                "vi": "Union / brand / alias mapped"
+                "vi": "Union / brand / mapped alias"
               },
               {
                 "en": "`type`",
@@ -202,7 +202,7 @@
             [
               {
                 "en": "Object DTO in app code",
-                "vi": "DTO object trong app"
+                "vi": "DTO object trong code app"
               },
               {
                 "en": "Either; follow the repo",
@@ -224,7 +224,7 @@
               },
               {
                 "en": "Fails loudly vs `&` → `never`",
-                "vi": "Fail ồn vs `&` → `never`"
+                "vi": "Fail rõ vs `&` → `never`"
               }
             ]
           ]
@@ -237,7 +237,7 @@
           },
           "text": {
             "en": "- Team default: `type` for unions and aliases, `interface` for merging. Object shapes follow the file you are in.\n- Two `interface User` files merge without a warning. That is a feature for `Window` and a footgun for DTOs.\n- I would rather `extends` fail loudly than an intersection collapse to `never`.\n- Vue module augmentation (`ComponentCustomProperties`) is an interface on purpose. Do not “modernize” it to a type.\n- Brands (`type UserId = string & { readonly brand: unique symbol }`) must be `type`. On the admin product the API state is a type union; `Window.analytics` stays an interface in `env.d.ts` so it can merge.",
-            "vi": "- Mặc định team: `type` cho union và alias, `interface` cho merge. Shape object theo file bạn đang ở.\n- Hai file `interface User` merge không cảnh báo. Đó là tính năng cho `Window` và bẫy cho DTO.\n- Tôi thà `extends` fail ồn còn hơn intersection sập thành `never`.\n- Module augmentation Vue (`ComponentCustomProperties`) là interface có chủ đích. Đừng “hiện đại hóa” thành type.\n- Brand (`type UserId = string & { readonly brand: unique symbol }`) phải là `type`. Ở sản phẩm admin, state API là type union; `Window.analytics` giữ interface trong `env.d.ts` để merge được."
+            "vi": "- Mặc định team: `type` cho union và alias, `interface` cho merge. Shape object theo file bạn đang ở.\n- Hai file `interface User` merge không cảnh báo. Đó là tính năng cho `Window` và bẫy cho DTO.\n- Mình thà `extends` fail rõ còn hơn intersection sập thành `never`.\n- Module augmentation Vue (`ComponentCustomProperties`) là interface có chủ đích. Đừng “hiện đại hóa” nó thành type.\n- Brand (`type UserId = string & { readonly brand: unique symbol }`) phải là `type`. Ở sản phẩm admin, state API là type union; `Window.analytics` giữ interface trong `env.d.ts` để merge được."
           }
         },
         {
@@ -245,18 +245,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: a union of API states is an `interface`. Cause: “always interface.” Fix: `type` for unions.\n- Symptom: a field disappeared in review. Cause: another `interface User` merged. Fix: `type` aliases for DTOs, or one interface per name.\n- Symptom: `A & B` makes a field `never`. Cause: incompatible intersections. Fix: `extends` or a union.\n- Symptom: Vue `declare module` rewritten as a `type`. Cause: “types are modern.” Fix: keep the interface so it merges.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: union trạng thái API là `interface`. Nguyên nhân: “luôn interface.” Cách xử lý: `type` cho union.\n- Triệu chứng: một field biến mất lúc review. Nguyên nhân: `interface User` khác đã merge. Cách xử lý: alias `type` cho DTO, hoặc một interface mỗi tên.\n- Triệu chứng: `A & B` làm field thành `never`. Nguyên nhân: intersection không tương thích. Cách xử lý: `extends` hoặc union.\n- Triệu chứng: Vue `declare module` viết lại thành `type`. Nguyên nhân: “type hiện đại.” Cách xử lý: giữ interface để nó merge."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: union các state API là `interface`. Nguyên nhân: “luôn dùng interface”. Cách xử lý: `type` cho union.\n- Triệu chứng: một field biến mất lúc review. Nguyên nhân: `interface User` khác đã merge. Cách xử lý: alias `type` cho DTO, hoặc một interface mỗi tên.\n- Triệu chứng: `A & B` làm field thành `never`. Nguyên nhân: intersection không tương thích. Cách xử lý: `extends` hoặc union.\n- Triệu chứng: Vue `declare module` viết lại thành `type`. Nguyên nhân: “type thì hiện đại”. Cách xử lý: giữ interface để nó merge."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "A teammate opened a PR that `interface`s a union of API states “for consistency.” Another refuses `interface` because “types are more modern.” They want a team rule with reasons, not a Twitter preference.",
-            "vi": "Đồng nghiệp mở PR `interface` một union trạng thái API “cho consistency.” Người khác từ chối `interface` vì “type hiện đại hơn.” Họ muốn quy tắc team có lý do, không phải sở thích Twitter."
+            "vi": "Một người trong team mở PR `interface` một union các state API “cho consistency”. Người khác từ chối `interface` vì “type hiện đại hơn”. Họ muốn quy tắc team có lý do, không phải sở thích Twitter."
           }
         },
         {
@@ -267,7 +267,7 @@
           },
           "text": {
             "en": "I use type for unions, brands, and mapped aliases, and interface when I want declaration merging — augmenting Vue, Express, or Window. Object shapes can be either; I follow the repo because mixed style is the real cost. Two interface User files merge without a warning, which is how you lose a field you are staring at. I would rather extends fail loudly than an intersection collapse to never. I do not modernize Vue module augmentation to a type, and brands must be type because they are an intersection with a unique symbol. On the admin product the API state machine is a type union, and Window.analytics is an interface in env.d.ts.",
-            "vi": "Tôi dùng type cho union, brand, và alias mapped, và interface khi muốn declaration merging — augment Vue, Express, hoặc Window. Shape object dùng được cả hai; tôi theo repo vì style lẫn mới là chi phí thật. Hai file interface User merge không cảnh báo, đó là cách mất field đang nhìn. Tôi thà extends fail ồn còn hơn intersection sập thành never. Tôi không hiện đại hóa module augmentation Vue thành type, và brand phải là type vì chúng là intersection với unique symbol. Ở sản phẩm admin, state machine API là type union, còn Window.analytics là interface trong env.d.ts."
+            "vi": "Mình dùng type cho union, brand, và alias mapped, còn interface khi muốn declaration merging: augment Vue, Express, hoặc Window. Shape object dùng được cả hai; mình theo repo vì style lẫn mới là chi phí thật. Hai file interface User merge không cảnh báo, đó là cách mất field đang nhìn trước mặt. Mình thà extends fail rõ còn hơn intersection sập thành never. Mình không hiện đại hóa module augmentation Vue thành type, và brand phải là type vì chúng là intersection với unique symbol. Ở sản phẩm admin, state machine API là type union, còn Window.analytics là interface trong env.d.ts."
           }
         },
         {
@@ -299,7 +299,7 @@
           },
           "text": {
             "en": "- **Can `interface` name a union?** No. That is a `type`.\n- **When is merging a feature?** `Window`, Vue `ComponentCustomProperties`, Express `Request`.\n- **Why might `A & B` become `never`?** Incompatible properties. `extends` fails earlier.\n- **Team default on a greenfield Vue repo?** `type` for unions and DTOs; `interface` only when you need to merge.",
-            "vi": "- **`interface` đặt tên union được không?** Không. Đó là `type`.\n- **Khi nào merge là tính năng?** `Window`, Vue `ComponentCustomProperties`, Express `Request`.\n- **Vì sao `A & B` thành `never`?** Thuộc tính không tương thích. `extends` fail sớm hơn.\n- **Mặc định team trên repo Vue greenfield?** `type` cho union và DTO; `interface` chỉ khi cần merge."
+            "vi": "- **`interface` đặt tên union được không?** Không. Đó là `type`.\n- **Khi nào merge là tính năng?** `Window`, Vue `ComponentCustomProperties`, Express `Request`.\n- **Vì sao `A & B` thành `never`?** Field không tương thích. `extends` fail sớm hơn.\n- **Mặc định team trên repo Vue greenfield?** `type` cho union và DTO; `interface` chỉ khi cần merge."
           }
         },
         {
@@ -321,14 +321,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** A generic is a type parameter — a function argument for types. Use it when the **caller** knows a type you cannot. Constrain what the implementation needs. Do not generic a false type at the network boundary.",
-            "vi": "**Tóm tắt:** Generic là type parameter — đối số của hàm, nhưng cho type. Dùng khi **caller** biết type mà bạn không biết. Ràng buộc điều implementation cần. Đừng generic một type giả ở ranh giới network."
+            "vi": "**Tóm tắt:** Generic là type parameter: đối số của hàm, nhưng cho type. Dùng khi **caller** biết type mà bạn không biết. Ràng buộc những gì implementation cần. Đừng generic một type giả ở ranh giới network."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** You wrap `fetch` or write a `useAsyncData`-style composable. A mid-level candidate writes `function wrap<T>(value: T)` and stops. Interviewers want **constraints, defaults, and when not to generic at all**. `useFetch<T>()` with no parser is a type you passed in, not a type you earned.",
-            "vi": "**Vì sao quan trọng:** Bạn bọc `fetch` hoặc viết composable kiểu `useAsyncData`. Candidate mid viết `function wrap<T>(value: T)` rồi dừng. Người phỏng vấn muốn **ràng buộc, default, và khi nào không generic**. `useFetch<T>()` không parser là type bạn truyền vào, không phải type bạn kiếm được."
+            "vi": "**Vì sao quan trọng:** Bạn bọc `fetch` hoặc viết composable kiểu `useAsyncData`. Candidate mức mid viết `function wrap<T>(value: T)` rồi dừng. Người phỏng vấn muốn **ràng buộc, default, và khi nào không generic**. `useFetch<T>()` không có parser là type bạn truyền vào, không phải type bạn kiếm được."
           }
         },
         {
@@ -337,19 +337,19 @@
           "items": [
             {
               "en": "**How it works:** `<T>` is declared at the call (or the type alias). TypeScript infers `T` from arguments when it can. If every caller writes `<Foo>`, inference failed.",
-              "vi": "**Cách hoạt động:** `<T>` khai báo lúc gọi (hoặc trên alias). TypeScript suy ra `T` từ đối số khi được. Nếu mọi caller viết `<Foo>`, inference đã thất bại."
+              "vi": "**Cách hoạt động:** `<T>` khai báo lúc gọi (hoặc trên type alias). TypeScript suy ra `T` từ đối số khi được. Nếu mọi caller viết `<Foo>`, inference đã thất bại."
             },
             {
               "en": "`T extends { id: string }` constrains what the body can use. Do not generic “just in case.” If `T` appears once as a return annotation, you wanted a named type.",
-              "vi": "`T extends { id: string }` ràng buộc thứ thân hàm dùng được. Đừng generic “phòng khi.” Nếu `T` chỉ xuất hiện một lần như annotation trả về, bạn muốn một type có tên."
+              "vi": "`T extends { id: string }` ràng buộc những gì thân hàm dùng được. Đừng generic “phòng khi”. Nếu `T` chỉ xuất hiện một lần như annotation trả về, bạn muốn một type có tên."
             },
             {
               "en": "Default to `unknown` at the wire so inference does not become `{}`. Parse (`zod`) or pass a `parse: (data: unknown) => T` so `T` is earned.",
-              "vi": "Mặc định `unknown` trên dây để inference không thành `{}`. Parse (`zod`) hoặc truyền `parse: (data: unknown) => T` để `T` được kiếm."
+              "vi": "Mặc định `unknown` ở ranh giới network để inference không thành `{}`. Parse (`zod`) hoặc truyền `parse: (data: unknown) => T` để `T` là type kiếm được."
             },
             {
               "en": "Vue composables: `ref<T | null>(null)` plus a parser. React `useQuery<T>` is the same lie if the fetcher returns `any`.",
-              "vi": "Composable Vue: `ref<T | null>(null)` cộng parser. React `useQuery<T>` cùng nói dối nếu fetcher trả `any`."
+              "vi": "Composable Vue: `ref<T | null>(null)` kèm parser. React `useQuery<T>` cùng một kiểu nói dối nếu fetcher trả `any`."
             }
           ]
         },
@@ -358,14 +358,14 @@
           "lang": "ts",
           "code": {
             "en": "type JsonParser<T> = (data: unknown) => T\n\nexport function useApi<T>(url: string, parse: JsonParser<T>) {\n  const data = ref<T | null>(null)\n  const error = ref<Error | null>(null)\n  async function reload(signal?: AbortSignal) {\n    const raw: unknown = await api.get(url, { signal })\n    data.value = parse(raw) // T is earned, not asserted\n  }\n  return { data, error, reload }\n}\n\nfunction upsertById<T extends { id: string }>(rows: T[], row: T): T[] {\n  return [...rows.filter((r) => r.id !== row.id), row]\n}",
-            "vi": "type JsonParser<T> = (data: unknown) => T\n\nexport function useApi<T>(url: string, parse: JsonParser<T>) {\n  const data = ref<T | null>(null)\n  const error = ref<Error | null>(null)\n  async function reload(signal?: AbortSignal) {\n    const raw: unknown = await api.get(url, { signal })\n    data.value = parse(raw) // T được kiếm, không phải assert\n  }\n  return { data, error, reload }\n}\n\nfunction upsertById<T extends { id: string }>(rows: T[], row: T): T[] {\n  return [...rows.filter((r) => r.id !== row.id), row]\n}"
+            "vi": "type JsonParser<T> = (data: unknown) => T\n\nexport function useApi<T>(url: string, parse: JsonParser<T>) {\n  const data = ref<T | null>(null)\n  const error = ref<Error | null>(null)\n  async function reload(signal?: AbortSignal) {\n    const raw: unknown = await api.get(url, { signal })\n    data.value = parse(raw) // T kiếm được, không phải assert\n  }\n  return { data, error, reload }\n}\n\nfunction upsertById<T extends { id: string }>(rows: T[], row: T): T[] {\n  return [...rows.filter((r) => r.id !== row.id), row]\n}"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `useApi` does not believe the URL. The caller supplies `parse`, so `T` is whatever that function returns. `upsertById` constrains `id` because the body needs it. A `useFetch<User>()` with `as User` inside would compile and be wrong on a 200 HTML error page.",
-            "vi": "**Điều gì xảy ra:** `useApi` không tin URL. Caller cung cấp `parse`, nên `T` là thứ hàm đó trả. `upsertById` ràng buộc `id` vì thân hàm cần nó. `useFetch<User>()` với `as User` bên trong vẫn compile và sai trên trang lỗi HTML 200."
+            "vi": "**Điều gì xảy ra:** `useApi` không tin URL. Caller đưa `parse`, nên `T` là thứ hàm đó trả về. `upsertById` ràng buộc `id` vì thân hàm cần nó. `useFetch<User>()` với `as User` bên trong vẫn compile và sai trên trang lỗi HTML 200."
           }
         },
         {
@@ -381,7 +381,7 @@
             },
             {
               "en": "Smell",
-              "vi": "Mùi"
+              "vi": "Smell"
             }
           ],
           "rows": [
@@ -424,7 +424,7 @@
               },
               {
                 "en": "`T` used once as a return type",
-                "vi": "`T` dùng một lần làm return"
+                "vi": "`T` dùng một lần làm return type"
               }
             ]
           ]
@@ -437,7 +437,7 @@
           },
           "text": {
             "en": "- Generic when the caller knows a type you cannot. Named types when the domain is closed.\n- Default type parameters to `unknown`, not `{}` or `any`.\n- Over-generic APIs (`<T, U, V, K>`) are unreadable. Two functions beat one clever signature.\n- If every caller writes `<Foo>`, fix inference (add an argument that mentions `T`) rather than documenting “please pass the type param.”\n- Zod / Valibot `z.infer<typeof schema>` is how `T` is earned at the boundary in 2026. On the admin product the list composable takes a `parse` function so `T` is earned, not asserted from the URL.",
-            "vi": "- Generic khi caller biết type bạn không biết. Type có tên khi domain đóng.\n- Default type parameter là `unknown`, không phải `{}` hay `any`.\n- API over-generic (`<T, U, V, K>`) khó đọc. Hai hàm hơn một chữ ký quá khéo.\n- Nếu mọi caller viết `<Foo>`, hãy sửa inference (thêm đối số nhắc `T`) chứ đừng ghi “xin hãy truyền type param.”\n- Zod / Valibot `z.infer<typeof schema>` là cách `T` được kiếm ở biên năm 2026. Ở sản phẩm admin, composable nhận hàm `parse` để `T` được kiếm, không assert từ URL."
+            "vi": "- Generic khi caller biết type bạn không biết. Type có tên khi domain đã đóng.\n- Default type parameter là `unknown`, không phải `{}` hay `any`.\n- API over-generic (`<T, U, V, K>`) khó đọc. Hai hàm hơn một chữ ký quá khéo.\n- Nếu mọi caller viết `<Foo>`, hãy sửa inference (thêm đối số nhắc `T`) chứ đừng ghi “xin hãy truyền type param”.\n- Zod / Valibot `z.infer<typeof schema>` là cách `T` được kiếm ở ranh giới năm 2026. Ở sản phẩm admin, composable list nhận hàm `parse` để `T` kiếm được, không assert từ URL."
           }
         },
         {
@@ -452,11 +452,11 @@
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "You are wrapping `fetch` or writing a `useAsyncData`-style composable. A mid-level candidate writes `function wrap<T>(value: T)` and calls it a day. They want constraints, defaults, and when not to generic at all.",
-            "vi": "Bạn bọc `fetch` hoặc viết composable kiểu `useAsyncData`. Candidate mid viết `function wrap<T>(value: T)` rồi xong. Họ muốn ràng buộc, default, và khi nào không generic."
+            "vi": "Bạn đang bọc `fetch` hoặc viết composable kiểu `useAsyncData`. Candidate mid viết `function wrap<T>(value: T)` rồi coi như xong. Họ muốn ràng buộc, default, và khi nào thì không generic."
           }
         },
         {
@@ -467,7 +467,7 @@
           },
           "text": {
             "en": "Generics are for callers who know a type I cannot. I constrain when the implementation needs id, I default to unknown so inference does not become empty object, and I refuse a generic whose T appears once as a return annotation. useFetch T with no parser is a false type you passed in — the generic documents intent, Zod or Valibot enforces it. If every caller writes Foo in angle brackets, inference failed. Empty wrappers that only return the argument should not be generic at all. Over-generic signatures with four type parameters are unreadable; two functions beat one clever one. On the admin product the composable takes a parse function so T is earned at the boundary.",
-            "vi": "Generic dành cho caller biết type tôi không biết. Tôi ràng buộc khi implementation cần id, mặc định unknown để inference không thành object rỗng, và từ chối generic mà T chỉ xuất hiện một lần như annotation trả về. useFetch T không parser là type giả bạn truyền vào — generic ghi intent, Zod hoặc Valibot mới enforce. Nếu mọi caller viết Foo trong ngoặc nhọn, inference đã thất bại. Wrapper rỗng chỉ trả đối số thì không nên generic. Chữ ký over-generic với bốn type parameter khó đọc; hai hàm hơn một chữ ký quá khéo. Ở sản phẩm admin, composable nhận hàm parse để T được kiếm ở biên."
+            "vi": "Generic dành cho caller biết type mà mình không biết. Mình ràng buộc khi implementation cần id, default unknown để inference không thành object rỗng, và từ chối generic mà T chỉ xuất hiện một lần như annotation return. useFetch T không parser là type giả bạn truyền vào. Generic chỉ ghi intent; Zod hoặc Valibot mới enforce. Nếu mọi caller viết Foo trong ngoặc nhọn, inference đã thất bại. Wrapper rỗng chỉ return lại argument thì không nên generic. Chữ ký over-generic với bốn type parameter khó đọc; hai hàm hơn một chữ ký quá khéo. Ở sản phẩm admin, composable nhận hàm parse để T được kiếm ở ranh giới."
           }
         },
         {
@@ -475,19 +475,19 @@
           "items": [
             {
               "en": "Generic when the caller knows `T`. Constrain what the body needs.",
-              "vi": "Generic khi caller biết `T`. Ràng buộc điều thân hàm cần."
+              "vi": "Generic khi caller biết `T`. Ràng buộc đúng thứ thân hàm cần."
             },
             {
               "en": "`useFetch<T>()` without a parser is a type you asserted, not earned.",
-              "vi": "`useFetch<T>()` không parser là type bạn assert, không kiếm được."
+              "vi": "`useFetch<T>()` không parser là type bạn assert, không phải type bạn kiếm được."
             },
             {
               "en": "If every caller writes `<Foo>`, inference failed. Fix the arguments.",
-              "vi": "Nếu mọi caller viết `<Foo>`, inference thất bại. Hãy sửa đối số."
+              "vi": "Nếu mọi caller viết `<Foo>`, inference đã thất bại. Sửa lại đối số."
             },
             {
               "en": "Do not generic a function whose `T` appears only as a return annotation.",
-              "vi": "Đừng generic hàm mà `T` chỉ xuất hiện như annotation trả về."
+              "vi": "Đừng generic hàm mà `T` chỉ xuất hiện như annotation return."
             }
           ]
         },
@@ -499,7 +499,7 @@
           },
           "text": {
             "en": "- **When is a generic overkill?** One named domain type, or `T` used once as a return type.\n- **How do you keep inference without a type argument?** Put `T` in an argument (`parse`, a sample, a schema).\n- **Why default `unknown` not `any`?** `any` leaks. `unknown` forces a narrow.\n- **Vue vs React?** Same rule: a composable or hook that returns `ref<T>` still needs a parser at the wire.",
-            "vi": "- **Khi nào generic là thừa?** Một domain type có tên, hoặc `T` dùng một lần làm return.\n- **Giữ inference không cần type argument thế nào?** Đặt `T` vào đối số (`parse`, mẫu, schema).\n- **Vì sao default `unknown` không phải `any`?** `any` rò. `unknown` buộc phải hẹp.\n- **Vue vs React?** Cùng quy tắc: composable hoặc hook trả `ref<T>` vẫn cần parser trên dây."
+            "vi": "- **Khi nào generic là thừa?** Một domain type đã có tên, hoặc `T` chỉ dùng một lần làm return type.\n- **Giữ inference mà không cần type argument thế nào?** Đặt `T` vào một argument (`parse`, mẫu, schema).\n- **Vì sao default `unknown` chứ không phải `any`?** `any` bị leak. `unknown` buộc phải narrow.\n- **Vue vs React?** Cùng quy tắc: composable hoặc hook trả `ref<T>` vẫn cần parser ở ranh giới."
           }
         },
         {
@@ -521,14 +521,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Narrowing is how TypeScript shrinks a union after a check: `typeof`, `in`, `instanceof`, equality, and discriminated unions. Model async UI as a tagged union so loading and error cannot both be true.",
-            "vi": "**Tóm tắt:** Narrowing là cách TypeScript thu union sau một phép kiểm: `typeof`, `in`, `instanceof`, equality, và discriminated union. Hãy model UI async như union có tag để loading và error không thể cùng true."
+            "vi": "**Tóm tắt:** Narrowing là cách TypeScript thu hẹp union sau một check: `typeof`, `in`, `instanceof`, equality, và discriminated union. Model UI async bằng union có tag, để loading và error không thể cùng true."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** A spinner, a form, and an error banner can all show at once because the state is `{ loading: boolean; data?: T; error?: Error }`. Interviewers want a **discriminated union as a UI state machine**, not `typeof` on a string.",
-            "vi": "**Vì sao quan trọng:** Spinner, form, và banner lỗi có thể hiện cùng lúc vì state là `{ loading: boolean; data?: T; error?: Error }`. Người phỏng vấn muốn **discriminated union như state machine UI**, không phải `typeof` trên chuỗi."
+            "vi": "**Vì sao quan trọng:** Spinner, form, và banner lỗi có thể hiện cùng lúc vì state là `{ loading: boolean; data?: T; error?: Error }`. Người phỏng vấn muốn **discriminated union như một state machine UI**, không phải `typeof` trên string."
           }
         },
         {
@@ -537,19 +537,19 @@
           "items": [
             {
               "en": "**How it works:** After `if (state.status === 'success')`, TypeScript keeps only that variant. A literal tag (`status`) is the discriminant.",
-              "vi": "**Cách hoạt động:** Sau `if (state.status === 'success')`, TypeScript chỉ giữ biến thể đó. Tag literal (`status`) là discriminant."
+              "vi": "**Cách hoạt động:** Sau `if (state.status === 'success')`, TypeScript chỉ còn giữ variant đó. Tag literal (`status`) là discriminant."
             },
             {
               "en": "`typeof` / `in` / `instanceof` / equality also narrow. `instanceof` fails across iframes — prefer a `kind` you own for values that cross realms.",
-              "vi": "`typeof` / `in` / `instanceof` / equality cũng hẹp. `instanceof` thất bại qua iframe — ưu tiên `kind` bạn sở hữu cho giá trị vượt realm."
+              "vi": "`typeof` / `in` / `instanceof` / equality cũng narrow. `instanceof` fail khi qua iframe: hãy dùng một `kind` do bạn định nghĩa cho giá trị đi xuyên realm."
             },
             {
               "en": "Boolean flags are fine for a one-line button and wrong for retry or stale-while-revalidate. Stale `data` is a different variant (`error` + optional `data`), not `data?` on every state.",
-              "vi": "Cờ boolean ổn cho nút một dòng và sai cho retry hoặc stale-while-revalidate. `data` stale là biến thể khác (`error` + `data` tùy chọn), không phải `data?` trên mọi state."
+              "vi": "Cờ boolean ổn cho nút một dòng, nhưng sai khi có retry hoặc stale-while-revalidate. `data` stale là variant khác (`error` + `data` tùy chọn), không phải `data?` trên mọi state."
             },
             {
               "en": "Narrowing is compile-time. JSON stays `unknown` until a parser. Vue templates often lose narrowing — compute a labelled variant in script.",
-              "vi": "Narrowing là lúc compile. JSON vẫn `unknown` đến khi có parser. Template Vue thường mất narrowing — hãy tính biến thể có nhãn trong script."
+              "vi": "Narrowing là lúc compile. JSON vẫn `unknown` đến khi có parser. Template Vue thường mất narrowing. Hãy derive variant đã gán nhãn trong script."
             }
           ]
         },
@@ -558,14 +558,14 @@
           "lang": "ts",
           "code": {
             "en": "type AsyncState<T, E = Error> =\n  | { status: 'idle' }\n  | { status: 'loading'; abort: AbortController }\n  | { status: 'success'; data: T }\n  | { status: 'error'; error: E; data?: T } // data present = stale\n\nfunction label(state: AsyncState<User>) {\n  if (state.status === 'success') return state.data.name\n  if (state.status === 'error') return state.error.message\n  return '…'\n}\n\nfunction assertNever(x: never): never {\n  throw new Error(String(x))\n}",
-            "vi": "type AsyncState<T, E = Error> =\n  | { status: 'idle' }\n  | { status: 'loading'; abort: AbortController }\n  | { status: 'success'; data: T }\n  | { status: 'error'; error: E; data?: T } // data có mặt = stale\n\nfunction label(state: AsyncState<User>) {\n  if (state.status === 'success') return state.data.name\n  if (state.status === 'error') return state.error.message\n  return '…'\n}\n\nfunction assertNever(x: never): never {\n  throw new Error(String(x))\n}"
+            "vi": "type AsyncState<T, E = Error> =\n  | { status: 'idle' }\n  | { status: 'loading'; abort: AbortController }\n  | { status: 'success'; data: T }\n  | { status: 'error'; error: E; data?: T } // có data = stale\n\nfunction label(state: AsyncState<User>) {\n  if (state.status === 'success') return state.data.name\n  if (state.status === 'error') return state.error.message\n  return '…'\n}\n\nfunction assertNever(x: never): never {\n  throw new Error(String(x))\n}"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** After the success check, `data` is required. `loading && error` cannot compile because those tags are different variants. `assertNever` is the exhaustive switch for a later `status: 'refreshing'` you have not handled yet. Optional `data` on error is stale-while-revalidate, not a third boolean.",
-            "vi": "**Điều gì xảy ra:** Sau bước kiểm success, `data` là bắt buộc. `loading && error` không compile vì các tag là biến thể khác nhau. `assertNever` là switch đủ nhánh cho `status: 'refreshing'` sau này bạn chưa xử lý. `data` tùy chọn trên error là stale-while-revalidate, không phải boolean thứ ba."
+            "vi": "**Điều gì xảy ra:** Sau check success, `data` là bắt buộc. `loading && error` không compile vì hai tag là variant khác nhau. `assertNever` là switch đủ nhánh cho `status: 'refreshing'` sau này bạn chưa xử lý. `data` tùy chọn trên error là stale-while-revalidate, không phải boolean thứ ba."
           }
         },
         {
@@ -573,11 +573,11 @@
           "headers": [
             {
               "en": "Check",
-              "vi": "Phép kiểm"
+              "vi": "Check"
             },
             {
               "en": "Narrows",
-              "vi": "Hẹp"
+              "vi": "Narrow thành"
             },
             {
               "en": "Watch-out",
@@ -592,7 +592,7 @@
               },
               {
                 "en": "That variant only",
-                "vi": "Chỉ biến thể đó"
+                "vi": "Chỉ variant đó"
               },
               {
                 "en": "Tag must be a literal, not `string`",
@@ -624,7 +624,7 @@
               },
               {
                 "en": "`instanceof` fails across realms",
-                "vi": "`instanceof` thất bại qua realm"
+                "vi": "`instanceof` fail khi khác realm"
               }
             ],
             [
@@ -651,7 +651,7 @@
           },
           "text": {
             "en": "- Discriminated unions are the UI state machine. Boolean bags are how spinner + error + form all show.\n- Exhaustiveness: `assertNever` in a `switch`. Adding a variant must break the build.\n- Vue templates re-unsound narrowing. Derived `computed` labels in script.\n- Narrowing does not validate JSON. Parse first (`unknown` → `User`), then switch on `status`.\n- Stale-while-revalidate is `error` with optional `data`, or a `success` + `refreshing` tag — not three booleans. On the admin product the list page is that union, so a retry cannot show the spinner and the error banner together.",
-            "vi": "- Discriminated union là state machine UI. Túi boolean là cách spinner + error + form cùng hiện.\n- Đủ nhánh: `assertNever` trong `switch`. Thêm biến thể phải phá build.\n- Template Vue làm mất narrowing. Hãy `computed` nhãn trong script.\n- Narrowing không validate JSON. Parse trước (`unknown` → `User`), rồi switch `status`.\n- Stale-while-revalidate là `error` với `data` tùy chọn, hoặc tag `success` + `refreshing` — không phải ba boolean. Ở sản phẩm admin, trang list là union đó, nên retry không thể hiện spinner và banner lỗi cùng lúc."
+            "vi": "- Discriminated union chính là state machine của UI. Túi boolean là lý do spinner + error + form hiện cùng lúc.\n- Đủ nhánh: `assertNever` trong `switch`. Thêm variant phải làm vỡ build.\n- Template Vue làm narrowing không còn sound. Derive nhãn bằng `computed` trong script.\n- Narrowing không validate JSON. Parse trước (`unknown` → `User`), rồi mới switch `status`.\n- Stale-while-revalidate là `error` kèm `data` tùy chọn, hoặc tag `success` + `refreshing`, không phải ba boolean. Ở sản phẩm admin, trang list là union đó, nên retry không thể hiện spinner và banner lỗi cùng lúc."
           }
         },
         {
@@ -659,18 +659,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: spinner and error together. Cause: `{ loading, error, data? }`. Fix: a `status` union.\n- Symptom: `state.data.name` in the template on loading. Cause: templates lost the narrow. Fix: a `computed` in script.\n- Symptom: `instanceof Array` false from an iframe. Cause: realms. Fix: `Array.isArray` / a `kind`.\n- Symptom: a new status compiles everywhere. Cause: no `never` check. Fix: `assertNever` in the switch.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: spinner và error cùng lúc. Nguyên nhân: `{ loading, error, data? }`. Cách xử lý: union `status`.\n- Triệu chứng: `state.data.name` trong template lúc loading. Nguyên nhân: template mất hẹp. Cách xử lý: `computed` trong script.\n- Triệu chứng: `instanceof Array` false từ iframe. Nguyên nhân: realm. Cách xử lý: `Array.isArray` / một `kind`.\n- Triệu chứng: status mới compile khắp nơi. Nguyên nhân: không kiểm `never`. Cách xử lý: `assertNever` trong switch."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: spinner và error cùng lúc. Nguyên nhân: `{ loading, error, data? }`. Cách xử lý: union `status`.\n- Triệu chứng: `state.data.name` trong template lúc loading. Nguyên nhân: template mất narrowing. Cách xử lý: `computed` trong script.\n- Triệu chứng: `instanceof Array` false từ iframe. Nguyên nhân: realm. Cách xử lý: `Array.isArray` / một `kind`.\n- Triệu chứng: status mới vẫn compile mọi chỗ. Nguyên nhân: không check `never`. Cách xử lý: `assertNever` trong switch."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "A spinner, a form, and an error banner can all show at once because the state is `{ loading: boolean; data?: T; error?: Error }`. They want a discriminated union as a UI state machine, not `typeof` on a string.",
-            "vi": "Spinner, form, và banner lỗi có thể hiện cùng lúc vì state là `{ loading: boolean; data?: T; error?: Error }`. Họ muốn discriminated union như state machine UI, không phải `typeof` trên chuỗi."
+            "vi": "Spinner, form, và banner lỗi có thể hiện cùng lúc vì state là `{ loading: boolean; data?: T; error?: Error }`. Họ muốn discriminated union như một state machine UI, không phải `typeof` trên string."
           }
         },
         {
@@ -681,7 +681,7 @@
           },
           "text": {
             "en": "I model async UI as idle, loading, success, or error with a literal status tag, so after a success check data is required and loading and error cannot compile together. Boolean flags are fine for a one-line button and wrong for retry or stale-while-revalidate — that stale data is a different variant, not data optional on every state. Narrowing is compile-time; JSON stays unknown until a parser. Vue templates often lose the narrow, so I compute the label in script and I put assertNever in the switch so a new status breaks the build. On the admin product the list page is that union, not three booleans.",
-            "vi": "Tôi model UI async là idle, loading, success, hoặc error với tag status literal, nên sau bước kiểm success thì data bắt buộc và loading cùng error không compile được. Cờ boolean ổn cho nút một dòng và sai cho retry hoặc stale-while-revalidate — data stale là biến thể khác, không phải data tùy chọn trên mọi state. Narrowing là lúc compile; JSON vẫn unknown đến khi có parser. Template Vue thường mất hẹp, nên tôi tính nhãn trong script và đặt assertNever trong switch để status mới phá build. Ở sản phẩm admin, trang list là union đó, không phải ba boolean."
+            "vi": "Mình model UI async thành idle, loading, success, hoặc error với tag status literal. Sau check success thì data là bắt buộc, loading và error không compile được cùng lúc. Cờ boolean ổn cho nút một dòng, sai khi có retry hoặc stale-while-revalidate. Data stale là variant khác, không phải data tùy chọn trên mọi state. Narrowing là lúc compile; JSON vẫn unknown đến khi có parser. Template Vue thường mất narrowing, nên mình tính nhãn trong script và đặt assertNever trong switch để status mới làm vỡ build. Ở sản phẩm admin, trang list là union đó, không phải ba boolean."
           }
         },
         {
@@ -689,7 +689,7 @@
           "items": [
             {
               "en": "Discriminated unions make illegal UI states unrepresentable.",
-              "vi": "Discriminated union làm trạng thái UI bất hợp pháp không biểu diễn được."
+              "vi": "Discriminated union khiến state UI bất hợp pháp không biểu diễn được."
             },
             {
               "en": "Narrowing is compile-time. Parse `unknown` JSON before you switch.",
@@ -697,7 +697,7 @@
             },
             {
               "en": "Vue templates lose narrowing. Label the variant in script.",
-              "vi": "Template Vue mất narrowing. Hãy gán nhãn biến thể trong script."
+              "vi": "Template Vue mất narrowing. Gán nhãn variant trong script."
             },
             {
               "en": "`assertNever` makes a new `status` a compile error.",
@@ -713,7 +713,7 @@
           },
           "text": {
             "en": "- **Why not `{ loading: boolean; data?: T }`?** `loading && data` and `error && loading` both compile. A tag forbids them.\n- **How do you keep a stale table visible on error?** Optional `data` on the `error` variant, or a `refreshing` tag.\n- **Does `typeof` narrow `null`?** `typeof null === 'object'`. Check `== null` first.\n- **Exhaustiveness in Vue SFC templates?** Do it in script. Templates are not a `switch`.",
-            "vi": "- **Vì sao không `{ loading: boolean; data?: T }`?** `loading && data` và `error && loading` đều compile. Một tag cấm chúng.\n- **Giữ bảng stale hiện khi error thế nào?** `data` tùy chọn trên biến thể `error`, hoặc tag `refreshing`.\n- **`typeof` có hẹp `null` không?** `typeof null === 'object'`. Hãy kiểm `== null` trước.\n- **Đủ nhánh trong template Vue SFC?** Làm trong script. Template không phải `switch`."
+            "vi": "- **Vì sao không `{ loading: boolean; data?: T }`?** `loading && data` và `error && loading` đều compile. Một tag thì cấm cả hai.\n- **Giữ bảng stale hiện khi error thế nào?** `data` tùy chọn trên variant `error`, hoặc tag `refreshing`.\n- **`typeof` có narrow `null` không?** `typeof null === 'object'`. Check `== null` trước.\n- **Đủ nhánh trong template Vue SFC?** Làm trong script. Template không phải `switch`."
           }
         },
         {
@@ -724,7 +724,7 @@
           "level": 3,
           "text": {
             "en": "2.2. Advanced Types",
-            "vi": "2.2. Kiểu nâng cao"
+            "vi": "2.2. Type nâng cao"
           },
           "id": {
             "en": "22-advanced-types",
@@ -747,14 +747,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Built-in utilities rewrite a type: `Partial`, `Pick`, `Omit`, `Record`, `ReturnType`, `Awaited`, `NonNullable`. They are structural and shallow. Compose an explicit DTO; do not ship `Partial<User>` as a PATCH body.",
-            "vi": "**Tóm tắt:** Utility có sẵn viết lại một type: `Partial`, `Pick`, `Omit`, `Record`, `ReturnType`, `Awaited`, `NonNullable`. Chúng là structural và nông. Hãy compose một DTO tường minh; đừng gửi `Partial<User>` làm body PATCH."
+            "vi": "**Tóm tắt:** Utility có sẵn viết lại một type: `Partial`, `Pick`, `Omit`, `Record`, `ReturnType`, `Awaited`, `NonNullable`. Chúng là structural và nông. Hãy compose một DTO tường minh; đừng ship `Partial<User>` làm body PATCH."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** You need a PATCH body for `User`. Someone writes `Partial<User>` and ships `id` plus `passwordHash` as optional writes. Someone else uses `Omit<User, 'password'>` and thinks nested `credentials.password` is gone. The HTTP function still accepts a full `User`.",
-            "vi": "**Vì sao quan trọng:** Bạn cần body PATCH cho `User`. Ai đó viết `Partial<User>` rồi gửi `id` cộng `passwordHash` như field ghi tùy chọn. Người khác dùng `Omit<User, 'password'>` và nghĩ `credentials.password` lồng đã biến mất. Hàm HTTP vẫn nhận cả `User`."
+            "vi": "**Vì sao quan trọng:** Bạn cần body PATCH cho `User`. Ai đó viết `Partial<User>` rồi ship `id` và `passwordHash` như field ghi tùy chọn. Người khác dùng `Omit<User, 'password'>` và nghĩ `credentials.password` lồng bên trong đã biến mất. Hàm HTTP vẫn nhận nguyên `User`."
           }
         },
         {
@@ -763,19 +763,19 @@
           "items": [
             {
               "en": "**How it works:** `Partial<T>` makes every key optional. `Pick<T, K>` keeps keys. `Omit<T, K>` is `{ [P in Exclude<keyof T, K>]: T[P] }` and is shallow — nested objects are copied as-is.",
-              "vi": "**Cách hoạt động:** `Partial<T>` biến mọi key thành tùy chọn. `Pick<T, K>` giữ key. `Omit<T, K>` là `{ [P in Exclude<keyof T, K>]: T[P] }` và nông — object lồng được copy nguyên."
+              "vi": "**Cách hoạt động:** `Partial<T>` biến mọi key thành tùy chọn. `Pick<T, K>` giữ key. `Omit<T, K>` là `{ [P in Exclude<keyof T, K>]: T[P] }` và nông: object lồng được copy nguyên."
             },
             {
               "en": "`Record<K, V>` is an index of keys `K`. `Record<string, V>` hides missing keys. `Record<Role, V>` with a union of roles is the useful one.",
-              "vi": "`Record<K, V>` là index các key `K`. `Record<string, V>` giấu key thiếu. `Record<Role, V>` với union role mới hữu ích."
+              "vi": "`Record<K, V>` là index của các key `K`. `Record<string, V>` giấu key thiếu. `Record<Role, V>` với union role mới hữu ích."
             },
             {
               "en": "`ReturnType<typeof fn>` and `Awaited<T>` glue promise wrappers. Type the client once; do not unwrap three Axios layers by hand.",
-              "vi": "`ReturnType<typeof fn>` và `Awaited<T>` gắn các lớp promise. Hãy type client một lần; đừng bóc ba lớp Axios bằng tay."
+              "vi": "`ReturnType<typeof fn>` và `Awaited<T>` nối các wrapper promise. Type client một lần; đừng tự bóc ba lớp Axios."
             },
             {
               "en": "`Readonly<T>` is compile-time. `Object.freeze` is a shallow runtime freeze. Vue `readonly()` is a proxy. They are not interchangeable. `NonNullable<T>` removes `null | undefined` only at the top.",
-              "vi": "`Readonly<T>` là lúc compile. `Object.freeze` đóng băng nông lúc runtime. Vue `readonly()` là proxy. Chúng không thay thế lẫn nhau. `NonNullable<T>` chỉ bỏ `null | undefined` ở tầng trên."
+              "vi": "`Readonly<T>` là lúc compile. `Object.freeze` freeze nông lúc runtime. Vue `readonly()` là proxy. Chúng không thay thế lẫn nhau. `NonNullable<T>` chỉ bỏ `null | undefined` ở tầng trên."
             }
           ]
         },
@@ -784,14 +784,14 @@
           "lang": "ts",
           "code": {
             "en": "type User = {\n  id: string\n  name: string\n  email: string\n  role: 'admin' | 'user'\n  passwordHash: string\n  profile: { bio: string; passwordHint: string }\n}\n\ntype UserPatch = Partial<Pick<User, 'name' | 'email' | 'role'>>\ntype UserPublic = Omit<User, 'passwordHash'> // nested passwordHint remains\n\nfunction patchUser(id: string, body: UserPatch) {\n  return api.patch('/users/' + id, body)\n}\n\nconst ok: UserPatch = { name: 'Ada' }\n// patchUser(id, fullUser) does not compile — the DTO did its job",
-            "vi": "type User = {\n  id: string\n  name: string\n  email: string\n  role: 'admin' | 'user'\n  passwordHash: string\n  profile: { bio: string; passwordHint: string }\n}\n\ntype UserPatch = Partial<Pick<User, 'name' | 'email' | 'role'>>\ntype UserPublic = Omit<User, 'passwordHash'> // passwordHint lồng vẫn còn\n\nfunction patchUser(id: string, body: UserPatch) {\n  return api.patch('/users/' + id, body)\n}\n\nconst ok: UserPatch = { name: 'Ada' }\n// patchUser(id, fullUser) không compile — DTO đã làm đúng việc"
+            "vi": "type User = {\n  id: string\n  name: string\n  email: string\n  role: 'admin' | 'user'\n  passwordHash: string\n  profile: { bio: string; passwordHint: string }\n}\n\ntype UserPatch = Partial<Pick<User, 'name' | 'email' | 'role'>>\ntype UserPublic = Omit<User, 'passwordHash'> // passwordHint lồng vẫn còn\n\nfunction patchUser(id: string, body: UserPatch) {\n  return api.patch('/users/' + id, body)\n}\n\nconst ok: UserPatch = { name: 'Ada' }\n// patchUser(id, fullUser) không compile: DTO đã làm đúng việc"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `UserPatch` can send `name`, `email`, or `role`, and nothing else. A full `User` is not assignable, so `passwordHash` cannot sneak onto the wire. `UserPublic` still has `profile.passwordHint` because `Omit` is shallow — you must strip the nested object yourself.",
-            "vi": "**Điều gì xảy ra:** `UserPatch` gửi được `name`, `email`, hoặc `role`, và không gì khác. Một `User` đầy đủ không gán được, nên `passwordHash` không lọt lên dây. `UserPublic` vẫn còn `profile.passwordHint` vì `Omit` nông — bạn phải tự gỡ object lồng."
+            "vi": "**Điều gì xảy ra:** `UserPatch` gửi được `name`, `email`, hoặc `role`, không gì khác. `User` đầy đủ không assign được, nên `passwordHash` không lọt ra network. `UserPublic` vẫn còn `profile.passwordHint` vì `Omit` nông: bạn phải tự gỡ object lồng."
           }
         },
         {
@@ -822,7 +822,7 @@
               },
               {
                 "en": "Bad PATCH: `id?` and secrets become writes",
-                "vi": "PATCH tệ: `id?` và secret thành ghi"
+                "vi": "PATCH dở: `id?` và secret thành field ghi"
               }
             ],
             [
@@ -877,7 +877,7 @@
           },
           "text": {
             "en": "- The DTO is the type the HTTP function accepts. If you can pass a full `User`, the DTO failed.\n- `Partial<User>` makes `id?` while the API still requires it, and offers `passwordHash` as a write.\n- `Omit` distributes over unions and can lose the union. Prefer `Exclude` when you meant the members, not the keys.\n- Do not maintain three hand-written twins of `User` if a `Pick` union would do. Do hand-write when the wire format is different (snake_case, ISO strings).\n- `Required<T>` on optional nested objects does not deep-require — same shallow trap as `Partial`. Verify with a type test that `UserPatch` rejects `passwordHash`.",
-            "vi": "- DTO là type hàm HTTP nhận. Nếu bạn truyền được cả `User`, DTO đã thất bại.\n- `Partial<User>` làm `id?` trong khi API vẫn bắt buộc, và mở `passwordHash` như field ghi.\n- `Omit` phân phối trên union và có thể làm mất union. Ưu tiên `Exclude` khi bạn muốn các phần tử, không phải các key.\n- Đừng giữ ba bản sao viết tay của `User` nếu một union `Pick` làm được. Hãy viết tay khi định dạng trên dây khác (snake_case, chuỗi ISO).\n- `Required<T>` trên object lồng tùy chọn không bắt buộc sâu — cùng bẫy nông như `Partial`. Kiểm chứng bằng type test rằng `UserPatch` từ chối `passwordHash`."
+            "vi": "- DTO là type mà hàm HTTP nhận vào. Truyền được cả `User` thì DTO đã fail.\n- `Partial<User>` biến `id?` trong khi API vẫn bắt buộc, và mở `passwordHash` như field ghi được.\n- `Omit` chạy trên từng nhánh union và có thể làm mất union. Dùng `Exclude` khi ý bạn là các member, không phải các key.\n- Đừng giữ ba bản `User` viết tay nếu một union `Pick` là đủ. Chỉ viết tay khi format trên network khác (snake_case, chuỗi ISO).\n- `Required<T>` trên object lồng optional không deep-require: cùng bẫy nông như `Partial`. Kiểm bằng type test rằng `UserPatch` từ chối `passwordHash`."
           }
         },
         {
@@ -885,18 +885,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: PATCH empties `id` or sends `passwordHash`. Cause: `Partial<User>`. Fix: `Partial<Pick<User, writable keys>>`.\n- Symptom: a nested `passwordHint` is still on the public type. Cause: `Omit` is shallow. Fix: strip the nested object.\n- Symptom: `Record<string, Role>` accepts any key. Cause: index signature. Fix: `Record<Role, V>` with a union.\n- Symptom: spreading a partial into `User` compiles. Cause: `as User`. Fix: the DTO is the argument type, no assertion.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: PATCH xóa `id` hoặc gửi `passwordHash`. Nguyên nhân: `Partial<User>`. Cách xử lý: `Partial<Pick<User, các key ghi được>>`.\n- Triệu chứng: `passwordHint` lồng vẫn còn trên type public. Nguyên nhân: `Omit` nông. Cách xử lý: gỡ object lồng.\n- Triệu chứng: `Record<string, Role>` nhận mọi key. Nguyên nhân: index signature. Cách xử lý: `Record<Role, V>` với union.\n- Triệu chứng: spread partial vào `User` vẫn compile. Nguyên nhân: `as User`. Cách xử lý: DTO là type đối số, không assertion."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: PATCH làm trống `id` hoặc gửi `passwordHash`. Nguyên nhân: `Partial<User>`. Cách xử lý: `Partial<Pick<User, writable keys>>`.\n- Triệu chứng: `passwordHint` lồng vẫn còn trên type public. Nguyên nhân: `Omit` nông. Cách xử lý: gỡ object lồng.\n- Triệu chứng: `Record<string, Role>` nhận mọi key. Nguyên nhân: index signature. Cách xử lý: `Record<Role, V>` với union.\n- Triệu chứng: spread partial vào `User` vẫn compile. Nguyên nhân: `as User`. Cách xử lý: DTO là type đối số, không assertion."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "You need a PATCH body for `User`. Someone writes `Partial<User>` and ships `id` plus `passwordHash` as optional writes. Someone else uses `Omit<User, 'password'>` and thinks nested `credentials.password` is gone.",
-            "vi": "Bạn cần body PATCH cho `User`. Ai đó viết `Partial<User>` rồi gửi `id` cộng `passwordHash` như field ghi tùy chọn. Người khác dùng `Omit<User, 'password'>` và nghĩ `credentials.password` lồng đã biến mất."
+            "vi": "Bạn cần body PATCH cho `User`. Có người viết `Partial<User>` rồi ship `id` và `passwordHash` như field ghi optional. Người khác dùng `Omit<User, 'password'>` và tưởng `credentials.password` lồng đã biến mất."
           }
         },
         {
@@ -907,7 +907,7 @@
           },
           "text": {
             "en": "I do not ship Partial of User as a PATCH type, because that makes id and passwordHash optional writes. I compose Partial of Pick of the writable keys so the HTTP function cannot accept a full User. Omit is shallow: nested passwordHint is still there until I strip the nested object. Readonly of T is a compile-time flag, Object.freeze is a shallow runtime freeze, and Vue readonly is a proxy — they are not interchangeable. Record of string hides missing keys; Record of a role union is the useful one. Awaited of ReturnType is good glue, but I type the client once instead of unwrapping three Axios wrappers. If the wire format uses snake_case I hand-write the DTO; otherwise a Pick beats three twin types. On the admin product the PATCH helper only accepts UserPatch, and a type test rejects passwordHash.",
-            "vi": "Tôi không gửi Partial của User làm type PATCH, vì nó biến id và passwordHash thành field ghi tùy chọn. Tôi compose Partial của Pick các key ghi được để hàm HTTP không nhận cả User. Omit nông: passwordHint lồng vẫn còn đến khi tôi gỡ object lồng. Readonly của T là cờ lúc compile, `Object.freeze` đóng băng nông lúc runtime, và Vue readonly là proxy — chúng không thay thế lẫn nhau. Record của string giấu key thiếu; Record của union role mới hữu ích. Awaited của ReturnType là keo tốt, nhưng tôi type client một lần thay vì bóc ba lớp Axios. Nếu định dạng trên dây dùng snake_case tôi viết tay DTO; không thì một Pick thắng ba type song sinh. Ở sản phẩm admin, helper PATCH chỉ nhận UserPatch, và một type test từ chối passwordHash."
+            "vi": "Mình không ship Partial của User làm type PATCH, vì nó biến id và passwordHash thành field ghi optional. Mình compose Partial của Pick các key ghi được để hàm HTTP không nhận cả User. Omit nông: passwordHint lồng vẫn còn đến khi mình gỡ object lồng. Readonly của T là cờ lúc compile, Object.freeze là freeze nông lúc runtime, Vue readonly là proxy: ba thứ không thay thế lẫn nhau. Record của string giấu key thiếu; Record của union role mới hữu ích. Awaited của ReturnType là glue tiện, nhưng mình type client một lần thay vì unwrap ba wrapper Axios. Format trên network dùng snake_case thì mình viết tay DTO; không thì một Pick hơn ba type song sinh. Ở admin nội bộ, helper PATCH chỉ nhận UserPatch, và type test từ chối passwordHash."
           }
         },
         {
@@ -927,7 +927,7 @@
             },
             {
               "en": "The DTO is the HTTP argument type. If a full `User` passes, it failed.",
-              "vi": "DTO là type đối số HTTP. Nếu cả `User` lọt, nó đã thất bại."
+              "vi": "DTO là type đối số HTTP. Nếu cả `User` lọt, DTO đã fail."
             }
           ]
         },
@@ -939,7 +939,7 @@
           },
           "text": {
             "en": "- **Why is `Partial<User>` a bad PATCH type?** It makes `id?` and offers secrets as writes. Compose `Partial<Pick<…>>`.\n- **Show a nested secret that `Omit` does not remove.** `profile.passwordHint` stays until you strip the nested object.\n- **`Readonly<T>` vs `Object.freeze` vs Vue `readonly()`?** Compile flag vs shallow freeze vs proxy. Only freeze and the proxy throw or no-op at runtime.\n- **What does `Omit` do to a discriminated union?** It distributes and can lose the union. Use `Exclude` on members when that is what you meant.",
-            "vi": "- **Vì sao `Partial<User>` là type PATCH tệ?** Nó làm `id?` và mở secret như field ghi. Hãy compose `Partial<Pick<…>>`.\n- **Chỉ một secret lồng mà `Omit` không gỡ.** `profile.passwordHint` còn đến khi bạn gỡ object lồng.\n- **`Readonly<T>` khác `Object.freeze` và Vue `readonly()` thế nào?** Cờ compile khác đóng băng nông khác proxy. Chỉ `freeze` và proxy ném hoặc no-op lúc runtime.\n- **`Omit` làm gì với discriminated union?** Nó phân phối và có thể làm mất union. Dùng `Exclude` trên phần tử khi đó là ý bạn."
+            "vi": "- **Vì sao `Partial<User>` là type PATCH tệ?** Nó biến `id?` và mở secret như field ghi. Compose `Partial<Pick<…>>`.\n- **Cho một secret lồng mà `Omit` không gỡ.** `profile.passwordHint` vẫn còn đến khi bạn gỡ object lồng.\n- **`Readonly<T>` vs `Object.freeze` vs Vue `readonly()`?** Cờ compile, freeze nông, và proxy. Chỉ freeze và proxy mới throw hoặc no-op lúc runtime.\n- **`Omit` làm gì với discriminated union?** Nó chạy trên từng nhánh và có thể làm mất union. Dùng `Exclude` trên member khi đó mới là ý bạn."
           }
         },
         {
@@ -961,14 +961,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** A predicate (`x is T`) or assertion (`asserts x is T`) is a contract you sign with the compiler. Check enough fields or parse. Never `return true as x is T`. At the wire the type is `unknown`.",
-            "vi": "**Tóm tắt:** Predicate (`x is T`) hoặc assertion (`asserts x is T`) là contract bạn ký với compiler. Hãy kiểm đủ field hoặc parse. Đừng bao giờ `return true as x is T`. Trên dây type là `unknown`."
+            "vi": "**Tóm tắt:** Predicate (`x is T`) hoặc assertion (`asserts x is T`) là contract bạn ký với compiler. Kiểm đủ field hoặc parse. Đừng bao giờ `return true as x is T`. Ở ranh giới network, type là `unknown`."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** A `isUser(x: unknown): x is User` that returns true if `'id' in x` compiles and is wrong. Interviewers want predicates you would sign, and the discipline not to `as User` at a trust boundary.",
-            "vi": "**Vì sao quan trọng:** Một `isUser(x: unknown): x is User` trả true nếu `'id' in x` vẫn compile và là sai. Người phỏng vấn muốn predicate bạn dám ký, và kỷ luật không `as User` ở ranh giới tin cậy."
+            "vi": "**Vì sao quan trọng:** Một `isUser(x: unknown): x is User` trả true nếu `'id' in x` thì vẫn compile, và sai. Người phỏng vấn muốn predicate bạn dám ký, và kỷ luật không `as User` ở ranh giới tin cậy."
           }
         },
         {
@@ -977,19 +977,19 @@
           "items": [
             {
               "en": "**How it works:** After `if (isAbortError(e))`, TypeScript keeps `DOMException`. The function body is not checked against the predicate — you can lie.",
-              "vi": "**Cách hoạt động:** Sau `if (isAbortError(e))`, TypeScript giữ `DOMException`. Thân hàm không bị kiểm theo predicate — bạn có thể nói dối."
+              "vi": "**Cách hoạt động:** Sau `if (isAbortError(e))`, TypeScript giữ `DOMException`. Thân hàm không bị kiểm theo predicate: bạn có thể nói dối."
             },
             {
               "en": "`asserts x is T` must throw on failure. Use it at startup (`assert(env.API_URL)`), not on a render path. A body that returns is a production-only crash.",
-              "vi": "`asserts x is T` phải ném khi thất bại. Dùng lúc khởi động (`assert(env.API_URL)`), không dùng trên đường render. Thân hàm chỉ return là crash chỉ thấy ở production."
+              "vi": "`asserts x is T` phải throw khi fail. Dùng lúc startup (`assert(env.API_URL)`), không dùng trên đường render. Thân hàm chỉ return thì crash chỉ thấy ở production."
             },
             {
               "en": "At the network or storage boundary, parse (`zod` / Valibot) and infer `T` from the schema. Hand-rolled guards are for your own unions (`isAbortError`, `isSuccess`).",
-              "vi": "Ở ranh giới network hoặc storage, hãy parse (`zod` / Valibot) và suy `T` từ schema. Guard viết tay dành cho union của bạn (`isAbortError`, `isSuccess`)."
+              "vi": "Ở ranh giới network hoặc storage, parse (`zod` / Valibot) rồi infer `T` từ schema. Guard viết tay dành cho union của bạn (`isAbortError`, `isSuccess`)."
             },
             {
               "en": "`instanceof` fails across iframes and duplicated packages. Prefer a `kind` discriminant you own. Re-narrow inside Vue `watch` and axios interceptors — they lose the narrow.",
-              "vi": "`instanceof` thất bại qua iframe và package bị nhân đôi. Ưu tiên discriminant `kind` bạn sở hữu. Hãy hẹp lại trong Vue `watch` và interceptor axios — chúng mất hẹp."
+              "vi": "`instanceof` fail khi qua iframe và package bị nhân đôi. Ưu tiên discriminant `kind` do bạn đặt. Narrow lại trong Vue `watch` và interceptor axios: chúng mất phần đã narrow."
             }
           ]
         },
@@ -998,14 +998,14 @@
           "lang": "ts",
           "code": {
             "en": "function isAbortError(e: unknown): e is DOMException {\n  return e instanceof DOMException && e.name === 'AbortError'\n}\n\nfunction assertUnreachable(x: never): never {\n  throw new Error('unreachable: ' + String(x))\n}\n\nfunction parseUser(data: unknown): User {\n  return UserSchema.parse(data) // throw → caller's error state\n}\n\n// ❌ lies: an object with only id is not a User\nfunction isUser(x: unknown): x is User {\n  return typeof x === 'object' && x !== null && 'id' in x\n}\n\ntry {\n  await reload()\n} catch (e: unknown) {\n  if (isAbortError(e)) return\n  throw e\n}",
-            "vi": "function isAbortError(e: unknown): e is DOMException {\n  return e instanceof DOMException && e.name === 'AbortError'\n}\n\nfunction assertUnreachable(x: never): never {\n  throw new Error('unreachable: ' + String(x))\n}\n\nfunction parseUser(data: unknown): User {\n  return UserSchema.parse(data) // ném → trạng thái error của caller\n}\n\n// ❌ nói dối: object chỉ có id không phải User\nfunction isUser(x: unknown): x is User {\n  return typeof x === 'object' && x !== null && 'id' in x\n}\n\ntry {\n  await reload()\n} catch (e: unknown) {\n  if (isAbortError(e)) return\n  throw e\n}"
+            "vi": "function isAbortError(e: unknown): e is DOMException {\n  return e instanceof DOMException && e.name === 'AbortError'\n}\n\nfunction assertUnreachable(x: never): never {\n  throw new Error('unreachable: ' + String(x))\n}\n\nfunction parseUser(data: unknown): User {\n  return UserSchema.parse(data) // throw → error state của caller\n}\n\n// ❌ nói dối: object chỉ có id thì không phải User\nfunction isUser(x: unknown): x is User {\n  return typeof x === 'object' && x !== null && 'id' in x\n}\n\ntry {\n  await reload()\n} catch (e: unknown) {\n  if (isAbortError(e)) return\n  throw e\n}"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `isAbortError` checks name, not only `instanceof`, so a random `DOMException` is not treated as cancel. `parseUser` throws on a bad payload, so the caller's error state is honest. `isUser` compiles and would let `{ id: 1 }` through as a `User`. `assertUnreachable` is the exhaustive `never` helper.",
-            "vi": "**Điều gì xảy ra:** `isAbortError` kiểm name, không chỉ `instanceof`, nên một `DOMException` ngẫu nhiên không bị coi là hủy. `parseUser` ném khi payload xấu, nên trạng thái error của caller là thật. `isUser` vẫn compile và để `{ id: 1 }` lọt như `User`. `assertUnreachable` là helper `never` đủ nhánh."
+            "vi": "**Điều gì xảy ra:** `isAbortError` kiểm name, không chỉ `instanceof`, nên một `DOMException` ngẫu nhiên không bị coi là cancel. `parseUser` throw khi payload sai, nên error state của caller là thật. `isUser` vẫn compile và để `{ id: 1 }` lọt như `User`. `assertUnreachable` là helper `never` phủ hết nhánh."
           }
         },
         {
@@ -1021,7 +1021,7 @@
             },
             {
               "en": "Lie to watch",
-              "vi": "Lời dối cần coi"
+              "vi": "Dối cần để ý"
             }
           ],
           "rows": [
@@ -1046,11 +1046,11 @@
               },
               {
                 "en": "Startup / invariants",
-                "vi": "Khởi động / bất biến"
+                "vi": "Startup / bất biến"
               },
               {
                 "en": "Body that does not throw",
-                "vi": "Thân hàm không ném"
+                "vi": "Thân hàm không throw"
               }
             ],
             [
@@ -1060,7 +1060,7 @@
               },
               {
                 "en": "Wire / storage",
-                "vi": "Dây / storage"
+                "vi": "Network / storage"
               },
               {
                 "en": "`as User` on JSON",
@@ -1091,7 +1091,7 @@
           },
           "text": {
             "en": "- A predicate is a contract you sign: check enough fields or parse. Never `return true as x is T`.\n- Runtime schema beats hand-rolled guards for anything that crossed the wire. Guards are for `isAbortError` and `isSuccess`.\n- Assertion functions throw, so they belong at startup, not in render. A false `asserts` is a production-only crash.\n- `instanceof` fails across realms and bundler duplicates. Prefer a `kind` you own.\n- A false guard poisons the rest of the file, including `noUncheckedIndexedAccess`. Re-guard inside `watch` callbacks. On the admin product, `catch` uses `unknown` and `isAbortError`, and `User` comes from `UserSchema.parse`.",
-            "vi": "- Predicate là contract bạn ký: kiểm đủ field hoặc parse. Đừng bao giờ `return true as x is T`.\n- Schema lúc runtime thắng guard viết tay cho mọi thứ đã vượt dây. Guard dành cho `isAbortError` và `isSuccess`.\n- Hàm assertion ném, nên thuộc lúc khởi động, không thuộc render. `asserts` sai là crash chỉ thấy ở production.\n- `instanceof` thất bại qua realm và package bị nhân đôi. Ưu tiên `kind` bạn sở hữu.\n- Guard sai đầu độc phần còn lại của file, kể cả `noUncheckedIndexedAccess`. Hãy guard lại trong callback `watch`. Ở sản phẩm admin, `catch` dùng `unknown` và `isAbortError`, còn `User` đến từ `UserSchema.parse`."
+            "vi": "- Predicate là contract bạn ký: kiểm đủ field hoặc parse. Đừng bao giờ `return true as x is T`.\n- Schema lúc runtime hay hơn guard viết tay cho mọi thứ đã qua network. Guard dành cho `isAbortError` và `isSuccess`.\n- Hàm assertion phải throw, nên để lúc startup, không để trên đường render. `asserts` sai là crash chỉ thấy ở production.\n- `instanceof` fail khi qua realm và khi bundler nhân đôi package. Ưu tiên `kind` do bạn đặt.\n- Guard sai nhiễm sang phần còn lại của file, kể cả `noUncheckedIndexedAccess`. Guard lại trong callback `watch`. Ở admin nội bộ, `catch` dùng `unknown` và `isAbortError`, còn `User` đến từ `UserSchema.parse`."
           }
         },
         {
@@ -1099,14 +1099,14 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: `{ id }` passes as `User`. Cause: `'id' in x`. Fix: enough fields, or Zod.\n- Symptom: `x.name.toUpperCase()` crashes after a guard. Cause: checked `typeof === 'object'` only. Fix: parse or check `name`.\n- Symptom: `x is User[]` after `Array.isArray`. Cause: elements untyped. Fix: check elements or parse.\n- Symptom: `assert(x)` does not throw and later crashes. Cause: empty body. Fix: throw on failure.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `{ id }` lọt như `User`. Nguyên nhân: `'id' in x`. Cách xử lý: đủ field, hoặc Zod.\n- Triệu chứng: `x.name.toUpperCase()` crash sau guard. Nguyên nhân: chỉ kiểm `typeof === 'object'`. Cách xử lý: parse hoặc kiểm `name`.\n- Triệu chứng: `x is User[]` sau `Array.isArray`. Nguyên nhân: phần tử chưa type. Cách xử lý: kiểm phần tử hoặc parse.\n- Triệu chứng: `assert(x)` không ném rồi crash sau. Nguyên nhân: thân rỗng. Cách xử lý: ném khi thất bại."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `{ id }` lọt như `User`. Nguyên nhân: `'id' in x`. Cách xử lý: đủ field, hoặc Zod.\n- Triệu chứng: `x.name.toUpperCase()` crash sau guard. Nguyên nhân: chỉ kiểm `typeof === 'object'`. Cách xử lý: parse hoặc kiểm `name`.\n- Triệu chứng: `x is User[]` sau `Array.isArray`. Nguyên nhân: phần tử chưa type. Cách xử lý: kiểm phần tử hoặc parse.\n- Triệu chứng: `assert(x)` không throw rồi crash sau. Nguyên nhân: thân rỗng. Cách xử lý: throw khi fail."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "A `isUser(x: unknown): x is User` that returns true if `'id' in x`. It compiles. It is wrong. They want predicates and assertion functions you would sign, and the discipline not to `as User` at a trust boundary.",
@@ -1121,7 +1121,7 @@
           },
           "text": {
             "en": "A predicate is a contract I sign. Checking that id is in x is not x is User — I check enough fields or I let Zod infer T from the schema. At the wire the type is unknown; after parse it is User. I never return true as x is T. Asserts throw, so they belong at startup, not in render. instanceof fails across realms, so I prefer a kind I own, and I re-narrow inside Vue watch callbacks because they lose the narrow. Array.isArray does not prove the element type. A false guard poisons the rest of the file, including noUncheckedIndexedAccess. On the admin product, catch uses unknown and isAbortError, and User comes from UserSchema.parse.",
-            "vi": "Predicate là contract tôi ký. Kiểm id có trong x không phải x is User — tôi kiểm đủ field hoặc để Zod suy T từ schema. Trên dây type là unknown; sau parse là User. Tôi không bao giờ return true as x is T. Assert ném, nên thuộc lúc khởi động, không thuộc render. instanceof thất bại qua realm, nên tôi ưu tiên kind mình sở hữu, và tôi hẹp lại trong callback Vue watch vì chúng mất hẹp. Array.isArray không chứng minh type phần tử. Guard sai đầu độc phần còn lại của file, kể cả noUncheckedIndexedAccess. Ở sản phẩm admin, catch dùng unknown và isAbortError, còn User đến từ UserSchema.parse."
+            "vi": "Predicate là contract mình ký. Có id trong x không có nghĩa là x is User. Mình kiểm đủ field, hoặc để Zod infer T từ schema. Ở ranh giới network type là unknown; sau parse là User. Mình không bao giờ return true as x is T. Assert phải throw, nên để lúc startup, không để trên đường render. instanceof fail khi qua realm, nên mình ưu tiên kind do mình đặt, và mình narrow lại trong callback Vue watch vì chúng mất phần đã narrow. Array.isArray không chứng minh type phần tử. Guard sai nhiễm sang phần còn lại của file, kể cả noUncheckedIndexedAccess. Ở admin nội bộ, catch dùng unknown và isAbortError, còn User đến từ UserSchema.parse."
           }
         },
         {
@@ -1129,19 +1129,19 @@
           "items": [
             {
               "en": "A predicate is a contract. `'id' in x` is not `x is User`.",
-              "vi": "Predicate là contract. `'id' in x` không phải `x is User`."
+              "vi": "Predicate là một contract. `'id' in x` không phải `x is User`."
             },
             {
               "en": "Schema at the wire. Hand-rolled guards for your own unions.",
-              "vi": "Schema trên dây. Guard viết tay cho union của bạn."
+              "vi": "Schema ở ranh giới network. Guard viết tay cho union của bạn."
             },
             {
               "en": "An `asserts` that does not throw is a production-only crash.",
-              "vi": "`asserts` không ném là crash chỉ thấy ở production."
+              "vi": "`asserts` không throw là crash chỉ thấy ở production."
             },
             {
               "en": "Re-narrow in `watch` and interceptors. They lose the narrow.",
-              "vi": "Hãy hẹp lại trong `watch` và interceptor. Chúng mất hẹp."
+              "vi": "Narrow lại trong `watch` và interceptor. Chúng mất phần đã narrow."
             }
           ]
         },
@@ -1153,7 +1153,7 @@
           },
           "text": {
             "en": "- **Why is `'id' in x` not enough for `x is User`?** Extra and missing fields still pass. Check enough keys or parse.\n- **Predicate vs assertion function?** Predicates return boolean and narrow an `if`. Asserts throw and belong at startup.\n- **How do you type `catch (e)` under `useUnknownInCatchVariables`?** `e` is `unknown`. Narrow with `isAbortError` or parse.\n- **Why can `instanceof ApiError` fail between app and a shared package?** Duplicate constructors. Prefer a `kind` discriminant.",
-            "vi": "- **Vì sao `'id' in x` chưa đủ cho `x is User`?** Field thừa và thiếu vẫn lọt. Hãy kiểm đủ key hoặc parse.\n- **Predicate khác hàm assertion thế nào?** Predicate trả boolean và hẹp một `if`. Assert ném và thuộc lúc khởi động.\n- **Type `catch (e)` khi `useUnknownInCatchVariables` thế nào?** `e` là `unknown`. Hãy hẹp bằng `isAbortError` hoặc parse.\n- **Vì sao `instanceof ApiError` thất bại giữa app và package dùng chung?** Constructor bị nhân đôi. Ưu tiên discriminant `kind`."
+            "vi": "- **Vì sao `'id' in x` chưa đủ cho `x is User`?** Field thừa và thiếu vẫn lọt. Kiểm đủ key hoặc parse.\n- **Predicate khác hàm assertion thế nào?** Predicate trả boolean và narrow một `if`. Assert throw và để lúc startup.\n- **Type `catch (e)` khi `useUnknownInCatchVariables` thế nào?** `e` là `unknown`. Narrow bằng `isAbortError` hoặc parse.\n- **Vì sao `instanceof ApiError` fail giữa app và package dùng chung?** Constructor bị nhân đôi. Ưu tiên discriminant `kind`."
           }
         },
         {
@@ -1175,14 +1175,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** A mapped type is “for each key of `T`, produce a property.” Map over `keyof T` so a form and its error map cannot drift. Prefer `Partial<Record<keyof T, string>>` over reinventing `Readonly`.",
-            "vi": "**Tóm tắt:** Mapped type là “với mỗi key của `T`, tạo một property.” Hãy map trên `keyof T` để form và error map không lệch. Ưu tiên `Partial<Record<keyof T, string>>` hơn việc viết lại `Readonly`."
+            "vi": "**Tóm tắt:** Mapped type là “với mỗi key của `T`, tạo một property”. Map trên `keyof T` để form và error map không lệch. Ưu tiên `Partial<Record<keyof T, string>>` hơn việc viết lại `Readonly`."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** Interviewers do not want you to reimplement `Readonly`. They want one production mapping: form errors keyed by the form, or an “all flags boolean” object, without a parallel list of keys that can drift.",
-            "vi": "**Vì sao quan trọng:** Người phỏng vấn không muốn bạn viết lại `Readonly`. Họ muốn một mapping production: error form gắn theo form, hoặc object “mọi cờ đều boolean”, không list key song song có thể lệch."
+            "vi": "**Vì sao quan trọng:** Người phỏng vấn không muốn bạn viết lại `Readonly`. Họ muốn một mapping production: error form gắn theo form, hoặc object “mọi flag đều boolean”, không list key song song có thể lệch."
           }
         },
         {
@@ -1191,11 +1191,11 @@
           "items": [
             {
               "en": "**How it works:** `{ [K in keyof T]: … }` walks the keys. Homomorphic mapped types keep `readonly` and optional until you rewrite the key in a way that resets them.",
-              "vi": "**Cách hoạt động:** `{ [K in keyof T]: … }` đi qua các key. Mapped type homomorphic giữ `readonly` và tùy chọn đến khi bạn viết lại key theo cách làm mất chúng."
+              "vi": "**Cách hoạt động:** `{ [K in keyof T]: … }` đi qua các key. Mapped type homomorphic giữ `readonly` và optional đến khi bạn viết lại key theo cách làm chúng bị reset."
             },
             {
               "en": "Modifiers: `+?` / `-?` and `readonly` / `-readonly`. `-?` makes every key required — that is the “touched” map `Record<keyof T, boolean>`.",
-              "vi": "Modifier: `+?` / `-?` và `readonly` / `-readonly`. `-?` bắt buộc mọi key — đó là map “touched” `Record<keyof T, boolean>`."
+              "vi": "Modifier: `+?` / `-?` và `readonly` / `-readonly`. `-?` bắt buộc mọi key: đó là map “touched” `Record<keyof T, boolean>`."
             },
             {
               "en": "Key remapping (`as`) is for `update:${K}` emits and for dropping keys with `never`. It is overkill for renaming `id` to `userId` once.",
@@ -1203,7 +1203,7 @@
             },
             {
               "en": "`keyof (A | B)` is the intersection of keys, not a union of forms. Map each member if you meant two forms. Mapped types are shallow; deep-partial is easy to get wrong.",
-              "vi": "`keyof (A | B)` là giao của các key, không phải union hai form. Hãy map từng phần tử nếu ý bạn là hai form. Mapped type nông; deep-partial rất dễ sai."
+              "vi": "`keyof (A | B)` là giao của các key, không phải union hai form. Map từng member nếu ý bạn là hai form. Mapped type nông; deep-partial rất dễ sai."
             }
           ]
         },
@@ -1212,14 +1212,14 @@
           "lang": "ts",
           "code": {
             "en": "type FormErrors<T> = Partial<Record<keyof T, string>>\ntype Touched<T> = { [K in keyof T]-?: boolean }\n\ntype Profile = { name: string; email: string; age: number }\ntype ProfileErrors = FormErrors<Profile>\ntype ProfileTouched = Touched<Profile>\n\nfunction showErrors(errors: ProfileErrors) {\n  if (errors.email) banner(errors.email)\n  // adding phone to Profile forces a decision here\n}\n\ntype UpdateEmit<T> = {\n  [K in keyof T as `update:${Extract<K, string>}`]: [T[K]]\n}\n\nconst errors: ProfileErrors = { email: 'required' }\nconst touched: ProfileTouched = { name: true, email: false, age: false }",
-            "vi": "type FormErrors<T> = Partial<Record<keyof T, string>>\ntype Touched<T> = { [K in keyof T]-?: boolean }\n\ntype Profile = { name: string; email: string; age: number }\ntype ProfileErrors = FormErrors<Profile>\ntype ProfileTouched = Touched<Profile>\n\nfunction showErrors(errors: ProfileErrors) {\n  if (errors.email) banner(errors.email)\n  // thêm phone vào Profile buộc phải quyết ở đây\n}\n\ntype UpdateEmit<T> = {\n  [K in keyof T as `update:${Extract<K, string>}`]: [T[K]]\n}\n\nconst errors: ProfileErrors = { email: 'required' }\nconst touched: ProfileTouched = { name: true, email: false, age: false }"
+            "vi": "type FormErrors<T> = Partial<Record<keyof T, string>>\ntype Touched<T> = { [K in keyof T]-?: boolean }\n\ntype Profile = { name: string; email: string; age: number }\ntype ProfileErrors = FormErrors<Profile>\ntype ProfileTouched = Touched<Profile>\n\nfunction showErrors(errors: ProfileErrors) {\n  if (errors.email) banner(errors.email)\n  // thêm phone vào Profile thì chỗ này phải quyết\n}\n\ntype UpdateEmit<T> = {\n  [K in keyof T as `update:${Extract<K, string>}`]: [T[K]]\n}\n\nconst errors: ProfileErrors = { email: 'required' }\nconst touched: ProfileTouched = { name: true, email: false, age: false }"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `ProfileErrors` can mention `name`, `email`, or `age`, and nothing else. Adding `phone` to `Profile` makes `ProfileErrors` and `Touched` require a decision in the UI. `Touched` uses `-?` so every key is required. `UpdateEmit` remaps each key to `update:${K}` for typed emits.",
-            "vi": "**Điều gì xảy ra:** `ProfileErrors` có thể nhắc `name`, `email`, hoặc `age`, và không gì khác. Thêm `phone` vào `Profile` khiến `ProfileErrors` và `Touched` buộc UI phải quyết. `Touched` dùng `-?` nên mọi key là bắt buộc. `UpdateEmit` remap mỗi key thành `update:${K}` cho emit có type."
+            "vi": "**Điều gì xảy ra:** `ProfileErrors` có thể có `name`, `email`, hoặc `age`, không key nào khác. Thêm `phone` vào `Profile` thì `ProfileErrors` và `Touched` buộc UI phải quyết. `Touched` dùng `-?` nên mọi key là bắt buộc. `UpdateEmit` remap mỗi key thành `update:${K}` cho emit có type."
           }
         },
         {
@@ -1270,7 +1270,7 @@
             [
               {
                 "en": "Drop / rename keys",
-                "vi": "Bỏ / đổi key"
+                "vi": "Bỏ / đổi tên key"
               },
               {
                 "en": "`as never` / `as` remapping",
@@ -1278,7 +1278,7 @@
               },
               {
                 "en": "A one-off rename written as a mapped type",
-                "vi": "Đổi tên một lần viết thành mapped type"
+                "vi": "Đổi tên một lần mà viết mapped type"
               }
             ]
           ]
@@ -1291,7 +1291,7 @@
           },
           "text": {
             "en": "- Adding a field to `T` must break the form until the UI handles it. That is the point of mapping over `keyof T`.\n- If `Partial<Record<keyof T, string>>` is enough, use that. Do not write a custom mapped type to look senior.\n- `keyof (A | B)` is an intersection of keys, which is why a union of two forms surprised us. Map each member.\n- Key remapping is for `update:K` emits or dropping keys with `never`, not for a one-off rename.\n- Mapped types are shallow. Pull a well-known helper if you really need deep-partial. Vue `v-for` over `Object.keys` types keys as `string` — pair with a typed helper.",
-            "vi": "- Thêm một field vào `T` phải phá form đến khi UI xử lý. Đó là lý do map trên `keyof T`.\n- Nếu `Partial<Record<keyof T, string>>` là đủ, hãy dùng nó. Đừng viết mapped type tùy chỉnh để trông senior.\n- `keyof (A | B)` là giao của các key, đó là lý do union hai form làm chúng ta bất ngờ. Hãy map từng phần tử.\n- Key remapping dành cho emit `update:K` hoặc bỏ key bằng `never`, không phải đổi tên một lần.\n- Mapped type nông. Hãy lấy helper quen thuộc nếu thật sự cần deep-partial. Vue `v-for` trên `Object.keys` type key thành `string` — hãy kèm helper có type."
+            "vi": "- Thêm field vào `T` phải làm form lỗi đến khi UI xử lý. Đó là lý do map trên `keyof T`.\n- Nếu `Partial<Record<keyof T, string>>` đủ rồi thì dùng. Đừng viết mapped type riêng để trông senior.\n- `keyof (A | B)` là giao các key, nên union hai form mới làm team bất ngờ. Map từng phần tử.\n- Key remapping dành cho emit `update:K` hoặc bỏ key bằng `never`, không phải để đổi tên một lần.\n- Mapped type là nông. Cần deep-partial thì lấy helper quen thuộc. Vue `v-for` trên `Object.keys` type key thành `string`: kèm helper có type."
           }
         },
         {
@@ -1299,18 +1299,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: a new `phone` field has no error slot. Cause: a hand-maintained error interface. Fix: map `keyof T`.\n- Symptom: a union of two forms lost keys. Cause: `keyof (A | B)` is an intersection. Fix: map each member.\n- Symptom: optional flags vanished. Cause: a non-homomorphic rewrite. Fix: `{ [K in keyof T]: … }` or keep `Partial`.\n- Symptom: `Object.keys(errors)` is `string[]`. Cause: TS widening. Fix: a typed helper, not `as`.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: field `phone` mới không có chỗ error. Nguyên nhân: interface error viết tay. Cách xử lý: map `keyof T`.\n- Triệu chứng: union hai form mất key. Nguyên nhân: `keyof (A | B)` là giao. Cách xử lý: map từng phần tử.\n- Triệu chứng: cờ tùy chọn biến mất. Nguyên nhân: viết lại không homomorphic. Cách xử lý: `{ [K in keyof T]: … }` hoặc giữ `Partial`.\n- Triệu chứng: `Object.keys(errors)` là `string[]`. Nguyên nhân: TS nới. Cách xử lý: helper có type, không `as`."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: field `phone` mới không có chỗ error. Nguyên nhân: interface error viết tay. Cách xử lý: map `keyof T`.\n- Triệu chứng: union hai form mất key. Nguyên nhân: `keyof (A | B)` là giao. Cách xử lý: map từng phần tử.\n- Triệu chứng: cờ optional biến mất. Nguyên nhân: viết lại không homomorphic. Cách xử lý: `{ [K in keyof T]: … }` hoặc giữ `Partial`.\n- Triệu chứng: `Object.keys(errors)` là `string[]`. Nguyên nhân: TS widening. Cách xử lý: helper có type, không `as`."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "They do not want you to reimplement `Readonly`. They want one production mapping: form errors keyed by the form, or an “all flags boolean” object, without a parallel list of keys that can drift.",
-            "vi": "Họ không muốn bạn viết lại `Readonly`. Họ muốn một mapping production: error form gắn theo form, hoặc object “mọi cờ đều boolean”, không list key song song có thể lệch."
+            "vi": "Họ không muốn bạn viết lại `Readonly`. Họ muốn một mapping production: error form gắn theo key của form, hoặc object “mọi cờ đều boolean”, không list key song song rồi lệch."
           }
         },
         {
@@ -1321,7 +1321,7 @@
           },
           "text": {
             "en": "A mapped type is how I stop a form and its error map from drifting. Partial of Record of keyof T of string is enough — I do not reimplement Readonly to look senior. Adding phone to Profile must break the UI until we handle it. keyof of a union is an intersection of keys, which is why a union of two forms surprised us; I map each member if I meant two forms. Minus-optional turns the touched map into every key required. Key remapping is for update-colon emits or dropping keys with never, not for a one-off rename. Mapped types are shallow, so I pull a well-known helper if I really need deep-partial. On the admin product the profile form uses FormErrors of Profile, and adding a field is a compile error until the banner handles it.",
-            "vi": "Mapped type là cách tôi chặn form và error map bị lệch. Partial của Record của keyof T của string là đủ — tôi không viết lại Readonly để trông senior. Thêm phone vào Profile phải phá UI đến khi chúng tôi xử lý. keyof của union là giao các key, đó là lý do union hai form làm chúng tôi bất ngờ; tôi map từng phần tử nếu ý tôi là hai form. Minus-optional biến map touched thành mọi key bắt buộc. Key remapping dành cho emit update-colon hoặc bỏ key bằng never, không phải đổi tên một lần. Mapped type nông, nên tôi lấy helper quen thuộc nếu thật sự cần deep-partial. Ở sản phẩm admin, form profile dùng FormErrors của Profile, và thêm field là lỗi compile đến khi banner xử lý."
+            "vi": "Mapped type là cách mình giữ form và error map khỏi lệch. Partial của Record của keyof T của string là đủ, mình không viết lại Readonly để trông senior. Thêm phone vào Profile phải làm UI lỗi đến khi team mình xử lý. keyof của union là giao các key, nên union hai form mới làm bọn mình bất ngờ; mình map từng phần tử nếu ý mình là hai form. Minus-optional biến map touched thành mọi key bắt buộc. Key remapping dành cho emit kiểu update-colon hoặc bỏ key bằng never, không phải đổi tên một lần. Mapped type nông nên mình lấy helper quen thuộc nếu cần deep-partial. Ở sản phẩm admin, form profile dùng FormErrors của Profile, thêm field là lỗi compile đến khi banner xử lý."
           }
         },
         {
@@ -1329,19 +1329,19 @@
           "items": [
             {
               "en": "Adding a field to `T` should break the form until the UI handles it.",
-              "vi": "Thêm field vào `T` phải phá form đến khi UI xử lý."
+              "vi": "Thêm field vào `T` phải làm form lỗi đến khi UI xử lý."
             },
             {
               "en": "Prefer `Partial<Record<keyof T, string>>` over a custom mapped type.",
-              "vi": "Ưu tiên `Partial<Record<keyof T, string>>` hơn mapped type tùy chỉnh."
+              "vi": "Ưu tiên `Partial<Record<keyof T, string>>` hơn mapped type tự viết."
             },
             {
               "en": "`keyof (A | B)` is the intersection of keys. Map each member.",
-              "vi": "`keyof (A | B)` là giao các key. Hãy map từng phần tử."
+              "vi": "`keyof (A | B)` là giao các key. Map từng phần tử."
             },
             {
               "en": "`-?` makes a required “touched” map. Remap with `as` only when needed.",
-              "vi": "`-?` tạo map “touched” bắt buộc. Chỉ remap `as` khi cần."
+              "vi": "`-?` tạo map “touched” bắt buộc. Chỉ remap bằng `as` khi cần."
             }
           ]
         },
@@ -1353,7 +1353,7 @@
           },
           "text": {
             "en": "- **Why not maintain a parallel `ProfileErrors` interface by hand?** A new field will not show up. Map `keyof T`.\n- **How do you drop keys in a mapped type?** Remap `as never` for a public DTO, or `Omit` if that is clearer.\n- **What does `keyof (A | B)` return?** The intersection of keys. Map each member for a union of forms.\n- **How would you type “touched” with every key required?** `{ [K in keyof T]-?: boolean }` or `Record<keyof T, boolean>`.",
-            "vi": "- **Vì sao không giữ interface `ProfileErrors` song song bằng tay?** Field mới sẽ không xuất hiện. Hãy map `keyof T`.\n- **Bỏ key trong mapped type thế nào?** Remap `as never` cho DTO public, hoặc `Omit` nếu rõ hơn.\n- **`keyof (A | B)` trả về gì?** Giao các key. Hãy map từng phần tử cho union hai form.\n- **Type “touched” với mọi key bắt buộc thế nào?** `{ [K in keyof T]-?: boolean }` hoặc `Record<keyof T, boolean>`."
+            "vi": "- **Vì sao không giữ interface `ProfileErrors` song song viết tay?** Field mới sẽ không hiện. Map `keyof T`.\n- **Bỏ key trong mapped type thế nào?** Remap `as never` cho DTO public, hoặc `Omit` nếu rõ hơn.\n- **`keyof (A | B)` trả về gì?** Giao các key. Map từng phần tử khi union các form.\n- **Type “touched” với mọi key bắt buộc thế nào?** `{ [K in keyof T]-?: boolean }` hoặc `Record<keyof T, boolean>`."
           }
         },
         {
@@ -1375,14 +1375,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** `T extends U ? X : Y` lets a library fork a type. Use it when one function has two honest return shapes, or when you `infer` an unwrap. Keep it off Vue pages — an overload or two functions infers better.",
-            "vi": "**Tóm tắt:** `T extends U ? X : Y` cho phép thư viện rẽ nhánh một type. Dùng khi một hàm có hai shape trả về thật, hoặc khi bạn `infer` để bóc. Để nó khỏi trang Vue — overload hoặc hai hàm suy type tốt hơn."
+            "vi": "**Tóm tắt:** `T extends U ? X : Y` cho library rẽ nhánh một type. Dùng khi một hàm có hai shape trả về thật, hoặc khi bạn `infer` để bóc. Đừng dùng trên trang Vue: overload hoặc hai hàm suy type tốt hơn."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** Interviewers want one production fork: a function that returns `void` versus `{ data: T }` depending on `T`, or extracting a Vue emit payload. They do not want you to reinvent `NonNullable` on a whiteboard unless they are probing `infer`.",
-            "vi": "**Vì sao quan trọng:** Người phỏng vấn muốn một nhánh production: hàm trả `void` so với `{ data: T }` tùy `T`, hoặc bóc payload emit Vue. Họ không muốn bạn phát minh lại `NonNullable` trên bảng trừ khi đang đào `infer`."
+            "vi": "**Vì sao quan trọng:** Người phỏng vấn muốn một chỗ rẽ production: hàm trả `void` hay `{ data: T }` tùy `T`, hoặc bóc payload emit Vue. Họ không muốn bạn tự viết `NonNullable` trên bảng, trừ khi đang hỏi `infer`."
           }
         },
         {
@@ -1391,7 +1391,7 @@
           "items": [
             {
               "en": "**How it works:** `T extends U ? X : Y` picks `X` when `T` is assignable to `U`. `infer R` names a piece of `U` so you can return it (`Awaited`, payload of an event).",
-              "vi": "**Cách hoạt động:** `T extends U ? X : Y` chọn `X` khi `T` gán được cho `U`. `infer R` đặt tên một mảnh của `U` để bạn trả nó (`Awaited`, payload của event)."
+              "vi": "**Cách hoạt động:** `T extends U ? X : Y` chọn `X` khi `T` gán được cho `U`. `infer R` đặt tên một mảnh của `U` để bạn trả về (`Awaited`, payload của event)."
             },
             {
               "en": "Naked `T` distributes over unions: `ToArray<string | number>` becomes `string[] | number[]`. Wrap `[T] extends [U]` when you must not distribute.",
@@ -1399,7 +1399,7 @@
             },
             {
               "en": "`never` extends everything. An empty tuple can make a generic `never` and match the wrong branch without a warning. Default generics to `unknown`, not `any`, or the false branch dies.",
-              "vi": "`never` extends mọi thứ. Tuple rỗng có thể biến generic thành `never` và khớp nhánh sai mà không cảnh báo. Default generic là `unknown`, không phải `any`, nếu không nhánh sai chết."
+              "vi": "`never` extends mọi thứ. Tuple rỗng có thể biến generic thành `never` rồi khớp nhánh sai mà không cảnh báo. Default generic là `unknown`, không phải `any`, không thì nhánh sai chết."
             },
             {
               "en": "If you need `infer` more than once in app code, you probably wanted `ReturnType`, `Parameters`, or `Awaited`. Prefer those in Vue SFCs.",
@@ -1419,7 +1419,7 @@
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `ApiOk<void>` is `{ ok: true }`. `ApiOk<User>` adds `data`. `ToArray` distributes, so a union becomes a union of arrays. `NoDistribute` wraps `T` in a tuple and returns one array of the union. `Unwrap` is `infer` used like `Awaited`. The `as ApiOk<T>` is honest only if a parser already checked `data`.",
-            "vi": "**Điều gì xảy ra:** `ApiOk<void>` là `{ ok: true }`. `ApiOk<User>` thêm `data`. `ToArray` phân phối, nên union thành union các mảng. `NoDistribute` bọc `T` trong tuple và trả một mảng của union. `Unwrap` là `infer` dùng như `Awaited`. `as ApiOk<T>` chỉ thật nếu parser đã kiểm `data`."
+            "vi": "**Điều gì xảy ra:** `ApiOk<void>` là `{ ok: true }`. `ApiOk<User>` thêm `data`. `ToArray` phân phối, nên union thành union các mảng. `NoDistribute` bọc `T` trong tuple và trả một mảng của union. `Unwrap` là `infer` dùng như `Awaited`. `as ApiOk<T>` chỉ đúng nếu parser đã check `data`."
           }
         },
         {
@@ -1450,7 +1450,7 @@
               },
               {
                 "en": "Keep it off Vue pages",
-                "vi": "Để khỏi trang Vue"
+                "vi": "Đừng dùng trên trang Vue"
               }
             ],
             [
@@ -1464,7 +1464,7 @@
               },
               {
                 "en": "Prefer `ReturnType` / `Awaited` in app code",
-                "vi": "Ưu tiên `ReturnType` / `Awaited` trong app"
+                "vi": "Ưu tiên `ReturnType` / `Awaited` trong code app"
               }
             ],
             [
@@ -1474,7 +1474,7 @@
               },
               {
                 "en": "Stop distribution",
-                "vi": "Dừng phân phối"
+                "vi": "Ngăn phân phối"
               },
               {
                 "en": "Naked `T` distributes on purpose",
@@ -1505,7 +1505,7 @@
           },
           "text": {
             "en": "- Use a conditional when one function has two honest return shapes, or when you `infer` an unwrap. Keep it off app pages.\n- Distribution over unions is a feature. Wrap `[T] extends [U]` when you must not distribute.\n- `never` from `[]` matches the wrong branch. Default generics to `unknown`, not `any`, or the false branch dies.\n- Overloads are often clearer than a conditional return for JSDoc and Vue inference.\n- Test the union case with `expectTypeOf`, and still parse at the boundary instead of `as ApiOk<T>`. `exactOptionalPropertyTypes` makes `?` versus `| undefined` matter on the false branch.",
-            "vi": "- Dùng conditional khi một hàm có hai shape trả về thật, hoặc khi bạn `infer` để bóc. Để nó khỏi trang app.\n- Phân phối trên union là tính năng. Bọc `[T] extends [U]` khi không được phân phối.\n- `never` từ `[]` khớp nhánh sai. Default generic là `unknown`, không phải `any`, nếu không nhánh sai chết.\n- Overload thường rõ hơn return conditional cho JSDoc và suy type Vue.\n- Hãy test case union bằng `expectTypeOf`, và vẫn parse ở ranh giới thay vì `as ApiOk<T>`. `exactOptionalPropertyTypes` làm `?` khác `| undefined` trên nhánh sai."
+            "vi": "- Dùng conditional khi một hàm có hai shape trả về thật, hoặc khi bạn `infer` để bóc. Đừng dùng trên trang app.\n- Phân phối trên union là tính năng. Bọc `[T] extends [U]` khi không được phân phối.\n- `never` từ `[]` khớp nhánh sai. Default generic là `unknown`, không phải `any`, không thì nhánh sai chết.\n- Overload thường rõ hơn return conditional, cả cho JSDoc lẫn suy type Vue.\n- Test case union bằng `expectTypeOf`, và vẫn parse ở ranh giới thay vì `as ApiOk<T>`. `exactOptionalPropertyTypes` khiến `?` khác `| undefined` trên nhánh sai."
           }
         },
         {
@@ -1520,11 +1520,11 @@
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "One production fork: a function that returns `void` versus `{ data: T }` depending on `T`, or extracting a Vue emit payload. They do not want you to reinvent `NonNullable` on a whiteboard unless they are probing `infer`.",
-            "vi": "Một nhánh production: hàm trả `void` so với `{ data: T }` tùy `T`, hoặc bóc payload emit Vue. Họ không muốn bạn phát minh lại `NonNullable` trên bảng trừ khi đang đào `infer`."
+            "vi": "Một chỗ rẽ production: hàm trả `void` hay `{ data: T }` tùy `T`, hoặc bóc payload emit của Vue. Họ không muốn bạn tự viết `NonNullable` trên bảng, trừ khi họ đang hỏi `infer`."
           }
         },
         {
@@ -1535,7 +1535,7 @@
           },
           "text": {
             "en": "I use a conditional type when one function has two honest return shapes, or when I infer an unwrap like Awaited. I keep it off Vue pages — an overload or two functions infers better. Distribution over unions is a feature; I wrap T in a tuple when I must not distribute. never from an empty list matches the wrong branch, so I default generics to unknown, not any, or the false branch dies. If I need infer more than once in app code I wanted ReturnType or Awaited. I test the union case with expectTypeOf, and I still parse at the boundary instead of asserting ApiOk. On the admin product, mutate returns ok with optional data, and the parser, not the assertion, earns T.",
-            "vi": "Tôi dùng conditional type khi một hàm có hai shape trả về thật, hoặc khi tôi infer để bóc như Awaited. Tôi để nó khỏi trang Vue — overload hoặc hai hàm suy type tốt hơn. Phân phối trên union là tính năng; tôi bọc T trong tuple khi không được phân phối. never từ list rỗng khớp nhánh sai, nên tôi default generic là unknown, không phải any, nếu không nhánh sai chết. Nếu tôi cần infer hơn một lần trong code app thì tôi muốn ReturnType hoặc Awaited. Tôi test case union bằng expectTypeOf, và vẫn parse ở ranh giới thay vì assert ApiOk. Ở sản phẩm admin, mutate trả ok với data tùy chọn, và parser, không phải assertion, mới kiếm được T."
+            "vi": "Mình dùng conditional type khi một hàm có hai shape trả về thật, hoặc khi infer để bóc như Awaited. Mình không dùng trên trang Vue: overload hoặc hai hàm suy type tốt hơn. Phân phối trên union là tính năng; mình bọc T trong tuple khi không được phân phối. never từ list rỗng khớp nhánh sai, nên mình default generic là unknown, không phải any, không thì nhánh sai chết. Nếu cần infer hơn một lần trong code app thì mình muốn ReturnType hoặc Awaited. Mình test case union bằng expectTypeOf, và vẫn parse ở ranh giới thay vì assert ApiOk. Ở sản phẩm admin, mutate trả ok với data tùy chọn, parser chứ không phải assertion mới ra được T."
           }
         },
         {
@@ -1543,19 +1543,19 @@
           "items": [
             {
               "en": "Distribute on purpose, or wrap `[T] extends [U]` to stop it.",
-              "vi": "Phân phối có chủ đích, hoặc bọc `[T] extends [U]` để dừng."
+              "vi": "Phân phối có chủ đích, hoặc bọc `[T] extends [U]` để ngăn."
             },
             {
               "en": "Prefer `ReturnType` / `Awaited` over a home-grown `infer` in app code.",
-              "vi": "Ưu tiên `ReturnType` / `Awaited` hơn `infer` tự viết trong app."
+              "vi": "Ưu tiên `ReturnType` / `Awaited` hơn `infer` tự viết trong code app."
             },
             {
               "en": "Default generics to `unknown`, not `any`, or the false branch dies.",
-              "vi": "Default generic là `unknown`, không phải `any`, nếu không nhánh sai chết."
+              "vi": "Default generic là `unknown`, không phải `any`, không thì nhánh sai chết."
             },
             {
               "en": "Keep conditionals off Vue pages. Two functions or an overload infers better.",
-              "vi": "Để conditional khỏi trang Vue. Hai hàm hoặc overload suy type tốt hơn."
+              "vi": "Đừng để conditional lên trang Vue. Hai hàm hoặc overload suy type tốt hơn."
             }
           ]
         },
@@ -1567,7 +1567,7 @@
           },
           "text": {
             "en": "- **When does a conditional distribute, and how do you stop it?** Naked `T` distributes over unions. Wrap `[T] extends [U]`.\n- **`infer R` vs `ReturnType`?** Write `infer` when you unwrap a shape `ReturnType` cannot name. Prefer `ReturnType` in app code.\n- **Why did `T extends undefined` mis-fire on a generic with no constraint?** The generic is not yet `undefined`. Constrain or default `unknown`.\n- **Overload vs conditional return in Vue `script setup`?** Overloads and two functions infer more reliably than a conditional return.",
-            "vi": "- **Khi nào conditional phân phối, và dừng thế nào?** `T` trần phân phối trên union. Hãy bọc `[T] extends [U]`.\n- **`infer R` khác `ReturnType` thế nào?** Viết `infer` khi bạn bóc shape mà `ReturnType` không đặt tên được. Ưu tiên `ReturnType` trong app.\n- **Vì sao `T extends undefined` lệch trên generic không ràng buộc?** Generic chưa phải `undefined`. Hãy ràng buộc hoặc default `unknown`.\n- **Overload khác return conditional trong Vue `script setup`?** Overload và hai hàm suy type ổn hơn return conditional."
+            "vi": "- **Khi nào conditional phân phối, và dừng thế nào?** `T` trần phân phối trên union. Bọc `[T] extends [U]`.\n- **`infer R` khác `ReturnType` thế nào?** Viết `infer` khi bạn bóc shape mà `ReturnType` không đặt tên được. Ưu tiên `ReturnType` trong code app.\n- **Vì sao `T extends undefined` khớp nhầm trên generic không ràng buộc?** Generic chưa phải `undefined`. Ràng buộc hoặc default `unknown`.\n- **Overload khác return conditional trong Vue `script setup`?** Overload và hai hàm suy type ổn hơn return conditional."
           }
         },
         {
@@ -1578,7 +1578,7 @@
           "level": 4,
           "text": {
             "en": "2.2.5. Template Literal Types",
-            "vi": "2.2.5. Kiểu Template Literal"
+            "vi": "2.2.5. Template Literal Types"
           },
           "id": {
             "en": "225-template-literal-types",
@@ -1589,14 +1589,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Template literal types concatenate string literals so `emit('update:modelValue')` cannot emit a field that is not a prop. One production example is enough: `update:${keyof props}` or `on${Capitalize<K>}`.",
-            "vi": "**Tóm tắt:** Kiểu template literal nối các literal chuỗi để `emit('update:modelValue')` không emit field không phải prop. Một ví dụ production là đủ: `update:${keyof props}` hoặc `on${Capitalize<K>}`."
+            "vi": "**Tóm tắt:** Template literal type nối các string literal để `emit('update:modelValue')` không emit được field ngoài prop. Một ví dụ production là đủ: `update:${keyof props}` hoặc `on${Capitalize<K>}`."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** Event names, i18n keys, or CSS vars must match a source of truth. `event: string` on a bus compiles `user:created` versus `userCreated`. They explode combinatorially if you interpolate `string`. Rename a prop and watch emits fail in `tsc`.",
-            "vi": "**Vì sao quan trọng:** Tên event, key i18n, hoặc CSS var phải khớp một nguồn sự thật. `event: string` trên bus vẫn compile `user:created` khác `userCreated`. Chúng nổ tổ hợp nếu bạn interpolate `string`. Đổi tên prop và xem emit fail trong `tsc`."
+            "vi": "**Vì sao quan trọng:** Tên event, key i18n, hoặc CSS var phải khớp một nguồn sự thật. `event: string` trên bus vẫn compile `user:created` khác `userCreated`. Chúng nổ tổ hợp nếu bạn interpolate `string`. Đổi tên prop rồi nhìn emit fail trong `tsc`."
           }
         },
         {
@@ -1605,19 +1605,19 @@
           "items": [
             {
               "en": "**How it works:** `` `${K}` `` concatenates literals. `as const` on the source object is required or you interpolate `string`. `keyof T & string` drops `number | symbol`.",
-              "vi": "**Cách hoạt động:** `` `${K}` `` nối literal. Cần `as const` trên object nguồn, không thì bạn interpolate `string`. `keyof T & string` bỏ `number | symbol`."
+              "vi": "**Cách hoạt động:** `` `${K}` `` nối literal. Phải có `as const` trên object nguồn, không thì bạn interpolate `string`. `keyof T & string` bỏ `number | symbol`."
             },
             {
               "en": "`Uppercase` / `Capitalize` are for protocol-ish names (`onChange`), not display copy. UI strings belong in i18n.",
-              "vi": "`Uppercase` / `Capitalize` dành cho tên kiểu protocol (`onChange`), không phải copy giao diện. Chuỗi UI thuộc i18n."
+              "vi": "`Uppercase` / `Capitalize` dành cho tên kiểu protocol (`onChange`), không phải chữ hiển thị. Chuỗi UI thuộc i18n."
             },
             {
               "en": "A path `` `/users/${string}` `` does not validate an id. Branded params still belong in the function argument.",
-              "vi": "Path `` `/users/${string}` `` không kiểm id. Param branded vẫn thuộc đối số hàm."
+              "vi": "Path `` `/users/${string}` `` không validate một id. Param branded vẫn phải nằm ở đối số của hàm."
             },
             {
               "en": "Huge unions of templates slow `tsc`. Split by feature. Do not type the whole router as templates when Vue Router 4 `RouteMap` or Nuxt `typedPages` already exists.",
-              "vi": "Union template khổng lồ làm chậm `tsc`. Hãy tách theo feature. Đừng type cả router bằng template khi Vue Router 4 `RouteMap` hoặc Nuxt `typedPages` đã có."
+              "vi": "Union template khổng lồ làm chậm `tsc`. Tách theo feature. Đừng type cả router bằng template khi Vue Router 4 `RouteMap` hoặc Nuxt `typedPages` đã có."
             }
           ]
         },
@@ -1626,14 +1626,14 @@
           "lang": "ts",
           "code": {
             "en": "type UpdateEmits<T> = {\n  [K in keyof T & string as `update:${K}`]: [value: T[K]]\n}\n\ntype UserForm = { name: string; email: string }\ntype UserFormEmits = UpdateEmits<UserForm>\n// keys: 'update:name' | 'update:email'\n\nconst ROUTES = {\n  home: '/',\n  user: '/users/:id',\n} as const\n\ntype RouteName = keyof typeof ROUTES\nfunction go(name: RouteName) {\n  return ROUTES[name]\n}\n// go('Home') is a type error — not 'update:Name', not 'change:name'",
-            "vi": "type UpdateEmits<T> = {\n  [K in keyof T & string as `update:${K}`]: [value: T[K]]\n}\n\ntype UserForm = { name: string; email: string }\ntype UserFormEmits = UpdateEmits<UserForm>\n// key: 'update:name' | 'update:email'\n\nconst ROUTES = {\n  home: '/',\n  user: '/users/:id',\n} as const\n\ntype RouteName = keyof typeof ROUTES\nfunction go(name: RouteName) {\n  return ROUTES[name]\n}\n// go('Home') là lỗi type — không 'update:Name', không 'change:name'"
+            "vi": "type UpdateEmits<T> = {\n  [K in keyof T & string as `update:${K}`]: [value: T[K]]\n}\n\ntype UserForm = { name: string; email: string }\ntype UserFormEmits = UpdateEmits<UserForm>\n// các key: 'update:name' | 'update:email'\n\nconst ROUTES = {\n  home: '/',\n  user: '/users/:id',\n} as const\n\ntype RouteName = keyof typeof ROUTES\nfunction go(name: RouteName) {\n  return ROUTES[name]\n}\n// go('Home') là lỗi type: không phải 'update:Name', không phải 'change:name'"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `UpdateEmits` remaps each form key to `update:${K}` with the matching payload. Renaming `email` to `mail` breaks listeners in `tsc`. `ROUTES` needs `as const` or `go` accepts `string`. A path template is not an id check.",
-            "vi": "**Điều gì xảy ra:** `UpdateEmits` remap mỗi key form thành `update:${K}` với payload khớp. Đổi `email` thành `mail` phá listener trong `tsc`. `ROUTES` cần `as const` nếu không `go` nhận `string`. Template path không phải phép kiểm id."
+            "vi": "**Điều gì xảy ra:** `UpdateEmits` remap mỗi key form thành `update:${K}` với payload khớp. Đổi `email` thành `mail` thì listener vỡ trong `tsc`. `ROUTES` cần `as const`, không thì `go` nhận `string`. Template path không phải chỗ kiểm id."
           }
         },
         {
@@ -1678,7 +1678,7 @@
               },
               {
                 "en": "Homemade URL template unions",
-                "vi": "Union template URL tự viết"
+                "vi": "Union template URL viết tay"
               }
             ],
             [
@@ -1705,7 +1705,7 @@
           },
           "text": {
             "en": "- One example is enough: typed emits or i18n keys. Do not type a whole router as templates when Vue Router or Nuxt already has helpers.\n- `as const` on the source, or you interpolate `string` and buy nothing.\n- Huge template unions slow `tsc`. Split by feature. `HTTP × Route` is fine; `string × string` is `string`.\n- `${string}@${string}` is a weak email type. Parse instead.\n- Type `provide/inject` keys the same way so a magic string cannot collide. Rename a prop and watch emits fail. On the admin product, user-form emits are `UpdateEmits` of the form type, so renaming `email` breaks the parent in `vue-tsc`.",
-            "vi": "- Một ví dụ là đủ: emit có type hoặc key i18n. Đừng type cả router bằng template khi Vue Router hoặc Nuxt đã có helper.\n- `as const` trên nguồn, không thì bạn interpolate `string` và chẳng được gì.\n- Union template khổng lồ làm chậm `tsc`. Hãy tách theo feature. `HTTP × Route` ổn; `string × string` là `string`.\n- `${string}@${string}` là type email yếu. Hãy parse.\n- Hãy type key `provide/inject` cùng cách để magic string không đụng. Đổi tên prop và xem emit fail. Ở sản phẩm admin, emit form user là `UpdateEmits` của type form, nên đổi `email` phá parent trong `vue-tsc`."
+            "vi": "- Một ví dụ là đủ: emit có type hoặc key i18n. Đừng type cả router bằng template khi Vue Router hoặc Nuxt đã có helper.\n- `as const` trên nguồn, không thì interpolate `string` chẳng được gì.\n- Union template khổng lồ làm chậm `tsc`. Tách theo feature. `HTTP × Route` thì ổn; `string × string` vẫn là `string`.\n- `${string}@${string}` là type email yếu. Parse thì hơn.\n- Type key `provide/inject` cùng cách để magic string không đụng nhau. Đổi tên prop rồi nhìn emit fail. Ở sản phẩm admin, emit form user là `UpdateEmits` của type form, nên đổi `email` là parent gãy trong `vue-tsc`."
           }
         },
         {
@@ -1713,14 +1713,14 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: `emit('update:modelvalue')` compiles. Cause: `event: string`. Fix: mapped `update:${K}`.\n- Symptom: interpolated keys are `string`. Cause: missing `as const` or `T & string`. Fix: both.\n- Symptom: `tsc` is slow after a path union. Cause: combinatorial templates. Fix: split by feature; trust the router.\n- Symptom: `` `/users/${string}` `` accepted a number. Cause: that is not an id check. Fix: a branded param.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `emit('update:modelvalue')` vẫn compile. Nguyên nhân: `event: string`. Cách xử lý: mapped `update:${K}`.\n- Triệu chứng: key interpolate là `string`. Nguyên nhân: thiếu `as const` hoặc `T & string`. Cách xử lý: cả hai.\n- Triệu chứng: `tsc` chậm sau union path. Nguyên nhân: template tổ hợp. Cách xử lý: tách theo feature; tin router.\n- Triệu chứng: `` `/users/${string}` `` nhận number. Nguyên nhân: đó không phải phép kiểm id. Cách xử lý: param branded."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `emit('update:modelvalue')` vẫn compile. Nguyên nhân: `event: string`. Cách xử lý: mapped `update:${K}`.\n- Triệu chứng: key interpolate thành `string`. Nguyên nhân: thiếu `as const` hoặc `T & string`. Cách xử lý: cả hai.\n- Triệu chứng: `tsc` chậm sau union path. Nguyên nhân: template tổ hợp. Cách xử lý: tách theo feature; tin router.\n- Triệu chứng: `` `/users/${string}` `` nhận number. Nguyên nhân: đó không phải check id. Cách xử lý: param branded."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "Event names, i18n keys, or CSS vars that must match a source of truth. One example is enough: `update:${keyof props}` or `on${Capitalize<K>}`.",
@@ -1735,7 +1735,7 @@
           },
           "text": {
             "en": "I use template literals so emit of update-colon-modelValue cannot emit a typo or a field that is not a prop. The source object needs as const or I interpolate string and buy nothing. I do not type a whole router as templates when Vue Router or Nuxt already has typed helpers. Huge template unions slow tsc, so I split by feature. A path of slash-users-slash-string does not validate an id — that is still a branded param. Capitalize is for protocol names like onChange, not display copy. On the admin product, the user form emits are UpdateEmits of the form type, so renaming email breaks the parent in vue-tsc.",
-            "vi": "Tôi dùng template literal để emit update-colon-modelValue không emit typo hoặc field không phải prop. Object nguồn cần as const, không thì tôi interpolate string và chẳng được gì. Tôi không type cả router bằng template khi Vue Router hoặc Nuxt đã có helper có type. Union template khổng lồ làm chậm tsc, nên tôi tách theo feature. Path slash-users-slash-string không kiểm id — đó vẫn là param branded. Capitalize dành cho tên protocol như onChange, không phải copy giao diện. Ở sản phẩm admin, emit form user là UpdateEmits của type form, nên đổi email phá parent trong vue-tsc."
+            "vi": "Mình dùng template literal để emit update-colon-modelValue không emit typo hay field không phải prop. Object nguồn cần as const, không thì mình interpolate string chẳng được gì. Mình không type cả router bằng template khi Vue Router hoặc Nuxt đã có helper có type. Union template khổng lồ làm chậm tsc, nên mình tách theo feature. Path slash-users-slash-string không validate id: đó vẫn là param branded. Capitalize dành cho tên protocol như onChange, không phải copy giao diện. Ở sản phẩm admin, emit form user là UpdateEmits của type form, nên đổi email là parent gãy trong vue-tsc."
           }
         },
         {
@@ -1747,15 +1747,15 @@
             },
             {
               "en": "Trust the router’s typed helpers over a homemade path union.",
-              "vi": "Hãy tin helper có type của router hơn union path tự viết."
+              "vi": "Ưu tiên helper có type của router hơn union path viết tay."
             },
             {
               "en": "Huge template unions slow `tsc`. Split by feature.",
-              "vi": "Union template khổng lồ làm chậm `tsc`. Hãy tách theo feature."
+              "vi": "Union template khổng lồ làm chậm `tsc`. Tách theo feature."
             },
             {
               "en": "A path template is not an id check. Brand the param.",
-              "vi": "Template path không phải phép kiểm id. Hãy brand param."
+              "vi": "Template path không phải check id. Brand param."
             }
           ]
         },
@@ -1767,7 +1767,7 @@
           },
           "text": {
             "en": "- **Why `as const`?** Without it the object values are `string` and concatenation buys nothing.\n- **When not to type the router this way?** Vue Router `RouteMap` and Nuxt `typedPages` already exist.\n- **Why is `${string}@${string}` a weak email type?** It accepts almost any string. Parse instead.\n- **How do you keep `provide/inject` keys from colliding?** A template or branded key type shared by both sides.",
-            "vi": "- **Vì sao `as const`?** Không có thì value là `string` và nối chẳng được gì.\n- **Khi nào không type router kiểu này?** Vue Router `RouteMap` và Nuxt `typedPages` đã có.\n- **Vì sao `${string}@${string}` là type email yếu?** Nó nhận gần như mọi chuỗi. Hãy parse.\n- **Giữ key `provide/inject` khỏi đụng thế nào?** Một type template hoặc branded dùng chung hai phía."
+            "vi": "- **Vì sao `as const`?** Không có thì value là `string` và nối chẳng được gì.\n- **Khi nào không type router kiểu này?** Vue Router `RouteMap` và Nuxt `typedPages` đã có.\n- **Vì sao `${string}@${string}` là type email yếu?** Nó nhận gần như mọi chuỗi. Parse thì hơn.\n- **Giữ key `provide/inject` khỏi đụng thế nào?** Một type template hoặc branded dùng chung hai phía."
           }
         },
         {
@@ -1789,7 +1789,7 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Brand IDs that are mixed constantly so `getUser(orderId)` is a type error. The wire is still a string. Parse at the boundary; `as UserId` lives only inside that parser.",
-            "vi": "**Tóm tắt:** Hãy brand các ID bị trộn liên tục để `getUser(orderId)` là lỗi type. Trên dây vẫn là string. Parse ở ranh giới; `as UserId` chỉ sống trong parser đó."
+            "vi": "**Tóm tắt:** Brand ID hay bị trộn để `getUser(orderId)` thành lỗi type. Ra ngoài vẫn là string. Parse ở biên; `as UserId` chỉ sống trong parser đó."
           }
         },
         {
@@ -1805,19 +1805,19 @@
           "items": [
             {
               "en": "**How it works:** `type UserId = string & { readonly __brand: 'UserId' }`. Branding is erased at runtime. Two brands that share `__brand: string` can be compatible by accident — use a unique literal.",
-              "vi": "**Cách hoạt động:** `type UserId = string & { readonly __brand: 'UserId' }`. Brand bị xóa lúc runtime. Hai brand dùng chung `__brand: string` có thể tương thích nhầm — hãy dùng literal độc nhất."
+              "vi": "**Cách hoạt động:** `type UserId = string & { readonly __brand: 'UserId' }`. Brand bị xóa lúc runtime. Hai brand dùng chung `__brand: string` có thể gán nhầm cho nhau: dùng literal độc nhất."
             },
             {
               "en": "At the boundary (route param, JSON), `parseUserId` returns `UserId`. Inside the app, `getUser` only accepts `UserId`. Zod `.brand<'UserId'>()` is the version I ship.",
-              "vi": "Ở ranh giới (route param, JSON), `parseUserId` trả `UserId`. Trong app, `getUser` chỉ nhận `UserId`. Zod `.brand<'UserId'>()` là bản tôi ship."
+              "vi": "Ở biên (route param, JSON), `parseUserId` trả `UserId`. Trong app, `getUser` chỉ nhận `UserId`. Zod `.brand<'UserId'>()` là bản mình ship."
             },
             {
               "en": "Do not brand every `string` on day one (`Email`, `Url`). Brand IDs that are mixed constantly: `UserId`, `OrgId`, `OrderId`.",
-              "vi": "Đừng brand mọi `string` ngày một (`Email`, `Url`). Hãy brand ID bị trộn liên tục: `UserId`, `OrgId`, `OrderId`."
+              "vi": "Đừng brand mọi `string` ngay từ đầu (`Email`, `Url`). Brand ID hay bị trộn: `UserId`, `OrgId`, `OrderId`."
             },
             {
               "en": "Vue route params stay `string` until the parent route parses once. Do not spread `as` through the component tree. Keep collections generic (`Set<UserId>`).",
-              "vi": "Vue route param vẫn `string` đến khi parent route parse một lần. Đừng rải `as` xuyên cây component. Hãy giữ collection generic (`Set<UserId>`)."
+              "vi": "Vue route param vẫn `string` đến khi parent route parse một lần. Đừng `as` xuyên cây component. Giữ collection generic (`Set<UserId>`)."
             }
           ]
         },
@@ -1826,14 +1826,14 @@
           "lang": "ts",
           "code": {
             "en": "type UserId = string & { readonly __brand: 'UserId' }\ntype OrderId = string & { readonly __brand: 'OrderId' }\n\nfunction parseUserId(raw: string): UserId {\n  if (!raw.startsWith('usr_')) throw new Error('bad user id')\n  return raw as UserId // only inside the parser\n}\n\nfunction getUser(id: UserId) {\n  return api.get('/users/' + id)\n}\n\ndeclare const orderId: OrderId\n// getUser(orderId) // error — this is the whole feature\n\nconst fromRoute = parseUserId(route.params.id as string)\ngetUser(fromRoute)",
-            "vi": "type UserId = string & { readonly __brand: 'UserId' }\ntype OrderId = string & { readonly __brand: 'OrderId' }\n\nfunction parseUserId(raw: string): UserId {\n  if (!raw.startsWith('usr_')) throw new Error('bad user id')\n  return raw as UserId // chỉ trong parser\n}\n\nfunction getUser(id: UserId) {\n  return api.get('/users/' + id)\n}\n\ndeclare const orderId: OrderId\n// getUser(orderId) // lỗi — đó là cả tính năng\n\nconst fromRoute = parseUserId(route.params.id as string)\ngetUser(fromRoute)"
+            "vi": "type UserId = string & { readonly __brand: 'UserId' }\ntype OrderId = string & { readonly __brand: 'OrderId' }\n\nfunction parseUserId(raw: string): UserId {\n  if (!raw.startsWith('usr_')) throw new Error('bad user id')\n  return raw as UserId // chỉ trong parser\n}\n\nfunction getUser(id: UserId) {\n  return api.get('/users/' + id)\n}\n\ndeclare const orderId: OrderId\n// getUser(orderId) // lỗi: đúng là cả tính năng\n\nconst fromRoute = parseUserId(route.params.id as string)\ngetUser(fromRoute)"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `UserId` and `OrderId` are both strings at runtime, so JSON and URLs stay strings. `getUser(orderId)` is a type error. `as UserId` is allowed only inside `parseUserId`. The parent route parses once; children take `UserId`.",
-            "vi": "**Điều gì xảy ra:** `UserId` và `OrderId` đều là string lúc runtime, nên JSON và URL vẫn là string. `getUser(orderId)` là lỗi type. `as UserId` chỉ được phép trong `parseUserId`. Parent route parse một lần; con nhận `UserId`."
+            "vi": "**Điều gì xảy ra:** `UserId` và `OrderId` đều là string lúc runtime, nên JSON và URL vẫn là string. `getUser(orderId)` là lỗi type. `as UserId` chỉ được phép trong `parseUserId`. Parent route parse một lần; child nhận `UserId`."
           }
         },
         {
@@ -1884,7 +1884,7 @@
             [
               {
                 "en": "Zod schema",
-                "vi": "Schema Zod"
+                "vi": "Zod schema"
               },
               {
                 "en": "`.brand<'UserId'>()`",
@@ -1892,7 +1892,7 @@
               },
               {
                 "en": "Preferred when you already parse",
-                "vi": "Ưu tiên khi đã parse"
+                "vi": "Ưu tiên khi đã parse rồi"
               }
             ]
           ]
@@ -1905,7 +1905,7 @@
           },
           "text": {
             "en": "- Brand IDs that are mixed constantly. Do not brand every email on day one.\n- Branding is erased. `as UserId` next to `JSON.parse` reintroduces the original bug.\n- A class with a private field is a runtime brand (`instanceof` works) but is painful in JSON. FE sticks to type brands plus parse.\n- `UserId | OrderId` widens in a `Set<string>` if you `.add(id)` into a string set. Keep collections generic.\n- Template literals `/users/${id}` widen to `string`. That is OK if the fetch function still takes `UserId`. On the admin product, `getUser` rejects `order.id` in a type test, and the list page receives `UserId` from the parent route.",
-            "vi": "- Hãy brand ID bị trộn liên tục. Đừng brand mọi email ngày một.\n- Brand bị xóa. `as UserId` cạnh `JSON.parse` đưa lại bug cũ.\n- Class với field private là brand lúc runtime (`instanceof` được) nhưng đau với JSON. FE bám type brand cộng parse.\n- `UserId | OrderId` nới trong `Set<string>` nếu bạn `.add(id)` vào `Set` string. Hãy giữ collection generic.\n- Template literal `/users/${id}` nới thành `string`. Ổn nếu hàm fetch vẫn nhận `UserId`. Ở sản phẩm admin, `getUser` từ chối `order.id` trong type test, và trang list nhận `UserId` từ parent route."
+            "vi": "- Brand ID hay bị trộn. Đừng brand mọi email ngay từ đầu.\n- Brand bị xóa. `as UserId` cạnh `JSON.parse` đưa lại bug cũ.\n- Class với field private là brand lúc runtime (`instanceof` được) nhưng JSON thì đau. FE bám type brand kèm parse.\n- `UserId | OrderId` bị nới trong `Set<string>` nếu bạn `.add(id)` vào set string. Giữ collection generic.\n- Template literal `/users/${id}` nới thành `string`. Ổn nếu hàm fetch vẫn nhận `UserId`. Ở sản phẩm admin, `getUser` từ chối `order.id` trong type test, và trang list nhận `UserId` từ parent route."
           }
         },
         {
@@ -1913,18 +1913,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: `getUser(orderId)` compiles. Cause: both are `string`. Fix: brands with unique literals.\n- Symptom: `as UserId` next to `JSON.parse`. Cause: skipping the parser. Fix: `parseUserId` only.\n- Symptom: two brands assignable. Cause: `__brand: string`. Fix: a unique `'UserId'` vs `'OrderId'` literal.\n- Symptom: every child `as`s the route param. Cause: parse not at the parent. Fix: parse once.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `getUser(orderId)` compile. Nguyên nhân: cả hai là `string`. Cách xử lý: brand với literal độc nhất.\n- Triệu chứng: `as UserId` cạnh `JSON.parse`. Nguyên nhân: bỏ parser. Cách xử lý: chỉ `parseUserId`.\n- Triệu chứng: hai brand gán được cho nhau. Nguyên nhân: `__brand: string`. Cách xử lý: literal độc nhất `'UserId'` khác `'OrderId'`.\n- Triệu chứng: mọi con `as` route param. Nguyên nhân: không parse ở parent. Cách xử lý: parse một lần."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `getUser(orderId)` compile. Nguyên nhân: cả hai là `string`. Cách xử lý: brand với literal độc nhất.\n- Triệu chứng: `as UserId` cạnh `JSON.parse`. Nguyên nhân: bỏ parser. Cách xử lý: chỉ `parseUserId`.\n- Triệu chứng: hai brand gán được cho nhau. Nguyên nhân: `__brand: string`. Cách xử lý: literal độc nhất `'UserId'` khác `'OrderId'`.\n- Triệu chứng: mọi child đều `as` route param. Nguyên nhân: không parse ở parent. Cách xử lý: parse một lần."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "`getUser(orderId)` compiles because both are `string`. A production outage. How do you make that a type error without a runtime wrapper object?",
-            "vi": "`getUser(orderId)` compile vì cả hai đều là `string`. Sự cố production. Làm lỗi type mà không cần object wrapper lúc runtime thế nào?"
+            "vi": "`getUser(orderId)` compile vì cả hai đều là `string`. Sự cố production. Làm sao thành lỗi type mà không cần object wrapper lúc runtime?"
           }
         },
         {
@@ -1935,7 +1935,7 @@
           },
           "text": {
             "en": "getUser of orderId compiling is the outage — both were string. I brand IDs that are mixed constantly: UserId is string intersected with a readonly brand literal. The wire is still a string; branding is erased, so as UserId is allowed only inside parseUserId. I ship Zod brand when we already parse. I do not brand every email on day one, and I do not spread as through the Vue tree — the parent route parses once. Collections stay generic so a Set of UserId cannot take an OrderId. On the admin product, getUser rejects order.id in a type test, and the list page receives UserId from the parent route.",
-            "vi": "getUser của orderId compile được chính là sự cố — cả hai đều là string. Tôi brand ID bị trộn liên tục: UserId là string giao với brand literal readonly. Trên dây vẫn là string; brand bị xóa, nên as UserId chỉ được phép trong parseUserId. Tôi ship Zod brand khi đã parse. Tôi không brand mọi email ngày một, và không rải as xuyên cây Vue — parent route parse một lần. Collection giữ generic để `Set` của UserId không nhận OrderId. Ở sản phẩm admin, getUser từ chối order.id trong type test, và trang list nhận UserId từ parent route."
+            "vi": "getUser của orderId compile được chính là sự cố: cả hai đều là string. Mình brand ID hay bị trộn: UserId là string giao với brand literal readonly. Ra ngoài vẫn là string; brand bị xóa, nên as UserId chỉ được phép trong parseUserId. Mình ship Zod brand khi bọn mình đã parse. Mình không brand mọi email ngay từ đầu, và không as xuyên cây Vue: parent route parse một lần. Collection giữ generic để Set của UserId không nhận OrderId. Ở sản phẩm admin, getUser từ chối order.id trong type test, và trang list nhận UserId từ parent route."
           }
         },
         {
@@ -1943,7 +1943,7 @@
           "items": [
             {
               "en": "Brand IDs that are mixed constantly — not every `string` on day one.",
-              "vi": "Brand ID bị trộn liên tục — không phải mọi `string` ngày một."
+              "vi": "Brand ID hay bị trộn, không phải mọi `string` ngay từ đầu."
             },
             {
               "en": "`as UserId` lives in `parseUserId`, not next to `JSON.parse`.",
@@ -1951,11 +1951,11 @@
             },
             {
               "en": "Two brands that share `__brand: string` can be compatible by accident.",
-              "vi": "Hai brand dùng chung `__brand: string` có thể tương thích nhầm."
+              "vi": "Hai brand dùng chung `__brand: string` có thể gán nhầm cho nhau."
             },
             {
               "en": "Parse Vue route params once at the parent. Do not spread `as`.",
-              "vi": "Parse Vue route param một lần ở parent. Đừng rải `as`."
+              "vi": "Parse Vue route param một lần ở parent. Đừng `as` xuyên cây."
             }
           ]
         },
@@ -1967,7 +1967,7 @@
           },
           "text": {
             "en": "- **Why not a `UserId` class?** Runtime `instanceof` works, but JSON and Vue props hurt. Type brand plus parse is the FE default.\n- **Zod `.brand` vs a hand-written intersection?** Same idea. Prefer Zod when you already parse.\n- **How do Vue route params become `UserId`?** Parse at the parent route. Children take `UserId`, not `string`.\n- **Can `UserId` go into a `Set<string>`?** Yes, and that widens. Keep `Set<UserId>`.",
-            "vi": "- **Vì sao không class `UserId`?** `instanceof` lúc runtime được, nhưng JSON và Vue props đau. Type brand cộng parse là mặc định FE.\n- **Zod `.brand` khác intersection viết tay thế nào?** Cùng ý. Ưu tiên Zod khi đã parse.\n- **Vue route param thành `UserId` thế nào?** Parse ở parent route. Con nhận `UserId`, không phải `string`.\n- **`UserId` vào `Set<string>` được không?** Được, và nó nới. Hãy giữ `Set<UserId>`."
+            "vi": "- **Vì sao không class `UserId`?** `instanceof` lúc runtime được, nhưng JSON và Vue props thì đau. Type brand kèm parse là mặc định FE.\n- **Zod `.brand` khác intersection viết tay thế nào?** Cùng ý. Ưu tiên Zod khi đã parse.\n- **Vue route param thành `UserId` thế nào?** Parse ở parent route. Child nhận `UserId`, không phải `string`.\n- **`UserId` vào `Set<string>` được không?** Được, và nó bị nới. Giữ `Set<UserId>`."
           }
         },
         {
@@ -1989,14 +1989,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** `satisfies` checks a value against a type without widening the value’s inferred type. Pair `as const satisfies T` at config and catalog boundaries so `typeof routes.home` stays `'/'`.",
-            "vi": "**Tóm tắt:** `satisfies` kiểm một value với một type mà không nới inferred type của value. Hãy pair `as const satisfies T` ở ranh config và catalog để `typeof routes.home` vẫn `'/'`."
+            "vi": "**Tóm tắt:** `satisfies` kiểm value với một type mà không nới inferred type của value. Ghép `as const satisfies T` ở biên config và catalog để `typeof routes.home` vẫn `'/'`."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** `as const` made a routes object too narrow to pass where `Record<string, string>` is required, or `as Record<…>` widened values and lost literal keys. Interviewers want what `satisfies` changes.",
-            "vi": "**Vì sao quan trọng:** `as const` làm object routes hẹp quá không gán được chỗ cần `Record<string, string>`, hoặc `as Record<…>` nới value và mất key literal. Người phỏng vấn muốn `satisfies` đổi gì."
+            "vi": "**Vì sao quan trọng:** `as const` làm object routes hẹp quá, không gán được chỗ cần `Record<string, string>`, hoặc `as Record<…>` nới value và mất key literal. Người phỏng vấn muốn biết `satisfies` đổi gì."
           }
         },
         {
@@ -2005,19 +2005,19 @@
           "items": [
             {
               "en": "**How it works:** The value is checked against `T` and keeps its own inferred type. `as const satisfies T` gives both literals and a completeness check. TS 4.9+ — upgrade; do not polyfill with double assertions.",
-              "vi": "**Cách hoạt động:** Value được kiểm với `T` và giữ inferred type của chính nó. `as const satisfies T` cho cả literal lẫn phép kiểm đủ. TS 4.9+ — hãy nâng; đừng polyfill bằng double assertion."
+              "vi": "**Cách hoạt động:** Value được kiểm với `T` và giữ inferred type của chính nó. `as const satisfies T` cho cả literal lẫn phép kiểm đủ. TS 4.9+: nâng version, đừng polyfill bằng double assertion."
             },
             {
               "en": "`as const` alone does not prove every key exists. `as Record<…>` widens literals. Extra keys are allowed unless the type forbids them.",
-              "vi": "`as const` một mình không chứng minh mọi key tồn tại. `as Record<…>` nới literal. Key thừa được phép trừ khi type cấm."
+              "vi": "`as const` một mình không chứng minh mọi key đều có. `as Record<…>` nới literal. Key thừa vẫn được phép trừ khi type cấm."
             },
             {
               "en": "`satisfies Record<string, boolean>` does not catch a typo’d flag name. `satisfies Record<KnownFlag, boolean>` does — or invert: `as const satisfies` and derive `KnownFlag` from the object.",
-              "vi": "`satisfies Record<string, boolean>` không bắt tên flag gõ sai. `satisfies Record<KnownFlag, boolean>` thì có — hoặc đảo: `as const satisfies` rồi suy `KnownFlag` từ object."
+              "vi": "`satisfies Record<string, boolean>` không bắt tên flag gõ sai. `satisfies Record<KnownFlag, boolean>` thì có. Hoặc đảo: `as const satisfies` rồi suy `KnownFlag` từ object."
             },
             {
               "en": "It is compile-time only. Remote JSON is still `unknown`. Do not `satisfies` a `JSON.parse` result. Do not use it on `defineProps`.",
-              "vi": "Nó chỉ lúc compile. JSON remote vẫn `unknown`. Đừng `satisfies` kết quả `JSON.parse`. Đừng dùng trên `defineProps`."
+              "vi": "Chỉ kiểm lúc compile. JSON remote vẫn `unknown`. Đừng `satisfies` kết quả `JSON.parse`. Đừng dùng trên `defineProps`."
             }
           ]
         },
@@ -2033,7 +2033,7 @@
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `flags` must be an object of booleans, but `Flag` stays the literal key union. `routes.home` stays `'/'`, not `string`. A typo key is a type error. Adding a required key to the contract fails `satisfies` at the object.",
-            "vi": "**Điều gì xảy ra:** `flags` phải là object các boolean, nhưng `Flag` vẫn là union key literal. `routes.home` vẫn `'/'`, không phải `string`. Key gõ sai là lỗi type. Thêm key bắt buộc vào contract làm `satisfies` fail tại object."
+            "vi": "**Điều gì xảy ra:** `flags` phải là object các boolean, nhưng `Flag` vẫn là union key literal. `routes.home` vẫn `'/'`, không phải `string`. Key gõ sai là lỗi type. Thêm key bắt buộc vào contract thì `satisfies` fail ngay tại object."
           }
         },
         {
@@ -2074,7 +2074,7 @@
               },
               {
                 "en": "No — widens",
-                "vi": "Không — nới"
+                "vi": "Không: bị nới"
               },
               {
                 "en": "Lies about the value",
@@ -2092,7 +2092,7 @@
               },
               {
                 "en": "Yes, against `T`",
-                "vi": "Có, theo `T`"
+                "vi": "Có, so với `T`"
               }
             ],
             [
@@ -2106,7 +2106,7 @@
               },
               {
                 "en": "Yes — the usual pair",
-                "vi": "Có — cặp thường dùng"
+                "vi": "Có, cặp hay dùng"
               }
             ]
           ]
@@ -2119,7 +2119,7 @@
           },
           "text": {
             "en": "- Use `satisfies` for route maps, design tokens, and feature-flag tables at module boundaries. Not on every object.\n- It does not deep-freeze at runtime. Remote JSON is still `unknown`; parse it.\n- Vue SFCs: `satisfies` on a `defineProps` argument is the wrong tool. Use `defineProps<T>()`.\n- `satisfies Record<string, boolean>` does not catch a typo’d flag name. Derive `Flag` from the object, or use a known-key `Record`.\n- Add a required key to the contract and watch `satisfies` fail. Rename a value and watch call sites still see the literal. On the admin product the feature-flag table is `as const satisfies`, and `Flag` is `keyof typeof flags`.",
-            "vi": "- Dùng `satisfies` cho route map, design token, và bảng feature flag ở ranh module. Không phải mọi object.\n- Nó không đóng băng sâu lúc runtime. JSON remote vẫn `unknown`; hãy parse.\n- Vue SFC: `satisfies` trên đối số `defineProps` là sai tool. Hãy dùng `defineProps<T>()`.\n- `satisfies Record<string, boolean>` không bắt tên flag gõ sai. Hãy suy `Flag` từ object, hoặc dùng `Record` key đã biết.\n- Thêm key bắt buộc vào contract và xem `satisfies` fail. Đổi tên value và xem chỗ gọi vẫn thấy literal. Ở sản phẩm admin, bảng feature flag là `as const satisfies`, và `Flag` là `keyof typeof flags`."
+            "vi": "- Dùng `satisfies` cho route map, design token, và bảng feature flag ở ranh giới module. Không phải mọi object.\n- Nó không deep-freeze lúc runtime. JSON remote vẫn là `unknown`; phải parse.\n- Vue SFC: `satisfies` trên argument của `defineProps` là sai tool. Dùng `defineProps<T>()`.\n- `satisfies Record<string, boolean>` không bắt tên flag gõ sai. Suy `Flag` từ object, hoặc dùng `Record` với key đã biết.\n- Thêm key bắt buộc vào contract rồi xem `satisfies` fail. Đổi tên value rồi xem chỗ gọi vẫn thấy literal. Ở admin nội bộ, bảng feature flag là `as const satisfies`, còn `Flag` là `keyof typeof flags`."
           }
         },
         {
@@ -2127,18 +2127,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: `typeof routes.home` is `string`. Cause: `as Record<string, string>`. Fix: `as const satisfies`.\n- Symptom: a typo flag compiles. Cause: `Record<string, boolean>`. Fix: derive keys from the object.\n- Symptom: `satisfies` on `JSON.parse`. Cause: thinking it parses. Fix: `unknown` plus a schema.\n- Symptom: used on `defineProps`. Cause: wrong tool. Fix: `defineProps<T>()`.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `typeof routes.home` là `string`. Nguyên nhân: `as Record<string, string>`. Cách xử lý: `as const satisfies`.\n- Triệu chứng: flag gõ sai vẫn compile. Nguyên nhân: `Record<string, boolean>`. Cách xử lý: suy key từ object.\n- Triệu chứng: `satisfies` trên `JSON.parse`. Nguyên nhân: nghĩ nó parse. Cách xử lý: `unknown` cộng schema.\n- Triệu chứng: dùng trên `defineProps`. Nguyên nhân: sai tool. Cách xử lý: `defineProps<T>()`."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `typeof routes.home` là `string`. Nguyên nhân: `as Record<string, string>`. Cách xử lý: `as const satisfies`.\n- Triệu chứng: flag gõ sai vẫn compile. Nguyên nhân: `Record<string, boolean>`. Cách xử lý: suy key từ object.\n- Triệu chứng: `satisfies` trên `JSON.parse`. Nguyên nhân: tưởng nó parse. Cách xử lý: `unknown` kèm schema.\n- Triệu chứng: dùng trên `defineProps`. Nguyên nhân: sai tool. Cách xử lý: `defineProps<T>()`."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "`as const` made a routes object too narrow to pass where `Record<string, string>` is required, or `as Record<…>` widened values and lost literal keys. What does `satisfies` change?",
-            "vi": "`as const` làm object routes hẹp quá không gán được chỗ cần `Record<string, string>`, hoặc `as Record<…>` nới value và mất key literal. `satisfies` đổi gì?"
+            "vi": "`as const` làm object routes hẹp quá, không gán được chỗ cần `Record<string, string>`, hoặc `as Record<…>` nới value và mất key literal. `satisfies` đổi được gì?"
           }
         },
         {
@@ -2149,7 +2149,7 @@
           },
           "text": {
             "en": "satisfies checks a value against a type without widening it. I use it for route maps, tokens, and flag tables so typeof routes.home stays slash while the object still matches the contract. as const alone does not prove every key exists; as Record widens literals and that is worse. It is compile-time only — remote JSON is still unknown, so I do not satisfies a parse result. I pair as const satisfies T at module boundaries, not on every object, and I do not use it on defineProps. On the admin product the feature-flag table is as const satisfies, and Flag is keyof typeof flags, so a typo name fails vue-tsc.",
-            "vi": "satisfies kiểm value với một type mà không nới. Tôi dùng cho route map, token, và bảng flag để typeof routes.home vẫn là slash trong khi object vẫn khớp contract. as const một mình không chứng minh mọi key tồn tại; as Record nới literal và tệ hơn. Nó chỉ lúc compile — JSON remote vẫn unknown, nên tôi không satisfies kết quả parse. Tôi pair as const satisfies T ở ranh module, không phải mọi object, và không dùng trên defineProps. Ở sản phẩm admin, bảng feature flag là as const satisfies, và Flag là keyof typeof flags, nên tên gõ sai fail vue-tsc."
+            "vi": "satisfies kiểm value với một type mà không nới. Mình dùng cho route map, token, và bảng flag để typeof routes.home vẫn là slash, trong khi object vẫn khớp contract. as const không đủ để chứng minh mọi key có mặt; as Record nới literal, tệ hơn. Nó chỉ lúc compile. JSON remote vẫn unknown, nên mình không satisfies kết quả parse. Mình ghép as const satisfies T ở ranh giới module, không phải mọi object, và không dùng trên defineProps. Ở admin nội bộ, bảng feature flag là as const satisfies, Flag là keyof typeof flags, nên tên gõ sai thì vue-tsc fail."
           }
         },
         {
@@ -2157,11 +2157,11 @@
           "items": [
             {
               "en": "`satisfies` checks without widening; `as Record` loses literals.",
-              "vi": "`satisfies` kiểm mà không nới; `as Record` mất literal."
+              "vi": "`satisfies` kiểm mà không nới; `as Record` làm mất literal."
             },
             {
               "en": "Pair `as const satisfies T` at config and catalog boundaries.",
-              "vi": "Hãy pair `as const satisfies T` ở ranh config và catalog."
+              "vi": "Ghép `as const satisfies T` ở ranh giới config và catalog."
             },
             {
               "en": "Remote JSON is still `unknown`. `satisfies` does not parse.",
@@ -2169,7 +2169,7 @@
             },
             {
               "en": "Do not use `satisfies` on `defineProps`. Use `defineProps<T>()`.",
-              "vi": "Đừng dùng `satisfies` trên `defineProps`. Hãy dùng `defineProps<T>()`."
+              "vi": "Đừng dùng `satisfies` trên `defineProps`. Dùng `defineProps<T>()`."
             }
           ]
         },
@@ -2181,7 +2181,7 @@
           },
           "text": {
             "en": "- **`as const` vs `satisfies`?** `as const` narrows. `satisfies` proves a contract without widening. Pair them.\n- **Why doesn’t `satisfies` help at IndexedDB / `postMessage`?** That data is `unknown`. Parse it.\n- **Does it freeze at runtime?** No. Compile-time only.\n- **Catch a typo flag name how?** Derive `Flag` from the object, not `Record<string, boolean>`.",
-            "vi": "- **`as const` khác `satisfies` thế nào?** `as const` hẹp. `satisfies` chứng minh contract mà không nới. Hãy pair chúng.\n- **Vì sao `satisfies` không giúp ở IndexedDB / `postMessage`?** Data đó là `unknown`. Hãy parse.\n- **Nó đóng băng lúc runtime?** Không. Chỉ lúc compile.\n- **Bắt tên flag gõ sai thế nào?** Suy `Flag` từ object, không dùng `Record<string, boolean>`."
+            "vi": "- **`as const` khác `satisfies` thế nào?** `as const` thì narrow. `satisfies` chứng minh contract mà không nới. Ghép hai cái.\n- **Vì sao `satisfies` không giúp ở IndexedDB / `postMessage`?** Data đó là `unknown`. Phải parse.\n- **Nó freeze lúc runtime?** Không. Chỉ lúc compile.\n- **Bắt tên flag gõ sai thế nào?** Suy `Flag` từ object, đừng dùng `Record<string, boolean>`."
           }
         },
         {
@@ -2203,14 +2203,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** `unknown` means you must narrow. `any` infects every expression it touches. JSON, `catch`, `postMessage`, and `localStorage` start as `unknown`, then parse.",
-            "vi": "**Tóm tắt:** `unknown` nghĩa là bạn phải hẹp. `any` lây mọi biểu thức nó chạm. JSON, `catch`, `postMessage`, và `localStorage` bắt đầu là `unknown`, rồi parse."
+            "vi": "**Tóm tắt:** `unknown` nghĩa là bạn phải narrow. `any` lây mọi expression nó đụng. JSON, `catch`, `postMessage`, và `localStorage` bắt đầu là `unknown`, rồi mới parse."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** `data: any` from `JSON.parse`, axios, `event.data`, IndexedDB, `postMessage`. Interviewers want why `unknown` is the senior default, and when `any` is a prudential exception.",
-            "vi": "**Vì sao quan trọng:** `data: any` từ `JSON.parse`, axios, `event.data`, IndexedDB, `postMessage`. Người phỏng vấn muốn vì sao `unknown` là mặc định senior, và khi nào `any` là ngoại lệ có chủ đích."
+            "vi": "**Vì sao quan trọng:** `data: any` từ `JSON.parse`, axios, `event.data`, IndexedDB, `postMessage`. Người phỏng vấn muốn vì sao `unknown` là mặc định senior, và khi nào `any` là ngoại lệ có cân nhắc."
           }
         },
         {
@@ -2219,19 +2219,19 @@
           "items": [
             {
               "en": "**How it works:** `unknown` is assignable to almost nothing until you narrow. `any` is assignable everywhere and poisons the next forty lines. `never` is “this cannot happen.”",
-              "vi": "**Cách hoạt động:** `unknown` gần như không gán được cho gì đến khi bạn hẹp. `any` gán được khắp nơi và đầu độc bốn mươi dòng sau. `never` là “điều này không thể xảy ra.”"
+              "vi": "**Cách hoạt động:** `unknown` gần như không gán được cho gì đến khi bạn narrow. `any` gán được mọi chỗ và đầu độc bốn mươi dòng sau. `never` là “chuyện này không xảy ra”."
             },
             {
               "en": "`JSON.parse` returns `any` in lib.dom — wrap it to return `unknown`. Generic default `<T = any>` poisons inference; default `unknown`. `any[]` stays `any` through `map`.",
-              "vi": "`JSON.parse` trả `any` trong lib.dom — hãy bọc để trả `unknown`. Default generic `<T = any>` đầu độc inference; hãy default `unknown`. `any[]` vẫn `any` qua `map`."
+              "vi": "`JSON.parse` trả `any` trong lib.dom: bọc lại để trả `unknown`. Generic default `<T = any>` phá inference; default là `unknown`. `any[]` đi qua `map` vẫn là `any`."
             },
             {
               "en": "Allow `any` only at a documented escape hatch — a broken `.d.ts` you will delete, or an eslint-disable with a ticket. After parse, Vue refs are `User`, not `unknown`.",
-              "vi": "Chỉ cho `any` ở lối thoát có ghi chú — `.d.ts` hỏng bạn sẽ xóa, hoặc eslint-disable kèm ticket. Sau parse, Vue ref là `User`, không phải `unknown`."
+              "vi": "Chỉ cho `any` ở lối thoát đã ghi chú: `.d.ts` hỏng bạn sẽ xóa, hoặc eslint-disable kèm ticket. Sau parse, Vue ref là `User`, không phải `unknown`."
             },
             {
               "en": "`object` is almost never what you wanted (`typeof null === 'object'`). Prefer `unknown` then narrow. Write `ref<User | null>(null)` so Vue does not infer `any`.",
-              "vi": "`object` gần như không phải thứ bạn muốn (`typeof null === 'object'`). Ưu tiên `unknown` rồi hẹp. Hãy viết `ref<User | null>(null)` để Vue không suy `any`."
+              "vi": "`object` gần như không phải thứ bạn muốn (`typeof null === 'object'`). Ưu tiên `unknown` rồi narrow. Viết `ref<User | null>(null)` để Vue không suy ra `any`."
             }
           ]
         },
@@ -2240,14 +2240,14 @@
           "lang": "ts",
           "code": {
             "en": "function parseJson(raw: string): unknown {\n  return JSON.parse(raw) // lib.dom returns any — wrap it\n}\n\nwindow.onmessage = (event: MessageEvent<unknown>) => {\n  const user = UserSchema.parse(event.data)\n  inbox.value = user\n}\n\ntry {\n  await reload()\n} catch (e: unknown) {\n  if (e instanceof Error) toast(e.message)\n}\n\nconst selected = ref<User | null>(null) // not ref() + null → any",
-            "vi": "function parseJson(raw: string): unknown {\n  return JSON.parse(raw) // lib.dom trả any — hãy bọc\n}\n\nwindow.onmessage = (event: MessageEvent<unknown>) => {\n  const user = UserSchema.parse(event.data)\n  inbox.value = user\n}\n\ntry {\n  await reload()\n} catch (e: unknown) {\n  if (e instanceof Error) toast(e.message)\n}\n\nconst selected = ref<User | null>(null) // không ref() + null → any"
+            "vi": "function parseJson(raw: string): unknown {\n  return JSON.parse(raw) // lib.dom trả any: hãy bọc\n}\n\nwindow.onmessage = (event: MessageEvent<unknown>) => {\n  const user = UserSchema.parse(event.data)\n  inbox.value = user\n}\n\ntry {\n  await reload()\n} catch (e: unknown) {\n  if (e instanceof Error) toast(e.message)\n}\n\nconst selected = ref<User | null>(null) // không phải ref() + null → any"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `parseJson` stops `JSON.parse` from leaking `any`. `MessageEvent<unknown>` forces a parse before `inbox` gets a `User`. `catch (e: unknown)` matches `useUnknownInCatchVariables`. `ref<User | null>(null)` keeps Vue from inferring `any`.",
-            "vi": "**Điều gì xảy ra:** `parseJson` chặn `JSON.parse` rò `any`. `MessageEvent<unknown>` buộc parse trước khi `inbox` nhận `User`. `catch (e: unknown)` khớp `useUnknownInCatchVariables`. `ref<User | null>(null)` giữ Vue khỏi suy `any`."
+            "vi": "**Điều gì xảy ra:** `parseJson` chặn `JSON.parse` rò `any`. `MessageEvent<unknown>` buộc parse trước khi `inbox` nhận `User`. `catch (e: unknown)` khớp `useUnknownInCatchVariables`. `ref<User | null>(null)` để Vue không suy ra `any`."
           }
         },
         {
@@ -2263,7 +2263,7 @@
             },
             {
               "en": "At the wire",
-              "vi": "Trên dây"
+              "vi": "Ở biên"
             }
           ],
           "rows": [
@@ -2274,7 +2274,7 @@
               },
               {
                 "en": "Must narrow",
-                "vi": "Phải hẹp"
+                "vi": "Phải narrow"
               },
               {
                 "en": "Default",
@@ -2306,7 +2306,7 @@
               },
               {
                 "en": "Exhaustive switch leftover",
-                "vi": "Phần còn lại của switch đủ nhánh"
+                "vi": "Leftover của exhaustive switch"
               }
             ],
             [
@@ -2316,7 +2316,7 @@
               },
               {
                 "en": "Non-primitive; `null` is still `object`",
-                "vi": "Không primitive; `null` vẫn `object`"
+                "vi": "Không phải primitive; `null` vẫn là `object`"
               },
               {
                 "en": "Prefer `unknown`",
@@ -2333,7 +2333,7 @@
           },
           "text": {
             "en": "- `unknown` is the default at every trust boundary. `any` is a defect unless you are migrating with a shrinking allowlist.\n- A single axios `response.data: any` turns the next forty lines into a non-typed program. Wrap the client once.\n- `unknown` is not a runtime check. You still write the guard or schema.\n- `noImplicitAny` plus a lint ban is not enough: `allowJs` implicit any from JS files still leaks.\n- Temporary `any` on a third-party widget needs an exit criterion. `never` belongs in exhaustive switches and functions that always throw — not as a default for an empty array. On the admin product, `MessageEvent` is `unknown` and `User` comes from `UserSchema.parse`.",
-            "vi": "- `unknown` là mặc định ở mọi ranh giới tin cậy. `any` là lỗi trừ khi bạn đang migrate với allowlist thu hẹp.\n- Một axios `response.data: any` biến bốn mươi dòng sau thành chương trình không type. Hãy bọc client một lần.\n- `unknown` không phải phép kiểm lúc runtime. Bạn vẫn viết guard hoặc schema.\n- `noImplicitAny` cộng lint ban vẫn chưa đủ: `allowJs` implicit any từ file JS vẫn rò.\n- `any` tạm trên widget third-party cần tiêu chí thoát. `never` thuộc switch đủ nhánh và hàm luôn ném — không phải default cho mảng rỗng. Ở sản phẩm admin, `MessageEvent` là `unknown` và `User` đến từ `UserSchema.parse`."
+            "vi": "- `unknown` là mặc định ở mọi ranh giới tin cậy. `any` là lỗi, trừ khi bạn đang migrate với allowlist đang thu hẹp.\n- Một axios `response.data: any` biến bốn mươi dòng sau thành chương trình không còn type. Bọc client một lần.\n- `unknown` không phải check lúc runtime. Bạn vẫn phải viết guard hoặc schema.\n- `noImplicitAny` kèm lint ban vẫn chưa đủ: implicit any từ file JS với `allowJs` vẫn rò.\n- `any` tạm trên widget third-party cần tiêu chí thoát. `never` dành cho exhaustive switch và hàm luôn throw, không phải default của mảng rỗng. Ở admin nội bộ, `MessageEvent` là `unknown` và `User` đến từ `UserSchema.parse`."
           }
         },
         {
@@ -2348,11 +2348,11 @@
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "`data: any` from `JSON.parse`, axios, `event.data`, IndexedDB, `postMessage`. Why is `unknown` the senior default, and when is `any` a prudential exception?",
-            "vi": "`data: any` từ `JSON.parse`, axios, `event.data`, IndexedDB, `postMessage`. Vì sao `unknown` là mặc định senior, và khi nào `any` là ngoại lệ có chủ đích?"
+            "vi": "`data: any` từ `JSON.parse`, axios, `event.data`, IndexedDB, `postMessage`. Vì sao `unknown` là mặc định của senior, và khi nào `any` là ngoại lệ có cân nhắc?"
           }
         },
         {
@@ -2363,7 +2363,7 @@
           },
           "text": {
             "en": "unknown means I must narrow; any infects every expression it touches. JSON, catch, postMessage, and localStorage start as unknown and go through a parser. I allow any only behind a ticket I will delete. One axios response.data typed any turns the next forty lines into a non-typed program. I wrap JSON.parse, default generics to unknown, and write ref of User or null so Vue does not infer any. never is the leftover of an exhaustive switch, not a default for an empty list. object is almost never what I wanted because typeof null is still object. On the admin product, MessageEvent is unknown and User comes from UserSchema.parse, and catch uses unknown.",
-            "vi": "unknown nghĩa là tôi phải hẹp; any lây mọi biểu thức nó chạm. JSON, catch, postMessage, và localStorage bắt đầu là unknown rồi qua parser. Tôi chỉ cho any sau ticket tôi sẽ xóa. Một axios response.data type any biến bốn mươi dòng sau thành chương trình không type. Tôi bọc JSON.parse, default generic là unknown, và viết ref của User hoặc null để Vue không suy any. never là phần còn lại của switch đủ nhánh, không phải default cho list rỗng. object gần như không phải thứ tôi muốn vì typeof null vẫn là object. Ở sản phẩm admin, MessageEvent là unknown và User đến từ UserSchema.parse, còn catch dùng unknown."
+            "vi": "unknown nghĩa là mình phải narrow; any lây mọi expression nó đụng. JSON, catch, postMessage, và localStorage bắt đầu là unknown rồi đi qua parser. Mình chỉ cho any sau một ticket mình sẽ xóa. Một axios response.data type any biến bốn mươi dòng sau thành chương trình không còn type. Mình bọc JSON.parse, default generic là unknown, và viết ref User hoặc null để Vue không suy ra any. never là leftover của exhaustive switch, không phải default cho list rỗng. object gần như không phải thứ mình muốn vì typeof null vẫn là object. Ở admin nội bộ, MessageEvent là unknown, User đến từ UserSchema.parse, còn catch dùng unknown."
           }
         },
         {
@@ -2375,15 +2375,15 @@
             },
             {
               "en": "A single `any` infects the next expressions. Wrap `JSON.parse`.",
-              "vi": "Một `any` lây các biểu thức sau. Hãy bọc `JSON.parse`."
+              "vi": "Một `any` lây các expression sau. Bọc `JSON.parse`."
             },
             {
               "en": "`noImplicitAny` plus a lint ban; implicit any from JS files still leaks.",
-              "vi": "`noImplicitAny` cộng lint ban; implicit any từ file JS vẫn rò."
+              "vi": "`noImplicitAny` kèm lint ban; implicit any từ file JS vẫn rò."
             },
             {
               "en": "`never` is exhaustive leftover, not a default empty array.",
-              "vi": "`never` là phần còn lại đủ nhánh, không phải mảng rỗng mặc định."
+              "vi": "`never` là leftover của exhaustive switch, không phải default mảng rỗng."
             }
           ]
         },
@@ -2395,7 +2395,7 @@
           },
           "text": {
             "en": "- **Why is `unknown` assignable to almost nothing, and `any` everywhere?** `unknown` forces a narrow. `any` turns the checker off.\n- **How do you type `window.onmessage` without `any`?** `MessageEvent<unknown>`, then parse `event.data`.\n- **Is a lint ban on `any` enough?** No. Implicit any from `allowJs` still leaks.\n- **`unknown` vs `Record<string, unknown>` for JSON?** Prefer `unknown`, then parse. A record still lies about keys.",
-            "vi": "- **Vì sao `unknown` gần như không gán được, còn `any` thì khắp nơi?** `unknown` buộc phải hẹp. `any` tắt checker.\n- **Type `window.onmessage` không `any` thế nào?** `MessageEvent<unknown>`, rồi parse `event.data`.\n- **Lint ban `any` đã đủ?** Chưa. Implicit any từ `allowJs` vẫn rò.\n- **`unknown` khác `Record<string, unknown>` cho JSON thế nào?** Ưu tiên `unknown`, rồi parse. Record vẫn nói dối về key."
+            "vi": "- **Vì sao `unknown` gần như không gán được, còn `any` thì mọi chỗ?** `unknown` buộc phải narrow. `any` tắt checker.\n- **Type `window.onmessage` không `any` thế nào?** `MessageEvent<unknown>`, rồi parse `event.data`.\n- **Lint ban `any` đã đủ chưa?** Chưa. Implicit any từ `allowJs` vẫn rò.\n- **`unknown` khác `Record<string, unknown>` cho JSON thế nào?** Ưu tiên `unknown`, rồi parse. Record vẫn nói dối về key."
           }
         },
         {
@@ -2417,14 +2417,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** `strict: true` and `isolatedModules: true` are the floor for a Vue 3 + Vite app. Measure with `vue-tsc --noEmit` and `strictTemplates`, not `tsc` alone.",
-            "vi": "**Tóm tắt:** `strict: true` và `isolatedModules: true` là sàn cho app Vue 3 + Vite. Hãy đo bằng `vue-tsc --noEmit` và `strictTemplates`, không chỉ `tsc`."
+            "vi": "**Tóm tắt:** `strict: true` và `isolatedModules: true` là sàn cho app Vue 3 + Vite. Đo bằng `vue-tsc --noEmit` và `strictTemplates`, không chỉ `tsc`."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** Interviewers ask what is in your `tsconfig` for a Vue 3 + Vite app, and which flags are non-negotiable in 2026. They are checking whether you have shipped `strict` or only talked about it.",
-            "vi": "**Vì sao quan trọng:** Người phỏng vấn hỏi `tsconfig` của bạn cho app Vue 3 + Vite có gì, và flag nào không thương lượng năm 2026. Họ kiểm bạn đã ship `strict` hay chỉ nói."
+            "vi": "**Vì sao quan trọng:** Người phỏng vấn hỏi `tsconfig` của bạn cho app Vue 3 + Vite có gì, và flag nào không thương lượng năm 2026. Họ muốn biết bạn đã ship `strict` hay mới chỉ nói miệng."
           }
         },
         {
@@ -2433,19 +2433,19 @@
           "items": [
             {
               "en": "**How it works:** `strict` turns on `strictNullChecks`, `noImplicitAny`, and `strictFunctionTypes`. Vite transpiles files alone, so `isolatedModules` is required.",
-              "vi": "**Cách hoạt động:** `strict` bật `strictNullChecks`, `noImplicitAny`, và `strictFunctionTypes`. Vite transpile từng file, nên cần `isolatedModules`."
+              "vi": "**Cách hoạt động:** `strict` bật `strictNullChecks`, `noImplicitAny`, và `strictFunctionTypes`. Vite transpile từng file một, nên cần `isolatedModules`."
             },
             {
               "en": "`const enum` becomes runtime `undefined` under Vite — use unions. Also want `noUncheckedIndexedAccess`, `useUnknownInCatchVariables`, `verbatimModuleSyntax`. `skipLibCheck` is a pragmatic yes for app repos.",
-              "vi": "`const enum` thành `undefined` lúc runtime dưới Vite — hãy dùng union. Còn muốn `noUncheckedIndexedAccess`, `useUnknownInCatchVariables`, `verbatimModuleSyntax`. `skipLibCheck` là yes thực dụng cho repo app."
+              "vi": "`const enum` thành `undefined` lúc runtime với Vite: hãy dùng union. Cũng nên có `noUncheckedIndexedAccess`, `useUnknownInCatchVariables`, `verbatimModuleSyntax`. `skipLibCheck` là yes thực dụng cho repo app."
             },
             {
               "en": "`vue-tsc --noEmit` type-checks `.vue`. `tsc` does not. `strictTemplates` is what catches wrong Vue props — many teams never enable it.",
-              "vi": "`vue-tsc --noEmit` type-check `.vue`. `tsc` thì không. `strictTemplates` mới bắt props Vue sai — nhiều team không bao giờ bật."
+              "vi": "`vue-tsc --noEmit` type-check `.vue`. `tsc` thì không. `strictTemplates` mới bắt props Vue sai. Nhiều team không bao giờ bật."
             },
             {
               "en": "Path aliases (`@/`) must match Vite and `tsconfig`. Two sources of truth is “works in the IDE, fails in the build.” Do not fight Nuxt’s generated `tsconfig`; extend it.",
-              "vi": "Path alias (`@/`) phải khớp Vite và `tsconfig`. Hai nguồn sự thật là “IDE được, build fail.” Đừng đánh `tsconfig` Nuxt sinh ra; hãy extend."
+              "vi": "Path alias (`@/`) phải khớp Vite và `tsconfig`. Hai nguồn sự thật là “IDE chạy được, build thì fail”. Đừng đánh nhau với `tsconfig` Nuxt generate; hãy extend."
             }
           ]
         },
@@ -2461,7 +2461,7 @@
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** Every flag in this snippet is one I would ship. `isolatedModules` is why `const enum` is banned. `strictTemplates` is why a wrong prop on a child fails CI. CI runs `vue-tsc --noEmit`, not `tsc` alone, so SFCs are included.",
-            "vi": "**Điều gì xảy ra:** Mọi flag trong snippet này là thứ tôi sẽ ship. `isolatedModules` là lý do cấm `const enum`. `strictTemplates` là lý do prop sai trên con fail CI. CI chạy `vue-tsc --noEmit`, không chỉ `tsc`, nên SFC được tính."
+            "vi": "**Điều gì xảy ra:** Mọi flag trong snippet này đều là thứ mình sẽ ship. `isolatedModules` là lý do cấm `const enum`. `strictTemplates` là lý do prop sai trên child fail CI. CI chạy `vue-tsc --noEmit`, không chỉ `tsc`, nên SFC cũng được check."
           }
         },
         {
@@ -2492,7 +2492,7 @@
               },
               {
                 "en": "Theater if `any` is everywhere",
-                "vi": "Diễn nếu `any` khắp nơi"
+                "vi": "Chỉ là diễn nếu `any` khắp nơi"
               }
             ],
             [
@@ -2502,7 +2502,7 @@
               },
               {
                 "en": "Vite transpiles files alone",
-                "vi": "Vite transpile từng file"
+                "vi": "Vite transpile từng file riêng"
               },
               {
                 "en": "Bans `const enum`",
@@ -2534,7 +2534,7 @@
               },
               {
                 "en": "Type-only import cannot cycle",
-                "vi": "Import chỉ type không cycle"
+                "vi": "Import chỉ type không tạo cycle"
               }
             ]
           ]
@@ -2547,7 +2547,7 @@
           },
           "text": {
             "en": "- `strict: true` with `any` everywhere is theater. Pair with a lint ban.\n- Turning on `noUncheckedIndexedAccess` in a 200k-line app is a week of `?.`. Do new packages first; do not pretend.\n- `verbatimModuleSyntax` makes import kind explicit so a type-only import cannot become a runtime cycle.\n- Project references vs one big config is a scaling choice, not a piety. `exactOptionalPropertyTypes` if the team can bear it.\n- `target` / `lib` too old: no `AbortSignal.any` types. Path aliases must match Vite or it works in the IDE and fails in the build. On the admin product CI runs `vue-tsc`, and a wrong child prop fails the pull request.",
-            "vi": "- `strict: true` với `any` khắp nơi là diễn. Hãy kèm lint ban.\n- Bật `noUncheckedIndexedAccess` trên app 200k dòng là một tuần `?.`. Hãy làm package mới trước; đừng giả vờ.\n- `verbatimModuleSyntax` làm loại import tường minh để import chỉ type không thành cycle lúc runtime.\n- Project references khác một config lớn là lựa chọn scale, không phải đạo đức. `exactOptionalPropertyTypes` nếu team chịu được.\n- `target` / `lib` quá cũ: không có type `AbortSignal.any`. Path alias phải khớp Vite nếu không IDE được, build fail. Ở sản phẩm admin CI chạy `vue-tsc`, và prop con sai làm fail pull request."
+            "vi": "- `strict: true` mà `any` khắp nơi chỉ là diễn. Kèm lint ban.\n- Bật `noUncheckedIndexedAccess` trên app 200k dòng là một tuần `?.`. Làm package mới trước; đừng giả vờ.\n- `verbatimModuleSyntax` bắt loại import phải tường minh, nên import chỉ type không thành cycle lúc runtime.\n- Project references hay một config lớn là lựa chọn scale, không phải chuyện đạo đức. `exactOptionalPropertyTypes` nếu team chịu nổi.\n- `target` / `lib` quá cũ: không có type `AbortSignal.any`. Path alias phải khớp Vite, không thì IDE chạy mà build fail. Trên sản phẩm admin, CI chạy `vue-tsc`, prop con sai thì fail pull request."
           }
         },
         {
@@ -2555,18 +2555,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: `const enum` is `undefined` in the browser. Cause: Vite + isolated transpile. Fix: unions.\n- Symptom: CI is green, Vue props are wrong. Cause: `tsc` only. Fix: `vue-tsc` + `strictTemplates`.\n- Symptom: `@/` works in the IDE, fails in build. Cause: alias mismatch. Fix: one source of truth.\n- Symptom: `strict` on, `any` everywhere. Cause: theater. Fix: lint ban + wrap the client.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `const enum` là `undefined` trên trình duyệt. Nguyên nhân: Vite + transpile tách. Cách xử lý: union.\n- Triệu chứng: CI xanh, props Vue sai. Nguyên nhân: chỉ `tsc`. Cách xử lý: `vue-tsc` + `strictTemplates`.\n- Triệu chứng: `@/` IDE được, build fail. Nguyên nhân: alias lệch. Cách xử lý: một nguồn sự thật.\n- Triệu chứng: `strict` bật, `any` khắp nơi. Nguyên nhân: diễn. Cách xử lý: lint ban + bọc client."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `const enum` là `undefined` trên trình duyệt. Nguyên nhân: Vite + transpile từng file. Cách xử lý: union.\n- Triệu chứng: CI xanh, props Vue sai. Nguyên nhân: chỉ `tsc`. Cách xử lý: `vue-tsc` + `strictTemplates`.\n- Triệu chứng: `@/` IDE chạy được, build fail. Nguyên nhân: alias lệch. Cách xử lý: một nguồn duy nhất.\n- Triệu chứng: `strict` bật, `any` khắp nơi. Nguyên nhân: diễn. Cách xử lý: lint ban + bọc client."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "What is in your `tsconfig` for a Vue 3 + Vite app, and which flags are non-negotiable in 2026? They are checking whether you have shipped `strict` or only talked about it.",
-            "vi": "`tsconfig` của bạn cho app Vue 3 + Vite có gì, và flag nào không thương lượng năm 2026? Họ kiểm bạn đã ship `strict` hay chỉ nói."
+            "vi": "App Vue 3 + Vite thì `tsconfig` của bạn có gì, và flag nào không thương lượng được năm 2026? Họ đang xem bạn đã ship `strict` hay chỉ nói suông."
           }
         },
         {
@@ -2577,7 +2577,7 @@
           },
           "text": {
             "en": "strict true and isolatedModules true are the floor on Vue 3 plus Vite — Vite transpiles files alone, so const enum becomes runtime undefined and I use unions. I also want noUncheckedIndexedAccess, useUnknownInCatchVariables, and verbatimModuleSyntax. I measure with vue-tsc noEmit and strictTemplates, not tsc alone. Turning on index checks in a 200k-line app is a week of optional chaining; I do new packages first and I do not pretend. Path aliases must match Vite or it works in the IDE and fails in the build. skipLibCheck is a pragmatic yes for app repos. On the admin product CI runs vue-tsc, and a wrong child prop fails the pull request.",
-            "vi": "strict true và isolatedModules true là sàn trên Vue 3 cộng Vite — Vite transpile từng file, nên const enum thành undefined lúc runtime và tôi dùng union. Tôi còn muốn noUncheckedIndexedAccess, useUnknownInCatchVariables, và verbatimModuleSyntax. Tôi đo bằng vue-tsc noEmit và strictTemplates, không chỉ tsc. Bật kiểm index trên app 200k dòng là một tuần optional chaining; tôi làm package mới trước và không giả vờ. Path alias phải khớp Vite nếu không IDE được, build fail. Ở sản phẩm admin CI chạy vue-tsc, và prop con sai làm fail pull request."
+            "vi": "strict true và isolatedModules true là sàn cho Vue 3 kèm Vite. Vite transpile từng file riêng, nên const enum thành undefined lúc runtime và mình dùng union. Mình cũng muốn noUncheckedIndexedAccess, useUnknownInCatchVariables, và verbatimModuleSyntax. Mình đo bằng vue-tsc noEmit và strictTemplates, không chỉ tsc. Bật kiểm index trên app 200k dòng là một tuần optional chaining; mình làm package mới trước, không giả vờ. Path alias phải khớp Vite, không thì IDE chạy mà build fail. skipLibCheck là yes thực dụng cho repo app. Trên sản phẩm admin, CI chạy vue-tsc, prop con sai thì fail pull request."
           }
         },
         {
@@ -2589,15 +2589,15 @@
             },
             {
               "en": "`isolatedModules` bans `const enum`. Unions survive Vite.",
-              "vi": "`isolatedModules` cấm `const enum`. Union sống sót với Vite."
+              "vi": "`isolatedModules` cấm `const enum`. Union vẫn chạy được với Vite."
             },
             {
               "en": "`strictTemplates` is what catches wrong Vue props.",
-              "vi": "`strictTemplates` mới bắt props Vue sai."
+              "vi": "`strictTemplates` mới bắt được props Vue sai."
             },
             {
               "en": "`strict` with `any` everywhere is theater. Pair a lint ban.",
-              "vi": "`strict` với `any` khắp nơi là diễn. Hãy kèm lint ban."
+              "vi": "`strict` mà `any` khắp nơi chỉ là diễn. Kèm lint ban."
             }
           ]
         },
@@ -2609,7 +2609,7 @@
           },
           "text": {
             "en": "- **Why does `isolatedModules` ban `const enum`?** Each file is transpiled alone, so the enum object never exists at runtime.\n- **`vue-tsc` vs `tsc`?** Only `vue-tsc` type-checks `.vue` files.\n- **What does `noUncheckedIndexedAccess` change?** `rows[0]` and `Map.get` become `T | undefined`.\n- **How do `verbatimModuleSyntax` and `import type` help?** A type-only import cannot become a runtime cycle.",
-            "vi": "- **Vì sao `isolatedModules` cấm `const enum`?** Mỗi file transpile riêng, nên object enum không tồn tại lúc runtime.\n- **`vue-tsc` khác `tsc` thế nào?** Chỉ `vue-tsc` type-check file `.vue`.\n- **`noUncheckedIndexedAccess` đổi gì?** `rows[0]` và `Map.get` thành `T | undefined`.\n- **`verbatimModuleSyntax` và `import type` giúp gì?** Import chỉ type không thành cycle lúc runtime."
+            "vi": "- **Vì sao `isolatedModules` cấm `const enum`?** Mỗi file được transpile riêng, nên object enum không tồn tại lúc runtime.\n- **`vue-tsc` khác `tsc` thế nào?** Chỉ `vue-tsc` type-check file `.vue`.\n- **`noUncheckedIndexedAccess` đổi gì?** `rows[0]` và `Map.get` thành `T | undefined`.\n- **`verbatimModuleSyntax` và `import type` giúp gì?** Import chỉ type không thành cycle lúc runtime."
           }
         },
         {
@@ -2620,7 +2620,7 @@
           "level": 4,
           "text": {
             "en": "2.2.10. Typing Vue props and emits",
-            "vi": "2.2.10. Type props và emit Vue"
+            "vi": "2.2.10. Type props và emit của Vue"
           },
           "id": {
             "en": "2210-typing-vue-props-and-emits",
@@ -2631,14 +2631,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Type Vue 3.3+ compiler macros — `defineProps<T>()` and `defineEmits<{ select: [id: UserId] }>()` — and let `vue-tsc` fail the parent on a wrong `userId` or a missing listener.",
-            "vi": "**Tóm tắt:** Hãy type compiler macro Vue 3.3+ — `defineProps<T>()` và `defineEmits<{ select: [id: UserId] }>()` — và để `vue-tsc` fail parent khi sai `userId` hoặc thiếu listener."
+            "vi": "**Tóm tắt:** Type compiler macro Vue 3.3+: `defineProps<T>()` và `defineEmits<{ select: [id: UserId] }>()`, rồi để `vue-tsc` fail parent khi `userId` sai hoặc thiếu listener."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** Type this component: `v-model`, a branded `userId`, a discriminated `variant`, and an emit the parent must handle. Compare briefly to React props. No untyped runtime `defineProps` object.",
-            "vi": "**Vì sao quan trọng:** Hãy type component này: `v-model`, `userId` branded, `variant` discriminated, và emit parent phải xử lý. So nhanh với React props. Không object `defineProps` runtime không type."
+            "vi": "**Vì sao quan trọng:** Type component này: `v-model`, `userId` branded, `variant` discriminated, và emit mà parent phải xử lý. So nhanh với React props. Không dùng object `defineProps` runtime chưa type."
           }
         },
         {
@@ -2647,19 +2647,19 @@
           "items": [
             {
               "en": "**How it works:** `defineProps<T>()` and `defineEmits<{ change: [id: UserId] }>()`. `v-model` is `modelValue` plus `'update:modelValue'`. Defaults go in `withDefaults`.",
-              "vi": "**Cách hoạt động:** `defineProps<T>()` và `defineEmits<{ change: [id: UserId] }>()`. `v-model` là `modelValue` cộng `'update:modelValue'`. Default nằm trong `withDefaults`."
+              "vi": "**Cách hoạt động:** `defineProps<T>()` và `defineEmits<{ change: [id: UserId] }>()`. `v-model` là `modelValue` kèm `'update:modelValue'`. Default để trong `withDefaults`."
             },
             {
               "en": "`defineModel<UserId>()` is the 3.4+ shortcut — still `modelValue` on the wire. Props are one-way; mutating a prop field can type-check and still be a Vue bug.",
-              "vi": "`defineModel<UserId>()` là lối tắt 3.4+ — trên dây vẫn `modelValue`. Props một chiều; mutate field prop vẫn có thể type-check và vẫn là bug Vue."
+              "vi": "`defineModel<UserId>()` là lối tắt 3.4+; khi truyền đi vẫn là `modelValue`. Props một chiều; mutate một field của prop vẫn type-check được, nhưng vẫn là bug Vue."
             },
             {
               "en": "Undeclared `emits` fall through as native events / vnode attrs, and the parent listener is not typed. Do not type emits as `(e: string, ...args: any[])`.",
-              "vi": "`emits` không khai báo rơi xuống như event native / vnode attrs, và listener parent không có type. Đừng type emit là `(e: string, ...args: any[])`."
+              "vi": "`emits` chưa khai báo đi tiếp như event native / vnode attrs, và listener phía parent không có type. Đừng type emit kiểu `(e: string, ...args: any[])`."
             },
             {
               "en": "React folds emits into `onChange` callbacks. Vue splits props and emits, so `v-model` typing is special. Parse branded `UserId` at the parent route, not with `as` in the child.",
-              "vi": "React gộp emit vào callback `onChange`. Vue tách props và emit, nên type `v-model` đặc biệt. Parse `UserId` branded ở parent route, không `as` trong con."
+              "vi": "React gộp emit vào callback `onChange`. Vue tách props và emit, nên type của `v-model` là chuyện riêng. Parse `UserId` branded ở route phía parent, không `as` trong con."
             }
           ]
         },
@@ -2668,14 +2668,14 @@
           "lang": "ts",
           "code": {
             "en": "const props = withDefaults(\n  defineProps<{\n    userId: UserId\n    variant: 'idle' | 'loading' | 'success' | 'error'\n    modelValue: string\n    disabled?: boolean\n  }>(),\n  { disabled: false },\n)\n\nconst emit = defineEmits<{\n  'update:modelValue': [value: string]\n  select: [id: UserId]\n}>()\n\nfunction onSelect() {\n  emit('select', props.userId)\n}\n// emit('select', 'raw-string') // error if UserId is branded",
-            "vi": "const props = withDefaults(\n  defineProps<{\n    userId: UserId\n    variant: 'idle' | 'loading' | 'success' | 'error'\n    modelValue: string\n    disabled?: boolean\n  }>(),\n  { disabled: false },\n)\n\nconst emit = defineEmits<{\n  'update:modelValue': [value: string]\n  select: [id: UserId]\n}>()\n\nfunction onSelect() {\n  emit('select', props.userId)\n}\n// emit('select', 'raw-string') // lỗi nếu UserId branded"
+            "vi": "const props = withDefaults(\n  defineProps<{\n    userId: UserId\n    variant: 'idle' | 'loading' | 'success' | 'error'\n    modelValue: string\n    disabled?: boolean\n  }>(),\n  { disabled: false },\n)\n\nconst emit = defineEmits<{\n  'update:modelValue': [value: string]\n  select: [id: UserId]\n}>()\n\nfunction onSelect() {\n  emit('select', props.userId)\n}\n// emit('select', 'raw-string') // lỗi nếu UserId là branded"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** The parent must pass a branded `userId` and a `variant` tag. `v-model` is `modelValue` plus the update emit. `select` requires a `UserId` payload, so a raw string fails. Defaults stay in `withDefaults`, not a runtime props object.",
-            "vi": "**Điều gì xảy ra:** Parent phải truyền `userId` branded và tag `variant`. `v-model` là `modelValue` cộng emit update. `select` cần payload `UserId`, nên chuỗi thô fail. Default nằm trong `withDefaults`, không phải object props runtime."
+            "vi": "**Điều gì xảy ra:** Parent phải truyền `userId` branded và tag `variant`. `v-model` là `modelValue` kèm emit update. `select` cần payload `UserId`, nên chuỗi thô sẽ fail. Default nằm trong `withDefaults`, không phải object props runtime."
           }
         },
         {
@@ -2683,7 +2683,7 @@
           "headers": [
             {
               "en": "Need",
-              "vi": "Nhu cầu"
+              "vi": "Cần"
             },
             {
               "en": "Vue",
@@ -2691,7 +2691,7 @@
             },
             {
               "en": "React analog",
-              "vi": "Tương tự React"
+              "vi": "Tương đương React"
             }
           ],
           "rows": [
@@ -2706,13 +2706,13 @@
               },
               {
                 "en": "One props object type",
-                "vi": "Một object type props"
+                "vi": "Một type object props"
               }
             ],
             [
               {
                 "en": "Emits",
-                "vi": "Emit"
+                "vi": "Emits"
               },
               {
                 "en": "`defineEmits<{ ev: [T] }>()`",
@@ -2761,7 +2761,7 @@
           },
           "text": {
             "en": "- In a TS-only app the type is the contract. Runtime `props: { userId: String }` is for custom elements and JS-only usage.\n- Mutating `props.user.role` is type-legal and a Vue bug. Pass primitives or emit.\n- Generic components (`generic=\"T\"` in 3.3+) are how a Select infers option type. Do not `any` the option.\n- Hydration: default props that use `Date.now()` or `Math.random()` in the factory desync SSR.\n- `vue-tsc` on the parent must fail a wrong `userId` or a missing listener. Parse the brand at the route, not in the child. On the admin product the user chip is that component, and a missing select listener fails CI.",
-            "vi": "- Trong app chỉ TS, type là contract. Runtime `props: { userId: String }` dành cho custom element và JS-only.\n- Mutate `props.user.role` vẫn type-legal và là bug Vue. Hãy truyền primitive hoặc emit.\n- Generic component (`generic=\"T\"` từ 3.3+) là cách Select suy type option. Đừng `any` option.\n- Hydration: default props dùng `Date.now()` hoặc `Math.random()` trong factory làm lệch SSR.\n- `vue-tsc` trên parent phải fail `userId` sai hoặc thiếu listener. Parse brand ở route, không trong con. Ở sản phẩm admin, chip user là component đó, và thiếu listener select làm fail CI."
+            "vi": "- Trong app chỉ TS, type chính là contract. Runtime `props: { userId: String }` dành cho custom element và chỗ chỉ dùng JS.\n- Mutate `props.user.role` vẫn type-check được, nhưng là bug Vue. Truyền primitive hoặc emit.\n- Generic component (`generic=\"T\"` từ 3.3+) là cách Select suy type của option. Đừng gán `any` cho option.\n- Hydration: default props dùng `Date.now()` hoặc `Math.random()` trong factory sẽ lệch SSR.\n- `vue-tsc` trên parent phải fail khi `userId` sai hoặc thiếu listener. Parse brand ở route, không trong con. Trên sản phẩm admin, chip user chính là component đó, thiếu listener select thì CI fail."
           }
         },
         {
@@ -2769,18 +2769,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: `emit('update:modelValue')` with no payload. Cause: undeclared emits. Fix: typed `defineEmits`.\n- Symptom: every parent `as`s `userId`. Cause: prop typed `string`. Fix: branded `UserId`, parse at the route.\n- Symptom: mutating `props.user.role` “works.” Cause: object props are references. Fix: primitives or emit.\n- Symptom: runtime `defineProps({ userId: String })` in a TS app. Cause: old habit. Fix: `defineProps<T>()`.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `emit('update:modelValue')` không payload. Nguyên nhân: emits chưa khai. Cách xử lý: `defineEmits` có type.\n- Triệu chứng: mọi parent `as` `userId`. Nguyên nhân: prop type `string`. Cách xử lý: `UserId` branded, parse ở route.\n- Triệu chứng: mutate `props.user.role` “chạy.” Nguyên nhân: object prop là reference. Cách xử lý: primitive hoặc emit.\n- Triệu chứng: runtime `defineProps({ userId: String })` trong app TS. Nguyên nhân: thói quen cũ. Cách xử lý: `defineProps<T>()`."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `emit('update:modelValue')` không có payload. Nguyên nhân: emits chưa khai báo. Cách xử lý: `defineEmits` có type.\n- Triệu chứng: mọi parent đều `as` `userId`. Nguyên nhân: prop type `string`. Cách xử lý: `UserId` branded, parse ở route.\n- Triệu chứng: mutate `props.user.role` “chạy được”. Nguyên nhân: object prop là reference. Cách xử lý: primitive hoặc emit.\n- Triệu chứng: runtime `defineProps({ userId: String })` trong app TS. Nguyên nhân: thói quen cũ. Cách xử lý: `defineProps<T>()`."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "Type this component: `v-model`, a branded `userId`, a discriminated `variant`, and an emit the parent must handle. Compare briefly to React props. No untyped runtime `defineProps` object.",
-            "vi": "Hãy type component này: `v-model`, `userId` branded, `variant` discriminated, và emit parent phải xử lý. So nhanh với React props. Không object `defineProps` runtime không type."
+            "vi": "Type component này: `v-model`, `userId` branded, `variant` discriminated, và emit mà parent phải xử lý. So nhanh với React props. Không dùng object `defineProps` runtime chưa type."
           }
         },
         {
@@ -2791,7 +2791,7 @@
           },
           "text": {
             "en": "I type Vue 3.3 macros: defineProps of T and defineEmits with select taking a UserId tuple. v-model is modelValue plus update-colon-modelValue; defineModel is sugar, still modelValue on the wire. I do not ship an untyped runtime props object in a TS-only app. Mutating props.user.role is type-legal and a Vue bug — I pass primitives or emit. React folds emits into callbacks; Vue splits them, which is why v-model typing is special. vue-tsc on the parent must fail a wrong userId or a missing listener. I parse UserId at the route, not with as in the child. On the admin product the user chip is that component, and a missing select listener fails CI.",
-            "vi": "Tôi type macro Vue 3.3: defineProps của T và defineEmits với select nhận tuple UserId. v-model là modelValue cộng update-colon-modelValue; defineModel là sugar, trên dây vẫn modelValue. Tôi không ship object props runtime không type trong app chỉ TS. Mutate props.user.role vẫn type-legal và là bug Vue — tôi truyền primitive hoặc emit. React gộp emit vào callback; Vue tách, nên type v-model đặc biệt. vue-tsc trên parent phải fail userId sai hoặc thiếu listener. Tôi parse UserId ở route, không as trong con. Ở sản phẩm admin, chip user là component đó, và thiếu listener select làm fail CI."
+            "vi": "Mình type macro Vue 3.3: defineProps T và defineEmits với select nhận tuple UserId. v-model là modelValue kèm update-colon-modelValue; defineModel là sugar, trên wire vẫn là modelValue. Trong app chỉ TS, mình không ship object props runtime chưa type. Mutate props.user.role vẫn type-check được, nhưng là bug Vue: mình truyền primitive hoặc emit. React gộp emit vào callback; Vue tách chúng, nên type v-model là chuyện riêng. vue-tsc trên parent phải fail khi userId sai hoặc thiếu listener. Mình parse UserId ở route, không as trong con. Trên sản phẩm admin, chip user chính là component đó, thiếu listener select thì CI fail."
           }
         },
         {
@@ -2799,19 +2799,19 @@
           "items": [
             {
               "en": "`defineProps<T>()` + `defineEmits<{ ev: [payload] }>()` — not `(e: string, ...args: any[])`.",
-              "vi": "`defineProps<T>()` + `defineEmits<{ ev: [payload] }>()` — không `(e: string, ...args: any[])`."
+              "vi": "`defineProps<T>()` + `defineEmits<{ ev: [payload] }>()`: không phải `(e: string, ...args: any[])`."
             },
             {
               "en": "Mutating a prop field can type-check and still be a Vue runtime bug.",
-              "vi": "Mutate field prop vẫn có thể type-check và vẫn là bug Vue lúc runtime."
+              "vi": "Mutate một field của prop vẫn type-check được, nhưng vẫn là bug Vue lúc runtime."
             },
             {
               "en": "`vue-tsc` on the parent must fail a wrong `userId` or a missing listener.",
-              "vi": "`vue-tsc` trên parent phải fail `userId` sai hoặc thiếu listener."
+              "vi": "`vue-tsc` trên parent phải fail khi `userId` sai hoặc thiếu listener."
             },
             {
               "en": "`v-model` is `modelValue` plus an update emit. `defineModel` is sugar.",
-              "vi": "`v-model` là `modelValue` cộng emit update. `defineModel` là sugar."
+              "vi": "`v-model` là `modelValue` kèm emit update. `defineModel` là sugar."
             }
           ]
         },
@@ -2823,7 +2823,7 @@
           },
           "text": {
             "en": "- **Runtime props vs type-only?** Runtime `String` / `Boolean` for custom elements and JS-only usage. TS-only apps use `defineProps<T>()`.\n- **Generic components?** `generic=\"T\"` on the SFC so a Select infers option type.\n- **React comparison?** Props object plus `onChange` callbacks. Vue splits props and emits, so v-model is special.\n- **SSR default trap?** `Date.now()` or `Math.random()` in `withDefaults` desyncs hydration.",
-            "vi": "- **Props runtime khác type-only thế nào?** Runtime `String` / `Boolean` cho custom element và JS-only. App chỉ TS dùng `defineProps<T>()`.\n- **Generic component?** `generic=\"T\"` trên SFC để Select suy type option.\n- **So với React?** Object props cộng callback `onChange`. Vue tách props và emit, nên v-model đặc biệt.\n- **Bẫy default SSR?** `Date.now()` hoặc `Math.random()` trong `withDefaults` làm lệch hydration."
+            "vi": "- **Props runtime khác type-only?** Runtime `String` / `Boolean` cho custom element và chỗ chỉ dùng JS. App chỉ TS dùng `defineProps<T>()`.\n- **Generic component?** `generic=\"T\"` trên SFC để Select suy type option.\n- **So với React?** Object props kèm callback `onChange`. Vue tách props và emit, nên v-model là chuyện riêng.\n- **Bẫy default SSR?** `Date.now()` hoặc `Math.random()` trong `withDefaults` làm lệch hydration."
           }
         },
         {

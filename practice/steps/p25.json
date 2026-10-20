@@ -9,7 +9,7 @@
   },
   "summary": {
     "en": "Public pages are cached for speed, so publishing must explicitly refresh them.",
-    "vi": "Trang public được cache để nhanh, nên lúc publish phải refresh chủ động."
+    "vi": "Trang public được cache cho nhanh, nên lúc publish phải refresh chúng chủ động."
   },
   "estimateMin": 120,
   "prereqs": ["p22", "p14"],
@@ -22,7 +22,7 @@
       },
       "explain": {
         "en": "Next cache key per entity (`post:<slug>`). Publishing one post should not flush the whole site.",
-        "vi": "Key cache Next theo từng entity (`post:<slug>`). Publish một post không được xóa cache cả site."
+        "vi": "Cache key của Next theo từng entity (`post:<slug>`). Publish một post thì không được xóa cache cả site."
       }
     },
     {
@@ -32,7 +32,7 @@
       },
       "explain": {
         "en": "A signed cookie that lets the owner see DRAFT rows on the public template. Logged-out visitors still get 404.",
-        "vi": "Cookie đã ký cho phép owner xem hàng DRAFT trên template public. Khách chưa login vẫn nhận 404."
+        "vi": "Cookie đã ký cho owner xem hàng DRAFT trên template public. Khách đã logout vẫn nhận 404."
       }
     },
     {
@@ -73,7 +73,7 @@
       },
       "detail": {
         "en": "`POST /posts/:id/publish` and `/unpublish` (same for projects). Set/clear `publishedAt`. Reject publish when EN required fields are empty or contain `TODO` / `lorem` (spec §5.11).",
-        "vi": "`POST /posts/:id/publish` và `/unpublish` (project tương tự). Set/xóa `publishedAt`. Từ chối publish khi field EN bắt buộc trống hoặc chứa `TODO` / `lorem` (spec §5.11)."
+        "vi": "`POST /posts/:id/publish` và `/unpublish` (project cũng vậy). Set/xóa `publishedAt`. Từ chối publish khi field EN bắt buộc trống hoặc chứa `TODO` / `lorem` (spec §5.11)."
       }
     },
     {
@@ -83,7 +83,7 @@
       },
       "detail": {
         "en": "Web route `POST /api/revalidate` checks a secret header and runs `revalidateTag('post:<slug>')` (and `project:<slug>`). API calls it after a successful publish.",
-        "vi": "Route web `POST /api/revalidate` kiểm header secret và chạy `revalidateTag('post:<slug>')` (và `project:<slug>`). API gọi nó sau khi publish thành công."
+        "vi": "Route web `POST /api/revalidate` check header secret rồi chạy `revalidateTag('post:<slug>')` (và `project:<slug>`). API gọi nó sau khi publish thành công."
       },
       "code": {
         "lang": "ts",
@@ -97,24 +97,24 @@
       },
       "detail": {
         "en": "An admin-only preview cookie shows the draft on the public template. Without it, `GET /posts/:slug` stays 404 for DRAFT.",
-        "vi": "Cookie preview chỉ dành admin hiện draft trên template public. Không có cookie thì `GET /posts/:slug` vẫn 404 với DRAFT."
+        "vi": "Cookie preview chỉ dành admin, hiện draft trên template public. Không có cookie thì `GET /posts/:slug` vẫn 404 với DRAFT."
       }
     }
   ],
   "doneWhen": [
     {
       "en": "Publishing shows the change on the public page in under 5 s without a redeploy.",
-      "vi": "Publish hiện thay đổi trên trang public dưới 5 giây, không cần redeploy."
+      "vi": "Publish xong, thay đổi hiện trên trang public dưới 5 giây, không cần redeploy."
     },
     {
       "en": "A draft is visible only in preview (public URL still 404).",
-      "vi": "Draft chỉ thấy trong preview (URL public vẫn 404)."
+      "vi": "Draft chỉ thấy được trong preview (URL public vẫn 404)."
     }
   ],
   "pitfalls": [
     {
       "en": "Revalidating the whole site. Tag per entity.",
-      "vi": "Revalidate cả site. Hãy tag theo từng entity."
+      "vi": "Revalidate cả site. Tag theo từng entity."
     }
   ],
   "commit": "feat: publish + on-demand revalidate"

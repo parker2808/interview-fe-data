@@ -7,7 +7,7 @@
   },
   "summary": {
     "en": "Senior JavaScript for Vue and React interviews: array methods, promises, the event loop, scope, and cancellation. Start with section 1.1; interviewers drill the event loop and async/await almost every round.",
-    "vi": "JavaScript mức senior cho phỏng vấn Vue và React: array method, promise, event loop, phạm vi, và cancellation. Bắt đầu từ mục 1.1; người phỏng vấn đào event loop và async/await gần như mọi vòng."
+    "vi": "JavaScript mức senior cho phỏng vấn Vue và React: array method, promise, event loop, scope, và cancellation. Bắt đầu từ 1.1; người phỏng vấn xoáy event loop và async/await gần như mọi vòng."
   },
   "category": "core",
   "order": 1,
@@ -42,14 +42,14 @@
           "type": "paragraph",
           "text": {
             "en": "This doc is senior JavaScript for Vue and React interviews: array methods and mutation, promises, the event loop, scope, closures, `this`, memory, and cancellation. It is for engineers who already ship UI and now need to explain the mechanism, not recite the API.",
-            "vi": "Tài liệu này là JavaScript mức senior cho phỏng vấn Vue và React: array method và mutation, promise, event loop, phạm vi (scope), closure, `this`, bộ nhớ, và cancellation. Dành cho engineer đã ship UI và giờ cần giải thích cơ chế, không phải thuộc lòng API."
+            "vi": "Bài này nói về JavaScript mức senior cho phỏng vấn Vue và React: array method và mutation, promise, event loop, scope, closure, `this`, memory, và cancellation. Dành cho engineer đã ship UI, giờ cần giải thích cơ chế, không phải thuộc lòng API."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "Study 1.1 first (`map`/`filter`/`reduce`, promises, the event loop, `var`/`let`/`const`). Interviewers ask the event loop and `async`/`await` almost every time. Then read 1.2 for closures, `this`, prototypes, and `AbortController`. For every topic, name the constraint, the failure, and how you would prove the fix in DevTools.",
-            "vi": "Hãy học 1.1 trước (`map`/`filter`/`reduce`, promise, event loop, `var`/`let`/`const`). Người phỏng vấn hỏi event loop và `async`/`await` gần như mọi lần. Rồi đọc 1.2 về closure, `this`, prototype, và `AbortController`. Với mỗi topic, hãy nêu ràng buộc, kịch bản lỗi, và cách bạn chứng minh phần sửa trong DevTools."
+            "vi": "Đọc 1.1 trước (`map`/`filter`/`reduce`, promise, event loop, `var`/`let`/`const`). Người phỏng vấn hỏi event loop và `async`/`await` gần như mọi lần. Rồi đọc 1.2 về closure, `this`, prototype, và `AbortController`. Với mỗi topic, nêu rõ ràng buộc, chỗ gãy, và cách bạn chứng minh fix trong DevTools."
           }
         },
         {
@@ -131,14 +131,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** A higher-order function takes a function as an argument, returns a function, or both. `map`, `filter`, `reduce`, `some`, and `find` are the array helpers you will be asked to choose between.",
-            "vi": "**Tóm tắt:** Hàm bậc cao (higher-order function) nhận một hàm làm đối số, trả về một hàm, hoặc cả hai. `map`, `filter`, `reduce`, `some`, và `find` là các helper trên mảng mà người phỏng vấn sẽ bắt bạn chọn."
+            "vi": "**Tóm tắt:** Hàm bậc cao nhận một hàm làm đối số, trả về một hàm, hoặc cả hai. `map`, `filter`, `reduce`, `some`, và `find` là các helper trên mảng mà bạn sẽ phải chọn."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** In a Vue 3 table bound to `rows`, a teammate writes `rows.sort(byName).filter(isActive).map(toView)`. The source order disappears, a child that received `rows` as a prop mutates the parent, and a 100k-row list hitches. The bug is mutation and wasted copies, not “you forgot `forEach`.”",
-            "vi": "**Vì sao quan trọng:** Trong bảng Vue 3 gắn vào `rows`, đồng nghiệp viết `rows.sort(byName).filter(isActive).map(toView)`. Thứ tự gốc mất, component con nhận `rows` qua props làm thay đổi parent, và danh sách 100k hàng bị giật. Bug nằm ở mutation và bản copy thừa, không phải “quên `forEach`.”"
+            "vi": "**Vì sao quan trọng:** Trong bảng Vue 3 gắn vào `rows`, đồng nghiệp viết `rows.sort(byName).filter(isActive).map(toView)`. Thứ tự gốc mất, child nhận `rows` qua prop lại mutate parent, và list 100k hàng bị giật. Bug nằm ở mutation và copy thừa, không phải “quên `forEach`”."
           }
         },
         {
@@ -147,7 +147,7 @@
           "items": [
             {
               "en": "**How it works:** `map` always returns a new array of the same length. `filter` returns a subset. `reduce` folds items into one value. `some`/`find` stop early with a boolean or the first match.",
-              "vi": "**Cách hoạt động:** `map` luôn trả mảng mới cùng độ dài. `filter` trả tập con. `reduce` gộp các phần tử thành một giá trị. `some`/`find` dừng sớm với boolean hoặc phần tử đầu tiên khớp."
+              "vi": "**Cách hoạt động:** `map` luôn trả mảng mới cùng độ dài. `filter` trả tập con. `reduce` gộp các phần tử thành một giá trị. `some`/`find` dừng sớm với boolean hoặc phần tử khớp đầu tiên."
             },
             {
               "en": "`forEach` is for side effects (tác dụng phụ) only. It returns `undefined`, so using it with `push` to build an array is a worse `map`.",
@@ -155,11 +155,11 @@
             },
             {
               "en": "`sort`, `reverse`, and `splice` mutate the original array and return the same reference. `toSorted` / `toReversed` / `toSpliced` copy first.",
-              "vi": "`sort`, `reverse`, và `splice` thay đổi mảng gốc và trả cùng reference. `toSorted` / `toReversed` / `toSpliced` copy trước."
+              "vi": "`sort`, `reverse`, và `splice` mutate mảng gốc và trả cùng reference. `toSorted` / `toReversed` / `toSpliced` copy trước."
             },
             {
               "en": "Vue 3’s Proxy already tracks index and length, so in-place `push` on owned state is cheap and correct. React compares identity, so sort-in-place then `setRows(rows)` does nothing.",
-              "vi": "Proxy của Vue 3 đã theo dõi index và length, nên `push` tại chỗ trên state bạn sở hữu vừa rẻ vừa đúng. React so identity, nên sort tại chỗ rồi `setRows(rows)` không có tác dụng."
+              "vi": "Proxy của Vue 3 đã track index và length, nên `push` tại chỗ trên state bạn phụ trách vừa rẻ vừa đúng. React so identity, nên sort tại chỗ rồi `setRows(rows)` không làm gì."
             }
           ]
         },
@@ -168,7 +168,7 @@
           "lang": "ts",
           "code": {
             "en": "const rows = [\n  { id: 1, name: 'Ada', active: true, qty: 2 },\n  { id: 2, name: 'Lin', active: false, qty: 5 },\n  { id: 3, name: 'Ada', active: true, qty: 0 },\n]\n\nconst names = rows.map((r) => r.name)         // ['Ada', 'Lin', 'Ada']\nconst live = rows.filter((r) => r.active)     // two rows\nconst hasZero = rows.some((r) => r.qty === 0) // true — not filter(Boolean)\n\n// ❌ mutates rows and returns the same reference\nconst broken = rows.sort((a, b) => a.name.localeCompare(b.name))\n// broken === rows → true\n\n// ✅ derived view: copy, then filter\nconst visible = rows\n  .toSorted((a, b) => a.name.localeCompare(b.name))\n  .filter((r) => r.active)",
-            "vi": "const rows = [\n  { id: 1, name: 'Ada', active: true, qty: 2 },\n  { id: 2, name: 'Lin', active: false, qty: 5 },\n  { id: 3, name: 'Ada', active: true, qty: 0 },\n]\n\nconst names = rows.map((r) => r.name)         // ['Ada', 'Lin', 'Ada']\nconst live = rows.filter((r) => r.active)     // hai hàng\nconst hasZero = rows.some((r) => r.qty === 0) // true — không dùng filter(Boolean)\n\n// ❌ thay đổi rows và trả cùng reference\nconst broken = rows.sort((a, b) => a.name.localeCompare(b.name))\n// broken === rows → true\n\n// ✅ dữ liệu dẫn xuất: copy, rồi filter\nconst visible = rows\n  .toSorted((a, b) => a.name.localeCompare(b.name))\n  .filter((r) => r.active)"
+            "vi": "const rows = [\n  { id: 1, name: 'Ada', active: true, qty: 2 },\n  { id: 2, name: 'Lin', active: false, qty: 5 },\n  { id: 3, name: 'Ada', active: true, qty: 0 },\n]\n\nconst names = rows.map((r) => r.name)         // ['Ada', 'Lin', 'Ada']\nconst live = rows.filter((r) => r.active)     // hai hàng\nconst hasZero = rows.some((r) => r.qty === 0) // true: không phải filter(Boolean)\n\n// ❌ mutate rows và trả cùng reference\nconst broken = rows.sort((a, b) => a.name.localeCompare(b.name))\n// broken === rows → true\n\n// ✅ derived view: copy, rồi filter\nconst visible = rows\n  .toSorted((a, b) => a.name.localeCompare(b.name))\n  .filter((r) => r.active)"
           }
         },
         {
@@ -244,11 +244,11 @@
               },
               {
                 "en": "The same array reference",
-                "vi": "Cùng reference mảng"
+                "vi": "Cùng array reference"
               },
               {
                 "en": "Yes — use `toSorted`",
-                "vi": "Có — dùng `toSorted`"
+                "vi": "Có: dùng `toSorted`"
               }
             ]
           ]
@@ -261,7 +261,7 @@
           },
           "text": {
             "en": "- In Vue, mutate the reactive array you own (`push`, `splice`). Copy when the array is a prop, shared, or a derived view.\n- React compares identity. Sort in place then `setState(rows)` is a silent no-op.\n- Chained `filter` then `map` is readable and fine on small lists. On 100k rows, measure first; one pass (a `for` or a well-named `reduce`) beats three allocations only when a profile says so.\n- Virtualising the DOM (`content-visibility`, TanStack Virtual, `vue-virtual-scroller`) is usually the real 100k-row fix, not a faster array method.\n- Default `sort()` is lexical: `[10, 2, 1]` becomes `[1, 10, 2]`. Always pass a comparator.",
-            "vi": "- Trong Vue, hãy thay đổi mảng reactive bạn sở hữu (`push`, `splice`). Copy khi mảng là props, bị chia sẻ, hoặc là derived view.\n- React so identity. Sort tại chỗ rồi `setState(rows)` là no-op thầm lặng.\n- Chain `filter` rồi `map` dễ đọc và ổn với list nhỏ. Với 100k hàng, hãy đo trước; một vòng (`for` hoặc `reduce` đặt tên rõ) chỉ thắng ba lần cấp phát khi profile nói vậy.\n- Virtualize DOM (`content-visibility`, TanStack Virtual, `vue-virtual-scroller`) mới thường là cách xử lý 100k hàng, không phải array method nhanh hơn.\n- `sort()` mặc định là lexical: `[10, 2, 1]` thành `[1, 10, 2]`. Luôn truyền comparator."
+            "vi": "- Trong Vue, mutate mảng reactive bạn phụ trách (`push`, `splice`). Copy khi mảng là prop, đang share, hoặc là derived view.\n- React so identity. Sort tại chỗ rồi `setState(rows)` là no-op thầm lặng.\n- Chain `filter` rồi `map` dễ đọc và ổn với list nhỏ. Với 100k hàng, đo trước; một vòng (`for` hoặc `reduce` đặt tên rõ) chỉ thắng so với ba lần allocate khi profile nói vậy.\n- Virtualize DOM (`content-visibility`, TanStack Virtual, `vue-virtual-scroller`) mới thường là cách xử lý 100k hàng, không phải array method nhanh hơn.\n- `sort()` mặc định là lexical: `[10, 2, 1]` thành `[1, 10, 2]`. Luôn truyền comparator."
           }
         },
         {
@@ -269,18 +269,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: a child table reorders the parent. Cause: `sort` / `reverse` on a prop. Fix: `toSorted` in a `computed`, never mutate the prop.\n- Symptom: React list does not update after sort. Cause: same array identity. Fix: `setRows(rows.toSorted(cmp))`.\n- Symptom: `rows.filter(Boolean)` drops valid `0` / `''` cells. Cause: truthiness, not emptiness. Fix: compare to `null` / `undefined` explicitly.\n- Symptom: `forEach` + `push` into a Pinia array. Cause: reinventing `map` and mutating shared store state. Fix: `map` into a new array, then assign once.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: bảng con làm xáo thứ tự parent. Nguyên nhân: `sort` / `reverse` trên props. Cách xử lý: `toSorted` trong `computed`, không bao giờ mutate props.\n- Triệu chứng: list React không cập nhật sau sort. Nguyên nhân: cùng identity mảng. Cách xử lý: `setRows(rows.toSorted(cmp))`.\n- Triệu chứng: `rows.filter(Boolean)` làm mất ô `0` / `''` hợp lệ. Nguyên nhân: truthiness, không phải emptiness. Cách xử lý: so với `null` / `undefined` tường minh.\n- Triệu chứng: `forEach` + `push` vào mảng Pinia. Nguyên nhân: viết lại `map` và mutate store dùng chung. Cách xử lý: `map` ra mảng mới, rồi gán một lần."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: bảng con làm xáo thứ tự parent. Nguyên nhân: `sort` / `reverse` trên prop. Cách xử lý: `toSorted` trong `computed`, đừng mutate prop.\n- Triệu chứng: list React không cập nhật sau sort. Nguyên nhân: cùng identity mảng. Cách xử lý: `setRows(rows.toSorted(cmp))`.\n- Triệu chứng: `rows.filter(Boolean)` làm mất ô `0` / `''` hợp lệ. Nguyên nhân: truthiness, không phải emptiness. Cách xử lý: so với `null` / `undefined` tường minh.\n- Triệu chứng: `forEach` + `push` vào mảng Pinia. Nguyên nhân: viết lại `map` và mutate store dùng chung. Cách xử lý: `map` ra mảng mới, rồi gán một lần."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "You own a Vue 3 table (or a React list) bound to `rows`. A teammate chains `sort`, `filter`, and `map` on that array. Why did the original order vanish, why did a child mutate the parent, and what would you ship for 100k rows instead of “faster `map`”?",
-            "vi": "Bạn sở hữu một bảng Vue 3 (hoặc list React) gắn vào `rows`. Đồng nghiệp chain `sort`, `filter`, và `map` trên mảng đó. Vì sao thứ tự gốc biến mất, vì sao component con mutate parent, và với 100k hàng bạn sẽ ship gì thay vì “`map` nhanh hơn”?"
+            "vi": "Bạn phụ trách một bảng Vue 3 (hoặc list React) gắn vào `rows`. Đồng nghiệp chain `sort`, `filter`, và `map` trên mảng đó. Vì sao thứ tự gốc biến mất, vì sao child mutate parent, và với 100k hàng bạn sẽ ship gì thay vì “`map` nhanh hơn”?"
           }
         },
         {
@@ -291,7 +291,7 @@
           },
           "text": {
             "en": "A higher-order function takes or returns another function. `map` keeps length and transforms items, `filter` keeps a subset, `reduce` folds to one value, and `forEach` is only for side effects. The production trap is mutation: `sort` and `splice` change the original array and return the same reference, so “I sorted a copy” is wrong unless I used `toSorted`. In Vue I mutate the array I own, but for a derived table I copy in a `computed`. On the admin table I ship, that view is `toSorted` plus `filter`; I would not clone 100k rows on every keystroke. I measure first, then virtualize the DOM if the Profiler says the DOM is the cost.",
-            "vi": "Hàm bậc cao nhận hoặc trả về một hàm khác. `map` giữ độ dài và biến đổi phần tử, `filter` giữ tập con, `reduce` gộp thành một giá trị, còn `forEach` chỉ cho side effect. Bẫy ở môi trường production là mutation: `sort` và `splice` đổi mảng gốc và trả cùng reference, nên “tôi đã sort một bản copy” là sai trừ khi dùng `toSorted`. Trong Vue tôi mutate mảng mình sở hữu, nhưng với bảng dẫn xuất tôi copy trong `computed`. Ở bảng admin tôi ship, view đó là `toSorted` cộng `filter`; tôi không clone 100k hàng mỗi lần gõ. Tôi đo trước, rồi virtualize DOM nếu Profiler nói DOM mới là chi phí."
+            "vi": "Hàm bậc cao nhận hoặc trả về một hàm khác. `map` giữ độ dài và biến đổi phần tử, `filter` giữ tập con, `reduce` gộp thành một giá trị, còn `forEach` chỉ cho side effect. Bẫy production là mutation: `sort` và `splice` đổi mảng gốc và trả cùng reference, nên “mình đã sort một bản copy” là sai trừ khi mình dùng `toSorted`. Trong Vue mình mutate mảng mình phụ trách, nhưng bảng derived thì copy trong `computed`. Ở bảng admin mình ship, view đó là `toSorted` kèm `filter`; mình không clone 100k hàng mỗi lần gõ. Mình đo trước, rồi virtualize DOM nếu Profiler nói DOM mới là chi phí."
           }
         },
         {
@@ -303,15 +303,15 @@
             },
             {
               "en": "Use `toSorted` in a Vue `computed` or React render. Never sort a prop in place.",
-              "vi": "Dùng `toSorted` trong `computed` Vue hoặc hàm render React. Đừng sort props tại chỗ."
+              "vi": "Dùng `toSorted` trong `computed` Vue hoặc hàm render React. Đừng sort prop tại chỗ."
             },
             {
               "en": "On 100k rows, measure, then virtualize. Do not clone on every keystroke “for immutability.”",
-              "vi": "Với 100k hàng, hãy đo, rồi virtualize. Đừng clone mỗi lần gõ “cho immutability.”"
+              "vi": "Với 100k hàng, đo, rồi virtualize. Đừng clone mỗi lần gõ “cho immutability”."
             },
             {
               "en": "`filter(Boolean)` drops valid `0` and `''`. Check `null` / `undefined` explicitly.",
-              "vi": "`filter(Boolean)` làm mất `0` và `''` hợp lệ. Hãy kiểm `null` / `undefined` tường minh."
+              "vi": "`filter(Boolean)` làm mất `0` và `''` hợp lệ. So với `null` / `undefined` tường minh."
             }
           ]
         },
@@ -323,7 +323,7 @@
           },
           "text": {
             "en": "- **What is `next === items` after `const next = items.sort(cmp)`?** `true`. Vue still sees index changes; React `setState(next)` does nothing.\n- **Why is `toSorted` in a `computed` safe?** It does not mutate the dependency. `sort` in a `computed` corrupts source state.\n- **When do you virtualize instead of faster array methods?** When the DOM, not the transform, is the cost — typically thousands of rows.\n- **How do you sort 100k rows without blocking input?** Chunk, a worker, or sort on the server after you have a Performance trace.",
-            "vi": "- **Sau `const next = items.sort(cmp)` thì `next === items` là gì?** `true`. Vue vẫn thấy đổi index; React `setState(next)` không làm gì.\n- **Vì sao `toSorted` trong `computed` an toàn?** Nó không mutate dependency. `sort` trong `computed` làm hỏng state nguồn.\n- **Khi nào virtualize thay vì tối ưu array method?** Khi DOM, không phải bước biến đổi, mới là chi phí — thường là hàng nghìn hàng.\n- **Sort 100k hàng mà không chặn input thế nào?** Chia nhỏ, đưa sang worker, hoặc sort trên server sau khi đã có Performance trace."
+            "vi": "- **`next === items` sau `const next = items.sort(cmp)` là gì?** `true`. Vue vẫn thấy đổi index; React `setState(next)` không làm gì.\n- **Vì sao `toSorted` trong `computed` an toàn?** Nó không mutate dependency. `sort` trong `computed` làm hỏng state nguồn.\n- **Khi nào virtualize thay vì array method nhanh hơn?** Khi DOM, không phải bước biến đổi, mới là chi phí, thường là hàng nghìn hàng.\n- **Sort 100k hàng mà không chặn input thế nào?** Chunk, worker, hoặc sort trên server sau khi đã có Performance trace."
           }
         },
         {
@@ -345,14 +345,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** A Promise is an object for a single future value. It is pending, then either fulfilled or rejected. `async` / `await` is syntax over promises, not a second runtime.",
-            "vi": "**Tóm tắt:** Promise là object cho một giá trị tương lai, settle một lần. Nó pending, rồi fulfilled hoặc rejected. `async` / `await` là cú pháp trên promise, không phải runtime thứ hai."
+            "vi": "**Tóm tắt:** Promise là object cho một giá trị tương lai. Nó pending, rồi fulfilled hoặc rejected. `async` / `await` là cú pháp trên promise, không phải runtime thứ hai."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** A dashboard `setup()` does `await getUser()`, then `await getPosts(user.id)`, then `await getFlags()`. Flags do not depend on the user. One of the three returns 500 and the spinner never ends. The question is parallelism, error policy, and what an empty `catch` paints.",
-            "vi": "**Vì sao quan trọng:** Dashboard trong `setup()` `await getUser()`, rồi `await getPosts(user.id)`, rồi `await getFlags()`. Flags không phụ thuộc user. Một trong ba trả 500 và spinner không bao giờ tắt. Câu hỏi là chạy song song, chính sách lỗi, và `catch` rỗng sẽ vẽ ra gì."
+            "vi": "**Vì sao quan trọng:** `setup()` của dashboard `await getUser()`, rồi `await getPosts(user.id)`, rồi `await getFlags()`. Flags không phụ thuộc user. Một trong ba trả 500 và spinner không bao giờ tắt. Câu hỏi là chạy song song, chính sách lỗi, và `catch` rỗng sẽ vẽ ra gì."
           }
         },
         {
@@ -369,11 +369,11 @@
             },
             {
               "en": "`try/catch` around `await` is the same as `.catch` on the promise. An empty `catch { console.error }` returns `undefined` and looks like “no data.”",
-              "vi": "`try/catch` quanh `await` giống `.catch` trên promise. `catch { console.error }` rỗng trả `undefined` và trông như “không có dữ liệu.”"
+              "vi": "`try/catch` quanh `await` giống `.catch` trên promise. `catch { console.error }` rỗng trả `undefined` và trông như “không có data”."
             },
             {
               "en": "Sequential `await` is a waterfall. Independent calls belong in `Promise.all`. Waterfall only on a real data dependence, such as posts needing `user.id`.",
-              "vi": "`await` nối tiếp là waterfall. Các call độc lập thuộc về `Promise.all`. Chỉ waterfall khi data phụ thuộc thật, ví dụ posts cần `user.id`."
+              "vi": "`await` nối tiếp là waterfall. Call độc lập thì cho vào `Promise.all`. Chỉ waterfall khi data phụ thuộc thật, ví dụ posts cần `user.id`."
             }
           ]
         },
@@ -382,14 +382,14 @@
           "lang": "ts",
           "code": {
             "en": "async function loadSlow(userId: string) {\n  const user = await getUser(userId)\n  const posts = await getPosts(user.id)\n  const flags = await getFlags() // independent — wasted round trip\n  return { user, posts, flags }\n}\n\nasync function loadFast(userId: string) {\n  const [user, flags] = await Promise.all([getUser(userId), getFlags()])\n  const posts = await getPosts(user.id) // real dependency\n  return { user, posts, flags }\n}\n\n// .then chain of the same idea:\ngetUser(id)\n  .then((user) => Promise.all([user, getFlags(), getPosts(user.id)]))\n  .catch((err) => {\n    reportError(err)\n    throw err\n  })",
-            "vi": "async function loadSlow(userId: string) {\n  const user = await getUser(userId)\n  const posts = await getPosts(user.id)\n  const flags = await getFlags() // độc lập — tốn thêm một round trip\n  return { user, posts, flags }\n}\n\nasync function loadFast(userId: string) {\n  const [user, flags] = await Promise.all([getUser(userId), getFlags()])\n  const posts = await getPosts(user.id) // phụ thuộc thật\n  return { user, posts, flags }\n}\n\n// .then chain cùng một ý:\ngetUser(id)\n  .then((user) => Promise.all([user, getFlags(), getPosts(user.id)]))\n  .catch((err) => {\n    reportError(err)\n    throw err\n  })"
+            "vi": "async function loadSlow(userId: string) {\n  const user = await getUser(userId)\n  const posts = await getPosts(user.id)\n  const flags = await getFlags() // độc lập: tốn một round trip thừa\n  return { user, posts, flags }\n}\n\nasync function loadFast(userId: string) {\n  const [user, flags] = await Promise.all([getUser(userId), getFlags()])\n  const posts = await getPosts(user.id) // dependency thật\n  return { user, posts, flags }\n}\n\n// chain .then cùng một ý:\ngetUser(id)\n  .then((user) => Promise.all([user, getFlags(), getPosts(user.id)]))\n  .catch((err) => {\n    reportError(err)\n    throw err\n  })"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `loadSlow` waits for the user, then posts, then flags — three serial round trips. `loadFast` starts user and flags together; posts still wait on `user.id`. If `getFlags` rejects, `Promise.all` rejects as a group. The `.then` chain is the same contract: one settlement, one error path.",
-            "vi": "**Điều gì xảy ra:** `loadSlow` chờ user, rồi posts, rồi flags — ba round trip nối tiếp. `loadFast` chạy user và flags cùng lúc; posts vẫn chờ `user.id`. Nếu `getFlags` reject, `Promise.all` reject cả nhóm. Chain `.then` là cùng một hợp đồng: settle một lần, một đường lỗi."
+            "vi": "**Điều gì xảy ra:** `loadSlow` chờ user, rồi posts, rồi flags: ba round trip nối tiếp. `loadFast` chạy user và flags cùng lúc; posts vẫn chờ `user.id`. Nếu `getFlags` reject, `Promise.all` reject cả nhóm. Chain `.then` là cùng một contract: settle một lần, một đường lỗi."
           }
         },
         {
@@ -416,7 +416,7 @@
               },
               {
                 "en": "Page cannot render without every result",
-                "vi": "Trang không render thiếu kết quả nào"
+                "vi": "Trang không render nếu thiếu bất kỳ kết quả nào"
               },
               {
                 "en": "Fail-fast: one reject fails the group",
@@ -448,7 +448,7 @@
               },
               {
                 "en": "Easy to swallow a 500 as empty data",
-                "vi": "Dễ nuốt 500 thành “không có data”"
+                "vi": "Dễ biến 500 thành data rỗng"
               }
             ],
             [
@@ -462,7 +462,7 @@
               },
               {
                 "en": "Always slower if calls are independent",
-                "vi": "Luôn chậm hơn nếu các call độc lập"
+                "vi": "Luôn chậm hơn khi các call độc lập"
               }
             ]
           ]
@@ -475,7 +475,7 @@
           },
           "text": {
             "en": "- Treat `async/await` as control-flow syntax. The real decision is the combinator and the `AbortSignal`.\n- `Promise.all` is wrong when 9 of 10 widgets can render without the 10th. Split the optional path or use `allSettled`.\n- Do not `await` inside a `forEach` of independent ids — it does not wait. Use `for…of` or `Promise.all` with a concurrency cap (about 4–8), not 10k at once.\n- Promises do not cancel. Pass one `AbortSignal` into every fetch and abort on unmount (`onScopeDispose` in Vue).\n- Nuxt `$fetch` throws on HTTP error by default; window `fetch` does not. Know which contract you are on.",
-            "vi": "- Coi `async/await` là cú pháp control-flow. Quyết định thật là combinator và `AbortSignal`.\n- `Promise.all` sai chỗ khi 9/10 widget render được thiếu cái thứ 10. Tách nhánh optional hoặc dùng `allSettled`.\n- Đừng `await` trong `forEach` các id độc lập — nó không wait. Dùng `for…of` hoặc `Promise.all` với trần concurrency (khoảng 4–8), không phải 10k một lúc.\n- Promise không cancel. Truyền một `AbortSignal` vào mọi fetch và abort khi unmount (`onScopeDispose` trong Vue).\n- Nuxt `$fetch` mặc định throw khi HTTP lỗi; `fetch` trên window thì không. Phải biết mình đang đứng trên hợp đồng nào."
+            "vi": "- Coi `async/await` là cú pháp control-flow. Quyết định nằm ở combinator và `AbortSignal`.\n- `Promise.all` sai khi 9 trên 10 widget render được dù thiếu cái thứ 10. Tách nhánh optional hoặc dùng `allSettled`.\n- Đừng `await` trong `forEach` các id độc lập: nó không wait. Dùng `for…of` hoặc `Promise.all` với trần concurrency (khoảng 4–8), đừng bắn 10k một lúc.\n- Promise không cancel. Truyền một `AbortSignal` vào mọi fetch và abort khi unmount (`onScopeDispose` trong Vue).\n- Nuxt `$fetch` mặc định throw khi HTTP lỗi; `fetch` trên window thì không. Biết rõ bạn đang dùng contract nào."
           }
         },
         {
@@ -483,18 +483,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: spinner forever after one 500. Cause: `Promise.all` fail-fast with no UI error state. Fix: fail the contract visibly, or use `allSettled` for optional widgets.\n- Symptom: UI shows “no rows.” Cause: `catch { console.error }` returned `undefined`. Fix: report the error, then throw or set an explicit error state.\n- Symptom: double charge. Cause: retry on a non-idempotent POST. Fix: retry only GET/PUT and 429/503, with an idempotency key.\n- Symptom: writes after navigate-away. Cause: no abort. Fix: one `AbortController` per screen, aborted in `onScopeDispose`.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: spinner mãi sau một lần 500. Nguyên nhân: `Promise.all` fail-fast mà không có error state trên UI. Cách xử lý: fail hợp đồng cho user thấy, hoặc `allSettled` cho widget optional.\n- Triệu chứng: UI hiện “không có hàng.” Nguyên nhân: `catch { console.error }` trả `undefined`. Cách xử lý: report lỗi, rồi throw hoặc gán error state tường minh.\n- Triệu chứng: bị charge hai lần. Nguyên nhân: retry POST không idempotent. Cách xử lý: chỉ retry GET/PUT và 429/503, kèm idempotency key.\n- Triệu chứng: vẫn ghi sau khi rời màn. Nguyên nhân: không abort. Cách xử lý: một `AbortController` mỗi màn, abort trong `onScopeDispose`."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: spinner mãi sau một lần 500. Nguyên nhân: `Promise.all` fail-fast mà không có error state trên UI. Cách xử lý: fail contract cho user thấy, hoặc dùng `allSettled` cho widget optional.\n- Triệu chứng: UI hiện “không có hàng”. Nguyên nhân: `catch { console.error }` trả `undefined`. Cách xử lý: report lỗi, rồi throw hoặc gán error state tường minh.\n- Triệu chứng: bị charge hai lần. Nguyên nhân: retry POST không idempotent. Cách xử lý: chỉ retry GET/PUT và 429/503, kèm idempotency key.\n- Triệu chứng: vẫn ghi sau khi rời màn. Nguyên nhân: không abort. Cách xử lý: một `AbortController` mỗi màn, abort trong `onScopeDispose`."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "A dashboard awaits user, then posts, then flags. Flags do not need the user. One call 500s and the spinner hangs. Walk through which calls can run in parallel, what `Promise.all` vs `allSettled` means for the page, and what an empty `catch` will paint.",
-            "vi": "Một dashboard await user, rồi posts, rồi flags. Flags không cần user. Một call trả 500 và spinner treo. Hãy chỉ call nào chạy song song được, `Promise.all` vs `allSettled` nghĩa là gì với trang, và `catch` rỗng sẽ vẽ ra gì."
+            "vi": "Một dashboard await user, rồi posts, rồi flags. Flags không cần user. Một call trả 500 và spinner treo. Đi từng bước: call nào chạy song song được, `Promise.all` vs `allSettled` nghĩa là gì với trang, và `catch` rỗng sẽ vẽ ra gì."
           }
         },
         {
@@ -505,7 +505,7 @@
           },
           "text": {
             "en": "A Promise is a single-settlement value: pending, then fulfilled or rejected. `async`/`await` is syntax on top of that, so the decision is which combinator and which abort signal. Independent calls go in `Promise.all` if the page cannot render without them; optional widgets use `allSettled` or a split path. I only waterfall when there is a real dependence, like posts needing `user.id`. On a dashboard I would start user and flags together, then fetch posts. An empty `catch` that returns `undefined` is how you paint “no data” on a 500 — I report the error, fail the UI contract, and pass one AbortSignal into every fetch.",
-            "vi": "Promise là giá trị settle một lần: pending, rồi fulfilled hoặc rejected. `async`/`await` là cú pháp trên đó, nên quyết định là combinator nào và abort signal nào. Các call độc lập đi `Promise.all` nếu trang không render thiếu cái nào; widget optional dùng `allSettled` hoặc tách nhánh. Tôi chỉ waterfall khi phụ thuộc thật, như posts cần `user.id`. Trên dashboard tôi sẽ chạy user và flags cùng lúc, rồi mới fetch posts. `catch` rỗng trả `undefined` là cách vẽ “không có data” khi API 500 — tôi report lỗi, fail hợp đồng UI, và truyền một AbortSignal vào mọi fetch."
+            "vi": "Promise là giá trị settle một lần: pending, rồi fulfilled hoặc rejected. `async`/`await` là cú pháp trên đó, nên quyết định nằm ở combinator nào và abort signal nào. Call độc lập đi vào `Promise.all` nếu trang không render thiếu cái nào; widget optional dùng `allSettled` hoặc tách nhánh. Mình chỉ waterfall khi có phụ thuộc thật, như posts cần `user.id`. Trên dashboard mình start user và flags cùng lúc, rồi mới fetch posts. `catch` rỗng trả `undefined` là cách vẽ “no data” khi 500. Mình report lỗi, fail contract UI, và truyền một AbortSignal vào mọi fetch."
           }
         },
         {
@@ -513,11 +513,11 @@
           "items": [
             {
               "en": "Three states: pending, fulfilled, rejected. `async` functions always return a Promise.",
-              "vi": "Ba trạng thái: pending, fulfilled, rejected. Hàm `async` luôn trả về Promise."
+              "vi": "Ba state: pending, fulfilled, rejected. Hàm `async` luôn trả về Promise."
             },
             {
               "en": "`try/catch` around `await` equals `.catch`. Empty catch paints “no data.”",
-              "vi": "`try/catch` quanh `await` tương đương `.catch`. Catch rỗng vẽ “không có data.”"
+              "vi": "`try/catch` quanh `await` cũng là `.catch`. Catch rỗng vẽ “no data”."
             },
             {
               "en": "Parallelise independent calls with `Promise.all`. Waterfall only on real data dependence.",
@@ -537,7 +537,7 @@
           },
           "text": {
             "en": "- **`all` vs `allSettled` vs per-call `try`?** Checkout wants fail-fast `all`. A widget dashboard wants `allSettled` or split paths so one 500 does not blank the screen.\n- **Why does `await` in `forEach` not wait?** `forEach` ignores the returned promise. Use `for…of` or `Promise.all`.\n- **Where does retry belong?** Idempotent GET/PUT and 429/503 only. Never retry POST or 400/401/403 without an idempotency key.\n- **How does this meet Vue `nextTick`?** `await` continues as a microtask, same queue Vue uses to flush DOM. Timing details live in the event-loop topic.",
-            "vi": "- **`all` vs `allSettled` vs `try` từng call?** Checkout cần `all` fail-fast. Dashboard widget cần `allSettled` hoặc tách nhánh để một lần 500 không làm trắng màn.\n- **Vì sao `await` trong `forEach` không wait?** `forEach` bỏ qua promise trả về. Dùng `for…of` hoặc `Promise.all`.\n- **Retry để đâu?** Chỉ GET/PUT idempotent và 429/503. Đừng retry POST hoặc 400/401/403 nếu không có idempotency key.\n- **Chỗ này gặp Vue `nextTick` thế nào?** `await` chạy tiếp như microtask, cùng hàng đợi Vue dùng để flush DOM. Chi tiết timing nằm ở topic event loop."
+            "vi": "- **`all` vs `allSettled` vs `try` từng call?** Checkout cần `all` fail-fast. Dashboard widget cần `allSettled` hoặc tách nhánh để một lần 500 không làm trắng màn.\n- **Vì sao `await` trong `forEach` không wait?** `forEach` bỏ qua promise trả về. Dùng `for…of` hoặc `Promise.all`.\n- **Retry đặt chỗ nào?** Chỉ GET/PUT idempotent và 429/503. Đừng retry POST hoặc 400/401/403 nếu không có idempotency key.\n- **Chỗ này gặp Vue `nextTick` thế nào?** `await` chạy tiếp như microtask, cùng hàng đợi Vue dùng để flush DOM. Chi tiết timing nằm ở topic event loop."
           }
         },
         {
@@ -559,14 +559,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** JavaScript runs one call stack. When the stack is empty, the event loop first drains the microtask queue, then may paint, then takes one macrotask (task) from the task queue.",
-            "vi": "**Tóm tắt:** JavaScript chạy một call stack. Khi stack trống, event loop rút hết hàng đợi microtask trước, rồi có thể vẽ lên màn hình (paint), rồi lấy một macrotask (task) từ hàng đợi task."
+            "vi": "**Tóm tắt:** JavaScript chạy một call stack. Khi stack trống, event loop rút hết hàng đợi microtask trước, rồi có thể paint, rồi lấy một macrotask (task) từ hàng đợi task."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** You set a Vue ref and immediately read `el.offsetHeight` — you get the old value. Or a tight `await` parse loop freezes the UI. Interviewers start with the `A D C B` puzzle, then ask why `nextTick` exists and why the page did not paint.",
-            "vi": "**Vì sao quan trọng:** Bạn gán ref Vue rồi đọc ngay `el.offsetHeight` — nhận giá trị cũ. Hoặc vòng `await` parse chặt làm UI bị treo. Người phỏng vấn bắt đầu bằng puzzle `A D C B`, rồi hỏi vì sao có `nextTick` và vì sao trang không kịp vẽ."
+            "vi": "**Vì sao quan trọng:** Bạn gán ref Vue rồi đọc ngay `el.offsetHeight`: nhận giá trị cũ. Hoặc vòng parse `await` dồn dập làm UI treo. Người phỏng vấn bắt đầu bằng puzzle `A D C B`, rồi hỏi vì sao có `nextTick` và vì sao trang không kịp paint."
           }
         },
         {
@@ -587,11 +587,11 @@
             },
             {
               "en": "Rendering (style, layout, paint) can happen after microtasks, before the next macrotask.",
-              "vi": "Bước render (style, layout, paint) có thể xảy ra sau microtask, trước macrotask kế."
+              "vi": "Render (style, layout, paint) có thể xảy ra sau microtask, trước macrotask kế."
             },
             {
               "en": "A long task (tác vụ chạy > 50 ms) on the main thread (luồng chính) delays input. INP (Interaction to Next Paint) is how long the page takes to visually respond after a click or key press.",
-              "vi": "Long task (tác vụ chạy > 50 ms) trên luồng chính (main thread) làm trễ input. INP (Interaction to Next Paint) là thời gian trang phản hồi bằng hình ảnh sau click hoặc phím."
+              "vi": "Long task (tác vụ chạy > 50 ms) trên main thread (luồng chính) làm trễ input. INP (Interaction to Next Paint) là thời gian trang phản hồi bằng hình ảnh sau click hoặc phím."
             }
           ]
         },
@@ -600,7 +600,7 @@
           "kind": "tip",
           "text": {
             "en": "**Analogy:** The stack is a cook finishing the current dish. Microtasks are sticky notes on the counter that must all be done before plating. Macrotasks are new tickets from the window. Paint is plating. If you keep adding sticky notes, the plate never leaves the kitchen — that is microtask starvation.",
-            "vi": "**Ẩn dụ:** Call stack là đầu bếp đang làm xong món hiện tại. Microtask là giấy nhớ trên quầy phải xong hết trước khi bày đĩa. Macrotask là phiếu mới từ cửa sổ. Paint là bày đĩa. Nếu bạn cứ thêm giấy nhớ, đĩa không bao giờ rời bếp — đó là microtask starvation (đói microtask)."
+            "vi": "**Ẩn dụ:** Call stack là đầu bếp đang làm xong món hiện tại. Microtask là giấy nhớ trên quầy, phải xong hết trước khi bày đĩa. Macrotask là phiếu mới từ cửa sổ. Paint là bày đĩa. Nếu bạn cứ thêm giấy nhớ, đĩa không bao giờ rời bếp. Đó là microtask starvation."
           }
         },
         {
@@ -608,14 +608,14 @@
           "lang": "ts",
           "code": {
             "en": "console.log('A')\nsetTimeout(() => console.log('B'), 0)      // macrotask\nPromise.resolve().then(() => console.log('C')) // microtask\nconsole.log('D')\n// logs: A, D, C, B\n\nrows.value = next\nawait nextTick() // Vue's flush is a microtask. Layout may still be dirty.\nconst h = el.value?.offsetHeight // this read forces layout — batch reads\n\n// Yield to input with a macrotask, not a microtask loop.\nasync function parseChunks(chunks: string[]) {\n  for (const chunk of chunks) {\n    consume(JSON.parse(chunk))\n    await new Promise((r) => setTimeout(r, 0))\n  }\n}",
-            "vi": "console.log('A')\nsetTimeout(() => console.log('B'), 0)      // macrotask\nPromise.resolve().then(() => console.log('C')) // microtask\nconsole.log('D')\n// logs: A, D, C, B\n\nrows.value = next\nawait nextTick() // flush của Vue là microtask. Layout có thể vẫn dirty.\nconst h = el.value?.offsetHeight // read này force layout — hãy gom các read\n\n// Nhường input bằng macrotask, không phải vòng microtask.\nasync function parseChunks(chunks: string[]) {\n  for (const chunk of chunks) {\n    consume(JSON.parse(chunk))\n    await new Promise((r) => setTimeout(r, 0))\n  }\n}"
+            "vi": "console.log('A')\nsetTimeout(() => console.log('B'), 0)      // macrotask\nPromise.resolve().then(() => console.log('C')) // microtask\nconsole.log('D')\n// logs: A, D, C, B\n\nrows.value = next\nawait nextTick() // flush của Vue là microtask. Layout có thể vẫn dirty.\nconst h = el.value?.offsetHeight // read này force layout, hãy gom các read\n\n// Nhường input bằng macrotask, không phải vòng microtask.\nasync function parseChunks(chunks: string[]) {\n  for (const chunk of chunks) {\n    consume(JSON.parse(chunk))\n    await new Promise((r) => setTimeout(r, 0))\n  }\n}"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `A` and `D` run on the stack. The `Promise.then` callback is queued as a microtask; `setTimeout` as a macrotask. After `D`, the loop drains microtasks (`C`) before the timer (`B`). `nextTick` waits for Vue’s own flush, which is also a microtask — not for paint. `setTimeout(0)` is how you break a long parse so input can run.",
-            "vi": "**Điều gì xảy ra:** `A` và `D` chạy trên stack. Callback `Promise.then` vào hàng microtask; `setTimeout` vào hàng macrotask. Sau `D`, vòng lặp rút microtask (`C`) trước timer (`B`). `nextTick` chờ flush của Vue, cũng là microtask — không chờ paint. `setTimeout(0)` là cách cắt parse dài để input còn chạy được."
+            "vi": "**Điều gì xảy ra:** `A` và `D` chạy trên stack. Callback `Promise.then` được xếp vào hàng microtask; `setTimeout` vào hàng macrotask. Sau `D`, vòng lặp rút hết microtask (`C`) trước timer (`B`). `nextTick` chờ flush của chính Vue, cũng là microtask, không chờ paint. `setTimeout(0)` là cách cắt parse dài để input còn chạy được."
           }
         },
         {
@@ -631,7 +631,7 @@
             },
             {
               "en": "Sees new Vue DOM?",
-              "vi": "Thấy DOM Vue mới?"
+              "vi": "Thấy DOM mới của Vue?"
             },
             {
               "en": "After paint?",
@@ -690,7 +690,7 @@
               },
               {
                 "en": "Usually — you yielded to a paint chance",
-                "vi": "Thường có — đã nhường một nhịp paint"
+                "vi": "Thường có: đã nhường một nhịp paint"
               }
             ],
             [
@@ -700,7 +700,7 @@
               },
               {
                 "en": "Before the next paint",
-                "vi": "Trước paint kế"
+                "vi": "Trước paint tiếp theo"
               },
               {
                 "en": "Yes",
@@ -708,7 +708,7 @@
               },
               {
                 "en": "No — it *is* the paint callback",
-                "vi": "Không — nó *là* callback của paint"
+                "vi": "Không: nó *là* callback của paint"
               }
             ]
           ]
@@ -721,7 +721,7 @@
           },
           "text": {
             "en": "- Vue 3 queues DOM updates as a microtask. `nextTick` is the API for “read layout after my refs commit.” `Promise.then` is also a microtask and is not a substitute — it may run *before* Vue’s job.\n- `setTimeout(0)` yields to paint and input. Use it to chunk a long task, not to measure a node you just wrote.\n- `requestAnimationFrame` runs before the next paint. Use it (twice if you need layout after paint) to start a CSS transition, not as a generic delay.\n- Microtask starvation: a chain of `await` on already-resolved promises never returns to the renderer. Chunk with a macrotask or `scheduler.yield()`.\n- Measure with the Performance panel: long tasks > 50 ms, INP, total blocking time. The puzzle output of A/D/C/B is not a metric.",
-            "vi": "- Vue 3 xếp DOM update như microtask. `nextTick` là API cho “đọc layout sau khi ref commit.” `Promise.then` cũng là microtask và không thay được — nó có thể chạy *trước* job của Vue.\n- `setTimeout(0)` nhường paint và input. Dùng để cắt long task, không phải để đo node vừa ghi.\n- `requestAnimationFrame` chạy trước paint kế. Dùng nó (hai lần nếu cần layout sau paint) để bắt CSS transition, không phải delay chung.\n- Microtask starvation: chuỗi `await` trên promise đã resolve không trả lại renderer. Hãy cắt bằng macrotask hoặc `scheduler.yield()`.\n- Đo bằng panel Performance: long task > 50 ms, INP, total blocking time. Output puzzle A/D/C/B không phải metric."
+            "vi": "- Vue 3 xếp DOM update thành microtask. `nextTick` là API cho “đọc layout sau khi ref commit”. `Promise.then` cũng là microtask và không phải thứ thay thế được: nó có thể chạy *trước* job của Vue.\n- `setTimeout(0)` nhường paint và input. Dùng nó để cắt một long task, không phải để đo node vừa ghi.\n- `requestAnimationFrame` chạy trước paint tiếp theo. Dùng nó (hai lần nếu cần layout sau paint) để bắt CSS transition, không phải làm delay chung.\n- Microtask starvation: chuỗi `await` trên promise đã resolve không bao giờ trả lại renderer. Cắt bằng macrotask hoặc `scheduler.yield()`.\n- Đo bằng panel Performance: long task > 50 ms, INP, total blocking time. Output puzzle A/D/C/B không phải metric."
           }
         },
         {
@@ -729,18 +729,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: `el.offsetHeight` is stale right after a ref write. Cause: Vue has not flushed yet. Fix: `await nextTick()` before the read, and batch reads to avoid forced reflow.\n- Symptom: UI frozen during parse, Performance shows one 200 ms task. Cause: microtask loop or a synchronous parse. Fix: yield with `setTimeout(0)` or `scheduler.yield()`.\n- Symptom: using `setTimeout(0)` to “fix Vue timing.” Cause: you needed `nextTick`, which waits for Vue’s flush, not a later macrotask.\n- Symptom: `await nextTick()` then measure then write layout. Cause: forced reflow. Fix: read all layout, then write, or use `rAF`.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `el.offsetHeight` cũ ngay sau khi ghi ref. Nguyên nhân: Vue chưa flush. Cách xử lý: `await nextTick()` trước khi đọc, và gom các lần đọc để tránh forced reflow.\n- Triệu chứng: UI treo lúc parse, Performance hiện một task 200 ms. Nguyên nhân: vòng microtask hoặc parse đồng bộ. Cách xử lý: nhường bằng `setTimeout(0)` hoặc `scheduler.yield()`.\n- Triệu chứng: dùng `setTimeout(0)` để “fix timing Vue.” Nguyên nhân: bạn cần `nextTick`, cái chờ flush của Vue, không phải macrotask sau đó.\n- Triệu chứng: `await nextTick()` rồi đo rồi ghi layout. Nguyên nhân: forced reflow. Cách xử lý: đọc hết layout, rồi mới ghi, hoặc dùng `rAF`."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `el.offsetHeight` cũ ngay sau khi ghi ref. Nguyên nhân: Vue chưa flush. Cách xử lý: `await nextTick()` trước khi đọc, và gom các lần đọc để tránh forced reflow.\n- Triệu chứng: UI treo lúc parse, Performance hiện một task 200 ms. Nguyên nhân: vòng microtask hoặc parse đồng bộ. Cách xử lý: nhường bằng `setTimeout(0)` hoặc `scheduler.yield()`.\n- Triệu chứng: dùng `setTimeout(0)` để “fix timing Vue”. Nguyên nhân: bạn cần `nextTick`, cái chờ flush của Vue, không phải macrotask sau đó.\n- Triệu chứng: `await nextTick()` rồi đo rồi ghi layout. Nguyên nhân: forced reflow. Cách xử lý: đọc hết layout, rồi mới ghi, hoặc dùng `rAF`."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "They may open with `console.log` / `Promise` / `setTimeout` order — that is a short warmup. The real question: you set a ref, immediately read `el.offsetHeight`, and get the old value; or the UI freezes in a tight `await` parse. How do Vue `nextTick`, Promises, and `setTimeout` differ, and why did the page not paint?",
-            "vi": "Họ có thể mở bằng thứ tự `console.log` / `Promise` / `setTimeout` — đó là phần khởi động ngắn. Câu thật: bạn gán ref, đọc ngay `el.offsetHeight`, nhận giá trị cũ; hoặc UI bị treo trong vòng `await` parse chặt. Vue `nextTick`, Promise, và `setTimeout` khác nhau thế nào, và vì sao trang không kịp vẽ?"
+            "vi": "Họ có thể mở bằng thứ tự `console.log` / `Promise` / `setTimeout`. Đó là phần khởi động ngắn. Câu hỏi chính: bạn gán ref, đọc ngay `el.offsetHeight`, nhận giá trị cũ; hoặc UI treo trong vòng parse `await` dồn dập. Vue `nextTick`, Promise, và `setTimeout` khác nhau thế nào, và vì sao trang không kịp paint?"
           }
         },
         {
@@ -751,7 +751,7 @@
           },
           "text": {
             "en": "After the call stack empties, every microtask runs before the browser can paint or take the next macrotask. That is why `A D C B` prints in that order: `A` and `D` are sync, `C` is a Promise microtask, `B` is a timer. Vue 3 flushes DOM updates as a microtask, so I use `nextTick` to read layout after my refs commit — `Promise.then` is not a substitute. `setTimeout(0)` yields to paint and input, which is how I break a long parse. If a Performance trace on a CSV paste shows a 200 ms long task, I chunk with a macrotask, not a microtask loop, because INP is time-to-visual-response after that keypress.",
-            "vi": "Sau khi call stack trống, mọi microtask chạy trước khi trình duyệt vẽ hoặc lấy macrotask kế. Vì thế `A D C B` in đúng thứ tự đó: `A` và `D` đồng bộ, `C` là microtask của Promise, `B` là timer. Vue 3 flush DOM update như microtask, nên tôi dùng `nextTick` để đọc layout sau khi ref commit — `Promise.then` không thay được. `setTimeout(0)` nhường paint và input, đúng để cắt parse dài. Nếu Performance trace lúc dán CSV hiện long task 200 ms, tôi cắt bằng macrotask, không phải vòng microtask, vì INP là thời gian phản hồi bằng hình ảnh sau lần gõ đó."
+            "vi": "Sau khi call stack trống, mọi microtask chạy trước khi trình duyệt paint hoặc lấy macrotask kế. Vì thế `A D C B` in đúng thứ tự đó: `A` và `D` đồng bộ, `C` là microtask của Promise, `B` là timer. Vue 3 flush DOM update thành microtask, nên mình dùng `nextTick` để đọc layout sau khi ref commit. `Promise.then` không thay được. `setTimeout(0)` nhường paint và input, đúng là cách mình cắt parse dài. Nếu Performance trace lúc dán CSV hiện long task 200 ms, mình cắt bằng macrotask, không phải vòng microtask, vì INP là thời gian phản hồi bằng hình ảnh sau lần gõ đó."
           }
         },
         {
@@ -767,11 +767,11 @@
             },
             {
               "en": "INP is time-to-visual-response after input. Long tasks > 50 ms on the main thread hurt it.",
-              "vi": "INP là thời gian phản hồi bằng hình ảnh sau input. Long task > 50 ms trên luồng chính làm hại INP."
+              "vi": "INP là thời gian phản hồi hình ảnh sau input. Long task > 50 ms trên main thread làm hại nó."
             },
             {
               "en": "A chain of already-resolved `await`s can starve paint. Chunk with a macrotask.",
-              "vi": "Chuỗi `await` đã resolve có thể đói paint. Hãy cắt bằng macrotask."
+              "vi": "Chuỗi `await` đã resolve có thể không nhường paint. Cắt bằng macrotask."
             }
           ]
         },
@@ -783,7 +783,7 @@
           },
           "text": {
             "en": "- **Order after a ref write: `nextTick(cb)` vs `Promise.then(cb)` vs `setTimeout(cb, 0)`?** `nextTick` sees Vue’s new DOM. `Promise.then` might run earlier. `setTimeout` sees the new DOM and usually a paint chance.\n- **What is microtask starvation on a Performance trace?** One long green task with no frames, while Promise jobs keep scheduling more jobs.\n- **`setTimeout(0)` vs `requestAnimationFrame`?** Timer is a macrotask; `rAF` is the next-paint callback. Use `rAF` to line up with paint.\n- **INP on a 5 MB CSV paste?** Yield between chunks so keypresses get a frame. Do not parse the whole file in one microtask turn.",
-            "vi": "- **Thứ tự sau khi ghi ref: `nextTick(cb)` vs `Promise.then(cb)` vs `setTimeout(cb, 0)`?** `nextTick` thấy DOM mới của Vue. `Promise.then` có thể chạy sớm hơn. `setTimeout` thấy DOM mới và thường có nhịp paint.\n- **Microtask starvation hiện trên Performance trace thế nào?** Một long task xanh dài không có frame, trong khi job Promise cứ xếp thêm job.\n- **`setTimeout(0)` vs `requestAnimationFrame`?** Timer là macrotask; `rAF` là callback paint kế. Dùng `rAF` để khớp với paint.\n- **INP khi dán CSV 5 MB?** Hãy nhường giữa các chunk để phím còn được một frame. Đừng parse cả file trong một lượt microtask."
+            "vi": "- **Thứ tự sau khi ghi ref: `nextTick(cb)` vs `Promise.then(cb)` vs `setTimeout(cb, 0)`?** `nextTick` thấy DOM mới của Vue. `Promise.then` có thể chạy sớm hơn. `setTimeout` thấy DOM mới và thường có nhịp paint.\n- **Microtask starvation hiện trên Performance trace thế nào?** Một long task xanh dài không có frame, trong khi job Promise cứ xếp thêm job.\n- **`setTimeout(0)` vs `requestAnimationFrame`?** Timer là macrotask; `rAF` là callback paint kế. Dùng `rAF` để khớp với paint.\n- **INP khi dán CSV 5 MB?** Nhường giữa các chunk để lần gõ còn được một frame. Đừng parse cả file trong một lượt microtask."
           }
         },
         {
@@ -794,7 +794,7 @@
           "level": 4,
           "text": {
             "en": "1.1.4. var vs let vs const",
-            "vi": "1.1.4. var, let và const"
+            "vi": "1.1.4. var vs let vs const"
           },
           "id": {
             "en": "114-var-vs-let-vs-const",
@@ -805,14 +805,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** `var` is function-scoped and can be reassigned. `let` is block-scoped and can be reassigned. `const` is block-scoped and cannot be reassigned — it does not freeze the object.",
-            "vi": "**Tóm tắt:** `var` có phạm vi hàm và gán lại được. `let` có phạm vi khối (block) và gán lại được. `const` có phạm vi khối và không gán lại được — nó không đóng băng (`freeze`) object."
+            "vi": "**Tóm tắt:** `var` có phạm vi hàm và gán lại được. `let` có phạm vi block và gán lại được. `const` có phạm vi block và không gán lại được. Nó không freeze object."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** The classic bug is `for (var i = 0; i < 3; i++) setTimeout(() => console.log(i))` printing `3, 3, 3`. People also confuse that with `await` in a loop, which is a different bug. `const` does not make `user.role = 'guest'` illegal.",
-            "vi": "**Vì sao quan trọng:** Bug cổ điển là `for (var i = 0; i < 3; i++) setTimeout(() => console.log(i))` in ra `3, 3, 3`. Người ta còn nhầm bug đó với `await` trong vòng lặp, vốn là một lỗi khác. `const` không làm `user.role = 'guest'` trở thành bất hợp lệ."
+            "vi": "**Vì sao quan trọng:** Bug cổ điển là `for (var i = 0; i < 3; i++) setTimeout(() => console.log(i))` in ra `3, 3, 3`. Người ta còn nhầm bug đó với `await` trong vòng lặp, vốn là lỗi khác. `const` không làm `user.role = 'guest'` thành bất hợp lệ."
           }
         },
         {
@@ -821,11 +821,11 @@
           "items": [
             {
               "en": "**How it works:** `var` is visible in the whole function, even above the line that declares it (initialized as `undefined`). `let` and `const` live in the `{ }` block they were declared in.",
-              "vi": "**Cách hoạt động:** `var` nhìn thấy được trong cả hàm, kể cả phía trên dòng khai báo (được khởi tạo `undefined`). `let` và `const` sống trong khối `{ }` nơi chúng được khai báo."
+              "vi": "**Cách hoạt động:** `var` dùng được trong cả hàm, kể cả phía trên dòng khai báo (khởi tạo là `undefined`). `let` và `const` sống trong khối `{ }` nơi chúng được khai báo."
             },
             {
               "en": "TDZ (Temporal Dead Zone) is the time from entering a block until `let`/`const` is initialized. Reading the binding there throws `ReferenceError`, not `undefined`.",
-              "vi": "TDZ (Temporal Dead Zone) là khoảng từ lúc vào khối đến khi `let`/`const` được khởi tạo. Đọc binding lúc đó throw `ReferenceError`, không phải `undefined`."
+              "vi": "TDZ (Temporal Dead Zone) là khoảng từ lúc vào block đến khi `let`/`const` được khởi tạo. Đọc binding lúc đó thì throw `ReferenceError`, không phải `undefined`."
             },
             {
               "en": "Re-assignment (`count = 1`) changes the binding. Mutation (`user.role = 'guest'` or `arr.push`) changes the object the binding points to. `const` only bans re-assignment.",
@@ -842,14 +842,14 @@
           "lang": "ts",
           "code": {
             "en": "// ❌ var is function-scoped: every callback sees the last i\nfor (var i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 0)\n}\n// logs: 3, 3, 3  — not 0, 1, 2\n\n// Sequential await does NOT have that bug: each step waits.\nfor (var j = 0; j < 3; j++) {\n  await save(j) // runs 0, then 1, then 2\n}\n\n// ✅ let creates a binding per iteration\nfor (let k = 0; k < 3; k++) {\n  setTimeout(() => console.log(k), 0)\n}\n// logs: 0, 1, 2\n\nconst user = { role: 'admin' }\nuser.role = 'guest' // legal: const is the binding, not a freeze",
-            "vi": "// ❌ var có phạm vi hàm: mọi callback thấy i cuối\nfor (var i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 0)\n}\n// logs: 3, 3, 3  — không phải 0, 1, 2\n\n// await tuần tự KHÔNG mắc bug đó: mỗi bước đều chờ.\nfor (var j = 0; j < 3; j++) {\n  await save(j) // chạy 0, rồi 1, rồi 2\n}\n\n// ✅ let tạo binding cho từng vòng\nfor (let k = 0; k < 3; k++) {\n  setTimeout(() => console.log(k), 0)\n}\n// logs: 0, 1, 2\n\nconst user = { role: 'admin' }\nuser.role = 'guest' // hợp lệ: const là binding, không phải đóng băng"
+            "vi": "// ❌ var có phạm vi hàm: mọi callback thấy i cuối\nfor (var i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 0)\n}\n// logs: 3, 3, 3  (không phải 0, 1, 2)\n\n// await tuần tự KHÔNG mắc bug đó: mỗi bước đều chờ.\nfor (var j = 0; j < 3; j++) {\n  await save(j) // chạy 0, rồi 1, rồi 2\n}\n\n// ✅ let tạo binding cho từng vòng\nfor (let k = 0; k < 3; k++) {\n  setTimeout(() => console.log(k), 0)\n}\n// logs: 0, 1, 2\n\nconst user = { role: 'admin' }\nuser.role = 'guest' // hợp lệ: const là binding, không phải freeze"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** The three `setTimeout` callbacks run after the loop. With `var i` there is one `i`, already `3`. With `let k` each iteration has its own `k`. The `await save(j)` loop is sequential, so even `var j` prints 0 then 1 then 2. `user.role = 'guest'` mutates the object; the `const` binding still points at the same object.",
-            "vi": "**Điều gì xảy ra:** Ba callback `setTimeout` chạy sau vòng lặp. Với `var i` chỉ có một `i`, đã là `3`. Với `let k` mỗi vòng có `k` riêng. Vòng `await save(j)` tuần tự, nên dù `var j` vẫn chạy 0 rồi 1 rồi 2. `user.role = 'guest'` mutate object; binding `const` vẫn trỏ cùng object."
+            "vi": "**Điều gì xảy ra:** Ba callback `setTimeout` chạy sau vòng lặp. Với `var i` chỉ có một `i`, đã là `3`. Với `let k` mỗi vòng có `k` riêng. Vòng `await save(j)` tuần tự, nên dù `var j` vẫn in 0 rồi 1 rồi 2. `user.role = 'guest'` mutate object; binding `const` vẫn trỏ cùng object."
           }
         },
         {
@@ -898,7 +898,7 @@
               },
               {
                 "en": "No (starts as `undefined`)",
-                "vi": "Không (bắt đầu `undefined`)"
+                "vi": "Không (bắt đầu là `undefined`)"
               },
               {
                 "en": "Yes",
@@ -942,7 +942,7 @@
               },
               {
                 "en": "Yes — not a freeze",
-                "vi": "Có — không đóng băng"
+                "vi": "Có, không phải freeze"
               }
             ]
           ]
@@ -955,7 +955,7 @@
           },
           "text": {
             "en": "- Default `const`. Use `let` only when the binding must move (index, retry count). Never `var` in new code; `no-var` / `prefer-const` in lint.\n- `const` is not `Object.freeze`. Freeze is shallow and can break Vue 3 proxies — use Vue `readonly()` or a real copy.\n- `const { items } = props` snapshots the value and drops Vue reactivity. Use `toRefs` / `storeToRefs`.\n- Circular ESM imports hitting TDZ throw `ReferenceError` at load, not a mysterious `undefined`. Break the cycle with a function, a lazy getter, or a third module.\n- Do not tell the interviewer that `var` plus sequential `await` fires the last id. That claim is wrong; the scheduled-callback loop is the real example.",
-            "vi": "- Mặc định `const`. Chỉ `let` khi binding phải đổi (index, số lần retry). Không `var` trong code mới; bật lint `no-var` / `prefer-const`.\n- `const` không phải `Object.freeze`. Đóng băng nông và có thể phá proxy Vue 3 — dùng Vue `readonly()` hoặc copy thật.\n- `const { items } = props` chụp snapshot và làm mất reactivity Vue. Dùng `toRefs` / `storeToRefs`.\n- Import ESM vòng tròn đụng TDZ throw `ReferenceError` lúc load, không phải `undefined` bí ẩn. Cắt vòng bằng hàm, lazy getter, hoặc module thứ ba.\n- Đừng nói với người phỏng vấn rằng `var` cộng `await` tuần tự sẽ bắn id cuối. Claim đó sai; ví dụ đúng là vòng lặp với callback được lên lịch."
+            "vi": "- Mặc định `const`. Chỉ `let` khi binding phải đổi (index, số lần retry). Code mới không dùng `var`; bật lint `no-var` / `prefer-const`.\n- `const` không phải `Object.freeze`. Freeze nông và có thể phá proxy Vue 3. Dùng Vue `readonly()` hoặc copy thật.\n- `const { items } = props` chụp snapshot giá trị và làm mất reactivity Vue. Dùng `toRefs` / `storeToRefs`.\n- Import ESM vòng tròn đụng TDZ thì throw `ReferenceError` lúc load, không phải một `undefined` bí ẩn. Cắt vòng bằng hàm, lazy getter, hoặc module thứ ba.\n- Đừng nói với người phỏng vấn rằng `var` kèm `await` tuần tự sẽ bắn id cuối. Điều đó sai; ví dụ đúng là vòng lặp với callback được lên lịch."
           }
         },
         {
@@ -963,18 +963,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: timers all log the last index. Cause: `var` plus a callback scheduled inside the loop (`setTimeout`, `.then`, event handler). Fix: `let`, or bind the index as an argument.\n- Symptom: “`const` should have blocked `push`.” Cause: `const` is the binding. Fix: copy (`toSorted`, spread) if you needed a new array.\n- Symptom: Vue list does not update after destructure. Cause: `const { items } = props`. Fix: `toRefs(props)`.\n- Symptom: app crashes on load with `ReferenceError` in a store. Cause: circular import TDZ. Fix: break the cycle; do not “default the variable to `undefined`.”",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: mọi timer đều log index cuối. Nguyên nhân: `var` cộng callback được lên lịch trong vòng (`setTimeout`, `.then`, event handler). Cách xử lý: `let`, hoặc truyền index như đối số.\n- Triệu chứng: “`const` lẽ ra phải chặn `push`.” Nguyên nhân: `const` là binding. Cách xử lý: copy (`toSorted`, spread) nếu bạn cần mảng mới.\n- Triệu chứng: list Vue không cập nhật sau destructure. Nguyên nhân: `const { items } = props`. Cách xử lý: `toRefs(props)`.\n- Triệu chứng: app crash lúc load với `ReferenceError` trong store. Nguyên nhân: TDZ do import vòng. Cách xử lý: cắt vòng; đừng “default biến thành `undefined`.”"
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: mọi timer đều log index cuối. Nguyên nhân: `var` kèm callback được lên lịch trong vòng (`setTimeout`, `.then`, event handler). Cách xử lý: `let`, hoặc truyền index như đối số.\n- Triệu chứng: “`const` lẽ ra phải chặn `push`”. Nguyên nhân: `const` là binding. Cách xử lý: copy (`toSorted`, spread) nếu bạn cần mảng mới.\n- Triệu chứng: list Vue không cập nhật sau destructure. Nguyên nhân: `const { items } = props`. Cách xử lý: `toRefs(props)`.\n- Triệu chứng: app crash lúc load với `ReferenceError` trong store. Nguyên nhân: TDZ do import vòng. Cách xử lý: cắt vòng; đừng “default biến thành `undefined`”."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "They want a 20-second table, then whether you know that `const` does not freeze objects, that TDZ exists in ES modules, and that `var` plus a *scheduled* callback in a loop is a different bug from sequential `await`.",
-            "vi": "Họ muốn một bảng 20 giây, rồi bạn có biết `const` không đóng băng object, TDZ tồn tại trong ES module, và `var` cộng callback *được lên lịch* trong vòng lặp là bug khác với `await` tuần tự."
+            "vi": "Họ muốn một bảng 20 giây, rồi bạn có biết `const` không freeze object, TDZ có trong ES module, và `var` kèm callback *được lên lịch* trong vòng lặp là bug khác với `await` tuần tự."
           }
         },
         {
@@ -985,7 +985,7 @@
           },
           "text": {
             "en": "I default to `const` and use `let` only when the binding must move. `var` is function-scoped and has no TDZ, which is why `for (var i…) setTimeout(() => console.log(i))` prints the last `i` three times — the callbacks run later and share one `i`. Sequential `await` in that loop does not have this bug, because each iteration waits. I would not tell an interviewer that `var` plus `await` fires the last id. `const` does not freeze the object: `user.role = 'guest'` is legal. If I need immutability in Vue I use `readonly()` or a copy, not `Object.freeze` on a proxy, and I default `const` in lint with `prefer-const`.",
-            "vi": "Tôi mặc định `const` và chỉ `let` khi binding phải đổi. `var` có phạm vi hàm và không có TDZ, nên `for (var i…) setTimeout(() => console.log(i))` in `i` cuối ba lần — callback chạy sau và dùng chung một `i`. `await` tuần tự trong vòng đó không mắc bug này, vì mỗi vòng đều chờ. Tôi sẽ không nói với người phỏng vấn rằng `var` cộng `await` sẽ bắn id cuối. `const` không đóng băng object: `user.role = 'guest'` hợp lệ. Nếu cần immutability trong Vue tôi dùng `readonly()` hoặc copy, không `Object.freeze` trên proxy, và tôi mặc định `const` trong lint bằng `prefer-const`."
+            "vi": "Mình mặc định `const` và chỉ `let` khi binding phải đổi. `var` có phạm vi hàm và không có TDZ, nên `for (var i…) setTimeout(() => console.log(i))` in `i` cuối ba lần: callback chạy sau và dùng chung một `i`. `await` tuần tự trong vòng đó không mắc bug này, vì mỗi vòng đều chờ. Mình sẽ không nói với người phỏng vấn rằng `var` kèm `await` sẽ bắn id cuối. `const` không freeze object: `user.role = 'guest'` vẫn hợp lệ. Nếu cần immutability trong Vue, mình dùng `readonly()` hoặc copy, không `Object.freeze` trên proxy, và lint mặc định `const` bằng `prefer-const`."
           }
         },
         {
@@ -1017,7 +1017,7 @@
           },
           "text": {
             "en": "- **Does `const` prevent `array.push`?** No. Reviewers flag it when they wanted a copy, not a freeze.\n- **Show a circular-import TDZ crash.** Module A imports B at top level while B reads A’s `export const store` during eval. Break the cycle with a function export.\n- **`var` in sloppy-mode scripts?** It can become a `window` binding. `let`/`const` never do.\n- **Vue `reactive` + rebind?** `const state = reactive({ n: 0 }); state.n++` is fine. `state = {}` is a TypeError.",
-            "vi": "- **`const` có chặn `array.push` không?** Không. Reviewer flag khi họ muốn copy, không phải đóng băng.\n- **Chỉ một crash TDZ do import vòng.** Module A import B ở top level trong khi B đọc `export const store` của A lúc eval. Cắt vòng bằng export một hàm.\n- **`var` trong script sloppy?** Nó có thể thành binding trên `window`. `let`/`const` thì không.\n- **Vue `reactive` + gán lại?** `const state = reactive({ n: 0 }); state.n++` ổn. `state = {}` là TypeError."
+            "vi": "- **`const` có chặn `array.push` không?** Không. Reviewer flag khi họ muốn copy, không phải freeze.\n- **Chỉ ra crash TDZ do import vòng.** Module A import B ở top level trong khi B đọc `export const store` của A lúc eval. Cắt vòng bằng export một hàm.\n- **`var` trong script sloppy?** Nó có thể thành binding trên `window`. `let`/`const` thì không.\n- **Vue `reactive` + gán lại?** `const state = reactive({ n: 0 }); state.n++` ổn. `state = {}` là TypeError."
           }
         },
         {
@@ -1040,7 +1040,7 @@
           "level": 4,
           "text": {
             "en": "1.2.1. Closure & Scope",
-            "vi": "1.2.1. Closure và phạm vi (scope)"
+            "vi": "1.2.1. Closure và phạm vi"
           },
           "id": {
             "en": "121-closure-scope",
@@ -1051,7 +1051,7 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** A closure is a function plus the variables from the place it was written. That environment is lexical scope: the function sees those bindings even after the outer function has returned.",
-            "vi": "**Tóm tắt:** Closure là một hàm cộng với các biến ở nơi nó được viết. Môi trường đó là phạm vi từ vựng (lexical scope): hàm vẫn thấy các binding đó sau khi hàm ngoài đã return."
+            "vi": "**Tóm tắt:** Closure là hàm kèm các biến ở nơi nó được viết. Môi trường đó là lexical scope: hàm vẫn thấy các binding đó sau khi hàm ngoài đã return."
           }
         },
         {
@@ -1067,23 +1067,23 @@
           "items": [
             {
               "en": "**How it works:** Lexical scope means a function looks up names where it was *written*, not where it is called. Nested functions form a scope chain out to the module.",
-              "vi": "**Cách hoạt động:** Phạm vi từ vựng nghĩa là hàm tìm tên ở nơi nó được *viết*, không phải nơi được gọi. Hàm lồng nhau tạo chuỗi scope ra tới module."
+              "vi": "**Cách hoạt động:** Lexical scope nghĩa là hàm tìm tên ở nơi nó được *viết*, không phải nơi được gọi. Hàm lồng nhau tạo chuỗi scope ra tới module."
             },
             {
               "en": "A closure is that function object plus the environment it captured. The inner function can read and write the outer bindings after the outer call is gone.",
-              "vi": "Closure là object hàm đó cộng môi trường nó bắt. Hàm trong có thể đọc và ghi binding ngoài sau khi lần gọi ngoài đã kết thúc."
+              "vi": "Closure là object hàm đó kèm môi trường nó bắt được. Hàm trong vẫn đọc và ghi binding ngoài sau khi lần gọi ngoài đã kết thúc."
             },
             {
               "en": "It keeps **bindings**, not a snapshot — unless you copied a `const` at schedule time. Later writes to the same binding are visible to every still-alive closure.",
-              "vi": "Nó giữ **binding**, không phải snapshot — trừ khi bạn copy một `const` lúc schedule. Lần ghi sau vào cùng binding hiện với mọi closure còn sống."
+              "vi": "Nó giữ **binding**, không phải snapshot, trừ khi bạn copy một `const` lúc schedule. Lần ghi sau vào cùng binding hiện với mọi closure còn sống."
             },
             {
               "en": "A stale closure is a scheduled callback that still sees an old copy, or an old binding you no longer mean. Abort plus “read latest inside the async function” is the usual Vue fix.",
-              "vi": "Closure stale là callback đã schedule vẫn thấy bản copy cũ, hoặc binding cũ bạn không còn muốn. Abort cộng “đọc giá trị mới bên trong hàm async” là cách xử lý thường gặp ở Vue."
+              "vi": "Closure stale là callback đã schedule vẫn thấy bản copy cũ, hoặc binding cũ bạn không còn muốn. Abort kèm “đọc giá trị mới bên trong hàm async” là cách xử lý thường gặp ở Vue."
             },
             {
               "en": "Whatever the closure retains stays ineligible for garbage collection until the function is released. Module singletons are the longest-lived retainers.",
-              "vi": "Thứ closure giữ thì garbage collection không thu đến khi hàm được thả. Singleton ở module là retainer sống lâu nhất."
+              "vi": "Những gì closure giữ thì garbage collection chưa thu được đến khi hàm được thả. Singleton ở module là retainer sống lâu nhất."
             }
           ]
         },
@@ -1099,7 +1099,7 @@
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `debounceLatest` stores `last` on the wrapper, so the timeout always fires with the newest args. The `watch` aborts the previous fetch and reads `currentPage.value` *inside* the callback, so a later page flip is not stuck on the first `page`. Without `onCleanup`, the first search can still write `results`.",
-            "vi": "**Điều gì xảy ra:** `debounceLatest` lưu `last` trên wrapper, nên timeout luôn chạy với args mới nhất. `watch` abort fetch trước và đọc `currentPage.value` *bên trong* callback, nên lần đổi `page` sau không kẹt ở `page` đầu. Không có `onCleanup`, search đầu vẫn có thể ghi `results`."
+            "vi": "**Điều gì xảy ra:** `debounceLatest` lưu `last` trên wrapper, nên timeout luôn chạy với args mới nhất. `watch` abort fetch trước và đọc `currentPage.value` *bên trong* callback, nên lần lật page sau không kẹt ở `page` đầu. Không có `onCleanup`, search đầu vẫn có thể ghi `results`."
           }
         },
         {
@@ -1122,7 +1122,7 @@
             [
               {
                 "en": "Stale query / page",
-                "vi": "Query / `page` stale"
+                "vi": "Query / page stale"
               },
               {
                 "en": "Read refs inside the async callback",
@@ -1154,7 +1154,7 @@
               },
               {
                 "en": "Clear or key the cache on auth change",
-                "vi": "Xóa hoặc gắn khóa cache khi auth đổi"
+                "vi": "Xóa hoặc gắn key cho cache khi auth đổi"
               },
               {
                 "en": "Same: no per-user blobs at module scope",
@@ -1171,7 +1171,7 @@
           },
           "text": {
             "en": "- Closures are how `watch`, debounce, and module caches work. Treat them as retainers, not as a trivia question.\n- In Vue, read latest refs **inside** the async callback (`page.value`). Copying `const page = page.value` before `await` freezes one render.\n- Abort **and** ignore stale. A latest-ref still wastes the network and can finish last.\n- React `useCallback` with `[]` is the same stale-closure bug with different syntax. `useRef` or include the dep.\n- Prove it: a test that a second query resolves first and the first result is dropped, plus Memory retainers on a 20MB export after logout. A debounce unit test that types “ab” then “abc” should search only “abc”.",
-            "vi": "- Closure là cách `watch`, debounce, và cache module hoạt động. Hãy coi chúng là retainer, không phải câu đố.\n- Trong Vue, đọc ref mới **bên trong** callback async (`page.value`). Copy `const page = page.value` trước `await` đóng băng một lần render.\n- Abort **và** bỏ kết quả stale. Chỉ đọc ref mới vẫn tốn network và có thể xong sau cùng.\n- React `useCallback` với `[]` là cùng bug closure stale, khác cú pháp. `useRef` hoặc đưa vào dep.\n- Kiểm chứng: test query thứ hai xong trước và kết quả thứ nhất bị bỏ, cộng retainer Memory trên export 20MB sau logout. Test debounce gõ “ab” rồi “abc” chỉ được search “abc”."
+            "vi": "- Closure là cách `watch`, debounce, và cache module hoạt động. Coi chúng là retainer, không phải câu đố trivia.\n- Trong Vue, đọc ref mới **bên trong** callback async (`page.value`). Copy `const page = page.value` trước `await` thì đóng băng một lần render.\n- Abort **và** bỏ kết quả stale. Chỉ đọc ref mới vẫn tốn network và có thể xong sau cùng.\n- React `useCallback` với `[]` là cùng bug closure stale, khác cú pháp. `useRef` hoặc đưa vào dep.\n- Kiểm chứng: test query thứ hai resolve trước và kết quả thứ nhất bị bỏ, kèm retainer Memory trên export 20MB sau logout. Unit test debounce gõ “ab” rồi “abc” thì chỉ được search “abc”."
           }
         },
         {
@@ -1186,11 +1186,11 @@
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "A search box still fetches the previous query, a `watch` logs yesterday’s `page`, a debounce helper sends stale args, and a module-level `Map` still holds the last user’s 20MB export. They want stale closures and retainers — not whether you can write `createCounter`.",
-            "vi": "Ô search vẫn fetch query trước, `watch` log `page` hôm qua, helper debounce gửi args stale, và `Map` ở module vẫn giữ export 20MB của user trước. Họ muốn closure stale và retainer — không phải bạn có viết được `createCounter` hay không."
+            "vi": "Ô search vẫn fetch query trước, `watch` log `page` hôm qua, helper debounce gửi args stale, và `Map` ở module vẫn giữ export 20MB của user trước. Họ muốn closure stale và retainer, không phải bạn có viết được `createCounter` hay không."
           }
         },
         {
@@ -1201,7 +1201,7 @@
           },
           "text": {
             "en": "A closure is a function plus the lexical environment where it was written, so it keeps those bindings after the outer call returns. It keeps bindings, not a snapshot, unless I copied a const at schedule time. In Vue I read page.value inside the async callback, not before the await; the React equivalent is useEffect with an empty list ignoring a later id. I abort the previous request and ignore stale results — a latest-ref alone still wastes the network. And I treat module singletons as retainers: if they hold the last user’s 20MB export after logout, that is a security bug I would prove in the Memory panel.",
-            "vi": "Closure là một hàm cộng môi trường từ vựng nơi nó được viết, nên nó giữ các binding đó sau khi lần gọi ngoài return. Nó giữ binding, không phải snapshot, trừ khi tôi copy một const lúc schedule. Trong Vue tôi đọc `page.value` bên trong callback async, không phải trước await; tương đương React là useEffect với danh sách rỗng bỏ qua id sau. Tôi abort request trước và bỏ kết quả stale — chỉ đọc ref mới vẫn tốn network. Và tôi coi singleton module là retainer: nếu chúng giữ export 20MB của user trước sau logout, đó là bug bảo mật tôi sẽ chứng minh trên panel Memory."
+            "vi": "Closure là hàm kèm môi trường lexical nơi nó được viết, nên nó giữ các binding đó sau khi lần gọi ngoài return. Nó giữ binding, không phải snapshot, trừ khi mình copy một const lúc schedule. Trong Vue mình đọc page.value bên trong callback async, không phải trước await; tương đương React là useEffect với list rỗng, bỏ qua id sau. Mình abort request trước và bỏ kết quả stale: chỉ đọc ref mới vẫn tốn network. Và mình coi singleton module là retainer: nếu chúng giữ export 20MB của user trước sau logout, đó là bug bảo mật mình sẽ chứng minh trên panel Memory."
           }
         },
         {
@@ -1221,7 +1221,7 @@
             },
             {
               "en": "Module Maps that hold per-user blobs after logout are retainers and a security bug.",
-              "vi": "`Map` ở module giữ blob theo user sau logout là retainer và bug bảo mật."
+              "vi": "Map ở module giữ blob theo user sau logout là retainer và bug bảo mật."
             }
           ]
         },
@@ -1255,14 +1255,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Every object has an internal `[[Prototype]]` link. Property lookup walks own keys, then that chain, until `null`. `class` is constructor plus prototype sugar, not a second object model.",
-            "vi": "**Tóm tắt:** Mọi object đều có liên kết nội bộ `[[Prototype]]`. Tra cứu thuộc tính đi qua key riêng, rồi chuỗi đó, đến `null`. `class` là constructor cộng sugar trên prototype, không phải mô hình object thứ hai."
+            "vi": "**Tóm tắt:** Mọi object đều có link nội bộ `[[Prototype]]`. Tra cứu property đi own key trước, rồi chain đó, đến `null`. `class` là constructor kèm sugar trên prototype, không phải mô hình object thứ hai."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** `el instanceof HTMLElement` is `false` for a node from an iframe. A library that extends `Array` breaks across realms. Vue `reactive()` on a Mapbox or chart instance wraps a Proxy, so `this` and `instanceof` go weird. `markRaw` is the fix, not “don’t use classes.”",
-            "vi": "**Vì sao quan trọng:** `el instanceof HTMLElement` là `false` với node từ iframe. Thư viện extend `Array` gãy qua realm. Vue `reactive()` trên instance Mapbox hoặc chart bọc Proxy, nên `this` và `instanceof` loạn. `markRaw` là cách xử lý, không phải “đừng dùng class.”"
+            "vi": "**Vì sao quan trọng:** `el instanceof HTMLElement` là `false` với node từ iframe. Library extend `Array` gãy khi sang realm khác. Vue `reactive()` trên instance Mapbox hoặc chart bọc Proxy, nên `this` và `instanceof` loạn. `markRaw` là cách xử lý, không phải “đừng dùng class”."
           }
         },
         {
@@ -1271,23 +1271,23 @@
           "items": [
             {
               "en": "**How it works:** `obj.foo` checks own properties first, then `Object.getPrototypeOf(obj)`, and so on. The chain ends at `Object.prototype`, then `null`.",
-              "vi": "**Cách hoạt động:** `obj.foo` kiểm tra thuộc tính riêng trước, rồi `Object.getPrototypeOf(obj)`, và tiếp. Chuỗi kết thúc ở `Object.prototype`, rồi `null`."
+              "vi": "**Cách hoạt động:** `obj.foo` tìm thuộc tính own trước, rồi `Object.getPrototypeOf(obj)`, rồi đi tiếp. Chuỗi kết thúc ở `Object.prototype`, rồi `null`."
             },
             {
               "en": "`class Foo { method() {} }` puts `method` on `Foo.prototype` so every instance shares one function. Class **fields** are per instance; they are not on the prototype.",
-              "vi": "`class Foo { method() {} }` đặt `method` trên `Foo.prototype` nên mọi instance chia một hàm. **Field** của class là theo instance; chúng không nằm trên prototype."
+              "vi": "`class Foo { method() {} }` đặt `method` trên `Foo.prototype` nên mọi instance dùng chung một function. **Field** của class là từng instance; không nằm trên prototype."
             },
             {
               "en": "`Object.create(proto)` makes an object whose `[[Prototype]]` is `proto`. `new Foo()` is `Object.create(Foo.prototype)` plus `Foo` called with `this`.",
-              "vi": "`Object.create(proto)` tạo object có `[[Prototype]]` là `proto`. `new Foo()` là `Object.create(Foo.prototype)` cộng `Foo` được gọi với `this`."
+              "vi": "`Object.create(proto)` tạo object có `[[Prototype]]` là `proto`. `new Foo()` chính là `Object.create(Foo.prototype)` rồi gọi `Foo` với `this`."
             },
             {
               "en": "`instanceof` walks the receiver’s chain looking for `Ctor.prototype`. A different realm (iframe, worker, jsdom) has a different `Array.prototype`, so the check fails.",
-              "vi": "`instanceof` đi chuỗi của receiver tìm `Ctor.prototype`. Realm khác (iframe, worker, jsdom) có `Array.prototype` khác, nên phép kiểm thất bại."
+              "vi": "`instanceof` đi theo chuỗi của receiver, tìm `Ctor.prototype`. Realm khác (iframe, worker, jsdom) có `Array.prototype` khác, nên check fail."
             },
             {
               "en": "Do not build Vue or React UI on prototype inheritance. Components and composables are functions plus data. Use `class` for identity (`Error` subclasses) and shared methods.",
-              "vi": "Đừng dựng UI Vue hoặc React trên kế thừa prototype. Component và composable là hàm cộng dữ liệu. Dùng `class` khi cần identity (subclass `Error`) và method dùng chung."
+              "vi": "Đừng dựng UI Vue hay React trên kế thừa prototype. Component và composable là function kèm data. Dùng `class` khi cần identity (subclass `Error`) và method dùng chung."
             }
           ]
         },
@@ -1296,14 +1296,14 @@
           "lang": "ts",
           "code": {
             "en": "// Lookup: own keys, then [[Prototype]], then null\nconst proto = { kind: 'row' }\nconst row = Object.create(proto)\nrow.id = 1\nrow.id        // 1 (own)\nrow.kind      // 'row' (prototype)\nObject.getPrototypeOf(row) === proto // true\n\n// Realm-safe checks — not instanceof\nArray.isArray(data)\nel.nodeType === 1\n\nconst map = markRaw(new google.maps.Map(el))\ntype AppErrorDTO = { kind: 'AppError'; message: string }",
-            "vi": "// Tra cứu: key riêng, rồi [[Prototype]], rồi null\nconst proto = { kind: 'row' }\nconst row = Object.create(proto)\nrow.id = 1\nrow.id        // 1 (own)\nrow.kind      // 'row' (prototype)\nObject.getPrototypeOf(row) === proto // true\n\n// Kiểm an toàn qua realm — không dùng instanceof\nArray.isArray(data)\nel.nodeType === 1\n\nconst map = markRaw(new google.maps.Map(el))\ntype AppErrorDTO = { kind: 'AppError'; message: string }"
+            "vi": "// Tra cứu: key own, rồi [[Prototype]], rồi null\nconst proto = { kind: 'row' }\nconst row = Object.create(proto)\nrow.id = 1\nrow.id        // 1 (own)\nrow.kind      // 'row' (prototype)\nObject.getPrototypeOf(row) === proto // true\n\n// Check an toàn theo realm, không dùng instanceof\nArray.isArray(data)\nel.nodeType === 1\n\nconst map = markRaw(new google.maps.Map(el))\ntype AppErrorDTO = { kind: 'AppError'; message: string }"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `row.id` is own; `row.kind` is found on `proto`. `Object.create` is the chain without `class`. `Array.isArray` and `nodeType` survive iframes; `instanceof Array` does not. `markRaw` stops Vue from proxying the map. The DTO is what you send over `postMessage`, because structured clone drops the prototype.",
-            "vi": "**Điều gì xảy ra:** `row.id` là own; `row.kind` tìm thấy trên `proto`. `Object.create` là chuỗi không cần `class`. `Array.isArray` và `nodeType` sống được qua iframe; `instanceof Array` thì không. `markRaw` ngăn Vue proxy map. DTO là thứ bạn gửi qua `postMessage`, vì structured clone bỏ prototype."
+            "vi": "**Điều gì xảy ra:** `row.id` là own; `row.kind` tìm thấy trên `proto`. `Object.create` là chuỗi không cần `class`. `Array.isArray` và `nodeType` vẫn đúng khi qua iframe; `instanceof Array` thì không. `markRaw` không cho Vue proxy map. DTO là thứ bạn gửi qua `postMessage`, vì structured clone bỏ prototype."
           }
         },
         {
@@ -1334,7 +1334,7 @@
               },
               {
                 "en": "Often false — use `Array.isArray`",
-                "vi": "Thường sai — dùng `Array.isArray`"
+                "vi": "Thường sai: dùng `Array.isArray`"
               }
             ],
             [
@@ -1348,7 +1348,7 @@
               },
               {
                 "en": "False — use `el.nodeType === 1`",
-                "vi": "Sai — dùng `el.nodeType === 1`"
+                "vi": "Sai: dùng `el.nodeType === 1`"
               }
             ],
             [
@@ -1362,7 +1362,7 @@
               },
               {
                 "en": "False after `postMessage` — send `kind`",
-                "vi": "Sai sau `postMessage` — gửi `kind`"
+                "vi": "Sai sau `postMessage`: gửi `kind`"
               }
             ],
             [
@@ -1372,11 +1372,11 @@
               },
               {
                 "en": "Same if deduped",
-                "vi": "Cùng nếu dedupe"
+                "vi": "Cùng nếu đã dedupe"
               },
               {
                 "en": "`instanceof` fails — bundler issue",
-                "vi": "`instanceof` thất bại — lỗi bundler"
+                "vi": "`instanceof` fail: lỗi bundler"
               }
             ]
           ]
@@ -1389,7 +1389,7 @@
           },
           "text": {
             "en": "- Use `class` for types with identity and a shared prototype API (`Error` subclasses, `instanceof` in `catch`). Do not build app UI on prototype inheritance.\n- Prototype methods are shared (one function, many instances). Class fields are per instance — that is the memory trade-off (đánh đổi) on 10k rows.\n- `instanceof` is realm-local. Prefer `Array.isArray`, `nodeType`, or a discriminant you control.\n- Vue `reactive()` on a class wrapping a Map or chart breaks `this` and `instanceof`. `markRaw` the instance.\n- `structuredClone` / `postMessage` return a plain object. Rehydrate explicitly; do not expect the class back.",
-            "vi": "- Dùng `class` cho kiểu có identity và API prototype dùng chung (subclass `Error`, `instanceof` trong `catch`). Đừng dựng UI app trên kế thừa prototype.\n- Method trên prototype được chia sẻ (một hàm, nhiều instance). Field của class là theo instance — đó là đánh đổi (trade-off) bộ nhớ trên 10k hàng.\n- `instanceof` gắn với realm. Ưu tiên `Array.isArray`, `nodeType`, hoặc discriminant bạn kiểm soát.\n- Vue `reactive()` trên class bọc Map hoặc chart làm hỏng `this` và `instanceof`. Hãy `markRaw` instance.\n- `structuredClone` / `postMessage` trả object trần. Hãy hydrate lại tường minh; đừng chờ class quay về."
+            "vi": "- Dùng `class` cho type có identity và API prototype dùng chung (subclass `Error`, `instanceof` trong `catch`). Đừng dựng UI app trên kế thừa prototype.\n- Method trên prototype dùng chung (một function, nhiều instance). Field của class là từng instance: đó là trade-off (đánh đổi) bộ nhớ trên 10k hàng.\n- `instanceof` chỉ đúng trong cùng realm. Ưu tiên `Array.isArray`, `nodeType`, hoặc discriminant bạn tự kiểm soát.\n- Vue `reactive()` trên class bọc Map hoặc chart làm gãy `this` và `instanceof`. `markRaw` instance.\n- `structuredClone` / `postMessage` trả về object trần. Hydrate lại tường minh; đừng chờ class quay về."
           }
         },
         {
@@ -1397,18 +1397,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: `el instanceof HTMLElement` is false in an embed. Cause: different window, different prototype. Fix: `el.nodeType === 1` or `el instanceof win.HTMLElement`.\n- Symptom: Vue chart flickers and methods throw. Cause: `reactive(new Mapbox.Map())`. Fix: `markRaw` the instance; keep coordinates in your own state.\n- Symptom: `err instanceof AppError` is false after a worker. Cause: structured clone dropped the prototype. Fix: send `{ kind, message }` and rehydrate.\n- Symptom: `Object.create(null)` blows up on `obj.toString`. Cause: no `Object.prototype`. Fix: `Object.hasOwn` / `Object.prototype.hasOwnProperty.call`.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `el instanceof HTMLElement` là false trong embed. Nguyên nhân: window khác, prototype khác. Cách xử lý: `el.nodeType === 1` hoặc `el instanceof win.HTMLElement`.\n- Triệu chứng: chart Vue giật và method throw. Nguyên nhân: `reactive(new Mapbox.Map())`. Cách xử lý: `markRaw` instance; giữ tọa độ trong state của bạn.\n- Triệu chứng: `err instanceof AppError` false sau worker. Nguyên nhân: structured clone bỏ prototype. Cách xử lý: gửi `{ kind, message }` rồi hydrate lại.\n- Triệu chứng: `Object.create(null)` nổ ở `obj.toString`. Nguyên nhân: không có `Object.prototype`. Cách xử lý: `Object.hasOwn` / `Object.prototype.hasOwnProperty.call`."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `el instanceof HTMLElement` ra false trong embed. Nguyên nhân: window khác, prototype khác. Cách xử lý: `el.nodeType === 1` hoặc `el instanceof win.HTMLElement`.\n- Triệu chứng: chart Vue nháy và method throw. Nguyên nhân: `reactive(new Mapbox.Map())`. Cách xử lý: `markRaw` instance; giữ tọa độ trong state của bạn.\n- Triệu chứng: `err instanceof AppError` ra false sau worker. Nguyên nhân: structured clone bỏ prototype. Cách xử lý: gửi `{ kind, message }` rồi hydrate lại.\n- Triệu chứng: `Object.create(null)` nổ ở `obj.toString`. Nguyên nhân: không có `Object.prototype`. Cách xử lý: `Object.hasOwn` / `Object.prototype.hasOwnProperty.call`."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "Almost nobody wants you to implement `new` with `Object.create`. They want: class is constructor plus prototype sugar, and the production hits — `instanceof` across an iframe, a library that extends `Array`, or a Vue component that broke because someone put a map instance through `reactive`.",
-            "vi": "Hầu như không ai muốn bạn cài `new` bằng `Object.create`. Họ muốn: class là constructor cộng sugar trên prototype, và các va chạm ở môi trường production — `instanceof` qua iframe, thư viện extend `Array`, hoặc component Vue gãy vì ai đó đưa instance map qua `reactive`."
+            "vi": "Hầu như không ai muốn bạn implement `new` bằng `Object.create`. Họ muốn nghe: class là constructor kèm sugar trên prototype, và các va chạm production: `instanceof` xuyên iframe, thư viện extend `Array`, hoặc component Vue gãy vì ai đó đưa instance map qua `reactive`."
           }
         },
         {
@@ -1419,7 +1419,7 @@
           },
           "text": {
             "en": "Lookup walks own properties, then [[Prototype]], then null. class is constructor plus prototype sugar — I use it for Error subclasses and models I instanceof in a catch, not for Vue UI, where a composable is the reuse tool. instanceof is wrong across iframes and workers, so I use Array.isArray and nodeType. Vue reactive on a class instance wraps a proxy, so I markRaw map and chart instances. structuredClone drops the prototype, so I send a discriminant, not a class. Two copies of a package in the bundle make instanceof fail; that is a bundler issue, not a language trick. On the admin product I would markRaw the map instance and keep coordinates in my own state.",
-            "vi": "Tra cứu đi thuộc tính riêng, rồi [[Prototype]], rồi null. class là constructor cộng sugar trên prototype — tôi dùng cho subclass Error và model tôi instanceof trong catch, không cho UI Vue, nơi composable mới là công cụ tái sử dụng. instanceof sai qua iframe và worker, nên tôi dùng Array.isArray và nodeType. Vue reactive trên instance class bọc proxy, nên tôi markRaw instance map và chart. structuredClone bỏ prototype, nên tôi gửi discriminant, không gửi class. Hai bản của một package trong bundle làm instanceof thất bại; đó là lỗi bundler, không phải mẹo ngôn ngữ. Ở sản phẩm admin tôi sẽ markRaw instance map và giữ tọa độ trong state của mình."
+            "vi": "Tra cứu đi thuộc tính own, rồi [[Prototype]], rồi null. class là constructor kèm sugar trên prototype. Mình dùng cho subclass Error và model mình instanceof trong catch, không dùng cho UI Vue, chỗ composable mới là công cụ tái sử dụng. instanceof sai khi qua iframe và worker, nên mình dùng Array.isArray và nodeType. Vue reactive trên instance class bọc bằng proxy, nên mình markRaw instance map và chart. structuredClone bỏ prototype, nên mình gửi discriminant, không gửi class. Hai bản của một package trong bundle làm instanceof fail; đó là lỗi bundler, không phải mẹo ngôn ngữ. Ở admin nội bộ mình markRaw instance map và giữ tọa độ trong state của mình."
           }
         },
         {
@@ -1427,11 +1427,11 @@
           "items": [
             {
               "en": "`class` is constructor plus prototype sugar. Methods are shared; fields are per instance.",
-              "vi": "`class` là constructor cộng sugar trên prototype. Method được chia; field là theo instance."
+              "vi": "`class` là constructor kèm sugar trên prototype. Method dùng chung; field là từng instance."
             },
             {
               "en": "`instanceof` fails across realms and duplicate packages. Use `Array.isArray` / `nodeType`.",
-              "vi": "`instanceof` thất bại qua realm và package nhân đôi. Dùng `Array.isArray` / `nodeType`."
+              "vi": "`instanceof` fail khi khác realm hoặc package bị nhân đôi. Dùng `Array.isArray` / `nodeType`."
             },
             {
               "en": "`markRaw` map and chart instances in Vue. Do not `reactive()` a library class.",
@@ -1439,7 +1439,7 @@
             },
             {
               "en": "`structuredClone` returns a plain object. Send a discriminant and rehydrate.",
-              "vi": "`structuredClone` trả object trần. Gửi discriminant rồi hydrate lại."
+              "vi": "`structuredClone` trả về object trần. Gửi discriminant rồi hydrate lại."
             }
           ]
         },
@@ -1451,7 +1451,7 @@
           },
           "text": {
             "en": "- **What does `markRaw` fix for a Google Map or Monaco instance?** Vue will not wrap it in a Proxy, so native methods and `this` keep working.\n- **Why can `instanceof` fail for a node from another iframe?** Each window has its own `HTMLElement`. Walk `nodeType` or use that window’s constructor.\n- **Is `Object.create(proto)` different from `class`?** Same chain. `class` also runs a constructor and sets `.constructor`.\n- **When do you still use prototype inheritance in an app?** Shared methods on a model or `Error` subclass — not Vue components.",
-            "vi": "- **`markRaw` sửa gì cho instance Google Map hoặc Monaco?** Vue sẽ không bọc Proxy, nên method native và `this` vẫn chạy.\n- **Vì sao `instanceof` thất bại với node từ iframe khác?** Mỗi window có `HTMLElement` riêng. Hãy đi `nodeType` hoặc dùng constructor của window đó.\n- **`Object.create(proto)` khác `class` không?** Cùng chuỗi. `class` còn chạy constructor và gán `.constructor`.\n- **Khi nào vẫn dùng kế thừa prototype trong app?** Method dùng chung trên model hoặc subclass `Error` — không phải component Vue."
+            "vi": "- **`markRaw` sửa gì cho instance Google Map hoặc Monaco?** Vue không bọc nó trong Proxy, nên method native và `this` vẫn chạy.\n- **Vì sao `instanceof` fail với node từ iframe khác?** Mỗi window có `HTMLElement` riêng. Dùng `nodeType` hoặc constructor của window đó.\n- **`Object.create(proto)` khác `class` không?** Cùng chuỗi. `class` còn chạy constructor và gán `.constructor`.\n- **Khi nào vẫn dùng kế thừa prototype trong app?** Method dùng chung trên model hoặc subclass `Error`, không phải component Vue."
           }
         },
         {
@@ -1473,14 +1473,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** For a `function`, `this` is bound at the **call site**: default, method, `call`/`apply`/`bind`, or `new`. Arrow functions do not bind `this`; they close over the lexical `this` from the enclosing scope.",
-            "vi": "**Tóm tắt:** Với `function`, `this` được gắn ở **nơi gọi** (call site): mặc định, method, `call`/`apply`/`bind`, hoặc `new`. Arrow function không gắn `this`; chúng close over `this` từ vựng của phạm vi bao ngoài."
+            "vi": "**Tóm tắt:** Với `function`, `this` được bind ở **call site**: mặc định, method, `call`/`apply`/`bind`, hoặc `new`. Arrow function không bind `this`; chúng close over lexical `this` của scope bên ngoài."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** A Vue Options-API method works until someone converts it to an arrow, and `this.$emit` dies. `addEventListener('click', obj.method)` detaches the receiver. Binding a **new** wrapper every render means `removeEventListener` never matches. `<script setup>` has no `this` at all.",
-            "vi": "**Vì sao quan trọng:** Method Vue Options API chạy đến khi ai đó đổi thành arrow, và `this.$emit` chết. `addEventListener('click', obj.method)` làm mất receiver. Bind một wrapper **mới** mỗi lần render khiến `removeEventListener` không bao giờ khớp. `<script setup>` không có `this`."
+            "vi": "**Vì sao quan trọng:** Method Vue Options API chạy tốt đến khi ai đó đổi thành arrow, rồi `this.$emit` chết. `addEventListener('click', obj.method)` làm mất receiver. Bind một wrapper **mới** mỗi lần render thì `removeEventListener` không bao giờ khớp. `<script setup>` không có `this`."
           }
         },
         {
@@ -1493,15 +1493,15 @@
             },
             {
               "en": "Method call: `obj.fn()` binds `this` to `obj`. Extracting `const fn = obj.fn; fn()` loses the receiver.",
-              "vi": "Gọi method: `obj.fn()` gắn `this` vào `obj`. Tách `const fn = obj.fn; fn()` làm mất receiver."
+              "vi": "Gọi method: `obj.fn()` bind `this` vào `obj`. Tách `const fn = obj.fn; fn()` là mất receiver."
             },
             {
               "en": "`fn.call(thisArg, a)` / `fn.apply(thisArg, args)` invoke now. `fn.bind(thisArg)` returns a new function with `this` fixed. `new Fn()` binds `this` to the instance.",
-              "vi": "`fn.call(thisArg, a)` / `fn.apply(thisArg, args)` gọi ngay. `fn.bind(thisArg)` trả hàm mới với `this` đã cố định. `new Fn()` gắn `this` vào instance."
+              "vi": "`fn.call(thisArg, a)` / `fn.apply(thisArg, args)` gọi ngay. `fn.bind(thisArg)` trả function mới với `this` đã cố định. `new Fn()` bind `this` vào instance."
             },
             {
               "en": "Arrows close over lexical `this`. Vue Options `methods` must be `function` so the instance can bind them. An arrow there captures module `this` (`undefined` in ESM).",
-              "vi": "Arrow close over `this` từ vựng. `methods` của Vue Options phải là `function` để instance gắn được. Arrow ở đó bắt `this` module (`undefined` trong ESM)."
+              "vi": "Arrow close over lexical `this`. `methods` của Vue Options phải là `function` để instance bind được. Arrow ở đó bắt `this` của module (`undefined` trong ESM)."
             },
             {
               "en": "Composition API almost never uses `this`. Vue templates still expose the instance; `<script setup>` does not. React class `onClick={this.handle}` is the same lost-receiver bug.",
@@ -1514,14 +1514,14 @@
           "lang": "ts",
           "code": {
             "en": "export default defineComponent({\n  methods: {\n    onSubmit() {\n      this.$emit('save', this.form) // Options binds this\n    },\n    // onSubmit: () => this.$emit(...)  // ❌ this is undefined in ESM\n  },\n})\n\nconst onKey = (e: KeyboardEvent) => {\n  if (e.key === 'Escape') close()\n}\nonMounted(() => window.addEventListener('keydown', onKey))\nonUnmounted(() => window.removeEventListener('keydown', onKey))",
-            "vi": "export default defineComponent({\n  methods: {\n    onSubmit() {\n      this.$emit('save', this.form) // Options gắn this\n    },\n    // onSubmit: () => this.$emit(...)  // ❌ this là undefined trong ESM\n  },\n})\n\nconst onKey = (e: KeyboardEvent) => {\n  if (e.key === 'Escape') close()\n}\nonMounted(() => window.addEventListener('keydown', onKey))\nonUnmounted(() => window.removeEventListener('keydown', onKey))"
+            "vi": "export default defineComponent({\n  methods: {\n    onSubmit() {\n      this.$emit('save', this.form) // Options bind this\n    },\n    // onSubmit: () => this.$emit(...)  // ❌ this là undefined trong ESM\n  },\n})\n\nconst onKey = (e: KeyboardEvent) => {\n  if (e.key === 'Escape') close()\n}\nonMounted(() => window.addEventListener('keydown', onKey))\nonUnmounted(() => window.removeEventListener('keydown', onKey))"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `onSubmit` is a `function`, so Vue binds `this` to the instance and `$emit` works. An arrow in `methods` would capture module `this`. `onKey` is a stable function identity, so add and remove match. `addEventListener('keydown', () => …)` every mount would leak because remove never finds the same reference.",
-            "vi": "**Điều gì xảy ra:** `onSubmit` là `function`, nên Vue gắn `this` vào instance và `$emit` chạy. Arrow trong `methods` sẽ bắt `this` module. `onKey` có identity hàm ổn định, nên add và remove khớp. `addEventListener('keydown', () => …)` mỗi lần mount sẽ leak vì remove không tìm được cùng reference."
+            "vi": "**Điều gì xảy ra:** `onSubmit` là `function`, nên Vue bind `this` vào instance và `$emit` chạy. Arrow trong `methods` sẽ bắt `this` của module. `onKey` có identity function ổn định, nên add và remove khớp. `addEventListener('keydown', () => …)` mỗi lần mount sẽ leak vì remove không tìm được cùng reference."
           }
         },
         {
@@ -1548,7 +1548,7 @@
               },
               {
                 "en": "The component instance",
-                "vi": "Instance component"
+                "vi": "Instance của component"
               },
               {
                 "en": "Write `function`, not an arrow",
@@ -1566,7 +1566,7 @@
               },
               {
                 "en": "Use refs, props, emits",
-                "vi": "Dùng ref, props, emits"
+                "vi": "Dùng refs, props, emits"
               }
             ],
             [
@@ -1594,7 +1594,7 @@
               },
               {
                 "en": "Keep the bound fn to remove it",
-                "vi": "Giữ hàm đã bind để gỡ"
+                "vi": "Giữ function đã bind để gỡ"
               }
             ]
           ]
@@ -1607,7 +1607,7 @@
           },
           "text": {
             "en": "- Four rules plus arrows cover almost every interview `this` question. Call site for `function`; lexical for arrows.\n- Vue Options methods are bound to the instance. Composition API should not use `this`. Migrating a mixin that reads `this.foo` in `<script setup>` is `undefined`.\n- The production bug is registering `obj.method` or a new wrapper every render so `removeEventListener` never matches. `{ signal: ac.signal }` is cleaner than `bind` for teardown.\n- Class fields `onClick = () => this.save()` duplicate per instance (fine at small N). Prototype methods plus one `bind` in the constructor save memory on 10k rows.\n- `const { save } = this` in Options loses the receiver unless `save` was already an arrow.",
-            "vi": "- Bốn quy tắc cộng arrow phủ gần như mọi câu `this` khi phỏng vấn. Call site cho `function`; từ vựng cho arrow.\n- Method Vue Options được gắn vào instance. Composition API không nên dùng `this`. Migrate mixin đọc `this.foo` trong `<script setup>` sẽ ra `undefined`.\n- Bug ở môi trường production là đăng ký `obj.method` hoặc wrapper mới mỗi lần render nên `removeEventListener` không khớp. `{ signal: ac.signal }` sạch hơn `bind` khi teardown.\n- Class field `onClick = () => this.save()` nhân đôi theo instance (ổn khi N nhỏ). Method trên prototype cộng một `bind` trong constructor tiết kiệm bộ nhớ trên 10k hàng.\n- `const { save } = this` trong Options làm mất receiver trừ khi `save` đã là arrow."
+            "vi": "- Bốn quy tắc kèm arrow phủ gần như mọi câu hỏi `this` khi phỏng vấn. Call site cho `function`; lexical cho arrow.\n- Method Vue Options được bind vào instance. Composition API không nên dùng `this`. Migrate mixin đọc `this.foo` trong `<script setup>` sẽ ra `undefined`.\n- Bug production là đăng ký `obj.method` hoặc wrapper mới mỗi lần render, nên `removeEventListener` không khớp. `{ signal: ac.signal }` sạch hơn `bind` khi teardown.\n- Class field `onClick = () => this.save()` nhân đôi theo instance (ổn khi N nhỏ). Method trên prototype kèm một `bind` trong constructor tiết kiệm bộ nhớ trên 10k hàng.\n- `const { save } = this` trong Options làm mất receiver, trừ khi `save` đã là arrow."
           }
         },
         {
@@ -1615,18 +1615,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: `this.$emit` is undefined after a refactor. Cause: an arrow in Options `methods`, or a helper extracted with `const fn = this.save`. Fix: keep `function` methods; call `this.save()` or `fn.call(this)`.\n- Symptom: listener never removes. Cause: `bind` or arrow created in `onMounted` every time, different identity. Fix: store one function; or pass `{ signal }` and abort.\n- Symptom: React class click handler has the wrong `this`. Cause: `onClick={this.handle}` without bind. Fix: class field arrow, or `bind` in the constructor.\n- Symptom: standalone `fn()` writes a global. Cause: default `this` is `window`. Fix: ESM / strict mode.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `this.$emit` là undefined sau refactor. Nguyên nhân: arrow trong `methods` Options, hoặc helper tách bằng `const fn = this.save`. Cách xử lý: giữ method `function`; gọi `this.save()` hoặc `fn.call(this)`.\n- Triệu chứng: listener không bao giờ gỡ. Nguyên nhân: `bind` hoặc arrow tạo trong `onMounted` mỗi lần, identity khác. Cách xử lý: lưu một hàm; hoặc truyền `{ signal }` rồi abort.\n- Triệu chứng: handler click React class có `this` sai. Nguyên nhân: `onClick={this.handle}` không bind. Cách xử lý: arrow class field, hoặc `bind` trong constructor.\n- Triệu chứng: `fn()` trần ghi global. Nguyên nhân: `this` mặc định là `window`. Cách xử lý: ESM / strict mode."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: `this.$emit` ra undefined sau refactor. Nguyên nhân: arrow trong `methods` Options, hoặc helper tách bằng `const fn = this.save`. Cách xử lý: giữ method `function`; gọi `this.save()` hoặc `fn.call(this)`.\n- Triệu chứng: listener không bao giờ gỡ. Nguyên nhân: `bind` hoặc arrow tạo trong `onMounted` mỗi lần, identity khác. Cách xử lý: giữ một function; hoặc truyền `{ signal }` rồi abort.\n- Triệu chứng: click handler React class có `this` sai. Nguyên nhân: `onClick={this.handle}` không bind. Cách xử lý: arrow class field, hoặc `bind` trong constructor.\n- Triệu chứng: `fn()` gọi trần ghi global. Nguyên nhân: `this` mặc định là `window`. Cách xử lý: ESM / strict mode."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "A Vue Options-API method works until someone converts it to an arrow; a class field works as a listener until someone moves it to the prototype to save memory. React is not immune: a bare `onClick={this.handle}` in a class component. They want the binding rule and the framework mapping — and whether you can remove the listener you bound.",
-            "vi": "Method Vue Options API chạy đến khi ai đó đổi thành arrow; class field chạy làm listener đến khi ai đó chuyển lên prototype để tiết kiệm bộ nhớ. React không miễn dịch: `onClick={this.handle}` trần trong class component. Họ muốn quy tắc gắn và ánh xạ framework — và liệu bạn gỡ được listener đã bind hay không."
+            "vi": "Method Vue Options API chạy tốt đến khi ai đó đổi thành arrow. Class field chạy được làm listener đến khi ai đó chuyển lên prototype để tiết kiệm bộ nhớ. React cũng không thoát: `onClick={this.handle}` trần trong class component. Họ muốn quy tắc bind và cách map sang framework, và liệu bạn gỡ được listener đã bind hay không."
           }
         },
         {
@@ -1637,7 +1637,7 @@
           },
           "text": {
             "en": "this is call-site for function and lexical for arrows. Default calls in ESM give undefined; obj.fn() binds the receiver; call, apply, and bind set it explicitly; new binds the instance. In Vue Options I write methods as functions so they bind to the instance — an arrow there captures undefined in ESM, and in Composition API I do not use this at all. The production bug is addEventListener with obj.method, then failing to remove it because I bound a new wrapper each time. I keep one function identity, or I pass an AbortSignal. On 10k instances I would put the method on the prototype and bind once.",
-            "vi": "this theo nơi gọi với function và theo từ vựng với arrow. Gọi mặc định trong ESM cho undefined; obj.fn() gắn receiver; call, apply, và bind gán tường minh; new gắn instance. Trong Vue Options tôi viết methods là function để chúng gắn vào instance — arrow ở đó bắt undefined trong ESM, còn Composition API tôi không dùng this. Bug ở môi trường production là addEventListener với obj.method, rồi không gỡ được vì tôi bind wrapper mới mỗi lần. Tôi giữ một identity hàm, hoặc truyền AbortSignal. Với 10k instance tôi đặt method trên prototype và bind một lần."
+            "vi": "this là call site với function, lexical với arrow. Gọi mặc định trong ESM cho undefined; obj.fn() bind receiver; call, apply, và bind gán tường minh; new bind instance. Trong Vue Options mình viết methods là function để chúng bind vào instance. Arrow ở đó bắt undefined trong ESM, còn Composition API mình không dùng this. Bug production là addEventListener với obj.method, rồi không gỡ được listener vì mình bind wrapper mới mỗi lần. Mình giữ một identity function, hoặc truyền AbortSignal. Với 10k instance mình đặt method trên prototype và bind một lần."
           }
         },
         {
@@ -1645,7 +1645,7 @@
           "items": [
             {
               "en": "`function` binds `this` at the call site. Arrows close over lexical `this`.",
-              "vi": "`function` gắn `this` ở nơi gọi. Arrow close over `this` từ vựng."
+              "vi": "`function` bind `this` ở call site. Arrow close over lexical `this`."
             },
             {
               "en": "Vue Options `methods` must be functions. `<script setup>` has no `this`.",
@@ -1653,11 +1653,11 @@
             },
             {
               "en": "`addEventListener(obj.method)` loses `this`. Keep one bound function or use `{ signal }`.",
-              "vi": "`addEventListener(obj.method)` làm mất `this`. Giữ một hàm đã bind hoặc dùng `{ signal }`."
+              "vi": "`addEventListener(obj.method)` làm mất `this`. Giữ một function đã bind hoặc dùng `{ signal }`."
             },
             {
               "en": "`call`/`apply` invoke now; `bind` returns a function. You need that same reference to remove it.",
-              "vi": "`call`/`apply` gọi ngay; `bind` trả về một hàm. Bạn cần cùng reference đó để gỡ."
+              "vi": "`call`/`apply` gọi ngay; `bind` trả về một hàm. Bạn cần đúng reference đó mới gỡ được."
             }
           ]
         },
@@ -1669,7 +1669,7 @@
           },
           "text": {
             "en": "- **Why is an arrow in Options `methods` usually a bug?** It captures module `this` (`undefined` in ESM), so `this.$emit` throws.\n- **How do you register and remove the same bound listener?** Store `const onKey = …` (or `bind` once) and pass that reference both times, or `{ signal }`.\n- **What does `const { save } = this` do?** It copies the function without the receiver. The next `save()` is a default call.\n- **Does Composition API bind `this` in `setup()`?** No useful instance `this`. Use `ref`, `props`, and `emit`.",
-            "vi": "- **Vì sao arrow trong `methods` Options thường là bug?** Nó bắt `this` module (`undefined` trong ESM), nên `this.$emit` throw.\n- **Đăng ký và gỡ cùng listener đã bind thế nào?** Lưu `const onKey = …` (hoặc `bind` một lần) và truyền cùng reference, hoặc `{ signal }`.\n- **`const { save } = this` làm gì?** Nó copy hàm mà không có receiver. Lần `save()` sau là gọi mặc định.\n- **Composition API có gắn `this` trong `setup()` không?** Không có `this` instance hữu ích. Dùng `ref`, `props`, và `emit`."
+            "vi": "- **Vì sao arrow trong `methods` Options thường là bug?** Nó bắt `this` của module (`undefined` trong ESM), nên `this.$emit` throw.\n- **Đăng ký rồi gỡ cùng listener đã bind thế nào?** Lưu `const onKey = …` (hoặc `bind` một lần) rồi truyền đúng reference đó cả hai lần, hoặc `{ signal }`.\n- **`const { save } = this` làm gì?** Nó copy hàm mà không kèm receiver. Lần `save()` sau là default call.\n- **Composition API có bind `this` trong `setup()` không?** Không có `this` instance nào dùng được. Dùng `ref`, `props`, và `emit`."
           }
         },
         {
@@ -1680,7 +1680,7 @@
           "level": 4,
           "text": {
             "en": "1.2.4. ES6+ Modern Features",
-            "vi": "1.2.4. Tính năng ES6+ hiện đại"
+            "vi": "1.2.4. Tính năng hiện đại ES6+"
           },
           "id": {
             "en": "124-es6-modern-features",
@@ -1691,14 +1691,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** The ES6+ features that show up in senior interviews are destructuring, spread, optional chaining, nullish coalescing, modules, `structuredClone`, `Array.prototype.at`, and top-level `await`. Each one has a pitfall that is more interesting than the syntax.",
-            "vi": "**Tóm tắt:** Các tính năng ES6+ xuất hiện trong phỏng vấn senior là destructuring, spread, optional chaining, nullish coalescing, module, `structuredClone`, `Array.prototype.at`, và top-level `await`. Mỗi cái có một lỗi hay gặp thú vị hơn cú pháp."
+            "vi": "**Tóm tắt:** Các tính năng ES6+ hay gặp trong phỏng vấn senior là destructuring, spread, optional chaining, nullish coalescing, module, `structuredClone`, `Array.prototype.at`, và top-level `await`. Mỗi cái có một lỗi hay gặp, thú vị hơn cú pháp."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** `user.age || 18` treats a real age of `0` as missing. `JSON.parse(JSON.stringify(state))` drops a `Date` and a `Map`. A barrel `import` pulls a 200kb chart onto the login page. Interviewers plant those bugs; they do not ask you to recite destructuring.",
-            "vi": "**Vì sao quan trọng:** `user.age || 18` coi tuổi thật `0` như thiếu. `JSON.parse(JSON.stringify(state))` làm mất `Date` và `Map`. `import` barrel kéo chart 200kb vào trang login. Người phỏng vấn gài những bug đó; họ không bắt bạn thuộc lòng destructuring."
+            "vi": "**Vì sao quan trọng:** `user.age || 18` coi tuổi `0` là thiếu. `JSON.parse(JSON.stringify(state))` làm mất `Date` và `Map`. Một barrel `import` kéo chart 200kb vào trang login. Người phỏng vấn gài những bug đó; họ không bắt bạn thuộc lòng destructuring."
           }
         },
         {
@@ -1707,27 +1707,27 @@
           "items": [
             {
               "en": "**How it works:** Destructuring and spread copy **enumerable own** keys one level deep. Nested objects stay shared. Rest in objects is also shallow.",
-              "vi": "**Cách hoạt động:** Destructuring và spread copy key **own enumerable** một tầng. Object lồng vẫn dùng chung. Rest trên object cũng nông (shallow)."
+              "vi": "**Cách hoạt động:** Destructuring và spread copy key **enumerable own** đúng một tầng. Object lồng vẫn dùng chung. Rest trên object cũng shallow."
             },
             {
               "en": "`?.` short-circuits on `null` or `undefined`. Use it for honest optionality. Hiding a missing `user` after a 200 is a product bug, not a clever default.",
-              "vi": "`?.` dừng sớm với `null` hoặc `undefined`. Dùng khi sự thiếu vắng là thật. Che `user` thiếu sau lỗi 200 là bug sản phẩm, không phải default khéo."
+              "vi": "`?.` dừng ngay khi gặp `null` hoặc `undefined`. Dùng khi đúng là optional. Che `user` thiếu sau response 200 là bug sản phẩm, không phải default khéo."
             },
             {
               "en": "`??` defaults only on `null` / `undefined`. `0`, `false`, and `''` stay. `||` is truthiness and is the age-0 bug.",
-              "vi": "`??` chỉ default khi `null` / `undefined`. `0`, `false`, và `''` được giữ. `||` theo truthiness và là bug tuổi 0."
+              "vi": "`??` chỉ default khi `null` / `undefined`. `0`, `false`, và `''` vẫn giữ. `||` theo truthiness, và đó là bug tuổi 0."
             },
             {
               "en": "`structuredClone` keeps `Date`, `Map`, `Set`, and many typed arrays. `JSON.stringify` is a serializer: it drops `undefined`, functions, and turns `Date` into a string.",
-              "vi": "`structuredClone` giữ `Date`, `Map`, `Set`, và nhiều typed array. `JSON.stringify` là serializer: nó bỏ `undefined`, function, và biến `Date` thành chuỗi."
+              "vi": "`structuredClone` giữ `Date`, `Map`, `Set`, và nhiều typed array. `JSON.stringify` là serializer: nó bỏ `undefined`, function, và biến `Date` thành string."
             },
             {
               "en": "ES modules are live bindings. Dynamic `import()` is a bundle boundary. Top-level `await` delays the module graph — fine in a Vue/Vite app entry, costly if a shared util waits on the network.",
-              "vi": "ES module là live binding. `import()` động là ranh giới bundle. Top-level `await` trì hoãn đồ thị module — ổn ở entry app Vue/Vite, tốn kém nếu util dùng chung chờ network."
+              "vi": "ES module là live binding. `import()` động là ranh giới bundle. Top-level `await` làm cả module graph phải chờ: ổn ở entry app Vue/Vite, đắt nếu util dùng chung phải chờ network."
             },
             {
               "en": "`arr.at(-1)` reads the last item without `arr[arr.length - 1]`. It does not copy. Prefer it over `slice(-1)[0]` when you mean “one element.”",
-              "vi": "`arr.at(-1)` đọc phần tử cuối mà không cần `arr[arr.length - 1]`. Nó không copy. Nên dùng hơn `slice(-1)[0]` khi ý bạn là “một phần tử.”"
+              "vi": "`arr.at(-1)` đọc phần tử cuối mà không cần `arr[arr.length - 1]`. Nó không copy. Nên dùng hơn `slice(-1)[0]` khi ý bạn là “một phần tử”."
             }
           ]
         },
@@ -1743,7 +1743,7 @@
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `??` keeps `0` and `false`. `?.` only runs the next access if `user` and `profile` exist. `structuredClone(toRaw(doc))` keeps `Date`/`Map` and unwraps a Vue proxy first. Dynamic `import` splits the chart out of the login bundle. `rows.at(-1)` is the last row, not a one-item array.",
-            "vi": "**Điều gì xảy ra:** `??` giữ `0` và `false`. `?.` chỉ truy cập tiếp nếu `user` và `profile` tồn tại. `structuredClone(toRaw(doc))` giữ `Date`/`Map` và bỏ Vue proxy trước. `import` động tách chart khỏi bundle login. `rows.at(-1)` là hàng cuối, không phải mảng một phần tử."
+            "vi": "**Điều gì xảy ra:** `??` giữ `0` và `false`. `?.` chỉ đi tiếp khi `user` và `profile` còn. `structuredClone(toRaw(doc))` giữ `Date`/`Map` và gỡ Vue proxy trước. `import` động tách chart ra khỏi bundle login. `rows.at(-1)` là hàng cuối, không phải mảng một phần tử."
           }
         },
         {
@@ -1774,7 +1774,7 @@
               },
               {
                 "en": "Only fills `null` / `undefined`",
-                "vi": "Chỉ lấp `null` / `undefined`"
+                "vi": "Chỉ lấp khi `null` / `undefined`"
               }
             ],
             [
@@ -1829,7 +1829,7 @@
           },
           "text": {
             "en": "- `?.` is for honest optionality; `??` defaults only on `null`/`undefined`. `user?.profile?.email ?? 'unknown'` can mask a partial endpoint.\n- `structuredClone(toRaw(x))` is the clone that keeps `Date`/`Map`. `JSON.stringify` is a wire format. Clone cost is O(n) — do not clone a 50k-row page on every keystroke.\n- Dynamic `import()` is a bundle boundary, not a way to load a 2kb helper. Prove it with a bundle analyzer, not a comment.\n- ESM `export let` is a live binding; `export default` is not. Re-exports in a barrel can pull unused heavy modules unless the bundler tree-shakes them.\n- Top-level `await` in a shared util delays every importer. Keep it at the app edge (route, plugin), not in a helper imported by the login page.",
-            "vi": "- `?.` dành cho sự thiếu vắng thật; `??` chỉ default khi `null`/`undefined`. `user?.profile?.email ?? 'unknown'` có thể che endpoint trả thiếu.\n- `structuredClone(toRaw(x))` là bản clone giữ `Date`/`Map`. `JSON.stringify` là định dạng dây. Chi phí clone là O(n) — đừng clone trang 50k hàng mỗi lần gõ.\n- `import()` động là ranh giới bundle, không phải cách tải helper 2kb. Hãy kiểm chứng bằng bundle analyzer, không phải comment.\n- ESM `export let` là live binding; `export default` thì không. Re-export trong barrel có thể kéo module nặng chưa dùng trừ khi bundler tree-shake.\n- Top-level `await` trong util dùng chung trì hoãn mọi importer. Giữ nó ở biên app (route, plugin), không trong helper mà trang login import."
+            "vi": "- `?.` dành cho chỗ đúng là optional; `??` chỉ default khi `null`/`undefined`. `user?.profile?.email ?? 'unknown'` có thể che endpoint trả thiếu.\n- `structuredClone(toRaw(x))` là clone giữ được `Date`/`Map`. `JSON.stringify` là wire format. Chi phí clone là O(n): đừng clone trang 50k hàng mỗi lần gõ.\n- `import()` động là ranh giới bundle, không phải cách load helper 2kb. Chứng minh bằng bundle analyzer, không phải comment.\n- ESM `export let` là live binding; `export default` thì không. Re-export trong barrel có thể kéo module nặng chưa dùng, trừ khi bundler tree-shake.\n- Top-level `await` trong util dùng chung làm mọi importer phải chờ. Để ở biên app (route, plugin), không nhét vào helper mà trang login import."
           }
         },
         {
@@ -1837,18 +1837,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: page `0` jumps to page `1`. Cause: `Number(query.page || 1)`. Fix: `?? 0` (or `?? 1` only if missing, not if zero).\n- Symptom: clone loses `createdAt` as a Date. Cause: `JSON.parse(JSON.stringify(doc))`. Fix: `structuredClone(toRaw(doc))`.\n- Symptom: login bundle includes a chart. Cause: `export * from './heavy-chart'` in a barrel. Fix: a real dynamic `import()` at the route that needs it.\n- Symptom: `structuredClone(vueProxy)` throws. Cause: proxies and some Vue internals are not cloneable. Fix: `toRaw` first.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: trang `0` nhảy thành trang `1`. Nguyên nhân: `Number(query.page || 1)`. Cách xử lý: `?? 0` (hoặc `?? 1` chỉ khi thiếu, không phải khi zero).\n- Triệu chứng: bản clone mất `createdAt` kiểu Date. Nguyên nhân: `JSON.parse(JSON.stringify(doc))`. Cách xử lý: `structuredClone(toRaw(doc))`.\n- Triệu chứng: bundle login có chart. Nguyên nhân: `export * from './heavy-chart'` trong barrel. Cách xử lý: `import()` động thật ở route cần nó.\n- Triệu chứng: `structuredClone(vueProxy)` throw. Nguyên nhân: proxy và vài internals Vue không clone được. Cách xử lý: `toRaw` trước."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: trang `0` nhảy thành trang `1`. Nguyên nhân: `Number(query.page || 1)`. Cách xử lý: `?? 0` (hoặc `?? 1` chỉ khi thiếu, không phải khi bằng 0).\n- Triệu chứng: clone mất `createdAt` kiểu Date. Nguyên nhân: `JSON.parse(JSON.stringify(doc))`. Cách xử lý: `structuredClone(toRaw(doc))`.\n- Triệu chứng: bundle login có chart. Nguyên nhân: `export * from './heavy-chart'` trong barrel. Cách xử lý: `import()` động thật ở route cần nó.\n- Triệu chứng: `structuredClone(vueProxy)` throw. Nguyên nhân: proxy và vài internals Vue không clone được. Cách xử lý: `toRaw` trước."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Người phỏng vấn hỏi gì"
           },
           "text": {
             "en": "Not “what is destructuring.” They plant a bug: `user.age || 18` when age is `0`, `JSON.parse(JSON.stringify(state))` that drops a `Date` and a `Map`, or a barrel import that pulled a 200kb chart onto the login page. They want `?.`, `??`, clone, and modules as production tools.",
-            "vi": "Không phải “destructuring là gì.” Họ gài bug: `user.age || 18` khi tuổi là `0`, `JSON.parse(JSON.stringify(state))` làm mất `Date` và `Map`, hoặc import barrel kéo chart 200kb vào trang login. Họ muốn `?.`, `??`, clone, và module như công cụ ở môi trường production."
+            "vi": "Không phải câu “destructuring là gì”. Họ gài bug: `user.age || 18` khi tuổi là `0`, `JSON.parse(JSON.stringify(state))` làm mất `Date` và `Map`, hoặc một barrel import kéo chart 200kb vào trang login. Họ muốn `?.`, `??`, clone, và module được dùng như tool trên production."
           }
         },
         {
@@ -1859,7 +1859,7 @@
           },
           "text": {
             "en": "I use ?? when 0 or false is a real value, and ?. only for honest optionality — hiding a missing user after a 200 is a product bug. Destructuring and spread are shallow: nested objects stay shared. For copies I use structuredClone(toRaw(x)) so Date and Map survive; JSON.stringify is a serializer, not a clone. Array.at(-1) is the last element. Dynamic import is a bundle boundary, not a way to load a 2kb helper, and I keep top-level await at the app edge. I would prove the flag case with a false row and the import with a bundle analyzer. On the admin table, page zero is a real page so I use ?? 0, and a false feature flag must not become true through ||.",
-            "vi": "Tôi dùng ?? khi 0 hoặc false là giá trị thật, và ?. chỉ khi sự thiếu vắng là thật — che user thiếu sau lỗi 200 là bug sản phẩm. Destructuring và spread là nông: object lồng vẫn dùng chung. Khi copy tôi dùng structuredClone(toRaw(x)) để Date và Map sống sót; JSON.stringify là serializer, không phải clone. Array.at(-1) là phần tử cuối. import động là ranh giới bundle, không phải cách tải helper 2kb, và tôi giữ top-level await ở biên app. Tôi sẽ chứng minh case flag bằng một hàng false và phần import bằng bundle analyzer. Ở bảng admin, trang zero là trang thật nên tôi dùng ?? 0, và feature flag false không được thành true qua ||."
+            "vi": "Mình dùng ?? khi 0 hoặc false là giá trị thật, và ?. chỉ khi đúng là optional. Che user thiếu sau response 200 là bug sản phẩm. Destructuring và spread là shallow: object lồng vẫn dùng chung. Khi copy mình dùng structuredClone(toRaw(x)) để Date và Map còn nguyên; JSON.stringify là serializer, không phải clone. Array.at(-1) là phần tử cuối. import động là ranh giới bundle, không phải cách load helper 2kb, và mình để top-level await ở biên app. Mình chứng minh case flag bằng một hàng false, và phần import bằng bundle analyzer. Ở bảng admin, trang zero là trang thật nên mình dùng ?? 0, và feature flag false không được thành true qua ||."
           }
         },
         {
@@ -1867,7 +1867,7 @@
           "items": [
             {
               "en": "`??` keeps `0` / `false`. `||` does not. `?.` is for honest optionality.",
-              "vi": "`??` giữ `0` / `false`. `||` thì không. `?.` dành cho sự thiếu vắng thật."
+              "vi": "`??` giữ `0` / `false`. `||` thì không. `?.` dành cho chỗ đúng là optional."
             },
             {
               "en": "`structuredClone(toRaw(x))` keeps `Date`/`Map`. JSON is a serializer.",
@@ -1875,11 +1875,11 @@
             },
             {
               "en": "Dynamic `import()` is a bundle boundary. Barrels can pull unused weight.",
-              "vi": "`import()` động là ranh giới bundle. Barrel có thể kéo code chưa dùng."
+              "vi": "`import()` động là ranh giới bundle. Barrel có thể kéo theo code nặng chưa dùng."
             },
             {
               "en": "Spread and destructuring are shallow. Nested objects stay shared.",
-              "vi": "Spread và destructuring là nông. Object lồng vẫn dùng chung."
+              "vi": "Spread và destructuring là shallow. Object lồng vẫn dùng chung."
             }
           ]
         },
@@ -1891,7 +1891,7 @@
           },
           "text": {
             "en": "- **When is `structuredClone` the wrong tool next to a Vue proxy?** When you forget `toRaw`, or when you clone a 50k-row page you could have updated in place.\n- **Does `export default` stay live if the module reassigns it?** No. `export let` is live; default is a one-time binding.\n- **Why not `user?.profile?.email ?? 'unknown'` everywhere?** It hides `profile: null` from a broken endpoint. Fail that path.\n- **Is top-level await OK in a Pinia store file?** Only if every importer can wait. Prefer `async` actions over delaying the whole graph.",
-            "vi": "- **Khi nào `structuredClone` là tool sai cạnh Vue proxy?** Khi quên `toRaw`, hoặc khi clone trang 50k hàng mà bạn có thể ghi tại chỗ.\n- **`export default` có live nếu module gán lại không?** Không. `export let` mới live; default là binding một lần.\n- **Vì sao không `user?.profile?.email ?? 'unknown'` khắp nơi?** Nó che `profile: null` từ endpoint hỏng. Hãy fail nhánh đó.\n- **Top-level await trong file store Pinia có ổn không?** Chỉ khi mọi importer chờ được. Ưu tiên action `async` hơn trì hoãn cả đồ thị."
+            "vi": "- **Khi nào `structuredClone` là tool sai cạnh Vue proxy?** Khi quên `toRaw`, hoặc khi clone trang 50k hàng mà đáng ra ghi tại chỗ.\n- **`export default` còn live nếu module gán lại không?** Không. `export let` mới live; default là binding một lần.\n- **Vì sao không `user?.profile?.email ?? 'unknown'` khắp nơi?** Nó che `profile: null` từ endpoint hỏng. Fail nhánh đó.\n- **Top-level await trong file store Pinia có ổn không?** Chỉ khi mọi importer chờ được. Ưu tiên action `async` hơn là làm chậm cả module graph."
           }
         },
         {
@@ -1913,14 +1913,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** JavaScript’s garbage collector frees objects that are unreachable from roots (the stack, globals, and anything a still-alive closure or DOM node points at). A leak is a forgotten root you did not unpair from the component lifetime.",
-            "vi": "**Tóm tắt:** Garbage collector của JavaScript giải phóng object không còn tới được từ root (stack, global, và bất cứ thứ gì closure còn sống hoặc DOM node đang trỏ tới). Leak là một root bị quên, bạn không gỡ khỏi vòng đời component."
+            "vi": "**Tóm tắt:** Garbage collector của JavaScript giải phóng object không còn đi tới được từ root (stack, global, và bất cứ gì mà closure còn sống hoặc DOM node còn trỏ tới). Leak là một root bị quên, bạn không gỡ theo vòng đời component."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** The SPA is fine at minute 0 and at 1.5GB after a day of client-side routing. Typical retainers: detached DOM, listeners, Vue `watch` without `stop`, closures over fetch bodies, a `Map` of metadata that should have been a `WeakMap`. “I removed the node from the document” is not enough if a closure still points at it.",
-            "vi": "**Vì sao quan trọng:** SPA ổn ở phút 0 và 1.5GB sau một ngày routing phía client. Retainer điển hình: DOM detached, listener, `watch` Vue không `stop`, closure giữ body fetch, `Map` metadata đáng lẽ là `WeakMap`. “Tôi đã gỡ node khỏi document” chưa đủ nếu closure vẫn trỏ tới nó."
+            "vi": "**Vì sao quan trọng:** SPA ổn ở phút 0, rồi 1.5GB sau một ngày routing phía client. Retainer điển hình: DOM detached, listener, `watch` Vue không `stop`, closure giữ body của fetch, một `Map` metadata đáng ra phải là `WeakMap`. Câu “Gỡ node khỏi document rồi” chưa đủ nếu closure vẫn trỏ tới nó."
           }
         },
         {
@@ -1929,7 +1929,7 @@
           "items": [
             {
               "en": "**How it works:** Reachability, not “I stopped using this variable.” If any root can still walk to an object, it stays. Closures are roots for everything they capture.",
-              "vi": "**Cách hoạt động:** Khả năng tới được (reachability), không phải “tôi không dùng biến này nữa.” Nếu còn root đi tới object, nó ở lại. Closure là root cho mọi thứ chúng bắt."
+              "vi": "**Cách hoạt động:** Reachability, không phải “mình không dùng biến này nữa”. Còn root nào đi tới được object thì object ở lại. Closure là root cho mọi thứ chúng capture."
             },
             {
               "en": "Common leaks: `window` / document listeners, `setInterval`, `IntersectionObserver` / `ResizeObserver`, Vue `watch` / `$subscribe` without `stop`, global caches, detached DOM still referenced by a handler.",
@@ -1937,15 +1937,15 @@
             },
             {
               "en": "`WeakMap` holds objects without keeping them alive. Use it for metadata on a DOM node you do not own, not as an LRU of API responses.",
-              "vi": "`WeakMap` giữ object mà không giữ chúng sống. Dùng cho metadata trên DOM node bạn không sở hữu, không phải LRU cho response API."
+              "vi": "`WeakMap` giữ object mà không giữ chúng sống. Dùng cho metadata trên DOM node không phải của bạn, không phải LRU cho response API."
             },
             {
               "en": "Finding a leak: take a heap snapshot, use the page, take another, look at the delta. Search Retainers for `Detached HTMLElement` or a known 20MB `exportBlob`. Comparison view beats scrolling one snapshot.",
-              "vi": "Tìm leak: chụp heap snapshot, dùng trang, chụp nữa, xem delta. Tìm Retainers cho `Detached HTMLElement` hoặc `exportBlob` 20MB đã biết. Comparison view hơn việc kéo một snapshot."
+              "vi": "Tìm leak: chụp heap snapshot, dùng trang, chụp lần nữa, xem delta. Search Retainers cho `Detached HTMLElement` hoặc `exportBlob` 20MB đã biết. Comparison view hay hơn scroll một snapshot."
             },
             {
               "en": "Pair every resource with the component scope: `onUnmounted`, `onScopeDispose`, `watch` `onCleanup`, or `{ signal }`. Keep-alive: `onUnmounted` may never run — dispose expensive work on `onDeactivated`.",
-              "vi": "Ghép mọi resource với scope component: `onUnmounted`, `onScopeDispose`, `watch` `onCleanup`, hoặc `{ signal }`. Keep-alive: `onUnmounted` có thể không bao giờ chạy — giải phóng việc nặng trên `onDeactivated`."
+              "vi": "Gắn mọi resource với scope component: `onUnmounted`, `onScopeDispose`, `watch` `onCleanup`, hoặc `{ signal }`. Keep-alive: `onUnmounted` có thể không bao giờ chạy, nên dispose việc nặng ở `onDeactivated`."
             }
           ]
         },
@@ -1954,14 +1954,14 @@
           "lang": "ts",
           "code": {
             "en": "const meta = new WeakMap<HTMLElement, { rowId: string }>()\n// when the element dies, metadata can die.\n// A Map<HTMLElement, …> would pin the node.\n\nonMounted(() => {\n  const stop = watch(filters, fetchList, { deep: true })\n  const ac = new AbortController()\n  window.addEventListener('resize', onResize, { signal: ac.signal })\n  onScopeDispose(() => {\n    stop()\n    ac.abort()\n  })\n})",
-            "vi": "const meta = new WeakMap<HTMLElement, { rowId: string }>()\n// khi element chết, metadata có thể chết.\n// Map<HTMLElement, …> sẽ ghim node.\n\nonMounted(() => {\n  const stop = watch(filters, fetchList, { deep: true })\n  const ac = new AbortController()\n  window.addEventListener('resize', onResize, { signal: ac.signal })\n  onScopeDispose(() => {\n    stop()\n    ac.abort()\n  })\n})"
+            "vi": "const meta = new WeakMap<HTMLElement, { rowId: string }>()\n// khi element chết, metadata chết theo.\n// Map<HTMLElement, …> sẽ ghim node.\n\nonMounted(() => {\n  const stop = watch(filters, fetchList, { deep: true })\n  const ac = new AbortController()\n  window.addEventListener('resize', onResize, { signal: ac.signal })\n  onScopeDispose(() => {\n    stop()\n    ac.abort()\n  })\n})"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `WeakMap` keys do not keep the element alive, so row metadata can die with the node. `watch` is stopped on scope dispose, and the resize listener is aborted with the same lifetime. A `Map<HTMLElement, …>` or a `watch` without `stop` would pin that memory for the whole session.",
-            "vi": "**Điều gì xảy ra:** Key `WeakMap` không giữ element sống, nên metadata hàng có thể chết cùng node. `watch` được stop khi dispose scope, và listener resize bị abort cùng vòng đời đó. `Map<HTMLElement, …>` hoặc `watch` không `stop` sẽ ghim bộ nhớ cả session."
+            "vi": "**Điều gì xảy ra:** Key của `WeakMap` không giữ element sống, nên metadata của hàng có thể chết cùng node. `watch` được stop khi dispose scope, và listener resize bị abort cùng lifetime đó. Một `Map<HTMLElement, …>` hoặc một `watch` không `stop` sẽ ghim memory đó cả session."
           }
         },
         {
@@ -2020,7 +2020,7 @@
               },
               {
                 "en": "Same — module scope outlives routes",
-                "vi": "Giống — module sống lâu hơn route"
+                "vi": "Cũng vậy: module scope sống lâu hơn route"
               }
             ],
             [
@@ -2047,7 +2047,7 @@
           },
           "text": {
             "en": "- GC only collects what is unreachable from roots. “I removed the node from the document” is not enough if a closure still points at it.\n- Pair every listener, interval, observer, `watch`, and module cache with the component scope. Measure with two heap snapshots, not Task Manager.\n- `WeakMap` is for metadata on objects you do not own, not an LRU of API responses. Values in a `WeakMap` still retain those values.\n- `watch` in a Pinia action or router guard without `onScopeDispose` lives forever. SSR `new Map()` at module scope can leak across requests — per-request, not per-module.\n- Keep-alive is a retainer by design. Dispose sockets and large buffers on deactivate; `onUnmounted` may never run.",
-            "vi": "- GC chỉ thu thứ không còn tới được từ root. “Tôi đã gỡ node khỏi document” chưa đủ nếu closure vẫn trỏ tới nó.\n- Ghép mọi listener, interval, observer, `watch`, và cache module với scope component. Đo bằng hai heap snapshot, không phải Task Manager.\n- `WeakMap` dành cho metadata trên object bạn không sở hữu, không phải LRU cho response API. Value trong `WeakMap` vẫn giữ những value đó.\n- `watch` trong action Pinia hoặc router guard không `onScopeDispose` sống mãi. SSR `new Map()` ở module có thể leak qua request — theo request, không theo module.\n- Keep-alive là retainer by design. Giải phóng socket và buffer lớn lúc deactivate; `onUnmounted` có thể không bao giờ chạy."
+            "vi": "- GC chỉ thu thứ không còn đi tới được từ root. “Gỡ node khỏi document rồi” chưa đủ nếu closure vẫn trỏ tới nó.\n- Gắn mọi listener, interval, observer, `watch`, và cache module với scope component. Đo bằng hai heap snapshot, không phải Task Manager.\n- `WeakMap` dành cho metadata trên object không phải của bạn, không phải LRU cho response API. Value trong `WeakMap` vẫn retain những value đó.\n- `watch` trong action Pinia hoặc router guard mà không `onScopeDispose` thì sống mãi. SSR `new Map()` ở module scope có thể leak sang request khác: theo request, không theo module.\n- Keep-alive là retainer by design. Dispose socket và buffer lớn lúc deactivate; `onUnmounted` có thể không bao giờ chạy."
           }
         },
         {
@@ -2055,18 +2055,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: heap grows after each client-side navigation. Cause: `watch` or a window listener without teardown. Fix: `onScopeDispose` / `{ signal }`.\n- Symptom: `Detached HTMLElement` in Retainers. Cause: a handler or Vue ref still points at a removed node. Fix: null the ref; remove the listener.\n- Symptom: `WeakMap` “cache” never hits. Cause: keys are strings or new object literals each time. Fix: `Map` with eviction, or a stable object key.\n- Symptom: keep-alive tab still runs a WebSocket. Cause: work started in `onMounted` and only stopped in `onUnmounted`. Fix: `onDeactivated` / `onActivated`.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: heap phình sau mỗi lần điều hướng client. Nguyên nhân: `watch` hoặc listener window không teardown. Cách xử lý: `onScopeDispose` / `{ signal }`.\n- Triệu chứng: `Detached HTMLElement` trong Retainers. Nguyên nhân: handler hoặc ref Vue vẫn trỏ node đã gỡ. Cách xử lý: gán null ref; gỡ listener.\n- Triệu chứng: “cache” `WeakMap` không bao giờ hit. Nguyên nhân: key là string hoặc object literal mới mỗi lần. Cách xử lý: `Map` có eviction, hoặc key object ổn định.\n- Triệu chứng: tab keep-alive vẫn chạy WebSocket. Nguyên nhân: việc bắt đầu trong `onMounted` và chỉ dừng ở `onUnmounted`. Cách xử lý: `onDeactivated` / `onActivated`."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: heap phình sau mỗi lần navigation phía client. Nguyên nhân: `watch` hoặc listener window không teardown. Cách xử lý: `onScopeDispose` / `{ signal }`.\n- Triệu chứng: `Detached HTMLElement` trong Retainers. Nguyên nhân: handler hoặc ref Vue vẫn trỏ node đã gỡ. Cách xử lý: gán null cho ref; gỡ listener.\n- Triệu chứng: “cache” `WeakMap` không bao giờ hit. Nguyên nhân: key là string hoặc object literal mới mỗi lần. Cách xử lý: `Map` có eviction, hoặc key object ổn định.\n- Triệu chứng: tab keep-alive vẫn chạy WebSocket. Nguyên nhân: việc bắt đầu trong `onMounted` và chỉ dừng ở `onUnmounted`. Cách xử lý: `onDeactivated` / `onActivated`."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "The SPA is fine at minute 0 and at 1.5GB after a day of client-side routing. They want retainers: detached DOM, listeners, Vue `watch` without `stop`, closures over fetch bodies, a `Map` of metadata that should have been a `WeakMap`. Naming “mark and sweep” without a snapshot walk is not enough.",
-            "vi": "SPA ổn ở phút 0 và 1.5GB sau một ngày routing phía client. Họ muốn retainer: DOM detached, listener, `watch` Vue không `stop`, closure giữ body fetch, `Map` metadata đáng lẽ là `WeakMap`. Nêu “mark and sweep” mà không đi snapshot thì chưa đủ."
+            "vi": "SPA lúc phút 0 thì ổn, sau một ngày routing phía client thì đã 1.5GB. Họ muốn retainer: DOM detached, listener, `watch` Vue không `stop`, closure giữ body fetch, `Map` metadata đáng lẽ là `WeakMap`. Nêu “mark and sweep” mà không đi từng bước snapshot thì chưa đủ."
           }
         },
         {
@@ -2077,7 +2077,7 @@
           },
           "text": {
             "en": "Garbage collection frees objects that are unreachable from roots. A leak is a forgotten root: a listener, interval, observer, Vue watch, or module cache that outlived the component. I pair every one of those with the component scope — onScopeDispose, watch onCleanup, or an AbortSignal. WeakMap is for metadata on objects I do not own, not a cache of API responses. I would take two heap snapshots, find the 20MB exportBlob on the Retainers view, and look for Detached HTMLElement. If keep-alive is involved, I dispose sockets on deactivate because onUnmounted may never run. On the admin product I would take those snapshots after a day of client-side routing, not after a single click.",
-            "vi": "Garbage collection giải phóng object không còn tới được từ root. Leak là root bị quên: listener, interval, observer, watch Vue, hoặc cache module sống lâu hơn component. Tôi ghép từng thứ đó với scope component — onScopeDispose, watch onCleanup, hoặc AbortSignal. WeakMap dành cho metadata trên object tôi không sở hữu, không phải cache response API. Tôi sẽ chụp hai heap snapshot, tìm exportBlob 20MB trên view Retainers, và tìm Detached HTMLElement. Nếu có keep-alive, tôi giải phóng socket lúc deactivate vì onUnmounted có thể không bao giờ chạy. Ở sản phẩm admin tôi chụp snapshot sau một ngày routing phía client, không phải sau một click."
+            "vi": "Garbage collection giải phóng object không còn tới được từ root. Leak là root bị quên: listener, interval, observer, watch Vue, hoặc cache module sống lâu hơn component. Mình gắn từng thứ đó với scope component: onScopeDispose, watch onCleanup, hoặc AbortSignal. WeakMap dành cho metadata trên object mình không quản lý vòng đời, không phải cache response API. Mình sẽ chụp hai heap snapshot, tìm exportBlob 20MB trên view Retainers, rồi tìm Detached HTMLElement. Nếu có keep-alive, mình giải phóng socket lúc deactivate vì onUnmounted có thể không bao giờ chạy. Ở admin nội bộ mình chụp các snapshot đó sau một ngày routing phía client, không phải sau một click."
           }
         },
         {
@@ -2085,7 +2085,7 @@
           "items": [
             {
               "en": "GC collects unreachable objects. Leaks are forgotten roots, not “the GC is slow.”",
-              "vi": "GC thu object không tới được. Leak là root bị quên, không phải “GC chậm.”"
+              "vi": "GC thu object không còn tới được. Leak là root bị quên, không phải “GC chậm”."
             },
             {
               "en": "Pair listeners, timers, observers, and `watch` with the component scope.",
@@ -2093,7 +2093,7 @@
             },
             {
               "en": "`WeakMap` is metadata on objects you do not own, not an LRU of responses.",
-              "vi": "`WeakMap` là metadata trên object bạn không sở hữu, không phải LRU response."
+              "vi": "`WeakMap` là metadata trên object bạn không quản lý vòng đời, không phải LRU response."
             },
             {
               "en": "Prove leaks with two heap snapshots and the Retainers view.",
@@ -2109,7 +2109,7 @@
           },
           "text": {
             "en": "- **How do you walk a heap snapshot in practice?** Snapshot, use the feature, snapshot again, Comparison view, search `Detached` or a known object name.\n- **Why is a module-level `Map` dangerous on SSR?** The module is shared across requests, so one user’s data can leak into the next.\n- **Does `WeakRef` replace disposing a listener?** No. You still remove the listener. WeakRef is for caches that may vanish.\n- **What does keep-alive change?** `onUnmounted` may never run. Dispose expensive work in `onDeactivated`.",
-            "vi": "- **Đi heap snapshot thực tế thế nào?** Snapshot, dùng feature, snapshot nữa, Comparison view, tìm `Detached` hoặc tên object đã biết.\n- **Vì sao `Map` ở module nguy hiểm trên SSR?** Module dùng chung giữa request, nên data của một user có thể rò sang request sau.\n- **`WeakRef` có thay việc gỡ listener không?** Không. Bạn vẫn phải gỡ listener. WeakRef dành cho cache có thể biến mất.\n- **Keep-alive đổi gì?** `onUnmounted` có thể không chạy. Hãy giải phóng việc nặng trong `onDeactivated`."
+            "vi": "- **Đi heap snapshot trên thực tế thế nào?** Snapshot, dùng feature, snapshot nữa, Comparison view, tìm `Detached` hoặc tên object đã biết.\n- **Vì sao `Map` ở module nguy hiểm trên SSR?** Module dùng chung giữa các request, nên data của một user có thể leak sang request sau.\n- **`WeakRef` có thay việc gỡ listener không?** Không. Bạn vẫn phải gỡ listener. WeakRef dành cho cache có thể biến mất.\n- **Keep-alive đổi gì?** `onUnmounted` có thể không chạy. Hãy giải phóng việc nặng trong `onDeactivated`."
           }
         },
         {
@@ -2120,7 +2120,7 @@
           "level": 4,
           "text": {
             "en": "1.2.6. Hoisting & Temporal Dead Zone",
-            "vi": "1.2.6. Hoisting và temporal dead zone (TDZ)"
+            "vi": "1.2.6. Hoisting và Temporal Dead Zone"
           },
           "id": {
             "en": "126-hoisting-temporal-dead-zone",
@@ -2131,14 +2131,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Hoisting means the engine allocates bindings before running the body. Function declarations are initialized. `var` is set to `undefined`. `let` / `const` / `class` exist in the temporal dead zone (TDZ) until their line runs — access throws `ReferenceError`.",
-            "vi": "**Tóm tắt:** Hoisting nghĩa là engine cấp binding trước khi chạy thân hàm. Function declaration được khởi tạo. `var` được gán `undefined`. `let` / `const` / `class` nằm trong temporal dead zone (TDZ) đến khi tới dòng của chúng — truy cập sẽ throw `ReferenceError`."
+            "vi": "**Tóm tắt:** Hoisting nghĩa là engine cấp binding trước khi chạy thân hàm. Function declaration được khởi tạo. `var` được gán `undefined`. `let` / `const` / `class` nằm trong temporal dead zone (TDZ) đến khi tới dòng của chúng. Truy cập sớm sẽ throw `ReferenceError`."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** The interview puzzle is `console.log(a)` before `let a`. The production bug is a circular ESM import: a Pinia store and a composable import each other, and the app throws `Cannot access X before initialization` at startup. Unit tests miss it because the graph is different.",
-            "vi": "**Vì sao quan trọng:** Câu đố khi phỏng vấn là `console.log(a)` trước `let a`. Bug ở môi trường production là import ESM vòng: store Pinia và composable import nhau, và app throw `Cannot access X before initialization` lúc start. Unit test bỏ sót vì đồ thị khác."
+            "vi": "**Vì sao quan trọng:** Câu đố phỏng vấn là `console.log(a)` trước `let a`. Bug trên production là import ESM vòng: store Pinia và composable import lẫn nhau, và app throw `Cannot access X before initialization` lúc start. Unit test bỏ sót vì graph khác."
           }
         },
         {
@@ -2147,23 +2147,23 @@
           "items": [
             {
               "en": "**How it works:** Treat hoisting as a **load-order** problem, not “the engine moved the line up.” The binding exists for the whole scope; initialization is what differs.",
-              "vi": "**Cách hoạt động:** Coi hoisting là bài **thứ tự load**, không phải “engine kéo dòng lên.” Binding tồn tại cho cả scope; phần khác nhau là lúc khởi tạo."
+              "vi": "**Cách hoạt động:** Coi hoisting là bài **thứ tự load**, không phải “engine kéo dòng lên”. Binding tồn tại cho cả scope; khác nhau ở lúc khởi tạo."
             },
             {
               "en": "Function declarations are initialized with the function object. You can call them above the line in the same scope. Function **expressions** (`const fn = () => {}`) follow `const` rules.",
-              "vi": "Function declaration được khởi tạo bằng object hàm. Bạn gọi được chúng trên dòng đó trong cùng scope. Function **expression** (`const fn = () => {}`) theo quy tắc `const`."
+              "vi": "Function declaration được khởi tạo bằng object hàm. Bạn gọi được chúng trước dòng khai báo trong cùng scope. Function **expression** (`const fn = () => {}`) theo quy tắc `const`."
             },
             {
               "en": "`var` is initialized to `undefined`, so reading it early is a silent wrong value. `let` / `const` / `class` throw until init. `typeof x` on a TDZ `let` still throws — unlike `typeof undeclared`.",
-              "vi": "`var` được khởi tạo `undefined`, nên đọc sớm ra giá trị sai thầm lặng. `let` / `const` / `class` throw đến khi init. `typeof x` trên `let` đang TDZ vẫn throw — khác `typeof undeclared`."
+              "vi": "`var` được khởi tạo `undefined`, nên đọc sớm ra giá trị sai mà không báo. `let` / `const` / `class` throw đến khi init. `typeof x` trên `let` đang TDZ vẫn throw, khác `typeof undeclared`."
             },
             {
               "en": "Circular ESM: `a.ts` imports `b.ts` imports `a.ts`. The second file may read a `const` export still in TDZ. Break the cycle with `getStore()`, a third module, or `import()` after init — not with `var`.",
-              "vi": "ESM vòng: `a.ts` import `b.ts` import `a.ts`. File sau có thể đọc export `const` còn trong TDZ. Cắt vòng bằng `getStore()`, module thứ ba, hoặc `import()` sau init — không phải bằng `var`."
+              "vi": "ESM vòng: `a.ts` import `b.ts` import `a.ts`. File sau có thể đọc export `const` còn trong TDZ. Cắt vòng bằng `getStore()`, module thứ ba, hoặc `import()` sau init, không phải bằng `var`."
             },
             {
               "en": "`import type` is erased and cannot cause a runtime TDZ. `const store = useFooStore()` at module top runs before Pinia is installed and is a cousin of the same bug.",
-              "vi": "`import type` bị xóa và không gây TDZ lúc chạy. `const store = useFooStore()` ở top module chạy trước khi Pinia được cài và là họ hàng của cùng bug."
+              "vi": "`import type` bị xóa và không gây TDZ lúc runtime. `const store = useFooStore()` ở top module chạy trước khi Pinia được cài, cùng họ với bug đó."
             }
           ]
         },
@@ -2172,7 +2172,7 @@
           "lang": "ts",
           "code": {
             "en": "console.log(a) // undefined — var is initialized\nvar a = 1\n\nconsole.log(b) // ReferenceError — b is in the TDZ\nlet b = 2\n\n// Break a Pinia ↔ composable cycle with a lazy getter.\nexport function getUserStore() {\n  return useUserStore()\n}\n\n// Don't: const store = useUserStore() at module top in a util.\nimport type { User } from './user' // erased — no runtime TDZ",
-            "vi": "console.log(a) // undefined — var đã được khởi tạo\nvar a = 1\n\nconsole.log(b) // ReferenceError — b đang trong TDZ\nlet b = 2\n\n// Cắt vòng Pinia ↔ composable bằng getter lazy.\nexport function getUserStore() {\n  return useUserStore()\n}\n\n// Đừng: const store = useUserStore() ở top module trong util.\nimport type { User } from './user' // bị xóa — không TDZ lúc chạy"
+            "vi": "console.log(a) // undefined: var đã được khởi tạo\nvar a = 1\n\nconsole.log(b) // ReferenceError: b đang trong TDZ\nlet b = 2\n\n// Cắt vòng Pinia ↔ composable bằng getter lazy.\nexport function getUserStore() {\n  return useUserStore()\n}\n\n// Đừng: const store = useUserStore() ở top module trong util.\nimport type { User } from './user' // bị xóa: không TDZ lúc chạy"
           }
         },
         {
@@ -2191,7 +2191,7 @@
             },
             {
               "en": "Hoisted?",
-              "vi": "Hoist?"
+              "vi": "Có hoist?"
             },
             {
               "en": "Before init",
@@ -2224,7 +2224,7 @@
               },
               {
                 "en": "`undefined` (silent)",
-                "vi": "`undefined` (thầm lặng)"
+                "vi": "`undefined` (không báo)"
               }
             ],
             [
@@ -2252,7 +2252,7 @@
               },
               {
                 "en": "Throw — not a function yet",
-                "vi": "Throw — chưa là hàm"
+                "vi": "Throw: chưa là hàm"
               }
             ]
           ]
@@ -2265,7 +2265,7 @@
           },
           "text": {
             "en": "- The useful mental model is load order, not “lines move up.” That is what makes circular ESM click.\n- Do not “use `var` to avoid TDZ.” Fix the cycle with a function (`getStore()`), a third module, or dynamic `import()` after init.\n- Lazy getters hide cycles and hide design smell. A third module is louder and usually right.\n- Vue auto-import plus Pinia can recreate the cycle: a composable pulled into a store pulled into the composable. Vitest’s graph can still pass.\n- `export class X extends Y` fails if `Y` is still in TDZ. `typeof` on a TDZ binding still throws for `let`/`const`. SSR boot order is not client boot order.",
-            "vi": "- Mô hình hữu ích là thứ tự load, không phải “dòng bị kéo lên.” Đó là thứ làm ESM vòng dễ hiểu.\n- Đừng “dùng `var` để tránh TDZ.” Hãy cắt vòng bằng hàm (`getStore()`), module thứ ba, hoặc `import()` động sau init.\n- Getter lazy giấu vòng và giấu mùi thiết kế. Module thứ ba ồn hơn và thường đúng.\n- Auto-import Vue cộng Pinia có thể tạo lại vòng: composable kéo vào store kéo vào composable. Đồ thị Vitest vẫn có thể pass.\n- `export class X extends Y` thất bại nếu `Y` còn TDZ. `typeof` trên binding TDZ vẫn throw với `let`/`const`. Thứ tự boot SSR không phải thứ tự boot client."
+            "vi": "- Mô hình hữu ích là thứ tự load, không phải “dòng bị kéo lên”. Đó là thứ làm ESM vòng dễ hiểu.\n- Đừng “dùng `var` để tránh TDZ”. Hãy cắt vòng bằng hàm (`getStore()`), module thứ ba, hoặc `import()` động sau init.\n- Getter lazy giấu vòng và giấu mùi thiết kế. Module thứ ba lộ rõ hơn và thường đúng.\n- Auto-import Vue kèm Pinia có thể tạo lại vòng: composable kéo vào store, store kéo lại composable. Graph Vitest vẫn có thể pass.\n- `export class X extends Y` thất bại nếu `Y` còn TDZ. `typeof` trên binding TDZ vẫn throw với `let`/`const`. Thứ tự boot SSR không phải thứ tự boot client."
           }
         },
         {
@@ -2273,18 +2273,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: app throws `Cannot access X before initialization`; tests pass. Cause: circular ESM, different graphs. Fix: `getStore()`, a third module, or `import()` after init.\n- Symptom: `typeof store` throws at startup. Cause: `let`/`const` in TDZ — `typeof` does not save you. Fix: do not read the export at module top.\n- Symptom: `useFooStore()` at module top is `undefined` or throws. Cause: Pinia is not installed yet. Fix: call it inside `setup` / an action.\n- Symptom: `class Child extends Parent` throws. Cause: `Parent` is a circular `const` still in TDZ. Fix: break the import cycle.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: app throw `Cannot access X before initialization`; test thì pass. Nguyên nhân: ESM vòng, đồ thị khác. Cách xử lý: `getStore()`, module thứ ba, hoặc `import()` sau init.\n- Triệu chứng: `typeof store` throw lúc start. Nguyên nhân: `let`/`const` trong TDZ — `typeof` không cứu bạn. Cách xử lý: đừng đọc export ở top module.\n- Triệu chứng: `useFooStore()` ở top module là `undefined` hoặc throw. Nguyên nhân: Pinia chưa được cài. Cách xử lý: gọi trong `setup` / action.\n- Triệu chứng: `class Child extends Parent` throw. Nguyên nhân: `Parent` là `const` vòng còn TDZ. Cách xử lý: cắt vòng import."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: app throw `Cannot access X before initialization`; test thì pass. Nguyên nhân: ESM vòng, graph khác. Cách xử lý: `getStore()`, module thứ ba, hoặc `import()` sau init.\n- Triệu chứng: `typeof store` throw lúc start. Nguyên nhân: `let`/`const` trong TDZ. `typeof` không cứu bạn. Cách xử lý: đừng đọc export ở top module.\n- Triệu chứng: `useFooStore()` ở top module là `undefined` hoặc throw. Nguyên nhân: Pinia chưa được cài. Cách xử lý: gọi trong `setup` / action.\n- Triệu chứng: `class Child extends Parent` throw. Nguyên nhân: `Parent` là `const` vòng còn TDZ. Cách xử lý: cắt vòng import."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "Twenty seconds: function declarations are hoisted fully; `var` is hoisted and set to `undefined`; `let`/`const`/`class` sit in the TDZ until init. Then the production version: circular ESM imports that throw `Cannot access X before initialization`, not the `console.log(a)` puzzle. Can you name TDZ instead of “hoisting is moving declarations up”?",
-            "vi": "Hai mươi giây: function declaration được hoist đủ; `var` được hoist và gán `undefined`; `let`/`const`/`class` nằm TDZ đến khi init. Rồi bản môi trường production: import ESM vòng throw `Cannot access X before initialization`, không phải câu đố `console.log(a)`. Bạn gọi tên TDZ thay vì “hoisting là kéo declaration lên”?"
+            "vi": "Hai mươi giây: function declaration được hoist đủ; `var` được hoist và gán `undefined`; `let`/`const`/`class` nằm TDZ đến khi init. Rồi bản production: import ESM vòng throw `Cannot access X before initialization`, không phải câu đố `console.log(a)`. Bạn nêu rõ được TDZ thay vì “hoisting là kéo declaration lên”?"
           }
         },
         {
@@ -2295,7 +2295,7 @@
           },
           "text": {
             "en": "Function declarations hoist fully, var hoists as undefined, and let, const, and class sit in the temporal dead zone until init — access throws ReferenceError, and typeof does not save you. The production bug is a circular ESM import. A composable imported by a Pinia store imported by the composable throws Cannot access X before initialization at startup, and tests miss it because the graph is different. I break the cycle with getStore(), a third module, or import() after init. I do not switch to var to avoid the TDZ, and I do not call useFooStore at module top before Pinia is installed. I would start from the exact ReferenceError, then the Vite import graph, not from rewriting the file with var.",
-            "vi": "Function declaration hoist đủ, var hoist thành undefined, còn let, const, và class nằm temporal dead zone đến khi init — truy cập throw ReferenceError, và typeof không cứu bạn. Bug ở môi trường production là import ESM vòng. Composable bị store Pinia import rồi import ngược composable sẽ throw Cannot access X before initialization lúc start, và test bỏ sót vì đồ thị khác. Tôi cắt vòng bằng getStore(), module thứ ba, hoặc import() sau init. Tôi không đổi sang var để tránh TDZ, và không gọi useFooStore ở top module trước khi Pinia được cài. Tôi sẽ bắt đầu từ đúng ReferenceError, rồi đồ thị import Vite, không phải viết lại file bằng var."
+            "vi": "Function declaration hoist đủ, var hoist thành undefined, còn let, const, và class nằm temporal dead zone đến khi init. Truy cập sẽ throw ReferenceError, và typeof không cứu bạn. Bug trên production là import ESM vòng. Composable bị store Pinia import rồi import ngược composable sẽ throw Cannot access X before initialization lúc start, và test bỏ sót vì graph khác. Mình cắt vòng bằng getStore(), module thứ ba, hoặc import() sau init. Mình không đổi sang var để tránh TDZ, và không gọi useFooStore ở top module trước khi Pinia được cài. Mình sẽ bắt đầu từ đúng ReferenceError, rồi graph import Vite, không phải viết lại file bằng var."
           }
         },
         {
@@ -2307,11 +2307,11 @@
             },
             {
               "en": "The production TDZ is circular ESM, not `console.log(a)` before `let a`.",
-              "vi": "TDZ ở môi trường production là ESM vòng, không phải `console.log(a)` trước `let a`."
+              "vi": "TDZ trên production là ESM vòng, không phải `console.log(a)` trước `let a`."
             },
             {
               "en": "Break cycles with `getStore()`, a third module, or `import()` — not `var`.",
-              "vi": "Cắt vòng bằng `getStore()`, module thứ ba, hoặc `import()` — không phải `var`."
+              "vi": "Cắt vòng bằng `getStore()`, module thứ ba, hoặc `import()`, không phải `var`."
             },
             {
               "en": "`typeof` on a TDZ `let` still throws. `import type` cannot cause a runtime TDZ.",
@@ -2327,7 +2327,7 @@
           },
           "text": {
             "en": "- **How do you break a Pinia ↔ composable import cycle?** Lazy `getStore()`, a third module both import, or `import()` after Pinia is installed.\n- **Does `typeof x` throw when `x` is in the TDZ?** Yes for `let`/`const`/`class`. `typeof undeclared` is `\"undefined\"`.\n- **Why do tests miss the crash?** Vitest’s module graph and mock order differ from the Vite app chunk.\n- **Is `var` ever the right TDZ fix?** No. It hides the cycle and brings function-scope leaks back.",
-            "vi": "- **Cắt vòng import Pinia ↔ composable thế nào?** `getStore()` lazy, module thứ ba cả hai cùng import, hoặc `import()` sau khi Pinia được cài.\n- **`typeof x` có throw khi `x` đang TDZ không?** Có với `let`/`const`/`class`. `typeof undeclared` là `\"undefined\"`.\n- **Vì sao test bỏ sót crash?** Đồ thị module và thứ tự mock của Vitest khác chunk Vite của app.\n- **`var` có bao giờ là cách xử lý TDZ đúng không?** Không. Nó giấu vòng và mang leak function-scope trở lại."
+            "vi": "- **Cắt vòng import Pinia ↔ composable thế nào?** `getStore()` lazy, module thứ ba cả hai cùng import, hoặc `import()` sau khi Pinia được cài.\n- **`typeof x` có throw khi `x` đang TDZ không?** Có với `let`/`const`/`class`. `typeof undeclared` là `\"undefined\"`.\n- **Vì sao test bỏ sót crash?** Graph module và thứ tự mock của Vitest khác chunk Vite của app.\n- **`var` có bao giờ là cách xử lý TDZ đúng không?** Không. Nó giấu vòng và mang leak function-scope trở lại."
           }
         },
         {
@@ -2349,14 +2349,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** `AbortController` is the browser primitive for cancelling work. One controller exposes a `signal` you pass to `fetch`, listeners, and Vue `watch` cleanup. Abort is cooperative: code that never checks the signal still finishes.",
-            "vi": "**Tóm tắt:** `AbortController` là primitive của browser để hủy việc. Một controller expose `signal` bạn truyền vào `fetch`, listener, và cleanup `watch` Vue. Abort là hợp tác: code không bao giờ kiểm signal vẫn chạy xong."
+            "vi": "**Tóm tắt:** `AbortController` là primitive của browser để hủy việc. Một controller expose `signal` bạn truyền vào `fetch`, listener, và cleanup `watch` Vue. Abort là cooperative: code không bao giờ check signal thì vẫn chạy xong."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** Typeahead fires five in-flight GETs and the slowest wins, overwriting the input. A route change still writes into the previous page. `let seq++` is an ad-hoc ignore-stale flag. Interviewers want `AbortController` as the contract, and how it composes with `Promise.all`.",
-            "vi": "**Vì sao quan trọng:** Typeahead bắn năm GET đang bay và cái chậm nhất thắng, ghi đè input. Đổi route vẫn ghi vào trang trước. `let seq++` là cờ bỏ-stale tự chế. Người phỏng vấn muốn `AbortController` như contract, và nó kết hợp với `Promise.all` thế nào."
+            "vi": "**Vì sao quan trọng:** Typeahead bắn năm GET đang bay và cái chậm nhất thắng, ghi đè input. Đổi route vẫn ghi vào trang trước. `let seq++` là cờ bỏ-stale tự chế. Người phỏng vấn muốn `AbortController` như contract, và nó ghép với `Promise.all` thế nào."
           }
         },
         {
@@ -2369,15 +2369,15 @@
             },
             {
               "en": "A race condition (tranh chấp thứ tự) in search is “last write wins” on a slow response. Abort the previous controller on each new query so the old GET cannot write `results`.",
-              "vi": "Race condition (tranh chấp thứ tự) trong search là “ghi sau cùng thắng” trên response chậm. Abort controller trước mỗi query mới để GET cũ không ghi `results`."
+              "vi": "Race condition (tranh chấp thứ tự) trong search là “ghi sau cùng thắng” khi response chậm. Abort controller trước đó mỗi query mới để GET cũ không ghi được `results`."
             },
             {
               "en": "Ignoring stale without abort still wastes the network. Prefer abort **and** ignore: catch `AbortError` and return; do not toast it; do not send it to Sentry.",
-              "vi": "Bỏ stale mà không abort vẫn tốn network. Nên abort **và** bỏ: catch `AbortError` rồi return; đừng toast; đừng gửi Sentry."
+              "vi": "Bỏ qua stale mà không abort vẫn tốn network. Nên abort **và** bỏ qua: catch `AbortError` rồi return; đừng toast nó; đừng gửi lên Sentry."
             },
             {
               "en": "`Promise.race([fetch(url, { signal }), timeout(ms, ac)])` can abort on timeout if the timeout calls `ac.abort()`. `Promise.all` siblings keep running unless they received the **same** signal.",
-              "vi": "`Promise.race([fetch(url, { signal }), timeout(ms, ac)])` abort được khi hết giờ nếu timeout gọi `ac.abort()`. Các nhánh `Promise.all` vẫn chạy trừ khi chúng nhận **cùng** signal."
+              "vi": "`Promise.race([fetch(url, { signal }), timeout(ms, ac)])` abort được khi timeout nếu timeout gọi `ac.abort()`. Các nhánh `Promise.all` vẫn chạy trừ khi chúng nhận **cùng** signal."
             },
             {
               "en": "Cleanup on unmount: Vue `watch` `onCleanup(() => ac.abort())`, `onScopeDispose`, or React `useEffect` cleanup. One signal can cover fetch, a listener, and the watch.",
@@ -2397,7 +2397,7 @@
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** Each query change aborts the previous controller, so both `search` and `getFacets` stop together. A late 200 cannot overwrite `results`. `AbortError` is swallowed; a real 500 still throws. Sharing one signal is what makes `Promise.all` cancellable as a unit.",
-            "vi": "**Điều gì xảy ra:** Mỗi lần đổi query abort controller trước, nên `search` và `getFacets` dừng cùng nhau. Một 200 đến muộn không ghi đè `results`. `AbortError` bị nuốt; 500 thật vẫn throw. Chia một signal là thứ làm `Promise.all` hủy được như một đơn vị."
+            "vi": "**Điều gì xảy ra:** Mỗi lần đổi query abort controller trước, nên `search` và `getFacets` dừng cùng nhau. Một 200 đến muộn không ghi đè `results`. `AbortError` bị nuốt; 500 thật vẫn throw. Dùng chung một signal thì `Promise.all` hủy được như một nhóm."
           }
         },
         {
@@ -2448,7 +2448,7 @@
             [
               {
                 "en": "Timeout",
-                "vi": "Hết giờ"
+                "vi": "Timeout"
               },
               {
                 "en": "`AbortSignal.timeout(ms)` or `race` + `abort`",
@@ -2466,11 +2466,11 @@
               },
               {
                 "en": "Do not abort unless leaving is unsafe",
-                "vi": "Đừng abort trừ khi rời đi là không an toàn"
+                "vi": "Đừng abort trừ khi rời trang là không an toàn"
               },
               {
                 "en": "Same — cancellation is a product rule",
-                "vi": "Giống — cancellation là quy tắc sản phẩm"
+                "vi": "Giống vậy: cancellation là quy tắc sản phẩm"
               }
             ]
           ]
@@ -2483,7 +2483,7 @@
           },
           "text": {
             "en": "- Cancellation is part of the API contract. Share one `AbortSignal` across fetch, listeners, and Vue `watch` `onCleanup`.\n- Abort is cooperative. A forgotten inner `fetch` without the signal still completes and can write stale results.\n- `Promise.all` plus one abort: siblings keep running unless they received the same signal. Pass it into every child.\n- Filter `AbortError` before Sentry so typeahead cancels do not page you. Retry after abort is wrong; retry after 503 is right — check `signal.aborted` first.\n- HTTP/2 cancellation helps the server; HTTP/1.1 may not stop work. Do not assume abort saves DB CPU. Do not abort a confirmed checkout unless applying the result after leave is unsafe.",
-            "vi": "- Cancellation là một phần của API contract. Hãy chia một `AbortSignal` cho fetch, listener, và `watch` `onCleanup` Vue.\n- Abort là hợp tác. `fetch` con quên signal vẫn chạy xong và có thể ghi kết quả stale.\n- `Promise.all` cộng một abort: các nhánh vẫn chạy trừ khi nhận cùng signal. Hãy truyền vào mọi nhánh con.\n- Lọc `AbortError` trước Sentry để cancel typeahead không gọi bạn dậy. Retry sau abort là sai; retry sau 503 là đúng — kiểm `signal.aborted` trước.\n- HTTP/2 cancellation giúp server; HTTP/1.1 có thể không dừng việc. Đừng giả định abort tiết kiệm CPU DB. Đừng abort checkout đã confirm trừ khi áp kết quả sau khi rời trang là không an toàn."
+            "vi": "- Cancellation là một phần của API contract. Chia một `AbortSignal` cho fetch, listener, và `watch` `onCleanup` của Vue.\n- Abort là hợp tác. `fetch` bên trong quên signal vẫn chạy xong và có thể ghi kết quả stale.\n- `Promise.all` kèm một abort: các nhánh vẫn chạy trừ khi nhận cùng signal. Truyền signal vào mọi child.\n- Lọc `AbortError` trước Sentry để cancel typeahead không gọi bạn dậy. Retry sau abort là sai; retry sau 503 mới đúng. Kiểm `signal.aborted` trước.\n- HTTP/2 cancellation giúp server; HTTP/1.1 có thể không dừng việc. Đừng nghĩ abort tiết kiệm CPU của DB. Đừng abort checkout đã confirm trừ khi áp kết quả sau khi rời trang là không an toàn."
           }
         },
         {
@@ -2491,18 +2491,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Symptom: slow first query overwrites the second. Cause: no abort, last write wins. Fix: new `AbortController` per query; ignore `AbortError`.\n- Symptom: Sentry floods on every keystroke. Cause: logging `AbortError` as a failure. Fix: return on `name === 'AbortError'`.\n- Symptom: facets still arrive after abort. Cause: `Promise.all` children did not get the signal. Fix: pass the same `signal` into every call.\n- Symptom: leaving a page still patches Pinia. Cause: no `onCleanup` abort. Fix: abort on unmount; do not write if `signal.aborted`.",
-            "vi": "**Lỗi hay gặp**\n- Triệu chứng: query đầu chậm ghi đè query hai. Nguyên nhân: không abort, ghi sau cùng thắng. Cách xử lý: `AbortController` mới mỗi query; bỏ `AbortError`.\n- Triệu chứng: Sentry ngập mỗi lần gõ. Nguyên nhân: log `AbortError` như failure. Cách xử lý: return khi `name === 'AbortError'`.\n- Triệu chứng: facet vẫn tới sau abort. Nguyên nhân: con của `Promise.all` không nhận signal. Cách xử lý: truyền cùng `signal` vào mọi lời gọi.\n- Triệu chứng: rời trang vẫn patch Pinia. Nguyên nhân: không abort trong `onCleanup`. Cách xử lý: abort lúc unmount; đừng ghi nếu `signal.aborted`."
+            "vi": "**Lỗi hay gặp**\n- Triệu chứng: query đầu chậm ghi đè query sau. Nguyên nhân: không abort, lần ghi sau cùng thắng. Cách xử lý: `AbortController` mới mỗi query; bỏ qua `AbortError`.\n- Triệu chứng: Sentry ngập mỗi lần gõ. Nguyên nhân: log `AbortError` như failure. Cách xử lý: return khi `name === 'AbortError'`.\n- Triệu chứng: facet vẫn tới sau abort. Nguyên nhân: các nhánh `Promise.all` không nhận signal. Cách xử lý: truyền cùng `signal` vào mọi lời gọi.\n- Triệu chứng: rời trang vẫn patch Pinia. Nguyên nhân: không abort trong `onCleanup`. Cách xử lý: abort lúc unmount; đừng ghi nếu `signal.aborted`."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "Typeahead: five in-flight GETs, the slowest wins and overwrites the input. Route change: a `watch` still writes into the previous page. “We used `let seq++`.” Why is `AbortController` the primitive, how does it compose with `Promise.all`, and when would you refuse to abort a request?",
-            "vi": "Typeahead: năm GET đang bay, cái chậm nhất thắng và ghi đè input. Đổi route: `watch` vẫn ghi vào trang trước. “Chúng tôi dùng `let seq++`.” Vì sao `AbortController` là primitive, nó kết hợp với `Promise.all` thế nào, và khi nào bạn từ chối abort một request?"
+            "vi": "Typeahead: năm GET đang bay, cái chậm nhất thắng và ghi đè input. Đổi route: `watch` vẫn ghi vào trang trước. “Bọn mình dùng `let seq++`”. Vì sao `AbortController` là primitive, nó kết hợp với `Promise.all` thế nào, và khi nào bạn từ chối abort một request?"
           }
         },
         {
@@ -2513,7 +2513,7 @@
           },
           "text": {
             "en": "I treat cancellation as part of the contract. Every fetch, listener, and Vue watch shares one AbortSignal — I abort on unmount, on query change, and on timeout. Abort is cooperative, so a forgotten inner call still completes and can write stale results; I pass the same signal into Promise.all children. I filter AbortError before Sentry so typeahead cancels do not page me, and I retry only after a real 503, after checking signal.aborted. I would not abort a confirmed checkout unless leaving the page makes applying the result unsafe. A seq counter only ignores stale writes; it still wastes the network.",
-            "vi": "Tôi coi cancellation là một phần của contract. Mọi fetch, listener, và watch Vue chia một AbortSignal — tôi abort lúc unmount, lúc đổi query, và lúc hết giờ. Abort là hợp tác, nên lời gọi con bị quên vẫn chạy xong và có thể ghi kết quả stale; tôi truyền cùng signal vào các nhánh Promise.all. Tôi lọc AbortError trước Sentry để cancel typeahead không gọi tôi dậy, và chỉ retry sau 503 thật, sau khi kiểm signal.aborted. Tôi không abort checkout đã confirm trừ khi rời trang khiến việc áp kết quả không an toàn. Bộ đếm seq chỉ bỏ lần ghi stale; nó vẫn tốn network."
+            "vi": "Mình coi cancellation là một phần của contract. Mọi fetch, listener, và watch Vue dùng chung một AbortSignal. Mình abort lúc unmount, lúc đổi query, và lúc timeout. Abort là hợp tác, nên call bên trong bị quên vẫn chạy xong và có thể ghi kết quả stale; mình truyền cùng signal vào các nhánh Promise.all. Mình lọc AbortError trước Sentry để cancel typeahead không gọi mình dậy, và chỉ retry sau 503 thật, sau khi kiểm signal.aborted. Mình không abort checkout đã confirm trừ khi rời trang khiến việc áp kết quả không an toàn. Bộ đếm seq chỉ bỏ lần ghi stale; nó vẫn tốn network."
           }
         },
         {
@@ -2529,11 +2529,11 @@
             },
             {
               "en": "`Promise.all` children keep running unless they got the same signal.",
-              "vi": "Nhánh `Promise.all` vẫn chạy trừ khi nhận cùng signal."
+              "vi": "Các nhánh `Promise.all` vẫn chạy trừ khi nhận cùng signal."
             },
             {
               "en": "Do not toast or Sentry `AbortError`. Do not abort a confirmed checkout by default.",
-              "vi": "Đừng toast hoặc Sentry `AbortError`. Đừng abort checkout đã confirm theo mặc định."
+              "vi": "Đừng toast hoặc Sentry `AbortError`. Checkout đã confirm thì mặc định đừng abort."
             }
           ]
         },
@@ -2545,7 +2545,7 @@
           },
           "text": {
             "en": "- **How do you share one signal across fetch, watch, and a listener?** Create one `AbortController` in the effect / `watch`, pass `signal` into each API, abort in `onCleanup`.\n- **What does `AbortSignal.timeout(ms)` do?** Returns a signal that aborts after `ms`. Combine with fetch; still catch `AbortError` / `TimeoutError`.\n- **When is a seq counter enough?** Never as the only fix for search. It ignores writes but does not cancel work.\n- **Does abort stop the server?** Maybe on HTTP/2. Treat it as best-effort; do not rely on it to un-charge a card.",
-            "vi": "- **Chia một signal cho fetch, watch, và listener thế nào?** Tạo một `AbortController` trong effect / `watch`, truyền `signal` vào mỗi API, abort trong `onCleanup`.\n- **`AbortSignal.timeout(ms)` làm gì?** Trả signal abort sau `ms`. Kết hợp với fetch; vẫn catch `AbortError` / `TimeoutError`.\n- **Khi nào bộ đếm seq là đủ?** Không bao giờ là cách xử lý duy nhất cho search. Nó bỏ lần ghi nhưng không hủy việc.\n- **Abort có dừng server không?** Có thể trên HTTP/2. Hãy coi là best-effort; đừng dựa vào nó để hủy trừ thẻ."
+            "vi": "- **Chia một signal cho fetch, watch, và listener thế nào?** Tạo một `AbortController` trong effect / `watch`, truyền `signal` vào mỗi API, abort trong `onCleanup`.\n- **`AbortSignal.timeout(ms)` làm gì?** Trả về signal abort sau `ms`. Kết hợp với fetch; vẫn catch `AbortError` / `TimeoutError`.\n- **Khi nào bộ đếm seq là đủ?** Không bao giờ là cách xử lý duy nhất cho search. Nó bỏ lần ghi nhưng không hủy việc.\n- **Abort có dừng server không?** Có thể trên HTTP/2. Coi là best-effort; đừng dựa vào nó để hủy charge trên thẻ."
           }
         },
         {

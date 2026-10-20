@@ -7,7 +7,7 @@
   },
   "summary": {
     "en": "Vite is fast because the browser loads ESM and dependencies are pre-bundled. Vite 8 (March 2026) uses Rolldown by default; older Vite still means Rollup in prod. Start with 12.1, then CI and the 3 MB chunk.",
-    "vi": "Vite nhanh vì browser load ESM và dependency được pre-bundle. Vite 8 (tháng 3/2026) dùng Rolldown mặc định; Vite cũ vẫn nghĩa Rollup lúc prod. Bắt đầu từ 12.1, rồi CI và chunk 3 MB."
+    "vi": "Vite nhanh vì browser load ESM, còn dependency thì được pre-bundle. Vite 8 (tháng 3/2026) mặc định dùng Rolldown; Vite cũ thì prod vẫn là Rollup. Bắt đầu từ 12.1, rồi tới CI và chunk 3 MB."
   },
   "category": "infra",
   "order": 15,
@@ -42,14 +42,14 @@
           "type": "paragraph",
           "text": {
             "en": "This doc is senior frontend build tools: why the Vite **dev server** is a different product from the **production bundle**, when you still pick Webpack / Rspack / Turbopack, and how you debug a fat `main` chunk. Interviewers already know Vite is “fast.” They hire you if you can name ESM plus pre-bundling, HMR cost, source maps, and Module Federation as a Webpack/Rspack conversation.",
-            "vi": "Tài liệu này là công cụ build frontend mức senior: vì sao **dev server** Vite là sản phẩm khác **bundle production**, khi nào vẫn chọn Webpack / Rspack / Turbopack, và cách debug `main` chunk béo. Người phỏng vấn đã biết Vite “nhanh.” Họ thuê nếu bạn gọi được ESM cộng pre-bundle, phí HMR, source map, và Module Federation như cuộc nói chuyện Webpack/Rspack."
+            "vi": "Bài này nói về build tool ở góc nhìn senior frontend: vì sao **dev server** của Vite và **production bundle** là hai thứ khác hẳn nhau, khi nào vẫn nên chọn Webpack / Rspack / Turbopack, và cách debug một chunk `main` quá nặng. Người phỏng vấn biết thừa Vite “nhanh”. Bạn ghi điểm khi nói rõ được ESM và pre-bundling, cái giá của HMR, source map, và hiểu Module Federation là chuyện của Webpack/Rspack."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "Study 12.1 first (the comparison and the Vite version line). Vite 8 (March 2026) uses Rolldown as the default bundler; Vite 5–7 still mean esbuild `optimizeDeps` in dev and Rollup in prod. Then 12.2 for CI minutes. 12.3 is the 3 MB walk-through. Vue 3 / Nuxt default to Vite; Webpack is still the Federation and legacy-loader conversation.",
-            "vi": "Hãy học 12.1 trước (bảng so sánh và dòng version Vite). Vite 8 (tháng 3/2026) dùng Rolldown làm bundler mặc định; Vite 5–7 vẫn nghĩa esbuild `optimizeDeps` lúc dev và Rollup lúc prod. Rồi 12.2 cho phút CI. 12.3 là walk-through 3 MB. Vue 3 / Nuxt mặc định Vite; Webpack vẫn là chuyện Federation và loader legacy."
+            "vi": "Đọc 12.1 trước (bảng so sánh và các mốc version của Vite). Vite 8 (tháng 3/2026) dùng Rolldown làm bundler mặc định; với Vite 5–7 thì dev vẫn chạy esbuild `optimizeDeps`, còn prod là Rollup. Sau đó đọc 12.2 để bớt phút CI. 12.3 phân tích từng bước một bundle 3 MB. Vue 3 / Nuxt mặc định dùng Vite; Webpack giờ chủ yếu còn được nhắc khi nói về Federation và loader legacy."
           }
         },
         {
@@ -119,14 +119,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** Vite’s **dev server** serves your app source as native ESM and pre-bundles `node_modules`. The **production** build is a separate bundler. Vite 8 (March 2026) uses **Rolldown** by default. Vite 5–7 still mean esbuild `optimizeDeps` in dev and **Rollup** in prod. Webpack walks a graph and serves a bundle in both modes.",
-            "vi": "**Tóm tắt:** **Dev server** Vite phục vụ source app như ESM native và pre-bundle `node_modules`. Build **production** là bundler riêng. Vite 8 (tháng 3/2026) dùng **Rolldown** mặc định. Vite 5–7 vẫn nghĩa esbuild `optimizeDeps` lúc dev và **Rollup** lúc prod. Webpack đi graph và phục vụ bundle ở cả hai mode."
+            "vi": "**Tóm tắt:** **dev server** của Vite serve source app dạng native ESM và pre-bundle `node_modules`. Build **production** là bundler riêng. Vite 8 (tháng 3/2026) mặc định dùng **Rolldown**. Vite 5–7 thì dev vẫn là esbuild `optimizeDeps`, prod là **Rollup**. Webpack walk graph rồi serve bundle ở cả hai mode."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “Vite vs Webpack — which do you choose?” is not a speed slogan. They want why the first request after a cold start is a module graph, when Module Federation still forces Webpack or Rspack, and whether you know Vite 8 swapped Rollup for Rolldown. “Vite has no production bundler” is a fail.",
-            "vi": "**Vì sao quan trọng:** “Vite khác Webpack — chọn cái nào?” không phải khẩu hiệu tốc độ. Họ muốn vì sao request đầu sau cold start là module graph, khi nào Module Federation vẫn buộc Webpack hoặc Rspack, và bạn có biết Vite 8 đổi Rollup sang Rolldown không. “Vite không có bundler production” là fail."
+            "vi": "**Vì sao quan trọng:** “Vite khác Webpack: chọn cái nào?” không phải khẩu hiệu tốc độ. Họ muốn biết vì sao request đầu sau cold start lại là module graph, khi nào Module Federation vẫn bắt buộc Webpack hoặc Rspack, và bạn có biết Vite 8 đã đổi Rollup sang Rolldown không. “Vite không có bundler production” là fail."
           }
         },
         {
@@ -135,23 +135,23 @@
           "items": [
             {
               "en": "**How it works:** App source is served as ESM. The browser requests `/src/pages/orders.vue`, not `main.js`. Dependencies are pre-bundled (esbuild on Vite 5–7; Rolldown on Vite 8) into the Vite cache (`optimizeDeps`) because raw CJS `node_modules` would be thousands of round-trips.",
-              "vi": "**Cách hoạt động:** Source app được phục vụ như ESM. Browser xin `/src/pages/orders.vue`, không phải `main.js`. Dependency được pre-bundle (esbuild trên Vite 5–7; Rolldown trên Vite 8) vào cache Vite (`optimizeDeps`) vì CJS thô trong `node_modules` sẽ là hàng nghìn round-trip."
+              "vi": "**Cách hoạt động:** Source app được serve dạng ESM. Browser xin `/src/pages/orders.vue`, không phải `main.js`. Dependency được pre-bundle (esbuild trên Vite 5–7; Rolldown trên Vite 8) vào cache của Vite (`optimizeDeps`) vì CJS thô trong `node_modules` sẽ thành hàng nghìn round-trip."
             },
             {
               "en": "HMR: Vite invalidates the changed module and its importers over a WebSocket. A leaf SFC is cheap. A change in a Pinia store or a Nuxt plugin that many routes import is expensive. Webpack HMR patches an already-built graph — fine once warm, slow when cold.",
-              "vi": "HMR: Vite vô hiệu module đổi và importer của nó trên WebSocket. SFC lá thì rẻ. Đổi store Pinia hoặc plugin Nuxt mà nhiều route import thì đắt. Webpack HMR vá graph đã build — ổn khi ấm, chậm khi lạnh."
+              "vi": "HMR: Vite invalidate module vừa đổi cùng importer của nó qua WebSocket. Đổi một SFC leaf thì rẻ. Đổi store Pinia hoặc plugin Nuxt mà nhiều route import thì đắt. Webpack HMR vá graph đã build sẵn: ổn khi đã warm, chậm khi còn cold."
             },
             {
               "en": "Production must bundle: HTTP/2 does not make 4,000 ESM requests a good LCP. Vite 8 = Rolldown (Rust, Rollup-compatible plugins, `build.rolldownOptions`). Vite 7 and below = Rollup (`build.rollupOptions`); a compat layer on Vite 8 still maps old options. Say which version the team is on — a Nuxt 3 app may still be Vite 6/7.",
-              "vi": "Production phải bundle: HTTP/2 không biến 4.000 request ESM thành LCP tốt. Vite 8 = Rolldown (Rust, plugin tương thích Rollup, `build.rolldownOptions`). Vite 7 trở xuống = Rollup (`build.rollupOptions`); lớp tương thích trên Vite 8 vẫn map option cũ. Hãy nói team đang ở version nào — app Nuxt 3 có thể vẫn Vite 6/7."
+              "vi": "Production phải bundle: HTTP/2 không biến 4.000 request ESM thành LCP tốt. Vite 8 = Rolldown (Rust, plugin tương thích Rollup, `build.rolldownOptions`). Vite 7 trở xuống = Rollup (`build.rollupOptions`); compat layer trên Vite 8 vẫn map option cũ. Nêu rõ team đang ở version nào: app Nuxt 3 có thể vẫn Vite 6/7."
             },
             {
               "en": "Module Federation (`exposes`, `remotes`, `shared: { vue: { singleton: true } }`) is still a Webpack 5 / Rspack platform. Vite can do MF via plugins; it is not the org-standard runtime. Shared singleton Vue is the whole game. “Works on `vite dev`” is not “works as a remote.”",
-              "vi": "Module Federation (`exposes`, `remotes`, `shared: { vue: { singleton: true } }`) vẫn là platform Webpack 5 / Rspack. Vite làm MF qua plugin; không phải runtime chuẩn org. Vue singleton share là cả ván. “Chạy trên `vite dev`” không phải “chạy như remote.”"
+              "vi": "Module Federation (`exposes`, `remotes`, `shared: { vue: { singleton: true } }`) vẫn là platform Webpack 5 / Rspack. Vite làm được MF qua plugin; đó không phải runtime chuẩn của org. Share Vue dạng singleton mới là cả ván. “Chạy trên `vite dev`” không phải “chạy như remote”."
             },
             {
               "en": "Source maps: prod default `sourcemap: \"hidden\"` — emit `.map`, do not link them from the JS, upload to Sentry on the matching release. Cheap maps are for dev. Inline maps in prod are a classic 3 MB `main`. Env: only `VITE_*` / `NUXT_PUBLIC_*` is client-visible. Never put secrets there. `define` is a compile-time constant, not a runtime flag service.",
-              "vi": "Source map: mặc định prod `sourcemap: \"hidden\"` — emit `.map`, không link từ JS, upload Sentry đúng release. Map cheap cho dev. Map inline trên prod là `main` 3 MB kinh điển. Env: chỉ `VITE_*` / `NUXT_PUBLIC_*` hiện phía client. Đừng nhét secret vào đó. `define` là hằng lúc compile, không phải dịch vụ flag runtime."
+              "vi": "Source map: mặc định prod là `sourcemap: \"hidden\"`: emit `.map`, không link từ JS, upload lên Sentry đúng release. Map cheap dành cho dev. Map inline trên prod là `main` 3 MB kinh điển. Env: chỉ `VITE_*` / `NUXT_PUBLIC_*` mới hiện phía client. Đừng nhét secret vào đó. `define` là hằng lúc compile, không phải dịch vụ flag runtime."
             }
           ]
         },
@@ -160,14 +160,14 @@
           "lang": "ts",
           "code": {
             "en": "import { defineConfig } from \"vite\"\nimport { visualizer } from \"rollup-plugin-visualizer\"\nexport default defineConfig({\n  define: { __PAYMENTS_V2__: JSON.stringify(false) }, // compile-time, not a secret\n  build: {\n    sourcemap: \"hidden\", // emit .map, do not link from JS; upload to Sentry\n    rolldownOptions: { // Vite 8. Vite 7 used build.rollupOptions (still mapped)\n      output: { codeSplitting: { groups: [{ name: \"echarts\", test: /node_modules\\/echarts/ }] } },\n    },\n  },\n  plugins: [visualizer({ gzipSize: true, emitFile: true })],\n})",
-            "vi": "import { defineConfig } from \"vite\"\nimport { visualizer } from \"rollup-plugin-visualizer\"\nexport default defineConfig({\n  define: { __PAYMENTS_V2__: JSON.stringify(false) }, // lúc compile, không phải secret\n  build: {\n    sourcemap: \"hidden\", // emit .map, không link từ JS; upload Sentry\n    rolldownOptions: { // Vite 8. Vite 7 dùng build.rollupOptions (vẫn được map)\n      output: { codeSplitting: { groups: [{ name: \"echarts\", test: /node_modules\\/echarts/ }] } },\n    },\n  },\n  plugins: [visualizer({ gzipSize: true, emitFile: true })],\n})"
+            "vi": "import { defineConfig } from \"vite\"\nimport { visualizer } from \"rollup-plugin-visualizer\"\nexport default defineConfig({\n  define: { __PAYMENTS_V2__: JSON.stringify(false) }, // lúc compile, không phải secret\n  build: {\n    sourcemap: \"hidden\", // emit .map, không link từ JS; upload lên Sentry\n    rolldownOptions: { // Vite 8. Vite 7 dùng build.rollupOptions (vẫn được map)\n      output: { codeSplitting: { groups: [{ name: \"echarts\", test: /node_modules\\/echarts/ }] } },\n    },\n  },\n  plugins: [visualizer({ gzipSize: true, emitFile: true })],\n})"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** `__PAYMENTS_V2__` is replaced at compile time — dead code drops if you `if (__PAYMENTS_V2__)`. Hidden maps never ship on the CDN. Vite 8 reads `rolldownOptions`; a Vite 7 config with `rollupOptions` still works through the compat layer. The visualizer HTML is a CI artifact, not a guess.",
-            "vi": "**Điều gì xảy ra:** `__PAYMENTS_V2__` bị thay lúc compile — code chết rơi nếu bạn `if (__PAYMENTS_V2__)`. Map hidden không xuất trên CDN. Vite 8 đọc `rolldownOptions`; config Vite 7 với `rollupOptions` vẫn chạy qua lớp tương thích. HTML visualizer là artifact CI, không phải đoán."
+            "vi": "**Điều gì xảy ra:** `__PAYMENTS_V2__` bị thay lúc compile: dead code bị loại nếu bạn `if (__PAYMENTS_V2__)`. Map hidden không bao giờ lên CDN. Vite 8 đọc `rolldownOptions`; config Vite 7 với `rollupOptions` vẫn chạy qua compat layer. HTML visualizer là artifact CI, không phải đoán mò."
           }
         },
         {
@@ -183,7 +183,7 @@
             },
             {
               "en": "You pay",
-              "vi": "Bạn trả"
+              "vi": "Cái giá"
             }
           ],
           "rows": [
@@ -198,7 +198,7 @@
               },
               {
                 "en": "Exotic Webpack loaders; MF is a plugin",
-                "vi": "Loader Webpack lạ; MF là plugin"
+                "vi": "Loader Webpack dị; MF là plugin"
               }
             ],
             [
@@ -208,11 +208,11 @@
               },
               {
                 "en": "Existing Nuxt 3 on Vite 6/7",
-                "vi": "Nuxt 3 sẵn trên Vite 6/7"
+                "vi": "Nuxt 3 đang chạy Vite 6/7"
               },
               {
                 "en": "Prod is still Rollup; do not claim Rolldown",
-                "vi": "Prod vẫn Rollup; đừng nhận Rolldown"
+                "vi": "Prod vẫn là Rollup; đừng nhận là Rolldown"
               }
             ],
             [
@@ -222,7 +222,7 @@
               },
               {
                 "en": "Custom loaders, mature MF, Vue CLI maze",
-                "vi": "Loader custom, MF chín, mê cung Vue CLI"
+                "vi": "Loader custom, MF đã ổn, mê cung Vue CLI"
               },
               {
                 "en": "Slow cold builds unless you invest in cache",
@@ -240,7 +240,7 @@
               },
               {
                 "en": "Plugin compatibility is most, not all",
-                "vi": "Tương thích plugin là hầu hết, không tất cả"
+                "vi": "Tương thích plugin: hầu hết, không phải tất cả"
               }
             ],
             [
@@ -267,7 +267,7 @@
           },
           "text": {
             "en": "- Dev-server speed and production-graph optimization are different jobs. Vite wins the first; Webpack/Rspack still win exotic loaders and first-class Federation.\n- Vite 8 (March 2026) unified on Rolldown; Rolldown 1.0 shipped May 2026. Do not say “prod is always Rollup” without a version.\n- `optimizeDeps.include` is for CJS packages that surprise the scanner. A missing include is a blank page after a dep upgrade, not “Vite is broken.”\n- Verify: first cold `vite` request is ESM modules; production Network shows hashed bundles; Sentry release matches the hidden map SHA.",
-            "vi": "- Tốc độ dev server và tối ưu graph production là hai việc. Vite thắng cái đầu; Webpack/Rspack vẫn thắng loader lạ và Federation hạng nhất.\n- Vite 8 (tháng 3/2026) thống nhất trên Rolldown; Rolldown 1.0 xuất tháng 5/2026. Đừng nói “prod luôn là Rollup” mà không có version.\n- `optimizeDeps.include` dành cho package CJS làm scanner bất ngờ. Thiếu include là trang trắng sau lần nâng dep, không phải “Vite hỏng.”\n- Kiểm chứng: request `vite` lạnh đầu là module ESM; Network production hiện bundle đã hash; release Sentry khớp SHA map hidden."
+            "vi": "- Tốc độ dev server và tối ưu graph production là hai việc khác nhau. Vite thắng cái đầu; Webpack/Rspack vẫn thắng loader dị và Federation first-class.\n- Vite 8 (tháng 3/2026) thống nhất trên Rolldown; Rolldown 1.0 ship tháng 5/2026. Đừng nói “prod luôn là Rollup” khi chưa nêu version.\n- `optimizeDeps.include` dành cho package CJS làm scanner bất ngờ. Thiếu include là trang trắng sau lần upgrade dep, không phải “Vite hỏng”.\n- Kiểm chứng: request `vite` cold đầu tiên là module ESM; Network lúc production hiện bundle đã hash; release Sentry khớp SHA của map hidden."
           }
         },
         {
@@ -275,18 +275,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- “Vite has no production bundler.” Symptom: you fail the round. Cause: confusing ESM-dev with prod. Fix: name Rollup (Vite 7) or Rolldown (Vite 8).\n- Secrets in `VITE_*`. Symptom: the key is in the JS. Cause: only the prefix is inlined. Fix: server `NUXT_*` / runtime env.\n- Public source maps. Symptom: your Vue source on the CDN. Cause: `sourcemap: true` in prod. Fix: `hidden` + Sentry upload.\n- Picking Vite for Module Federation because it is fast. Symptom: two Vues, broken provide/inject. Cause: MF is a Webpack/Rspack runtime. Fix: Rspack or a plugin you can operate, not a slogan.",
-            "vi": "**Lỗi hay gặp**\n- “Vite không có bundler production.” Triệu chứng: trượt vòng. Nguyên nhân: nhầm ESM-dev với prod. Sửa: gọi Rollup (Vite 7) hoặc Rolldown (Vite 8).\n- Secret trong `VITE_*`. Triệu chứng: key nằm trong JS. Nguyên nhân: chỉ prefix bị inline. Sửa: `NUXT_*` phía server / env runtime.\n- Source map public. Triệu chứng: source Vue trên CDN. Nguyên nhân: `sourcemap: true` lúc prod. Sửa: `hidden` + upload Sentry.\n- Chọn Vite cho Module Federation vì nhanh. Triệu chứng: hai Vue, provide/inject gãy. Nguyên nhân: MF là runtime Webpack/Rspack. Sửa: Rspack hoặc plugin bạn vận hành được, không phải khẩu hiệu."
+            "vi": "**Lỗi hay gặp**\n- “Vite không có bundler production”. Triệu chứng: trượt vòng. Nguyên nhân: nhầm ESM lúc dev với prod. Sửa: nêu rõ Rollup (Vite 7) hoặc Rolldown (Vite 8).\n- Secret trong `VITE_*`. Triệu chứng: key nằm trong JS. Nguyên nhân: chỉ prefix bị inline. Sửa: `NUXT_*` phía server / env runtime.\n- Source map public. Triệu chứng: source Vue nằm trên CDN. Nguyên nhân: `sourcemap: true` lúc prod. Sửa: `hidden` + upload Sentry.\n- Chọn Vite cho Module Federation vì nhanh. Triệu chứng: hai Vue, provide/inject gãy. Nguyên nhân: MF là runtime Webpack/Rspack. Sửa: Rspack hoặc plugin bạn vận hành được, không phải khẩu hiệu."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "Vite vs Webpack — which do you choose and why? If Vite does not bundle in dev, how does production work? We need Module Federation — does that force Webpack? HMR is slow — where do you look?",
-            "vi": "Vite khác Webpack — chọn cái nào và vì sao? Nếu Vite không bundle lúc dev, production chạy thế nào? Cần Module Federation — có buộc Webpack không? HMR chậm — nhìn đâu?"
+            "vi": "Vite khác Webpack: bạn chọn cái nào và vì sao? Nếu Vite không bundle lúc dev, production vận hành thế nào? Team cần Module Federation: vậy có bắt buộc Webpack không? HMR chậm: bạn nhìn vào đâu?"
           }
         },
         {
@@ -297,7 +297,7 @@
           },
           "text": {
             "en": "Greenfield Vue 3 I pick Vite because the ESM dev server and the production bundle are different products, and I want both. Vite 8, March 2026, uses Rolldown by default — I say that instead of “prod is Rollup” unless the app is still on Vite 7. I do not pick Vite for Module Federation; that is still Webpack 5 or Rspack with a shared Vue singleton. Hidden source maps go to Sentry, never the CDN. VITE_ is always client. If HMR is slow I look at who imports the file I just saved — a Pinia root or a Nuxt plugin — not at the bundler brand. Turbopack is a Next answer, not a Vue one.",
-            "vi": "Vue 3 greenfield tôi chọn Vite vì dev server ESM và bundle production là hai sản phẩm, và tôi muốn cả hai. Vite 8, tháng 3/2026, dùng Rolldown mặc định — tôi nói vậy thay vì “prod là Rollup” trừ khi app còn Vite 7. Tôi không chọn Vite cho Module Federation; đó vẫn là Webpack 5 hoặc Rspack với Vue singleton share. Source map hidden vào Sentry, không bao giờ CDN. VITE_ luôn là client. Nếu HMR chậm tôi nhìn ai import file vừa lưu — root Pinia hoặc plugin Nuxt — không phải thương hiệu bundler. Turbopack là câu Next, không phải Vue."
+            "vi": "Vue 3 greenfield thì mình chọn Vite vì dev server ESM và bundle production là hai sản phẩm khác nhau, và mình muốn cả hai. Vite 8, tháng 3/2026, mặc định dùng Rolldown: mình nói vậy chứ không nói “prod là Rollup”, trừ khi app còn Vite 7. Mình không chọn Vite cho Module Federation; đó vẫn là Webpack 5 hoặc Rspack với Vue singleton được share. Source map hidden đưa lên Sentry, không bao giờ lên CDN. VITE_ luôn là client. Nếu HMR chậm, mình nhìn ai import file vừa lưu (root Pinia hoặc plugin Nuxt), không nhìn thương hiệu bundler. Turbopack là câu trả lời cho Next, không phải Vue."
           }
         },
         {
@@ -305,11 +305,11 @@
           "items": [
             {
               "en": "Dev is ESM plus pre-bundled deps. Prod is a bundler. Name the Vite version.",
-              "vi": "Dev là ESM cộng dep pre-bundle. Prod là một bundler. Gọi version Vite."
+              "vi": "Dev là ESM kèm dep đã pre-bundle. Prod là một bundler. Nêu rõ version Vite."
             },
             {
               "en": "Vite 8 default is Rolldown. Vite 5–7 production is still Rollup.",
-              "vi": "Vite 8 mặc định Rolldown. Production Vite 5–7 vẫn Rollup."
+              "vi": "Vite 8 mặc định là Rolldown. Production Vite 5–7 vẫn là Rollup."
             },
             {
               "en": "Module Federation is still Webpack / Rspack. Hidden maps, never public.",
@@ -329,7 +329,7 @@
           },
           "text": {
             "en": "- **How does Nuxt use Vite vs Nitro?** Vite (or Rolldown on Vite 8) bundles the client. Nitro bundles the server. Do not forget the server bundle in the treemap.\n- **What is optimizeDeps.include for?** CJS packages the scanner misses. Add them so cold start does not 500.\n- **How do you keep HMR fast in a monorepo?** Avoid a root plugin that every package imports. Leaf SFCs stay cheap.\n- **Why might prod miss a CJS default export that esbuild allowed in dev?** Different bundlers. Prove it with the production build, not vite dev.",
-            "vi": "- **Nuxt dùng Vite khác Nitro thế nào?** Vite (hoặc Rolldown trên Vite 8) bundle client. Nitro bundle server. Đừng quên server bundle trên treemap.\n- **optimizeDeps.include để làm gì?** Package CJS mà scanner bỏ sót. Thêm chúng để cold start không 500.\n- **Giữ HMR nhanh trong monorepo thế nào?** Tránh plugin root mà mọi package import. SFC lá vẫn rẻ.\n- **Vì sao prod miss default export CJS mà esbuild cho lúc dev?** Bundler khác nhau. Chứng minh bằng production build, không phải vite dev."
+            "vi": "- **Nuxt dùng Vite khác Nitro thế nào?** Vite (hoặc Rolldown trên Vite 8) bundle client. Nitro bundle server. Đừng quên server bundle trên treemap.\n- **optimizeDeps.include để làm gì?** Package CJS mà scanner bỏ sót. Thêm chúng để cold start không 500.\n- **Giữ HMR nhanh trong monorepo thế nào?** Tránh plugin root mà mọi package import. SFC leaf vẫn rẻ.\n- **Vì sao prod miss default export CJS mà esbuild cho lúc dev?** Bundler khác nhau. Chứng minh bằng production build, không phải vite dev."
           }
         },
         {
@@ -351,14 +351,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** CI minutes are a product metric. A Vue PR pipeline is lint, typecheck, unit, production build, and a bundle budget — in **parallel** where they do not depend — with `pnpm` store and remote caches keyed on lockfiles. Do not delete `vue-tsc` to save eight minutes.",
-            "vi": "**Tóm tắt:** Phút CI là metric sản phẩm. Pipeline PR Vue là lint, typecheck, unit, production build, và ngân sách bundle — **song song** khi chúng không phụ thuộc — với store `pnpm` và cache remote khóa theo lockfile. Đừng xóa `vue-tsc` để tiết kiệm tám phút."
+            "vi": "**Tóm tắt:** Phút CI là metric của sản phẩm. Pipeline PR Vue gồm lint, typecheck, unit, production build, và ngân sách bundle, chạy **song song** khi chúng không phụ thuộc, với store `pnpm` và cache remote khóa theo lockfile. Đừng xóa `vue-tsc` để tiết kiệm tám phút."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** “Our Vue pipeline is 18 minutes. What do you cut?” They want install cache, parallel jobs, affected-only monorepos, and a gate you will not drop. Typecheck catches the bugs Vite will not. Preview env leaks are 14.3; this topic is the clock.",
-            "vi": "**Vì sao quan trọng:** “Pipeline Vue 18 phút. Bạn cắt gì?” Họ muốn cache install, job song song, monorepo chỉ affected, và cổng bạn không bỏ. Typecheck bắt bug Vite không bắt. Env preview rò là 14.3; topic này là đồng hồ."
+            "vi": "**Vì sao quan trọng:** “Pipeline Vue 18 phút. Bạn cắt gì?” Họ muốn cache install, job song song, monorepo chỉ build phần affected, và một gate bạn không bỏ. Typecheck bắt bug mà Vite không bắt. Env preview rò là 14.3; topic này là chuyện thời gian."
           }
         },
         {
@@ -367,19 +367,19 @@
           "items": [
             {
               "en": "**How it works:** Cache the pnpm store on `pnpm-lock.yaml` with a frozen lockfile. Never cache `node_modules` across Node versions — native binaries break. Vite’s `node_modules/.vite` is a local optimize cache; restore it per branch, keyed on lockfile plus patch.",
-              "vi": "**Cách hoạt động:** Cache store pnpm trên `pnpm-lock.yaml` với lockfile đóng băng. Đừng cache `node_modules` xuyên version Node — binary native gãy. `node_modules/.vite` là cache optimize local; restore theo nhánh, khóa theo lockfile cộng patch."
+              "vi": "**Cách hoạt động:** Cache store pnpm theo `pnpm-lock.yaml` với frozen lockfile. Đừng cache `node_modules` xuyên các version Node: binary native sẽ gãy. `node_modules/.vite` là cache optimize local của Vite; restore theo từng branch, khóa theo lockfile kèm patch."
             },
             {
               "en": "Split `vue-tsc --noEmit` from `vite build` / `nuxt build`. They contend for CPU and RAM. Run lint, types, and Vitest in parallel after install. Production build plus a bundle budget is a required PR job, not a nightly surprise.",
-              "vi": "Tách `vue-tsc --noEmit` khỏi `vite build` / `nuxt build`. Chúng tranh CPU và RAM. Chạy lint, type, và Vitest song song sau install. Production build cộng ngân sách bundle là job PR bắt buộc, không phải bất ngờ nightly."
+              "vi": "Tách `vue-tsc --noEmit` khỏi `vite build` / `nuxt build`. Chúng tranh CPU và RAM. Chạy lint, type, và Vitest song song sau install. Production build kèm ngân sách bundle là job PR bắt buộc, không phải bất ngờ nightly."
             },
             {
               "en": "Monorepo: Turborepo / Nx remote cache for `typecheck` and `build`. A docs-only PR should not rebuild the app. Affected graphs are the win; a giant `pnpm -r build` is the 18-minute smell.",
-              "vi": "Monorepo: cache remote Turborepo / Nx cho `typecheck` và `build`. PR chỉ docs không được rebuild app. Graph affected là thắng; `pnpm -r build` khổng lồ là mùi 18 phút."
+              "vi": "Monorepo: cache remote Turborepo / Nx cho `typecheck` và `build`. PR chỉ docs thì đừng rebuild app. Graph affected mới là thắng; `pnpm -r build` khổng lồ chính là mùi 18 phút."
             },
             {
               "en": "E2E on PR is a tiny smoke against the preview URL, not the whole Playwright suite. Full suite on main. Watch OOM: CI `nuxt build` has less RAM than a laptop. `NODE_ENV=development` in the Docker build command is how you ship unminified JS.",
-              "vi": "E2E trên PR là smoke nhỏ nhắm URL preview, không cả suite Playwright. Suite đầy trên main. Coi OOM: `nuxt build` trên CI ít RAM hơn laptop. `NODE_ENV=development` trong lệnh Docker build là cách xuất JS chưa minify."
+              "vi": "E2E trên PR là smoke nhỏ nhắm URL preview, không phải cả suite Playwright. Suite đầy đủ chạy trên main. Coi chừng OOM: `nuxt build` trên CI ít RAM hơn laptop. `NODE_ENV=development` trong lệnh Docker build là cách ship JS chưa minify."
             }
           ]
         },
@@ -388,14 +388,14 @@
           "lang": "bash",
           "code": {
             "en": "# GitHub Actions sketch — cache install, split the fat jobs\n- uses: actions/setup-node@v4\n  with: { node-version: \"22\", cache: \"pnpm\" }\n- run: pnpm install --frozen-lockfile\n- run: pnpm lint & pnpm exec vue-tsc --noEmit & pnpm test --run & wait\n- run: pnpm build   # production. NODE_ENV=production implied\n- run: node scripts/check-bundle-budget.mjs\n# turbo: pnpm exec turbo run build --filter=...[origin/main]\n# do not cache node_modules across Node 20 → 22 (native addons)",
-            "vi": "# Phác GitHub Actions — cache install, tách job béo\n- uses: actions/setup-node@v4\n  with: { node-version: \"22\", cache: \"pnpm\" }\n- run: pnpm install --frozen-lockfile\n- run: pnpm lint & pnpm exec vue-tsc --noEmit & pnpm test --run & wait\n- run: pnpm build   # production. NODE_ENV=production ngầm\n- run: node scripts/check-bundle-budget.mjs\n# turbo: pnpm exec turbo run build --filter=...[origin/main]\n# đừng cache node_modules xuyên Node 20 → 22 (addon native)"
+            "vi": "# Phác GitHub Actions: cache install, tách job quá nặng\n- uses: actions/setup-node@v4\n  with: { node-version: \"22\", cache: \"pnpm\" }\n- run: pnpm install --frozen-lockfile\n- run: pnpm lint & pnpm exec vue-tsc --noEmit & pnpm test --run & wait\n- run: pnpm build   # production. NODE_ENV=production ngầm\n- run: node scripts/check-bundle-budget.mjs\n# turbo: pnpm exec turbo run build --filter=...[origin/main]\n# đừng cache node_modules xuyên Node 20 → 22 (addon native)"
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** Install is cached on the lockfile. Lint, `vue-tsc`, and Vitest share one runner via `& wait` (or better: three CI jobs). Build is production. The budget script fails the PR. Turbo filter skips packages the diff did not touch. Node version is part of the cache key.",
-            "vi": "**Điều gì xảy ra:** Install được cache theo lockfile. Lint, `vue-tsc`, và Vitest chia một runner qua `& wait` (hoặc tốt hơn: ba job CI). Build là production. Script ngân sách fail PR. Filter turbo bỏ package mà diff không đụng. Version Node là một phần cache key."
+            "vi": "**Điều gì xảy ra:** Install được cache theo lockfile. Lint, `vue-tsc`, và Vitest chia một runner qua `& wait` (hoặc tốt hơn: ba job CI). Build là production. Script ngân sách fail PR. Filter turbo bỏ package mà diff không đụng. Version Node nằm trong cache key."
           }
         },
         {
@@ -436,7 +436,7 @@
               },
               {
                 "en": "Catches what Vite will not",
-                "vi": "Bắt thứ Vite không bắt"
+                "vi": "Bắt bug Vite không bắt"
               },
               {
                 "en": "Turbo/Nx remote if monorepo",
@@ -450,7 +450,7 @@
               },
               {
                 "en": "Tree-shake and 12.3 in CI form",
-                "vi": "Tree-shake và 12.3 dạng CI"
+                "vi": "Tree-shake và 12.3 dưới dạng CI"
               },
               {
                 "en": "Do not cache dist across SHAs",
@@ -481,7 +481,7 @@
           },
           "text": {
             "en": "- Fail the PR on a byte budget (absolute gzip overage or 5% JS growth), not on coverage theater. Coverage is a risk map (testing doc).\n- Build once, promote the digest (14.1). Rebuilding on the prod cluster is how staging and prod diverge.\n- Caching `~/.npm` across a Node bump breaks `esbuild` / `sharp` binaries. Key on Node version.\n- Verify: wall clock of the PR pipeline, cache hit rate, OOM kills on `nuxt build`.",
-            "vi": "- Fail PR trên ngân sách byte (vượt gzip tuyệt đối hoặc JS tăng 5%), không phải kịch coverage. Coverage là bản đồ rủi ro (doc kiểm thử).\n- Build một lần, promote digest (14.1). Rebuild trên cluster prod là cách staging và prod lệch.\n- Cache `~/.npm` xuyên lần nhảy Node phá binary `esbuild` / `sharp`. Khóa theo version Node.\n- Kiểm chứng: wall clock pipeline PR, tỷ lệ cache hit, OOM kill lúc `nuxt build`."
+            "vi": "- Fail PR theo ngân sách byte (vượt gzip tuyệt đối hoặc JS tăng 5%), không theo coverage diễn kịch. Coverage là bản đồ rủi ro (doc kiểm thử).\n- Build một lần, promote digest (14.1). Rebuild trên cluster prod là cách staging và prod lệch nhau.\n- Cache `~/.npm` xuyên lần bump Node thì gãy binary `esbuild` / `sharp`. Key theo version Node.\n- Kiểm chứng: wall clock của pipeline PR, tỷ lệ cache hit, OOM kill lúc `nuxt build`."
           }
         },
         {
@@ -489,18 +489,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Deleting typecheck “temporarily.” Symptom: `undefined` on a Vue prop in prod. Cause: minutes-as-the-only-metric. Fix: split the job, cache it, keep the gate.\n- Caching `node_modules` across Node 20 → 22. Symptom: segfault in esbuild. Cause: native addons. Fix: store cache + Node in the key.\n- Building with `NODE_ENV=development` in Docker. Symptom: unminified 3 MB. Cause: copied the wrong command. Fix: production build in CI, copy `dist`.\n- Preview using prod `VITE_*`. Symptom: PII on a public URL. Cause: copied env files. That is 14.3 — do not debug it as a bundler issue.",
-            "vi": "**Lỗi hay gặp**\n- Xóa typecheck “tạm.” Triệu chứng: `undefined` trên prop Vue lúc prod. Nguyên nhân: phút là metric duy nhất. Sửa: tách job, cache, giữ cổng.\n- Cache `node_modules` xuyên Node 20 → 22. Triệu chứng: segfault trong esbuild. Nguyên nhân: addon native. Sửa: cache store + Node trong key.\n- Build với `NODE_ENV=development` trong Docker. Triệu chứng: 3 MB chưa minify. Nguyên nhân: copy nhầm lệnh. Sửa: production build trên CI, copy `dist`.\n- Preview dùng `VITE_*` prod. Triệu chứng: PII trên URL public. Nguyên nhân: copy file env. Đó là 14.3 — đừng debug như lỗi bundler."
+            "vi": "**Lỗi hay gặp**\n- Xóa typecheck “tạm thời”. Triệu chứng: `undefined` trên prop Vue lúc prod. Nguyên nhân: lấy phút CI làm metric duy nhất. Sửa: tách job, cache, giữ gate.\n- Cache `node_modules` xuyên Node 20 → 22. Triệu chứng: segfault trong esbuild. Nguyên nhân: addon native. Sửa: dùng store cache và đưa Node vào key.\n- Build với `NODE_ENV=development` trong Docker. Triệu chứng: 3 MB chưa minify. Nguyên nhân: copy nhầm lệnh. Sửa: production build trên CI, copy `dist`.\n- Preview dùng `VITE_*` của prod. Triệu chứng: PII trên URL public. Nguyên nhân: copy file env. Đó là 14.3. Đừng debug như lỗi bundler."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "Our Vue pipeline is 18 minutes. What do you cut? Should typecheck be in the same job as vite build? How do you cache a pnpm + Vite monorepo?",
-            "vi": "Pipeline Vue 18 phút. Bạn cắt gì? Typecheck có nên cùng job với vite build? Cache monorepo pnpm + Vite thế nào?"
+            "vi": "Pipeline Vue của team đang 18 phút. Bạn cắt gì? Typecheck có nên nằm cùng job với vite build không? Cache một monorepo pnpm + Vite thế nào?"
           }
         },
         {
@@ -511,7 +511,7 @@
           },
           "text": {
             "en": "I would not delete typecheck to save eight minutes. I split vue-tsc and vite build, cache pnpm on the lockfile plus Node version, and remote-cache unchanged packages. Lint, types, and unit run in parallel after install. Production build plus a bundle budget stays on the PR. E2E on PR is a smoke against the preview URL; the full suite is main. In a monorepo a docs-only PR must not rebuild the app. I watch OOM on CI nuxt build — laptops lie about RAM. NODE_ENV development in Docker is how you ship an unminified main, not a cache win.",
-            "vi": "Tôi không xóa typecheck để tiết kiệm tám phút. Tôi tách vue-tsc và vite build, cache pnpm theo lockfile cộng version Node, và cache remote package không đổi. Lint, type, và unit chạy song song sau install. Production build cộng ngân sách bundle ở lại trên PR. E2E trên PR là smoke nhắm URL preview; suite đầy là main. Trong monorepo PR chỉ docs không được rebuild app. Tôi coi OOM lúc nuxt build trên CI — laptop nói dối về RAM. NODE_ENV development trong Docker là cách xuất main chưa minify, không phải thắng cache."
+            "vi": "Mình không xóa typecheck để tiết kiệm 8 phút. Mình tách vue-tsc và vite build, cache pnpm theo lockfile và version Node, rồi remote-cache những package không đổi. Lint, types, và unit chạy song song sau install. Production build kèm ngân sách bundle vẫn nằm trên PR. E2E trên PR là smoke nhắm URL preview; suite đầy đủ chạy trên main. Trong monorepo, PR chỉ sửa docs không được rebuild app. Mình để ý OOM lúc nuxt build trên CI. Laptop nói dối về RAM. NODE_ENV development trong Docker là cách ship main chưa minify, không phải thắng cache."
           }
         },
         {
@@ -519,19 +519,19 @@
           "items": [
             {
               "en": "Cache pnpm on the lockfile and Node version. Do not cache node_modules across Node bumps.",
-              "vi": "Cache pnpm theo lockfile và version Node. Đừng cache node_modules xuyên lần nhảy Node."
+              "vi": "Cache pnpm theo lockfile và version Node. Đừng cache node_modules khi nhảy version Node."
             },
             {
               "en": "Split vue-tsc from vite build. Keep both gates.",
-              "vi": "Tách vue-tsc khỏi vite build. Giữ cả hai cổng."
+              "vi": "Tách vue-tsc khỏi vite build. Giữ cả hai gate."
             },
             {
               "en": "Monorepo: affected plus remote cache. Docs PRs must not rebuild the app.",
-              "vi": "Monorepo: affected cộng cache remote. PR docs không rebuild app."
+              "vi": "Monorepo: affected kèm remote cache. PR docs không được rebuild app."
             },
             {
               "en": "PR budget plus production build. Full Playwright is main, not every PR.",
-              "vi": "Ngân sách PR cộng production build. Playwright đầy là main, không mọi PR."
+              "vi": "Ngân sách PR kèm production build. Playwright đầy đủ là main, không mọi PR."
             }
           ]
         },
@@ -543,7 +543,7 @@
           },
           "text": {
             "en": "- **Where do you fail the PR: 5% JS growth or an absolute 200 KB gzip overage?** Both beat coverage percent. Pick a number the team can see on the visualizer.\n- **How do you typecheck Vue SFCs in CI?** vue-tsc --noEmit, not tsc alone. Takeovers need the Vue plugin.\n- **Do you build once and deploy the same artifact to staging and prod?** Yes — that is 14.1. Runtime env, not rebuild.\n- **How do you keep node_modules/.vite from poisoning another branch?** Key it on lockfile plus a salt; never share writable caches across SHAs.",
-            "vi": "- **Fail PR chỗ nào: JS tăng 5% hay vượt gzip 200 KB tuyệt đối?** Cả hai thắng phần trăm coverage. Chọn một số team thấy trên visualizer.\n- **Typecheck SFC Vue trên CI thế nào?** vue-tsc --noEmit, không tsc một mình. Takeover cần plugin Vue.\n- **Build một lần rồi deploy cùng artifact lên staging và prod?** Có — đó là 14.1. Env runtime, không rebuild.\n- **Giữ node_modules/.vite khỏi đầu độc nhánh khác thế nào?** Khóa theo lockfile cộng salt; đừng chia cache ghi xuyên SHA."
+            "vi": "- **Fail PR chỗ nào: JS tăng 5% hay vượt gzip 200 KB tuyệt đối?** Cả hai hơn phần trăm coverage. Chọn một số team thấy được trên visualizer.\n- **Typecheck SFC Vue trên CI thế nào?** vue-tsc --noEmit, không phải tsc một mình. Takeover cần plugin Vue.\n- **Build một lần rồi deploy cùng artifact lên staging và prod?** Có. Đó là 14.1. Env runtime, không rebuild.\n- **Làm sao để node_modules/.vite không poison branch khác?** Key theo lockfile kèm salt; đừng share cache ghi được xuyên SHA."
           }
         },
         {
@@ -554,7 +554,7 @@
           "level": 3,
           "text": {
             "en": "12.3. How You'd Debug a 3MB Main Chunk",
-            "vi": "12.3. Debug main chunk 3MB như thế nào"
+            "vi": "12.3. Debug một main chunk 3 MB thế nào"
           },
           "id": {
             "en": "123-how-youd-debug-a-3mb-main-chunk",
@@ -565,14 +565,14 @@
           "type": "paragraph",
           "text": {
             "en": "**In short:** A 3 MB `main` is a procedure, not a slogan. Confirm transferred versus parsed, generate a treemap from the **same SHA CI built**, then attack sync route imports, heavy vendors, barrels, inline maps, and duplicated packages. Migrating bundler is last.",
-            "vi": "**Tóm tắt:** `main` 3 MB là một quy trình, không phải khẩu hiệu. Xác nhận transferred khác parsed, tạo treemap từ **đúng SHA CI đã build**, rồi tấn công import route đồng bộ, vendor nặng, barrel, map inline, và package trùng. Đổi bundler là nước cuối."
+            "vi": "**Tóm tắt:** `main` 3 MB là một quy trình, không phải khẩu hiệu. Xác nhận transferred khác parsed, tạo treemap từ **đúng SHA CI đã build**, rồi lần lượt xử lý import route đồng bộ, vendor nặng, barrel, map inline, và package trùng. Đổi bundler là nước cuối."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**Why it matters:** Interviewers say “production main is about 3 MB. Walk me through it.” They want you to stop guessing. The entry chunk must stay small enough that first paint and INP survive a mid-tier phone. “We should code-split” without a treemap is a junior answer.",
-            "vi": "**Vì sao quan trọng:** Người phỏng vấn nói “main production khoảng 3 MB. Walk tôi đi.” Họ muốn bạn ngừng đoán. Entry chunk phải nhỏ đủ để paint đầu và INP sống sót trên điện thoại tầm trung. “Nên code-split” không treemap là câu junior."
+            "vi": "**Vì sao quan trọng:** Người phỏng vấn nói “main production khoảng 3 MB. Đi từng bước”. Họ muốn bạn ngừng đoán. Entry chunk phải đủ nhỏ để first paint và INP sống được trên điện thoại tầm trung. “Nên code-split” mà không có treemap là câu junior."
           }
         },
         {
@@ -581,19 +581,19 @@
           "items": [
             {
               "en": "**How it works:** Network panel: confirm it is `assets/entry-*.js` (or Nuxt `entry`), not a lazily loaded route you misread. Note **transferred** (gzip) versus **parsed** (uncompressed). Interviewers often quote parsed.",
-              "vi": "**Cách hoạt động:** Panel Network: xác nhận đó là `assets/entry-*.js` (hoặc `entry` Nuxt), không phải route lazy bạn đọc nhầm. Ghi **transferred** (gzip) khác **parsed** (chưa nén). Người phỏng vấn thường nêu parsed."
+              "vi": "**Cách hoạt động:** Panel Network: xác nhận đúng `assets/entry-*.js` (hoặc Nuxt `entry`), không phải route lazy bạn đọc nhầm. Ghi **transferred** (gzip) khác **parsed** (chưa nén). Người phỏng vấn thường nêu parsed."
             },
             {
               "en": "Reproduce with `rollup-plugin-visualizer` (Vite 5–7 / Rollup) or the Rolldown visualizer on Vite 8, from the same commit CI built. Sort by parsed size. The top 10 modules are the suspects. Also open gzip size — a 1 MB JSON of translations is a different fix than a 1 MB of Vue.",
-              "vi": "Tái lập với `rollup-plugin-visualizer` (Vite 5–7 / Rollup) hoặc visualizer Rolldown trên Vite 8, từ cùng commit CI đã build. Sort theo parsed size. 10 module đầu là nghi phạm. Mở cả gzip — JSON 1 MB bản dịch là fix khác Vue 1 MB."
+              "vi": "Tái lập với `rollup-plugin-visualizer` (Vite 5–7 / Rollup) hoặc visualizer Rolldown trên Vite 8, từ đúng commit CI đã build. Sort theo parsed size. Mười module đầu là nghi phạm. Mở cả gzip size: JSON 1 MB bản dịch là một fix khác với Vue 1 MB."
             },
             {
               "en": "Typical Vue/Nuxt culprits: a router that static-imports every page; a layout that imports a chart; a barrel `index.ts` that re-exports 80 SFCs; two copies of `vue` or `date-fns`; `sourcemap: true` or inline maps; a design-system CSS dump on the critical path; a Federation remote that brought its own Vue.",
-              "vi": "Thủ phạm Vue/Nuxt điển hình: router import tĩnh mọi trang; layout import chart; barrel `index.ts` re-export 80 SFC; hai bản `vue` hoặc `date-fns`; `sourcemap: true` hoặc map inline; dump CSS design-system trên critical path; remote Federation mang Vue riêng."
+              "vi": "Thủ phạm Vue/Nuxt điển hình: một router import tĩnh mọi page; một layout import chart; barrel `index.ts` re-export 80 SFC; hai bản `vue` hoặc `date-fns`; `sourcemap: true` hoặc map inline; dump CSS của design-system nằm trên critical path; remote Federation mang theo Vue riêng của nó."
             },
             {
               "en": "Fixes in order: route-level `defineAsyncComponent` / Nuxt `pages/` (already split) plus layouts that do not import the world; `manualChunks` / Rolldown `codeSplitting.groups` only for vendors that are huge **and** not on the first screen; `sideEffects: false` on packages you own; delete the barrel; dedupe in `pnpm.overrides`; hidden maps. Bundler migration is last.",
-              "vi": "Fix theo thứ tự: `defineAsyncComponent` cấp route / `pages/` Nuxt (đã tách) cộng layout không import cả thế giới; `manualChunks` / `codeSplitting.groups` Rolldown chỉ cho vendor vừa khổng lồ **vừa** không trên màn đầu; `sideEffects: false` trên package bạn sở hữu; xóa barrel; dedupe trong `pnpm.overrides`; map hidden. Đổi bundler là nước cuối."
+              "vi": "Fix theo thứ tự: `defineAsyncComponent` cấp route / Nuxt `pages/` (đã tách) kèm layout không import cả thế giới; `manualChunks` / Rolldown `codeSplitting.groups` chỉ cho vendor vừa khổng lồ **và** không nằm màn đầu; `sideEffects: false` trên package bạn phụ trách; xóa barrel; dedupe trong `pnpm.overrides`; map hidden. Đổi bundler là nước cuối."
             }
           ]
         },
@@ -602,14 +602,14 @@
           "lang": "ts",
           "code": {
             "en": "import { visualizer } from \"rollup-plugin-visualizer\"\nexport default defineConfig({\n  plugins: [visualizer({ gzipSize: true, brotliSize: true, emitFile: true, filename: \"stats.html\" })]\n  // CI: open stats.html from the same SHA. Sort parsed size.\n})\n// Only split vendors you know are huge AND not on the first screen.\nfunction manualChunks(id: string) {\n  if (id.includes(\"node_modules/echarts\")) return \"echarts\"\n  if (id.includes(\"monaco-editor\")) return \"monaco\"\n}\n// Route-level defineAsyncComponent / Nuxt pages should do the rest.",
-            "vi": "import { visualizer } from \"rollup-plugin-visualizer\"\nexport default defineConfig({\n  plugins: [visualizer({ gzipSize: true, brotliSize: true, emitFile: true, filename: \"stats.html\" })]\n  // CI: mở stats.html từ cùng SHA. Sort parsed size.\n})\n// Chỉ tách vendor vừa khổng lồ VỪA không trên màn đầu.\nfunction manualChunks(id: string) {\n  if (id.includes(\"node_modules/echarts\")) return \"echarts\"\n  if (id.includes(\"monaco-editor\")) return \"monaco\"\n}\n// defineAsyncComponent cấp route / pages Nuxt nên làm phần còn lại."
+            "vi": "import { visualizer } from \"rollup-plugin-visualizer\"\nexport default defineConfig({\n  plugins: [visualizer({ gzipSize: true, brotliSize: true, emitFile: true, filename: \"stats.html\" })]\n  // CI: mở stats.html từ cùng SHA. Sort parsed size.\n})\n// Chỉ tách vendor bạn biết khổng lồ VÀ không nằm màn đầu.\nfunction manualChunks(id: string) {\n  if (id.includes(\"node_modules/echarts\")) return \"echarts\"\n  if (id.includes(\"monaco-editor\")) return \"monaco\"\n}\n// defineAsyncComponent cấp route / pages Nuxt nên làm phần còn lại."
           }
         },
         {
           "type": "paragraph",
           "text": {
             "en": "**What happens here:** CI emits `stats.html` next to the build. You sort parsed size, not folklore. `echarts` becomes its own chunk only because the dashboard route loads it; the login route must not. Route splitting does the rest. Migrating to Rspack is not step one.",
-            "vi": "**Điều gì xảy ra:** CI emit `stats.html` cạnh build. Bạn sort parsed size, không folklore. `echarts` thành chunk riêng chỉ vì route dashboard load nó; route login không được. Tách route làm phần còn. Migrate sang Rspack không phải bước một."
+            "vi": "**Điều gì xảy ra:** CI emit `stats.html` cạnh build. Bạn sort parsed size, đừng tin lore. `echarts` thành chunk riêng chỉ vì route dashboard load nó; route login thì không được. Tách route làm phần còn lại. Migrate sang Rspack không phải bước một."
           }
         },
         {
@@ -621,7 +621,7 @@
             },
             {
               "en": "How you see it",
-              "vi": "Cách thấy"
+              "vi": "Cách nhận ra"
             },
             {
               "en": "Fix",
@@ -654,7 +654,7 @@
               },
               {
                 "en": "Deep imports; `sideEffects: false`",
-                "vi": "Import sâu; `sideEffects: false`"
+                "vi": "Deep import; `sideEffects: false`"
               }
             ],
             [
@@ -674,7 +674,7 @@
             [
               {
                 "en": "Inline or linked prod maps",
-                "vi": "Map prod inline hoặc được link"
+                "vi": "Map prod inline hoặc có link"
               },
               {
                 "en": "`.map` inside parsed JS",
@@ -695,7 +695,7 @@
           },
           "text": {
             "en": "- One extra round trip for a chart chunk is cheaper than 3 MB on login. Do not split vendors that are on the first screen.\n- Nuxt layouts importing a heavy widget are not page-split. The layout is the entry for every child.\n- CSS of the whole design system can sit on the critical path while JS looks fine. Read the CSS pane too.\n- Verify: before/after gzip on the same route, LCP/INP on a mid-tier phone, treemap from the same SHA.",
-            "vi": "- Một round-trip thêm cho chunk chart rẻ hơn 3 MB lúc login. Đừng tách vendor đang ở màn đầu.\n- Layout Nuxt import widget nặng thì không được tách theo trang. Layout là entry của mọi child.\n- CSS cả design system có thể nằm critical path khi JS trông ổn. Đọc cả pane CSS.\n- Kiểm chứng: gzip trước/sau trên cùng route, LCP/INP trên điện thoại tầm trung, treemap từ cùng SHA."
+            "vi": "- Một round-trip thêm cho chunk chart rẻ hơn 3 MB lúc login. Đừng tách những vendor đang nằm màn đầu.\n- Layout Nuxt import một widget nặng thì không phải page-split. Layout là entry của mọi child.\n- CSS của cả design system có thể nằm trên critical path khi JS trông ổn. Đọc cả pane CSS.\n- Kiểm chứng: gzip trước/sau trên cùng route, LCP/INP trên điện thoại tầm trung, treemap từ cùng SHA."
           }
         },
         {
@@ -703,18 +703,18 @@
           "kind": "warning",
           "text": {
             "en": "**Common pitfalls**\n- Starting with “we should switch to Rspack.” Symptom: a two-month migration for a barrel file. Cause: skipping the treemap. Fix: measure, then split.\n- `manualChunks` for every package. Symptom: 80 tiny requests, worse INP. Cause: over-splitting. Fix: only huge, not-first-screen vendors.\n- Reading Lighthouse on a laptop Wi-Fi. Symptom: “it is fine.” Cause: mid-tier phones are the user. Fix: throttled trace plus field INP.\n- Forgetting the Nitro server bundle. Symptom: client looks 200 KB, SSR still 8 s. Cause: treemap of client only. Fix: also inspect `.output/server`.",
-            "vi": "**Lỗi hay gặp**\n- Bắt đầu bằng “nên chuyển Rspack.” Triệu chứng: migrate hai tháng vì một file barrel. Nguyên nhân: bỏ treemap. Sửa: đo, rồi tách.\n- `manualChunks` cho mọi package. Triệu chứng: 80 request nhỏ, INP tệ hơn. Nguyên nhân: tách quá tay. Sửa: chỉ vendor khổng lồ, không trên màn đầu.\n- Đọc Lighthouse trên laptop Wi-Fi. Triệu chứng: “ổn.” Nguyên nhân: điện thoại tầm trung mới là user. Sửa: trace throttled cộng INP field.\n- Quên server bundle Nitro. Triệu chứng: client trông 200 KB, SSR vẫn 8 s. Nguyên nhân: treemap chỉ client. Sửa: cũng soi `.output/server`."
+            "vi": "**Lỗi hay gặp**\n- Bắt đầu bằng “nên chuyển sang Rspack”. Triệu chứng: migrate hai tháng vì một file barrel. Nguyên nhân: bỏ qua treemap. Sửa: đo, rồi mới tách.\n- `manualChunks` cho mọi package. Triệu chứng: 80 request nhỏ, INP tệ hơn. Nguyên nhân: tách quá tay. Sửa: chỉ vendor khổng lồ, không nằm màn đầu.\n- Đọc Lighthouse trên laptop Wi-Fi. Triệu chứng: “ổn”. Nguyên nhân: điện thoại tầm trung mới là user. Sửa: trace throttled kèm INP field.\n- Quên server bundle Nitro. Triệu chứng: client trông 200 KB, SSR vẫn 8 s. Nguyên nhân: treemap chỉ client. Sửa: cũng soi `.output/server`."
           }
         },
         {
           "type": "senior-answer",
           "label": {
             "en": "What interviewers really ask",
-            "vi": "Nhà tuyển dụng thực sự hỏi gì"
+            "vi": "Nhà tuyển dụng hay hỏi gì"
           },
           "text": {
             "en": "Production main is about 3 MB. Walk me through it. They want a procedure, not “we would code-split.”",
-            "vi": "Main production khoảng 3 MB. Walk tôi đi. Họ muốn một quy trình, không phải “chúng tôi sẽ code-split.”"
+            "vi": "Main production khoảng 3 MB. Đi từng bước. Họ muốn một quy trình, không phải “nên code-split”."
           }
         },
         {
@@ -725,7 +725,7 @@
           },
           "text": {
             "en": "I do not start with “we should code-split.” I open the Network panel, confirm transferred versus parsed on the entry chunk, then open the treemap from the same SHA CI built. If the router statically imported every page, that is first. Then barrels, duplicated vue, inline maps, a layout that imported echarts. I split only vendors that are huge and not on the first screen. Nuxt pages already split routes; layouts do not. Bundler migration is last. On the admin product the 3 MB was monaco plus a barrel — not Webpack versus Vite.",
-            "vi": "Tôi không bắt đầu bằng “nên code-split.” Tôi mở panel Network, xác nhận transferred khác parsed trên entry chunk, rồi mở treemap từ đúng SHA CI đã build. Nếu router import tĩnh mọi trang, đó là đầu. Rồi barrel, vue trùng, map inline, layout import echarts. Tôi chỉ tách vendor vừa khổng lồ vừa không trên màn đầu. Pages Nuxt đã tách route; layout thì không. Đổi bundler là nước cuối. Ở sản phẩm admin, 3 MB là monaco cộng một barrel — không phải Webpack khác Vite."
+            "vi": "Mình không bắt đầu bằng “nên code-split”. Mình mở panel Network, xác nhận transferred khác parsed trên entry chunk, rồi mở treemap từ đúng SHA CI đã build. Nếu router import tĩnh mọi page, đó là việc đầu. Rồi barrel, vue trùng, map inline, layout import echarts. Mình chỉ tách vendor vừa khổng lồ vừa không nằm màn đầu. Pages Nuxt đã tách route; layout thì không. Đổi bundler là nước cuối. Ở admin nội bộ, 3 MB là monaco kèm một barrel, không phải Webpack vs Vite."
           }
         },
         {
@@ -737,11 +737,11 @@
             },
             {
               "en": "Attack sync routes, barrels, duplicates, inline maps, layout imports.",
-              "vi": "Tấn công route đồng bộ, barrel, bản trùng, map inline, import layout."
+              "vi": "Xử lý route sync, barrel, bản trùng, map inline, import trong layout."
             },
             {
               "en": "manualChunks only for huge vendors not on the first screen.",
-              "vi": "manualChunks chỉ cho vendor khổng lồ không trên màn đầu."
+              "vi": "manualChunks chỉ cho vendor khổng lồ không nằm màn đầu."
             },
             {
               "en": "Bundler migration is last. Do not forget the Nitro server bundle.",
@@ -757,7 +757,7 @@
           },
           "text": {
             "en": "- **Difference between defineAsyncComponent and route-level splitting?** Async is a component. Route-level is a chunk per page. Layouts still sit on every child.\n- **How do you keep a design-system package tree-shakeable?** Per-component entrypoints, sideEffects false, no barrel that imports CSS of everything.\n- **Would you set a Lighthouse score gate or a byte budget?** Byte budget on the entry chunk. Lighthouse is noisy in CI.\n- **When is a slightly larger main acceptable?** When splitting would add a round trip on the LCP path. Prove it with a trace.",
-            "vi": "- **defineAsyncComponent khác tách cấp route?** Async là một component. Cấp route là một chunk mỗi trang. Layout vẫn nằm trên mọi child.\n- **Giữ package design-system tree-shake được thế nào?** Entrypoint từng component, sideEffects false, không barrel import CSS của mọi thứ.\n- **Cổng điểm Lighthouse hay ngân sách byte?** Ngân sách byte trên entry chunk. Lighthouse ồn trên CI.\n- **Khi nào main hơi lớn còn chấp nhận?** Khi tách sẽ thêm round-trip trên đường LCP. Chứng minh bằng trace."
+            "vi": "- **defineAsyncComponent khác tách cấp route chỗ nào?** Async là một component. Cấp route là một chunk mỗi page. Layout vẫn nằm trên mọi child.\n- **Giữ package design-system tree-shake được thế nào?** Entrypoint từng component, sideEffects false, không barrel import CSS của mọi thứ.\n- **Gate điểm Lighthouse hay ngân sách byte?** Ngân sách byte trên entry chunk. Lighthouse noisy trên CI.\n- **Khi nào main hơi lớn còn chấp nhận?** Khi tách sẽ thêm round-trip trên đường LCP. Chứng minh bằng trace."
           }
         },
         {
