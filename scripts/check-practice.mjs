@@ -4,6 +4,8 @@
  * Zero dependencies. Node 22. Exits 1 on errors.
  * Format/budget rules are warnings unless --strict is passed.
  * Also validates practice/design/index.json (files, unique ids, § refs).
+ * When plans/portfolio-design-system.vi.md exists, numbered headings and s- ids
+ * must match the EN spec.
  *
  *   node scripts/check-practice.mjs [root]
  *   node scripts/check-practice.mjs . --strict
@@ -32,8 +34,10 @@ const PHONE_RE =
   /(?:\+|tel:)\s*\d{1,3}[\s.-]?\d|\b0\d{8,10}\b|\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b/
 const SPEC_REF_RE = /^§\d+(?:\.\d+[a-z]?)*$/
 const SPEC_HEADING_RE = /^(#{2,3}) (\d+(?:\.\d+[a-z]?)*)\b/
+const SPEC_HTML_HEADING_RE = /<h[2-3][^>]*>\s*(\d+(?:\.\d+[a-z]?)*)\b/gi
 const EXPECTED_STEP_COUNT = 33
 const EXPECTED_SPEC_PATH = 'plans/portfolio-design-system.md'
+const EXPECTED_SPEC_VI_PATH = 'plans/portfolio-design-system.vi.md'
 const FIGMA_URL_RE = /^https:\/\/www\.figma\.com\//
 const DESIGN_INDEX_KEYS = new Set(['version', 'specPath', 'title', 'intro', 'figma', 'screens'])
 const DESIGN_FIGMA_KEYS = new Set(['url', 'label', 'note'])
@@ -137,6 +141,33 @@ function specRefToAnchorId(ref) {
   return `s-${String(ref).replace(/^§/, '').replaceAll('.', '-')}`
 }
 
+function numberedSpecIds(markdown) {
+  const ids = []
+  const seen = new Set()
+  function add(id) {
+    const key = String(id).toLowerCase()
+    if (seen.has(key)) return
+    seen.add(key)
+    ids.push(key)
+  }
+  for (const line of String(markdown || '').split(/\r?\n/)) {
+    const match = line.match(SPEC_HEADING_RE)
+    if (match) add(match[2])
+  }
+  const htmlHeadingRe = new RegExp(SPEC_HTML_HEADING_RE.source, 'gi')
+  for (const match of String(markdown || '').matchAll(htmlHeadingRe)) {
+    add(match[1])
+  }
+  return ids
+}
+
+function specHasAnchor(markdown, anchor) {
+  const id = String(anchor)
+  if (markdown.includes(`<a id="${id}"></a>`)) return true
+  if (markdown.includes(`id="${id}"`) || markdown.includes(`id='${id}'`)) return true
+  return false
+}
+
 function webpSize(buf) {
   if (buf.toString('ascii', 0, 4) !== 'RIFF' || buf.toString('ascii', 8, 12) !== 'WEBP') {
     return null
@@ -173,18 +204,38 @@ function loadSpecSectionIds() {
     return ids
   }
   const text = readFileSync(specPath, 'utf8')
-  for (const line of text.split('\n')) {
-    const match = line.match(SPEC_HEADING_RE)
-    if (match) ids.add(`§${match[2]}`)
-  }
+  const numbered = numberedSpecIds(text)
+  for (const id of numbered) ids.add(`§${id}`)
   if (!ids.size) fail(specRel, 'no numbered headings found')
   for (const id of ids) {
     const anchor = specRefToAnchorId(id)
-    if (!text.includes(`<a id="${anchor}"></a>`)) {
+    if (!specHasAnchor(text, anchor)) {
       fail(specRel, `missing HTML anchor ${anchor} for ${id}`)
     }
   }
   return ids
+}
+
+function checkBilingualSpec() {
+  const enRel = EXPECTED_SPEC_PATH
+  const viRel = EXPECTED_SPEC_VI_PATH
+  const enFile = path.join(root, enRel)
+  const viFile = path.join(root, viRel)
+  if (!existsSync(enFile) || !existsSync(viFile)) return
+  const enIds = numberedSpecIds(readFileSync(enFile, 'utf8'))
+  const vi = readFileSync(viFile, 'utf8')
+  const viIds = numberedSpecIds(vi)
+  const viSet = new Set(viIds)
+  for (const id of enIds) {
+    if (!viSet.has(id)) fail(viRel, `missing numbered heading ${id}`)
+    const anchor = specRefToAnchorId(`§${id}`)
+    if (!specHasAnchor(vi, anchor)) {
+      fail(viRel, `missing explicit id="${anchor}" for §${id}`)
+    }
+  }
+  for (const id of viIds) {
+    if (!enIds.includes(id)) fail(viRel, `extra numbered heading ${id}`)
+  }
 }
 
 const specSectionIds = loadSpecSectionIds()
@@ -699,6 +750,7 @@ function checkDesignGallery() {
 }
 
 checkDesignGallery()
+checkBilingualSpec()
 
 function printStats() {
   const byMilestone = new Map()
