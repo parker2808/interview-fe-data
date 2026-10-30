@@ -50,8 +50,10 @@
 
 ## 8. Open items / status
 - Context-check rejects a missing or deleted context file; section updates remain a review requirement. GitHub CI is currently blocked by account billing/spending limits.
+- Agent guidance is now consolidated in `AGENT_RULES.md`, with common rules copied from `ai-memory/rules/COMMON_RULES.md` and repository-specific checks and boundaries.
 - (uncertain) anything not confirmed by Parker is listed here before acting on it.
 
 ## 9. Changelog
+- 2026-10-31 — Added `AGENT_RULES.md` and linked it from `AGENTS.md`.
 - 2026-10-30 — Added PROJECT_CONTEXT.md, AGENTS.md and context-check CI (T3 Code multi-agent setup, mirrors lil.j).
 - 2026-10-30 — Reject missing/deleted context at HEAD; clarify CI enforcement, correct paths and merged-plan status, qualify deployment behavior, and anonymize the private repository name.
