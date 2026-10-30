@@ -1,6 +1,7 @@
 # AGENTS.md
 
 **Read [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md) in full before doing anything.**
+Agents must also follow [`.agents/RULES.md`](.agents/RULES.md).
 
 Hard rules (details in PROJECT_CONTEXT.md):
 - Never commit Parker's phone or personal email (use `<email>` / `<phone>`), or any secret.

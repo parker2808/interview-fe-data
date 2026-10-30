@@ -49,9 +49,11 @@
 - Portfolio design specs were completed in merged PR #56; see `plans/portfolio-design-system.md` and its Vietnamese companion.
 
 ## 8. Open items / status
+- 2026-10-31 — Agent rules are maintained in `.agents/RULES.md`; agents must read them alongside this context file.
 - Context-check rejects a missing or deleted context file; section updates remain a review requirement. GitHub CI is currently blocked by account billing/spending limits.
 - (uncertain) anything not confirmed by Parker is listed here before acting on it.
 
 ## 9. Changelog
+- 2026-10-31 — Added `.agents/RULES.md` with a dated copy of common rules and repo-verified project rules; linked it from `AGENTS.md`.
 - 2026-10-30 — Added PROJECT_CONTEXT.md, AGENTS.md and context-check CI (T3 Code multi-agent setup, mirrors lil.j).
 - 2026-10-30 — Reject missing/deleted context at HEAD; clarify CI enforcement, correct paths and merged-plan status, qualify deployment behavior, and anonymize the private repository name.
