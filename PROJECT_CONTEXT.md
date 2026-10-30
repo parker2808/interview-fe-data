@@ -1,13 +1,13 @@
-# PROJECT_CONTEXT — interview-fe-data (private content repo)
+# PROJECT_CONTEXT — `<private-content-repo>`
 
 > **Mandatory reading for every agent** (Cursor, Codex, Claude Code, T3 Code threads, cloud agents) before touching this repo.
-> Every PR to `main` must update **§8 Open items / status** and **§9 Changelog** in the same PR (enforced by `.github/workflows/context-check.yml`; label `skip-context` bypasses). Exempt paths (pure content, edited often): `docs/`, `knowledge-base/`, `plan/`, `practice/`, `qna/`, `mockups/`, `manifest.json`. Changes to `scripts/`, `schema/`, `.github/`, `README.md` or other root files must update PROJECT_CONTEXT.md. Rationale: content edits are validated by the existing content CI; structural changes alter the contract with the app and need recording.
+> Every PR to `main` must update **§8 Open items / status** and **§9 Changelog** in the same PR (CI requires the file to exist at HEAD and, for non-exempt changes, appear in the diff; section updates are a review requirement, not parsed by CI; label `skip-context` bypasses). Exempt paths (pure content, edited often): `docs/`, `knowledge-base/`, `plan/`, `practice/`, `qna/`, `mockups/`, `manifest.json`. Changes to `scripts/`, `schema/`, `.github/`, `README.md` or other root files must update PROJECT_CONTEXT.md. Rationale: content edits are validated by the existing content CI; structural changes alter the contract with the app and need recording.
 
 ## 1. Project overview
 - **What:** private source of truth for `interview-senior-fe`: bilingual JSON for the knowledge base, 30-day plan, practice path, practice design gallery and Q&A bank.
-- **Repo:** https://github.com/parker2808/interview-fe-data (private; never link it publicly, only describe it).
-- **Deploy:** merging to `main` triggers the Vercel deploy hook (GitHub Action) for the app; the app pulls this tree at build time. **So every merge is a production deploy.**
-- **Layout:** `knowledge-base/`, `plan/`, `practice/`, `qna/` (single `questions.json`, do not split), `schema/`, `scripts/` (validate, check-*, sync-*-index), `manifest.json`, `mockups/`, `docs/`.
+- **Repo:** `<private-content-repo>` (private; never name or link it publicly, only describe it).
+- **Deploy:** merging to `main` triggers the Vercel deploy hook (GitHub Action) for the app; the app pulls this tree at build time. The hook runs only when its secret is configured; otherwise the workflow skips deployment. Treat merges as potential production deploys.
+- **Layout:** `knowledge-base/`, `plan/`, `practice/`, `qna/` (single `questions.json`, do not split), `schema/`, `scripts/` (validate, check-*, sync-*-index), `manifest.json`, `mockups/`, `plans/` (design specs, rewrite plans, style guide and glossary; distinct from `plan/`).
 
 ## 2. Confirmed facts
 | Fact | Value | Status |
@@ -29,8 +29,8 @@
 - Change only the JSON you need; never drop `en` or `vi`.
 - Allowed block types: `heading`, `paragraph`, `list`, `callout`, `code`, `table`, `senior-answer`, `key-takeaways`, `markdown`, `thematic-break`.
 - Heading `id` is per locale; keep existing anchors working.
-- After editing docs/plan/practice, run the matching `sync-*-index.mjs` and `check-*.mjs` scripts and `validate.mjs`.
-- Vietnamese is written as natural Vietnamese (see the vi style guide / glossary in `docs/` if present), never word-for-word.
+- After editing `knowledge-base/`, run `sync-kb-index.mjs` and `check-content.mjs`; for `plan/` or `practice/`, run the matching `sync-*-index.mjs` and `check-*.mjs` scripts. Also run `validate.mjs`. The Markdown specs in `plans/` have no matching index sync script.
+- Vietnamese is written as natural Vietnamese (see `plans/vi-style-guide.md` and `plans/vi-glossary.json`), never word-for-word.
 - No PII anywhere in content (`check-practice.mjs` checks this).
 
 ## 5. Workflow
@@ -40,16 +40,18 @@
 
 ## 6. Multi-agent coordination
 - A coordinating agent splits work with `delegate_task`; each sub-agent is its own thread and gets a self-contained brief (it cannot see the parent's history), so include all needed context and point it at this file.
-- Each agent works on its own branch or git worktree (`git worktree add ../interview-fe-data-<task> -b <type>/<task>`). Never edit another agent's branch.
+- Each agent works on its own branch or git worktree (`git worktree add ../content-<task> -b <type>/<task>`). Never edit another agent's branch.
 - Stay in your task's scope; record decisions and open questions here in the same PR.
 - App and data are linked: a change in the content shape needs coordinated PRs in both repos, and the data PR merges only when Parker approves.
 
 ## 7. Future work
-- Vietnamese rewrite per the vi style guide plan (PR #54).
-- Portfolio design spec work (PR #56).
+- Continue the Vietnamese rewrite per `plans/vi-rewrite-plan.md`; PR #54 merged the style guide, glossary, rewrite plan and pilot.
+- Portfolio design specs were completed in merged PR #56; see `plans/portfolio-design-system.md` and its Vietnamese companion.
 
 ## 8. Open items / status
+- Context-check rejects a missing or deleted context file; section updates remain a review requirement. GitHub CI is currently blocked by account billing/spending limits.
 - (uncertain) anything not confirmed by Parker is listed here before acting on it.
 
 ## 9. Changelog
 - 2026-10-30 — Added PROJECT_CONTEXT.md, AGENTS.md and context-check CI (T3 Code multi-agent setup, mirrors lil.j).
+- 2026-10-30 — Reject missing/deleted context at HEAD; clarify CI enforcement, correct paths and merged-plan status, qualify deployment behavior, and anonymize the private repository name.
