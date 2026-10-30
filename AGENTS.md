@@ -1,5 +1,7 @@
 # AGENTS.md
 
+**Read [`AGENT_RULES.md`](AGENT_RULES.md) for common and project rules.**
+
 **Read [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md) in full before doing anything.**
 
 Hard rules (details in PROJECT_CONTEXT.md):
