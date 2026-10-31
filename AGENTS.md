@@ -6,7 +6,8 @@ These are the canonical agent rules. `AGENT_RULES.md` points here for older link
 ## Start and scope
 - Work in a T3 worktree on a feature branch, never in the main checkout on `main`.
 - One task = one branch/worktree = one PR. Stay in scope and do not edit another agent's branch.
-- Read `graphify-out/GRAPH_REPORT.md` for navigation; open only the files needed for the task.
+- Small tasks: skip Graphify. Big tasks: read `graphify-out/GRAPH_REPORT.md` for navigation; open only the files needed.
+- Token budget: `qna/*.json` and `knowledge-base/*.json` are 0.2-0.9 MB; never read them whole, query with `rg` or `jq` and edit by id. Use `tail -n 80` for long command output.
 - For a big task, write a plan before coding and a spec in `docs/specs/` when needed.
 - Run agent work through `~/ai-tools/t3-run.sh` so its watchdog reports failures and switches models.
 - Do small tasks directly; keep bigger tasks in small, checked steps.
