@@ -50,11 +50,12 @@
 
 ## 8. Open items / status
 - Context-check rejects a missing or deleted context file; section updates remain a review requirement. GitHub CI is currently blocked by account billing/spending limits.
-- Agent guidance is now consolidated in `AGENT_RULES.md`, with common rules copied from `ai-memory/rules/COMMON_RULES.md` and repository-specific checks and boundaries.
+- Agent guidance is consolidated in `AGENTS.md`; `AGENT_RULES.md` is a compatibility pointer. Git guardrails and `docs/LESSONS.md` are in place, pending Parker's review.
 - (uncertain) anything not confirmed by Parker is listed here before acting on it.
 
 ## 9. Changelog
 
+- 2026-10-31 — Made `AGENTS.md` canonical, added lessons, a branch-blocking pre-commit hook with staged gitleaks scanning, and gitleaks CI.
 - 2026-10-31: Added Graphify code map (`graphify-out/GRAPH_REPORT.md` committed, rest of `graphify-out/` gitignored; built with `--code-only`, no model calls) and shortened `AGENT_RULES.md` to ~30 lines pointing to the shared common rules and TOKEN_FLOW in `<private-memory-repo>`. Pending Parker's review.
 - 2026-10-31 — Added `AGENT_RULES.md` and linked it from `AGENTS.md`.
 - 2026-10-30 — Added PROJECT_CONTEXT.md, AGENTS.md and context-check CI (T3 Code multi-agent setup, mirrors lil.j).
