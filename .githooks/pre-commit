@@ -1,0 +1,15 @@
+#!/bin/sh
+
+branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null || true)
+case "$branch" in
+  main|master)
+    echo "Commit blocked: switch to a feature branch/worktree before committing on $branch." >&2
+    exit 1
+    ;;
+esac
+
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks protect --staged --redact || exit $?
+else
+  echo "Warning: gitleaks is not installed; skipping staged secret scan." >&2
+fi

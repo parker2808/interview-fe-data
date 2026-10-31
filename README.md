@@ -34,6 +34,14 @@ scripts/sync-practice-index.mjs # rebuild practice/index.json from meta + steps
 
 ## Editing
 
+For local commit guardrails, enable the tracked hook once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+The hook blocks commits on `main` or `master` and scans staged changes with gitleaks when installed.
+
 1. Change only the JSON you need. Do not drop `en` or `vi`.
 2. Keep block types: `heading`, `paragraph`, `list`, `callout`, `code`, `table`, `senior-answer`, `key-takeaways`, `markdown`, `thematic-break`.
 3. Inline emphasis, links, and anchors stay as markdown inside `text` / list `items`.
