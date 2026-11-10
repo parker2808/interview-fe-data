@@ -2,6 +2,12 @@
 
 ## Scope
 
+### Revision after Parker's review (2026-11-10)
+
+The initial PR #65 guide is an outline, not finished teaching material. Retain the existing `backend-learning` catalog entry and 23-topic count, but replace its outline with connected, substantial chapters within that document. Each core chapter must explain the problem, request/data lifecycle, vocabulary and tradeoffs, source evidence, a contextual toy reading-list example, failure modes, questions with worked answers, a guided exercise with acceptance criteria and official references. The introductory chapter must map prerequisites and terms; the final chapter must separate optional services from the core. EN and VI must cover the same concepts, with idiomatic Vietnamese. No production connection, live-status assertion or unrelated code changes.
+
+Review the four-case protected POST test separately: anonymous 401, authenticated reader 403, authorized editor with invalid payload 400, authorized editor with valid payload success. Use explicit test identities and an isolated toy app. Any excerpt that is not a complete runnable program must be labeled as an excerpt and name its dependencies/setup.
+
 Add a bilingual knowledge-base guide grounded in the backend of the portfolio project on its `main` branch, not in a CV. Preserve the existing six catalog groups and content schema; this is a guide, not a change to the 30-day frontend plan or practice steps. The consuming app automatically reads the generated catalog at build time.
 
 ## Acceptance criteria
