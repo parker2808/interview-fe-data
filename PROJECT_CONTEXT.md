@@ -49,11 +49,14 @@
 - Portfolio design specs were completed in merged PR #56; see `plans/portfolio-design-system.md` and its Vietnamese companion.
 
 ## 8. Open items / status
+- Backend learning guide and catalog entry are prepared for review; the consuming app's topic count must land together before either PR is merged. No live portfolio service or production state was verified by this documentation task.
 - Context-check rejects a missing or deleted context file; section updates remain a review requirement. GitHub CI is currently blocked by account billing/spending limits.
 - Agent guidance is consolidated in `AGENTS.md`; `AGENT_RULES.md` is a compatibility pointer. Git guardrails and `docs/LESSONS.md` are in place, pending Parker's review.
 - (uncertain) anything not confirmed by Parker is listed here before acting on it.
 
 ## 9. Changelog
+
+- 2026-11-10 — Added a bilingual frontend-to-backend learning path based on the portfolio API source and wired it into the knowledge-base catalog.
 
 Older and full entries: `docs/CHANGELOG_ARCHIVE.md` (read only when needed).
 
