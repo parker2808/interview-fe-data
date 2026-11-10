@@ -6,3 +6,4 @@
 - 2026-11-10: A backend outline passed structural checks but did not teach the theory; review each core chapter for explanations, source evidence, worked examples and correct auth-before-validation tests.
 - 2026-11-10: Documentation examples need complete bootstrap paths, local database credentials scoped to disposable exercises, expected outputs and bilingual parity before a green schema check is meaningful.
 - 2026-11-10: Check tutorial execution order: introduce fixtures before first use, test claimed rollback behavior, and review EN/VI meaning as well as schema parity.
+- 2026-11-10: An empty concept heading and a root test config can survive content checks; verify chapter sections and a clean compiled entrypoint in a disposable Nest fixture.
