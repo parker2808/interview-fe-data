@@ -10,7 +10,7 @@ Use Node 22 and Docker. Run these commands from the **data repo root**, not agai
 cp -R docs/examples/backend-next /tmp/books-next-rev1
 cd /tmp/books-next-rev1
 npm ci --no-audit --no-fund
-docker run -d --rm --name books-next-rev1-redis -p 127.0.0.1:6387:6379 redis:7-alpine
+docker run -d --name books-next-rev1-redis -p 127.0.0.1:6387:6379 redis:7-alpine
 REDIS_PORT=6387 npm run build
 REDIS_PORT=6387 npm start
 ```
@@ -41,9 +41,21 @@ docker stop books-next-rev1-redis
 curl --max-time 3 -s -o /dev/null -w 'live=%{http_code}\n' 'http://127.0.0.1:3000/api/health/live'
 curl --max-time 3 -s -o /dev/null -w 'ready=%{http_code}\n' 'http://127.0.0.1:3000/api/health/ready'
 curl --max-time 3 -s 'http://127.0.0.1:3000/api/books?locale=en'
+curl --max-time 2 -s -o /dev/null -w 'post=%{http_code} time=%{time_total}s\n' -X POST 'http://127.0.0.1:3000/api/books' -H 'content-type: application/json' -H 'x-test-role: editor' -d '{"title":"Redis offline","locale":"en"}'
+curl --max-time 2 -s -o /dev/null -w 'patch=%{http_code} time=%{time_total}s\n' -X PATCH 'http://127.0.0.1:3000/api/books/3' -H 'content-type: application/json' -H 'x-test-role: editor' -d '{"title":"Redis offline revision","locale":"en"}'
+docker start books-next-rev1-redis
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  test "$(curl --max-time 2 -s -o /dev/null -w '%{http_code}' 'http://127.0.0.1:3000/api/health/ready')" = 200 && break
+  sleep .5
+done
+curl --max-time 3 -s -o /dev/null -w 'ready=%{http_code}\n' 'http://127.0.0.1:3000/api/health/ready'
+curl --max-time 3 -s 'http://127.0.0.1:3000/api/books?locale=en'
+curl --max-time 3 -s 'http://127.0.0.1:3000/api/books?locale=en'
 ```
 
-**Observed with the same running Nest process:** `live=200`, `ready=503`, and GET returns `source:"store"` with HTTP 200 in under 3 seconds. With Redis unavailable, don't attempt a queue-backed POST: memory write could succeed while enqueue fails and the API returns 503. Stop the API with Ctrl-C when finished. The lab allows two seconds for shutdown before exiting if a BullMQ connection cannot close while Redis is down; this is a teaching safety limit, not a production worker shutdown policy. The local cache client disables offline queuing and automatic reconnect; that does not establish production availability or consistency.
+**Observed with the same running Nest process (Node 22, isolated port 4318):** `live=200`, `ready=503`, GET returned `source:"store"` with HTTP 200; POST returned `503 time=0.001480s`, PATCH returned `503 time=0.002207s`. Both memory writes already happened, so reconcile before retrying. After `docker start` on the same Redis container, `ready=200`, then GET returned `store` followed by `cache` with the revised title; another POST returned 201. The producer uses a separate BullMQ connection with `enableOfflineQueue:false`, plus a 900 ms enqueue deadline; the worker connection keeps `maxRetriesPerRequest:null` so it can wait for recovery. The cache uses capped reconnection backoff, disables offline queuing and limits command duration. A failed invalidation marks the key dirty until a fresh value is stored, preventing a stale hit after recovery. This is not a durable multi-replica consistency guarantee. Stop the API with Ctrl-C when finished; its two-second shutdown limit is a teaching safeguard, not a production policy. Remove **only** the named disposable container afterward with `docker rm -f books-next-rev1-redis`.
+
+For a repeatable outage assertion with the API already running and the **named disposable** container available, run `sh test/redis-outage.sh` (set `BASE_URL=http://127.0.0.1:4318/api` if using another API port). It stops and restarts only `books-next-rev1-redis`, checks POST/PATCH 503 within two seconds and waits up to five seconds for readiness to recover; it is not part of the standard Vitest suite because it controls the container. The fixture uses memory: these test writes change ids/titles, so use a fresh API process before the numbered chapter exercises.
 
 ## Review-only quality gate
 

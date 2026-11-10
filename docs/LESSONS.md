@@ -1,5 +1,7 @@
 # Lessons
 
+- 2026-11-10: Queue producers must fail within a request budget when Redis is unavailable, while cache clients must keep bounded reconnection enabled so readiness can recover without restarting the API; verify both on one disposable process.
+
 - 2026-11-10: A follow-up must extend the same teaching API and align its commands with measured IDs/states; separate observed local lab behavior from illustrative workflow, migration and telemetry.
 
 - 2026-11-10: A follow-on documentation branch should reuse the existing catalog entry when the app schema is unchanged; make source-status claims and local example limits explicit, then validate the regenerated heading index.

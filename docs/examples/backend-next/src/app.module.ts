@@ -85,7 +85,17 @@ const store: BookStore = {
 };
 
 @Module({
-  imports: [BullModule.registerQueue({ name: 'book-emails' })],
+  imports: [BullModule.registerQueue({
+    name: 'book-emails',
+    connection: {
+      host: process.env.REDIS_HOST ?? '127.0.0.1',
+      port: Number(process.env.REDIS_PORT ?? 6379),
+      connectTimeout: 500,
+      enableOfflineQueue: false,
+      maxRetriesPerRequest: 1,
+      retryStrategy: (attempts) => Math.min(attempts * 100, 500),
+    },
+  })],
   controllers: [BooksController, HealthController],
   providers: [BooksService, RedisCacheService, NotificationProcessor, EditorGuard, { provide: BOOK_STORE, useValue: store }],
 })

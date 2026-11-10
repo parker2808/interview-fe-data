@@ -4,7 +4,14 @@ import { PinoLogger } from 'nestjs-pino';
 
 type BookJob = { bookId: number; revision: number; title: string; requestId: string };
 
-@Processor('book-emails', { concurrency: 2 })
+@Processor('book-emails', {
+  concurrency: 2,
+  connection: {
+    host: process.env.REDIS_HOST ?? '127.0.0.1',
+    port: Number(process.env.REDIS_PORT ?? 6379),
+    maxRetriesPerRequest: null,
+  },
+})
 export class NotificationProcessor extends WorkerHost {
   constructor(private readonly logger: PinoLogger) {
     super();

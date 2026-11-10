@@ -57,13 +57,25 @@ export class BooksService {
       catch { this.logger.warn('old-locale invalidation unavailable'); }
     }
     try {
-      await this.queue.add('notify', { bookId, revision, title: book.title, requestId }, {
+      await this.cache.ping();
+      let deadline: ReturnType<typeof setTimeout> | undefined;
+      const enqueue = this.queue.add('notify', { bookId, revision, title: book.title, requestId }, {
         jobId: `notify-${bookId}-${revision}`,
         attempts: 2,
         backoff: { type: 'fixed', delay: 250 },
         removeOnComplete: false,
         removeOnFail: false,
       });
+      try {
+        await Promise.race([
+          enqueue,
+          new Promise<never>((_, reject) => {
+            deadline = setTimeout(() => reject(new Error('enqueue timeout')), 900);
+          }),
+        ]);
+      } finally {
+        clearTimeout(deadline);
+      }
     } catch {
       throw new ServiceUnavailableException('book stored but enqueue failed; reconcile before retry');
     }
