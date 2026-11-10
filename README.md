@@ -5,7 +5,7 @@ The public Nuxt app downloads this tree **at build time** (never into client JS)
 
 Locale toggle is instant because every user-facing string is `{ "en", "vi" }`.
 
-The [backend learning guide](knowledge-base/backend-learning.json) is an EN/VI textbook with eight connected core chapters (HTTP/Node, Nest, Zod, MySQL, Prisma, auth, tests, Docker), a shared toy reading-list API, evidence from the portfolio project's `main` source, worked questions, exercises and an optional operations chapter. It remains one Infrastructure catalog topic: `/docs/en/backend-learning` and `/docs/vi/backend-learning` after the app pulls this content branch. It does not replace the 30-day frontend plan. See the [revision criteria](docs/specs/2026-11-10-backend-learning-path.md); PR #65 is paired with app PR #43 and neither may be merged or deployed independently.
+The [backend learning guide](knowledge-base/backend-learning.json) adds the 23rd catalog topic in Infrastructure: `/docs/en/backend-learning` and `/docs/vi/backend-learning` after the app pulls this content branch. Its eight connected EN/VI core chapters (HTTP/Node, Nest, Zod, MySQL, Prisma, auth, tests, Docker) use a staged toy reading-list API, source evidence, expected outputs, worked questions and guided exercises; optional operations follow. It does not replace the 30-day frontend plan. See the [revision criteria](docs/specs/2026-11-10-backend-learning-path.md); PR #65 is paired with app PR #43 and neither may be merged or deployed independently.
 
 ## Layout
 
