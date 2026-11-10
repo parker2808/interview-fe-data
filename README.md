@@ -7,6 +7,8 @@ Locale toggle is instant because every user-facing string is `{ "en", "vi" }`.
 
 The [backend learning guide](knowledge-base/backend-learning.json) adds the 23rd catalog topic in Infrastructure (22 on `main`): `/docs/en/backend-learning` and `/docs/vi/backend-learning` after the app pulls this content branch. Its eight connected EN/VI core chapters (HTTP/Node, Nest, Zod, MySQL, Prisma, auth, tests, Docker) use a staged toy reading-list API, source evidence, expected outputs, worked questions and guided exercises; optional operations follow. Chapter 5 records outputs observed in a disposable local Node 22 / Prisma 7.10.1 / MySQL 8.4 Compose lab; these are not production verification. It does not replace the 30-day frontend plan. See the [revision criteria](docs/specs/2026-11-10-backend-learning-path.md); PR #65 is paired with app PR #43 and neither may be merged or deployed independently.
 
+A stacked follow-up adds bilingual chapters 9–12 inside that same guide: Redis caching, BullMQ workers, observability and CI/CD. The [isolated books fixture](docs/examples/backend-next/) and [extension criteria](docs/specs/2026-11-10-backend-next-steps.md) distinguish real local output from unrun production examples. The catalog topic count and app contract do not change; do not merge this follow-up before PR #65 and app PR #43. None of these documentation branches authorizes a deploy.
+
 ## Layout
 
 ```text
