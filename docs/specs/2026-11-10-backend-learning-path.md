@@ -4,6 +4,8 @@
 
 ### Revision after Parker's review (2026-11-10)
 
+Round-three review also requires a chronological stage map: create the disposable Compose fixture before the Prisma lab uses it; use `down` on only that toy project before a fresh tmpfs `up`; demonstrate and assert rollback, and keep the isolated Vitest body pipe aligned with the chapter-3 Zod contract. Format lifecycle traces in readable ASCII because the current app renders code blocks as `<pre><code>` rather than Mermaid. Check EN/VI meaning, not just key parity.
+
 The initial PR #65 guide was an outline, not finished teaching material. PR #65 adds `backend-learning` as the 23rd catalog entry (22 on `main`), then develops connected chapters within that document. Each core chapter must explain the problem, request/data lifecycle, vocabulary and tradeoffs, source evidence, a contextual toy reading-list example, expected results, failure modes, questions with worked answers, a guided exercise with acceptance criteria and official references. The introductory chapter must map prerequisites and terms; the final chapter must separate optional services from the core. EN and VI must cover the same concepts, with idiomatic Vietnamese. No production connection, live-status assertion or unrelated code changes.
 
 Review the four-case protected POST test separately: anonymous 401, authenticated reader 403, authorized editor with invalid payload 400, authorized editor with valid payload success. Use explicit test identities and an isolated toy app. Any excerpt that is not a complete runnable program must be labeled as an excerpt and name its dependencies/setup.

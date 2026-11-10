@@ -49,14 +49,14 @@
 - Portfolio design specs were completed in merged PR #56; see `plans/portfolio-design-system.md` and its Vietnamese companion.
 
 ## 8. Open items / status
-- Backend guide PR #65 adds the 23rd catalog entry (22 on `main`). After two review rounds, the eight EN/VI core chapters now include staged examples, expected results and guided exercises, plus optional operations. App PR #43 must be reviewed together; neither PR is merged or deployed. No live portfolio service or production state was verified by this documentation task.
-- Context-check rejects a missing or deleted context file; section updates remain a review requirement. The prior account billing/spending CI block is historical; all PR #65 checks at head `8868d71` passed on 2026-11-10. The next push needs fresh CI verification.
+- Backend guide PR #65 adds the 23rd catalog entry (22 on `main`). Round three connects staged examples in learning order, makes lifecycle and debugging sections scannable, and aligns the EN/VI test contract. App PR #43 must be reviewed together; neither PR is merged or deployed to production. No live portfolio service or production state was verified by this documentation task.
+- Context-check rejects a missing or deleted context file; section updates remain a review requirement. The prior account billing/spending CI block is historical; confirm checks again after each new PR head rather than citing an older SHA.
 - Agent guidance is consolidated in `AGENTS.md`; `AGENT_RULES.md` is a compatibility pointer. Git guardrails and `docs/LESSONS.md` are in place, pending Parker's review.
 - (uncertain) anything not confirmed by Parker is listed here before acting on it.
 
 ## 9. Changelog
 
-- 2026-11-10 — Added the 23rd bilingual catalog topic and revised the eight-chapter backend textbook after review round two, including executable teaching stages, expected results and safer local-only examples.
+- 2026-11-10 — Revised the 23rd bilingual catalog topic after review round three: reordered the disposable database lab, clarified stage handoffs, added a transaction rollback demonstration, and made lifecycle/diagnostics readable in both languages.
 
 Older and full entries: `docs/CHANGELOG_ARCHIVE.md` (read only when needed).
 
