@@ -1,18 +1,25 @@
 #!/usr/bin/env python3
 """Import the locally supplied FDE study pack without executing its Python files.
 
-Usage: python3 scripts/import-fde-sources.py /path/to/fde-src
-The resulting JSON is the checked-in content; this importer is not part of the build.
+Usage: python3 scripts/import-fde-sources.py /path/to/fde-src --output /tmp/fde-import.json
+The checked-in content is reviewed and expanded by hand; a fresh import must not replace it.
 """
+import argparse
 import ast
 import json
 import re
-import sys
 from pathlib import Path
 
 
-SOURCE = Path(sys.argv[1])
-DEST = Path(__file__).resolve().parents[1] / 'fde' / 'fde-prep.json'
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('source', type=Path)
+parser.add_argument('--output', type=Path, help='write a raw import to a separate file for review')
+args = parser.parse_args()
+SOURCE = args.source
+REVIEWED = Path(__file__).resolve().parents[1] / 'fde' / 'fde-prep.json'
+DEST = args.output or REVIEWED
+if DEST.resolve() == REVIEWED.resolve() and REVIEWED.exists():
+    parser.error('refusing to overwrite reviewed FDE content; pass --output /tmp/fde-import.json to review a fresh import')
 
 
 def read_nodes(filename):
