@@ -5,6 +5,10 @@ The public Nuxt app downloads this tree **at build time** (never into client JS)
 
 Locale toggle is instant because every user-facing string is `{ "en", "vi" }`.
 
+The optional [FDE interview module](fde/fde-prep.json) is a separate bilingual collection for live interview lookup. It contains a JD map, 40 deep concepts, interview answers (I1-I33, J1-J12, B1-B14, R1-R12 and A1-A15), pitch, rescue phrases, interviewer questions and a one-screen cheat sheet. The reviewed explanations expand the supplied JD and locally imported study pack by hand; Monday/Evolve and GCP implementations are proposals or general knowledge, not shipped project claims. The importer refuses to overwrite reviewed content; use `python3 scripts/import-fde-sources.py /path/to/fde-src --output /tmp/fde-import.json` for a raw comparison. The app consumes the collection through a Nitro endpoint. Merge this data PR before the paired app PR, with Parker's approval; do not merge or deploy automatically. Run `node scripts/check-fde.mjs .` after edits.
+
+External API claims were cross-checked against primary docs: [Monday board-item pagination](https://developer.monday.com/api-reference/docs/querying-board-items) and [rate limits](https://developer.monday.com/api-reference/docs/rate-limits), [Gmail push](https://developers.google.com/workspace/gmail/api/guides/push) and [history synchronization](https://developers.google.com/workspace/gmail/api/guides/sync), and [Cloud Run scheduled services](https://docs.cloud.google.com/run/docs/triggering/using-scheduler). The Monday API version and Evolve interface must be confirmed with the client; this material is not an integration specification.
+
 The [backend learning guide](knowledge-base/backend-learning.json) adds the 23rd catalog topic in Infrastructure (22 on `main`): `/docs/en/backend-learning` and `/docs/vi/backend-learning` after the app pulls this content branch. Its eight connected EN/VI core chapters (HTTP/Node, Nest, Zod, MySQL, Prisma, auth, tests, Docker) use a staged toy reading-list API, source evidence, expected outputs, worked questions and guided exercises; optional operations follow. Chapter 5 records outputs observed in a disposable local Node 22 / Prisma 7.10.1 / MySQL 8.4 Compose lab; these are not production verification. It does not replace the 30-day frontend plan. See the [revision criteria](docs/specs/2026-11-10-backend-learning-path.md); PR #65 is paired with app PR #43 and neither may be merged or deployed independently.
 
 A stacked follow-up adds bilingual chapters 9–12 inside that same guide: Redis cache-aside, BullMQ workers, Pino/probes, and review-only CI/CD. The [Nest TypeScript books fixture](docs/examples/backend-next/) extends the chapter-8 memory app (`/api/books`, port 3000, Zod, Vitest/Supertest, non-root image); it does not connect Prisma/MySQL or a real notification provider. Its [revision criteria](docs/specs/2026-11-10-backend-next-steps.md) distinguish observed local output from unrun telemetry, workflow and production examples. The catalog topic count and app contract do not change; do not merge this follow-up before PR #65 and app PR #43. None of these documentation branches authorizes a deploy.
@@ -12,6 +16,7 @@ A stacked follow-up adds bilingual chapters 9–12 inside that same guide: Redis
 ## Layout
 
 ```text
+fde/fde-prep.json             # FDE interview collection (bilingual)
 knowledge-base/<slug>.json     # one bilingual doc
 knowledge-base/index.json      # generated catalog + headings for search
 plan/meta.json                 # weeks, gaps, resource index

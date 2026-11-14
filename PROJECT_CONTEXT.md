@@ -49,6 +49,7 @@
 - Portfolio design specs were completed in merged PR #56; see `plans/portfolio-design-system.md` and its Vietnamese companion.
 
 ## 8. Open items / status
+- FDE preparation is staged as a separate optional collection with 40 reviewed concepts and 86 question-specific answers, paired with an app route. Raw source imports cannot overwrite curated content. Merge data before app only with Parker's approval. Behavioral stories I26, I28 and I29 still require Parker's real details.
 - Stacked backend follow-up `content/backend-next-steps` adds chapters 9–12 to the 23rd catalog entry, retaining its slug and topic count. The disposable Nest TypeScript books app extends chapter 8's `/api/books` memory app with Redis/BullMQ/Pino; it does not integrate Prisma/MySQL or verify production services. Its nested CI example is not executed by this repo. Merge order requires PR #65, app PR #43, then this follow-up after separate Parker approval. No app schema/count update is needed unless app validation finds a mismatch.
 - Backend guide PR #65 adds the 23rd catalog entry (22 on `main`). Round five aligns the toy `{code, field}` error, separates repeated contracts theory, adds Prisma projection and auth response tables, labels the three Docker files in execution order, and records a disposable local Prisma migration/seed/query/rollback lab. App PR #43 must be reviewed together; neither PR is merged or deployed to production. No live portfolio service or production state was verified by this documentation task.
 - Context-check rejects a missing or deleted context file; section updates remain a review requirement. The prior account billing/spending CI block is historical; confirm checks again after each new PR head rather than citing an older SHA.
@@ -56,6 +57,9 @@
 - (uncertain) anything not confirmed by Parker is listed here before acting on it.
 
 ## 9. Changelog
+- 2026-11-15: Expanded FDE concepts and interview answers in EN/VI, added dedicated Monday/Gmail/Evolve/workflow/GCP cards and quality checks, and protected reviewed content from raw re-imports.
+
+- 2026-11-15: Added the bilingual FDE interview collection, an offline source importer and a dedicated validation gate.
 
 - 2026-11-10: Revised chapters 9–12 as a Nest TypeScript continuation of the chapter-8 memory books API with cache, BullMQ, Pino/probes, deeper bilingual theory, a real local lab and a review-only CI example. No change to core chapters or production infrastructure; fixture CI/MySQL/telemetry/deploy are not observed.
 - 2026-11-10 — Review round five: polished EN/VI chapters 3, 5–8; observed a disposable local Node 22 / Prisma 7.10.1 / MySQL 8.4 Compose migration, two seed runs, query and rollback checks (neither inserted book nor tag persisted). Aligned Docker file order and README; no production or existing database was tested.
