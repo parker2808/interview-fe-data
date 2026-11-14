@@ -5,6 +5,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { validateModules } from './modules-index.mjs'
 
 const root = path.resolve(process.argv[2] || path.dirname(fileURLToPath(import.meta.url)), process.argv[2] ? '.' : '..')
 const resolvedRoot = process.argv[2]
@@ -12,6 +13,7 @@ const resolvedRoot = process.argv[2]
   : path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 
 const errors = []
+if (existsSync(path.join(resolvedRoot, 'modules'))) errors.push(...validateModules(resolvedRoot))
 
 function fail(pathHint, message) {
   errors.push(`${pathHint}: ${message}`)

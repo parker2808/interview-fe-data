@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["version", "modules"],
+  "properties": {
+    "version": { "const": 2 },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["slug", "source", "organizationAlias", "role", "level", "date", "tags", "status", "title", "summary"],
+        "properties": {
+          "slug": { "type": "string" },
+          "source": { "type": "string" },
+          "fixture": { "type": "boolean" },
+          "organizationAlias": { "type": "string" },
+          "role": { "$ref": "module.schema.json#/$defs/localized" },
+          "level": { "$ref": "module.schema.json#/$defs/localized" },
+          "date": { "type": "string", "format": "date" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "status": { "enum": ["active", "archived"] },
+          "archivedAt": { "type": "string", "format": "date-time" },
+          "purgeAfter": { "type": "string", "format": "date-time" },
+          "title": { "$ref": "module.schema.json#/$defs/localized" },
+          "summary": { "$ref": "module.schema.json#/$defs/localized" },
+          "testScore": { "type": "number", "minimum": 0, "maximum": 100 }
+        }
+      }
+    }
+  }
+}

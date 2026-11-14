@@ -5,6 +5,8 @@ The public Nuxt app downloads this tree **at build time** (never into client JS)
 
 Locale toggle is instant because every user-facing string is `{ "en", "vi" }`.
 
+The [modules index](modules/index.json) lists the existing FDE pack without moving it and one explicitly fictional frontend fixture. New version 2 modules live in `modules/<slug>.json`. Each row records whether the module is active or archived; archived modules are hidden by default in the app. A future removal can delete one module file and regenerate the index without touching the FDE source. The [module contract](docs/specs/2026-11-15-modules-index.md) explains the fields and the fixture.
+
 The optional [FDE interview module](fde/fde-prep.json) is a separate bilingual collection for live interview lookup. It contains a JD map, 40 deep concepts, interview answers (I1-I33, J1-J12, B1-B14, R1-R12 and A1-A15), pitch, rescue phrases, interviewer questions and a one-screen cheat sheet. The reviewed explanations expand the supplied JD and locally imported study pack by hand; Monday/Evolve and GCP implementations are proposals or general knowledge, not shipped project claims. The importer refuses to overwrite reviewed content; use `python3 scripts/import-fde-sources.py /path/to/fde-src --output /tmp/fde-import.json` for a raw comparison. The app consumes the collection through a Nitro endpoint. Merge this data PR before the paired app PR, with Parker's approval; do not merge or deploy automatically. Run `node scripts/check-fde.mjs .` after edits.
 
 External API claims were cross-checked against primary docs: [Monday board-item pagination](https://developer.monday.com/api-reference/docs/querying-board-items) and [rate limits](https://developer.monday.com/api-reference/docs/rate-limits), [Gmail push](https://developers.google.com/workspace/gmail/api/guides/push) and [history synchronization](https://developers.google.com/workspace/gmail/api/guides/sync), and [Cloud Run scheduled services](https://docs.cloud.google.com/run/docs/triggering/using-scheduler). The Monday API version and Evolve interface must be confirmed with the client; this material is not an integration specification.
@@ -64,6 +66,8 @@ node scripts/check-plan.mjs . --strict
 node scripts/sync-plan-index.mjs --check
 node scripts/check-practice.mjs . --strict
 node scripts/sync-practice-index.mjs --check
+node scripts/check-modules.mjs .
+node scripts/sync-modules-index.mjs --check
 ```
 
 `check-content.mjs` also runs `sync-kb-index.mjs --check`. After editing a knowledge-base doc, regenerate the catalog:

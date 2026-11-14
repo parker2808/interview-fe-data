@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "module.schema.json",
+  "$defs": {
+    "localized": {
+      "type": "object",
+      "required": ["en", "vi"],
+      "additionalProperties": false,
+      "properties": { "en": { "type": "string", "minLength": 1 }, "vi": { "type": "string", "minLength": 1 } }
+    },
+    "reference": {
+      "type": "object",
+      "required": ["slug", "sectionId", "state"],
+      "properties": {
+        "slug": { "type": "string", "minLength": 1 },
+        "sectionId": { "type": "string", "minLength": 1 },
+        "state": { "enum": ["pending", "live", "rejected"] }
+      }
+    },
+    "entry": {
+      "type": "object",
+      "required": ["id", "section", "jdRequirement", "tags", "title", "shortAnswer", "keyPoints", "detail"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "section": { "enum": ["jd", "concepts", "interview", "pitch", "rescue", "ask", "cheat"] },
+        "jdRequirement": { "type": "string", "minLength": 1 },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "title": { "$ref": "#/$defs/localized" },
+        "shortAnswer": { "$ref": "#/$defs/localized" },
+        "keyPoints": { "type": "array", "items": { "$ref": "#/$defs/localized" } },
+        "detail": { "$ref": "#/$defs/localized" },
+        "kbRefs": { "type": "array", "items": { "$ref": "#/$defs/reference" } },
+        "embellishmentRefs": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    }
+  },
+  "type": "object",
+  "required": ["version", "slug", "organizationAlias", "role", "level", "date", "tags", "status", "title", "summary", "requirements", "entries"],
+  "properties": {
+    "version": { "const": 2 },
+    "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "fixture": { "type": "boolean" },
+    "organizationAlias": { "type": "string", "minLength": 1 },
+    "role": { "$ref": "#/$defs/localized" },
+    "level": { "$ref": "#/$defs/localized" },
+    "date": { "type": "string", "format": "date" },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "status": { "enum": ["active", "archived"] },
+    "archivedAt": { "type": "string", "format": "date-time" },
+    "purgeAfter": { "type": "string", "format": "date-time" },
+    "title": { "$ref": "#/$defs/localized" },
+    "summary": { "$ref": "#/$defs/localized" },
+    "testScore": { "type": "number", "minimum": 0, "maximum": 100 },
+    "requirements": { "type": "array", "items": { "type": "object", "required": ["id", "title"], "properties": { "id": { "type": "string" }, "title": { "$ref": "#/$defs/localized" } } } },
+    "entries": { "type": "array", "items": { "$ref": "#/$defs/entry" } }
+  }
+}
