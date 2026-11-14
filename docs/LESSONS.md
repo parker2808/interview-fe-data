@@ -1,5 +1,7 @@
 # Lessons
 
+- 2026-11-15: Keep interview-prep content in a separate validated collection rather than adding it to the existing knowledge-base index contract.
+
 - 2026-11-10: Queue producers must fail within a request budget when Redis is unavailable, while cache clients must keep bounded reconnection enabled so readiness can recover without restarting the API; verify both on one disposable process.
 
 - 2026-11-10: A follow-up must extend the same teaching API and align its commands with measured IDs/states; separate observed local lab behavior from illustrative workflow, migration and telemetry.
