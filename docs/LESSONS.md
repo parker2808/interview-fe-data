@@ -1,5 +1,7 @@
 # Lessons
 
+- 2026-11-15: Validate archive metadata on both the source and generated row, then refuse file removal unless the full index is consistent; deleting a current Git file does not erase its history.
+
 - 2026-11-15: A generated index must validate both missing source files and orphan documents so removing a module cannot silently leave stale content.
 
 - 2026-11-15: A structurally valid import can still repeat generic text or flatten code; curate each language and require labelled depth, concise speaking points and question-specific answers in validation.

@@ -17,8 +17,32 @@ export function readModule(root, file) {
 }
 
 export function rowFor(module) {
-  const { slug, fixture, organizationAlias, role, level, date, tags, status, archivedAt, purgeAfter, title, summary, testScore } = module
-  return Object.fromEntries(Object.entries({ slug, source: `modules/${slug}.json`, fixture, organizationAlias, role, level, date, tags, status, archivedAt, purgeAfter, title, summary, testScore }).filter(([, value]) => value !== undefined))
+  const { slug, fixture, organizationAlias, role, level, date, tags, status, archivedAt, purgeAfter, autoArchive, lastOpenedAt, title, summary, testScore } = module
+  return Object.fromEntries(Object.entries({ slug, source: `modules/${slug}.json`, fixture, organizationAlias, role, level, date, tags, status, archivedAt, purgeAfter, autoArchive, lastOpenedAt, title, summary, testScore }).filter(([, value]) => value !== undefined))
+}
+
+export function defaultModules(index) {
+  return index.modules.filter((row) => row.status !== 'archived')
+}
+
+function validTimestamp(value) {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(value)) return false
+  const timestamp = Date.parse(value)
+  if (!Number.isFinite(timestamp)) return false
+  const offset = value.endsWith('Z') ? 0 : (value.at(-6) === '-' ? -1 : 1) * (Number(value.slice(-5, -3)) * 60 + Number(value.slice(-2)))
+  if (Math.abs(offset) > 14 * 60 || Number(value.slice(-2)) > 59) return false
+  return new Date(timestamp + offset * 60000).toISOString().slice(0, 19) === value.slice(0, 19)
+}
+
+function validateArchive(record, slug, errors) {
+  if (!['active', 'archived'].includes(record.status)) errors.push(`${slug}.status: expected active or archived`)
+  for (const field of ['archivedAt', 'purgeAfter']) {
+    if (record.status === 'archived' && !validTimestamp(record[field])) errors.push(`${slug}.${field}: required ISO-8601 timestamp`)
+    if (record.status === 'active' && Object.hasOwn(record, field)) errors.push(`${slug}.${field}: not allowed on active module`)
+  }
+  if (validTimestamp(record.archivedAt) && validTimestamp(record.purgeAfter) && Date.parse(record.purgeAfter) - Date.parse(record.archivedAt) !== 7 * 86400000) errors.push(`${slug}.purgeAfter: must be exactly seven days after archivedAt`)
+  if (record.autoArchive !== undefined && typeof record.autoArchive !== 'boolean') errors.push(`${slug}.autoArchive: expected boolean`)
+  if (record.lastOpenedAt !== undefined && !validTimestamp(record.lastOpenedAt)) errors.push(`${slug}.lastOpenedAt: expected ISO-8601 timestamp`)
 }
 
 export function generatedIndex(root) {
@@ -56,9 +80,8 @@ export function validateModules(root) {
     const expected = row.slug === 'fde' ? 'fde/fde-prep.json' : `modules/${row.slug}.json`
     if (row.source !== expected || !existsSync(path.join(root, expected))) errors.push(`${row.slug}: dangling source`)
     for (const field of ['role', 'level', 'title', 'summary']) localized(row[field], `${row.slug}.${field}`, errors)
-    if (!['active', 'archived'].includes(row.status)) errors.push(`${row.slug}: invalid status`)
-    if (row.status === 'archived' && (!validDate(row.archivedAt) || !validDate(row.purgeAfter) || Date.parse(row.purgeAfter) <= Date.parse(row.archivedAt))) errors.push(`${row.slug}: invalid archive dates`)
-    if (row.status === 'active' && (row.archivedAt || row.purgeAfter)) errors.push(`${row.slug}: active row has archive dates`)
+    validateArchive(row, row.slug, errors)
+    if (row.slug === 'fde' && JSON.stringify(row) !== JSON.stringify(generatedIndex(root).modules[0])) errors.push('fde: index row must remain unchanged')
   }
   if (!seen.has('fde')) errors.push('fde: missing index row')
   for (const file of files) {
@@ -67,6 +90,7 @@ export function validateModules(root) {
     let module
     try { module = readModule(root, file) } catch { errors.push(`${file}: invalid JSON`); continue }
     if (module.version !== 2 || module.slug !== slug) errors.push(`${file}: invalid version or slug`)
+    validateArchive(module, slug, errors)
     for (const field of ['role', 'level', 'title', 'summary']) localized(module[field], `${file}.${field}`, errors)
     if (!module.organizationAlias || !Array.isArray(module.tags) || !validDate(module.date)) errors.push(`${file}: invalid metadata`)
     const requirements = new Set()
@@ -87,7 +111,13 @@ export function validateModules(root) {
       if (entry.embellishmentRefs !== undefined && (!Array.isArray(entry.embellishmentRefs) || entry.embellishmentRefs.some((ref) => typeof ref !== 'string' || !ref.trim()))) errors.push(`${file}.${entry.id}: malformed embellishment reference`)
     }
     if (!Array.isArray(module.requirements) || !Array.isArray(module.entries)) errors.push(`${file}: missing requirements or entries`)
-    if (JSON.stringify(index.modules.find((row) => row.slug === slug)) !== JSON.stringify(rowFor(module))) errors.push(`${file}: index row is stale`)
+    const actualRow = index.modules.find((row) => row.slug === slug)
+    if (JSON.stringify(actualRow) !== JSON.stringify(rowFor(module))) {
+      for (const field of ['status', 'archivedAt', 'purgeAfter', 'autoArchive', 'lastOpenedAt']) {
+        if (JSON.stringify(actualRow?.[field]) !== JSON.stringify(module[field])) errors.push(`${slug}.${field}: index disagrees with module file`)
+      }
+      errors.push(`${file}: index row is stale`)
+    }
   }
   if (!existsSync(path.join(root, 'fde/fde-prep.json'))) errors.push('fde: missing version 1 source')
   return errors

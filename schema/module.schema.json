@@ -35,6 +35,10 @@
     }
   },
   "type": "object",
+  "allOf": [
+    { "if": { "properties": { "status": { "const": "archived" } }, "required": ["status"] }, "then": { "required": ["archivedAt", "purgeAfter"] } },
+    { "if": { "properties": { "status": { "const": "active" } }, "required": ["status"] }, "then": { "not": { "anyOf": [{ "required": ["archivedAt"] }, { "required": ["purgeAfter"] }] } } }
+  ],
   "required": ["version", "slug", "organizationAlias", "role", "level", "date", "tags", "status", "title", "summary", "requirements", "entries"],
   "properties": {
     "version": { "const": 2 },
@@ -48,6 +52,8 @@
     "status": { "enum": ["active", "archived"] },
     "archivedAt": { "type": "string", "format": "date-time" },
     "purgeAfter": { "type": "string", "format": "date-time" },
+    "autoArchive": { "type": "boolean" },
+    "lastOpenedAt": { "type": "string", "format": "date-time" },
     "title": { "$ref": "#/$defs/localized" },
     "summary": { "$ref": "#/$defs/localized" },
     "testScore": { "type": "number", "minimum": 0, "maximum": 100 },
