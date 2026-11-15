@@ -8,6 +8,10 @@
       "type": "array",
       "items": {
         "type": "object",
+        "allOf": [
+          { "if": { "properties": { "status": { "const": "archived" } }, "required": ["status"] }, "then": { "required": ["archivedAt", "purgeAfter"] } },
+          { "if": { "properties": { "status": { "const": "active" } }, "required": ["status"] }, "then": { "not": { "anyOf": [{ "required": ["archivedAt"] }, { "required": ["purgeAfter"] }] } } }
+        ],
         "required": ["slug", "source", "organizationAlias", "role", "level", "date", "tags", "status", "title", "summary"],
         "properties": {
           "slug": { "type": "string" },
@@ -21,6 +25,8 @@
           "status": { "enum": ["active", "archived"] },
           "archivedAt": { "type": "string", "format": "date-time" },
           "purgeAfter": { "type": "string", "format": "date-time" },
+          "autoArchive": { "type": "boolean" },
+          "lastOpenedAt": { "type": "string", "format": "date-time" },
           "title": { "$ref": "module.schema.json#/$defs/localized" },
           "summary": { "$ref": "module.schema.json#/$defs/localized" },
           "testScore": { "type": "number", "minimum": 0, "maximum": 100 }
