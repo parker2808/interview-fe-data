@@ -3,6 +3,12 @@
 Read `PROJECT_CONTEXT.md` in full and `docs/LESSONS.md` before starting; append one line per new lesson.
 These are the canonical agent rules. `AGENT_RULES.md` points here for older links.
 
+## Full decision authority
+
+When Parker assigns a task with “có toàn quyền quyết định” to a Grok Bot assistant or the Parker Telegram bot, it may assign T3 coding and review, choose next steps, coordinate bots and threads, merge, deploy, and re-test that task without asking again.
+At task start, check required permissions and access; ask Parker once, immediately, for exactly what is missing.
+Every existing gate and ban remains mandatory: green CI or the required local gate, review with no P0–P2 findings, privacy, PR #50 backups/rollback/startup logs, 08:00–23:00 ICT merges/deploys, pinned T3 threads, interview-senior-fe PR #27, no paid runners, same-PR README/help updates, and quiet hours. See [COMMON_RULES §3](https://github.com/parker2808/ai-memory/blob/docs/routing-plan-2026-11/rules/COMMON_RULES.md#3-merging-absolute).
+
 ## Start and scope
 - Work in a T3 worktree on a feature branch, never in the main checkout on `main`.
 - One task = one branch/worktree = one PR. Stay in scope and do not edit another agent's branch.
