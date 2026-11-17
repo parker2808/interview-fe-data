@@ -47,6 +47,10 @@ scripts/check-practice.mjs     # practice: links, budgets, prereq graph, PII
 scripts/sync-practice-index.mjs # rebuild practice/index.json from meta + steps
 ```
 
+## Agent rules
+
+The task-scoped [full decision authority rule](AGENTS.md#full-decision-authority) applies only when Parker assigns it; all existing review, privacy, CI, and deployment gates still apply.
+
 ## Editing
 
 For local commit guardrails, enable the tracked hook once per clone:

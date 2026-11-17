@@ -60,7 +60,7 @@
 - (uncertain) anything not confirmed by Parker is listed here before acting on it.
 
 ## 9. Changelog
-- 2026-11-18: Document Parker’s task-scoped full decision authority in AGENTS.md; all existing gates remain mandatory. No runtime change.
+- 2026-11-18: Document Parker’s task-scoped full decision authority in AGENTS.md and link it from the README; all existing gates remain mandatory. No runtime change.
 
 - 2026-11-15: Specified and tested archived module dates, optional inactivity fields, default visibility, and safe Phase 1 file/index removal without touching FDE or the knowledge base.
 - 2026-11-15: Added a validated, synchronized module index with archive metadata and a fictional version 2 example; FDE remains in place.
