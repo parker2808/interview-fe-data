@@ -49,6 +49,7 @@
 - Portfolio design specs were completed in merged PR #56; see `plans/portfolio-design-system.md` and its Vietnamese companion.
 
 ## 8. Open items / status
+
 - Archived module metadata now has a seven-day validation rule and a local, review-only removal command. The script handles only an archived module file and its index row; KB entries, FDE, and Git history remain intact. Bot commands, web deletion, and jdcv contract alignment require later PRs and Parker's approval before merge.
 - Module index v2 records FDE without moving its version 1 source and includes one fictional fixture. The linked app PR must merge only after this data PR and Parker's approval. Module deletion, restore, live bot tokens and CV integration remain future work.
 - FDE preparation is staged as a separate optional collection with 40 reviewed concepts and 86 question-specific answers, paired with an app route. Raw source imports cannot overwrite curated content. Merge data before app only with Parker's approval. Behavioral stories I26, I28 and I29 still require Parker's real details.
@@ -59,6 +60,8 @@
 - (uncertain) anything not confirmed by Parker is listed here before acting on it.
 
 ## 9. Changelog
+- 2026-11-18: Document Parker’s task-scoped full decision authority in AGENTS.md and link it from the README; all existing gates remain mandatory. No runtime change.
+
 - 2026-11-15: Specified and tested archived module dates, optional inactivity fields, default visibility, and safe Phase 1 file/index removal without touching FDE or the knowledge base.
 - 2026-11-15: Added a validated, synchronized module index with archive metadata and a fictional version 2 example; FDE remains in place.
 - 2026-11-15: Expanded FDE concepts and interview answers in EN/VI, added dedicated Monday/Gmail/Evolve/workflow/GCP cards and quality checks, and protected reviewed content from raw re-imports.
