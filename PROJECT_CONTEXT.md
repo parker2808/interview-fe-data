@@ -49,7 +49,6 @@
 - Portfolio design specs were completed in merged PR #56; see `plans/portfolio-design-system.md` and its Vietnamese companion.
 
 ## 8. Open items / status
-- 2026-11-18: Full decision authority documentation PR is open; no merge or deployment.
 
 - Archived module metadata now has a seven-day validation rule and a local, review-only removal command. The script handles only an archived module file and its index row; KB entries, FDE, and Git history remain intact. Bot commands, web deletion, and jdcv contract alignment require later PRs and Parker's approval before merge.
 - Module index v2 records FDE without moving its version 1 source and includes one fictional fixture. The linked app PR must merge only after this data PR and Parker's approval. Module deletion, restore, live bot tokens and CV integration remain future work.
