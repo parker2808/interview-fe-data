@@ -84,4 +84,5 @@ Older and full entries: `docs/CHANGELOG_ARCHIVE.md` (read only when needed).
 - 2026-10-30 — Added PROJECT_CONTEXT.md, AGENTS.md and context-check CI.
 
 ## Changelog
+- 2026-11-22: Graphify refresh (auto weekly, parker bot).
 - 2026-11-15: Graphify refresh (auto weekly, parker bot).
